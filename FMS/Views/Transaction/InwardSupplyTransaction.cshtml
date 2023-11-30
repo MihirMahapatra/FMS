@@ -1,0 +1,170 @@
+﻿@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Inward Supply";
+}
+<style>
+    .cust-btn {
+        margin-top: 32px !important;
+    }
+</style>
+
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1></h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                    </ol>
+                </div>
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="card card-primary card-outline">
+                <div class="card-body">
+                    <ul class="nav nav-tabs" id="custom-content-below-tab" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="tab-InwardSupply" data-toggle="pill" href="#InwardSupply" role="tab" aria-controls="InwardSupply" aria-selected="true"><b>Inward Supply</b></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="tab-InwardSupplyList" data-toggle="pill" href="#InwardSupplyList" role="tab" aria-controls="InwardSupplyList" aria-selected="false"><b>Inward Supply List</b></a>
+                        </li>
+                    </ul>
+                    <div class="tab-content pt-3" id="custom-content-below-tabContent">
+                        <div class="tab-pane fade show active" id="InwardSupply" role="tabpanel" aria-labelledby="tab-InwardSupply">
+                            <div class="card card-primary card-outline">
+                                <div class="card-header">
+                                    <div class="row">
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <!-----------To Branch-------------->
+                                    <div class="card card-primary">
+                                        <div class="card-header">
+                                            <h3 class="card-title"><b>Stock Inward</b></h3>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <input type="hidden" name="hdnInwardSupplyOrderId" value="" />
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label>Transaction Date</label>
+                                                        <div class="input-group  date" id="reservationdate3" data-target-input="nearest">
+                                                            <input type="text" class="form-control datetimepicker-input" data-target="#reservationdate3" name="TransactionDate" />
+                                                            <div class="input-group-append" data-target="#reservationdate3" data-toggle="datetimepicker">
+                                                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label>Transaction No</label>
+                                                        <input type="text" class="form-control" disabled name="TransactionNo">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label>From Branch</label>
+                                                        <select class="form-control select2bs4" style="width: 100%" name="ddlBranchId" tabindex="1">
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label>Product Type</label>
+                                                        <select class="form-control select2bs4" style="width: 100%" name="ddlProductTypeId" tabindex="2">
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-------------Inward Suppply------------------>
+                                    <div class="card card-primary">
+                                        <div class="card-header">
+                                            <h3 class="card-title"><b>Products</b></h3>
+                                            <button class="btn btn-primary btn-link" id="addInwardSupplyRowBtn" tabindex="3" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px; float:right"> <i class="fa-solid fa-plus"></i></button>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-md-12 table-responsive">
+                                                    <table id="tblInwardSupply" class="table table-bordered table-hover">
+                                                        <thead>
+                                                            <tr style="text-align:center">
+                                                                <th hidden>InwardSupplyId</th>
+                                                                <th style="width:30%">Product Name</th>
+                                                                <th style="width:15%">Quantity</th>
+                                                                <th style="width:15%">Rate</th>
+                                                                <th style="width:15%">Amount</th>
+                                                                <th style="width:10%">Action</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                                <div class="col-md-8"></div>
+                                                <div class="col-md-4 table-responsive pt-1">
+                                                    <table class="table">
+                                                        <tr>
+                                                            <th>Total Amt:</th>
+                                                            <td><input type="text" class="form-control form-control-sm" id="" name="GrandTotal" value="0" disabled></td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card-footer">
+                                            <button type="button" id="btnSave" tabindex="4" class="btn btn-primary" style="float:right">Submit</button>
+                                            <button type="button" id="btnUpdate" tabindex="5" class="btn btn-primary" style="float:right; display:none">Update</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="InwardSupplyList" role="tabpanel" aria-labelledby="tab-InwardSupplyList">
+                            <div class="card card-primary card-outline">
+                                <div class="card-header">
+                                    <i class="fa-solid fa-file-invoice"></i>
+                                    Inward Supply List
+                                </div>
+                                <div class="card-body">
+                                    <div class="col-md-12">
+                                        <div id="loader" style="display:none;"></div>
+                                        <div class="tblInwardSupplyList">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- /.content -->
+</div>
+@await Html.PartialAsync("_FooterScript")
+<script src="~/scripts/FormScript.js"></script>
+<script src="~/viewscripts/transaction/inwardsupplytransaction.js"></script>
+<script>
+    $('#reservationdate1').datetimepicker({
+        format: 'DD/MM/YYYY'
+    });
+    $('#reservationdate2').datetimepicker({
+        format: 'DD/MM/YYYY'
+    });
+    $('#reservationdate3').datetimepicker({
+        format: 'DD/MM/YYYY'
+    });
+</script>
+

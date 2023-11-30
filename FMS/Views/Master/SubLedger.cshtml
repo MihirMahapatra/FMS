@@ -1,0 +1,88 @@
+﻿@*@using namespace
+@model modelType*@
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "";
+}
+
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1></h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                    </ol>
+                </div>
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card card-primary card-outline">
+                        <div class="card-header">
+                            <i class="fa-solid fa-file-invoice"></i>
+                            SubLedger Master
+                        </div>
+                        <div class="card-body">
+                            <div class="col-md-12">
+                                <div class="tblSubLedger">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- /.content -->
+</div>
+<!--MODAL-->
+<div class="modal fade" id="modal-edit-subledger">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Update</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div class="row">
+                    <input type="hidden" name="mdlSubLedgerId" />
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Ledger name</label>
+                            <select class="form-control select2bs4" style="width: 100%;" name="mdlLedgerid">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="">SubLedger Name</label>
+                            <input type="text" class="form-control" id="" name="mdlSubLedgerName">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary btnSubLedgerModal">Save changes</button>
+            </div>
+
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!--.END MODAL-->
+@await Html.PartialAsync("_FooterScript")
+<script src="~/scripts/formscript.js"></script>
+<script src="~/viewscripts/admin/accountconfig/subledger.js"></script>

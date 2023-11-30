@@ -1,0 +1,115 @@
+﻿@model SignUpUserModel;
+@{
+    ViewData["Title"] = "SignUp";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Factory Management System</title>
+    @await Html.PartialAsync("_Head")
+
+</head>
+<body class="hold-transition register-page">
+    @*@Html.AntiForgeryToken()*@
+    <div class="register-box">
+        <div class="card card-outline card-primary">
+            <div class="card-header text-center">
+                <a href="#" class="brand-link">
+                    <img src="~/assets/images/logo/logo.png" alt="Logo" class="brand-image" style="opacity: .8; max-height:95px; float:none">
+                </a>
+            </div>
+            <div class="card-body">
+                <p class="login-box-msg">Register a new membership</p>
+                <!-- Validate Token -->
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" placeholder="Enter Token" name="TokenValue" data-inputmask="'mask': ['999-999-9999']" data-mask>
+                    <div class="input-group-append">
+                        <button type="button" class="btn btn-block btn-default" id="btnValidate" style="line-height: 0.6">Validate</button>
+                    </div>
+                </div>
+                <form action="/Account/SignUp" method="post" enctype="multipart/form-data">
+                    <input type="hidden" name="FkTokenId" asp-for="FkTokenId" />
+
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" placeholder="Full name" name="Name" asp-for="Name">
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fas fa-user"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="input-group mb-3">
+                        <input type="email" class="form-control" placeholder="Email" name="Email" asp-for="Email">
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fas fa-envelope"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" placeholder="Mobile Number" name="PhoneNumber" asp-for="PhoneNumber">
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fas fa-phone"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="input-group mb-3">
+                        <input type="password" class="form-control" placeholder="Password" name="Password" asp-for="Password">
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fas fa-lock"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="input-group mb-3">
+                        <input type="password" class="form-control" name="ConformPassword" placeholder="Conform password">
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fas fa-lock"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="input-group mb-3">
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input" id="exampleInputFile" placeholder="Profile Picture" asp-for="ProfilePhoto" name="ProfilePhoto">
+                            <label class="custom-file-label" for="exampleInputFile">Choose file</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-8">
+                            <div class="icheck-primary">
+                                <input type="checkbox" id="agreeTerms" name="terms" value="agree">
+                                <label for="agreeTerms">
+                                    I agree to the <a href="#">terms</a>
+                                </label>
+                            </div>
+                        </div>
+                        <!-- /.col -->
+                        <div class="col-4">
+                            <button type="submit" class="btn btn-primary btn-block" id="btnSubmit">Register</button>
+                        </div>
+                        <!-- /.col -->
+                    </div>
+                    <div class="mt-2">
+                        <a href="@Url.Action("Login","Account")" class="text-center"> <i class="fas fa-light fa-circle-arrow-left"></i><b>Login</b></a>
+                    </div>
+                </form>
+            </div>
+            <!-- /.form-box -->
+        </div><!-- /.card -->
+    </div>
+
+    @await Html.PartialAsync("_FooterScript")
+    <script src="~/scripts/FormScript.js"></script>
+    <script src="~/viewscripts/account/signup.js"></script>
+
+    <script>
+        $('[data-mask]').inputmask()
+    </script>
+</body>
+</html>
+

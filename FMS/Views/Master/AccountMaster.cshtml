@@ -1,0 +1,194 @@
+﻿@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Account Master";
+}
+
+
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1></h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                    </ol>
+                </div>
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card card-primary card-outline">
+                        <div class="card-header">
+                            <i class="fa-solid fa-file-invoice"></i>
+                            Account Master
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <!-------------Ledger------------>
+                                <div class="col-md-5">
+                                    <div class="card card-primary">
+                                        <div class="card-header">
+                                            <h3 class="card-title"><b>Ledger</b></h3>
+                                        </div>
+                                        <div class="card-body">
+                                            <table id="tblLedger" class="table table-bordered table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th width="50%">Ledger Name</th>
+                                                        <th width="30%">Opening Bal</th>
+                                                        <th width="20%">Bal. Type</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>
+                                                            <div class="form-group">
+                                                                <select class="form-control select2bs4" style="width: 100%;" id="ledgerId" name="ddnLedgerId">
+                                                                </select>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="form-group">
+                                                                <input type="text" class="form-control" id="openingBal" name="ledgerOpeningBal">
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="form-group">
+                                                                <div class="form-group">
+                                                                    <select class="form-control select2bs4" style="width: 100%;" name="BalanceType">
+                                                                        <option value="Dr">Dr</option>
+                                                                        <option value="Cr">Cr</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="card-footer">
+                                            <button type="button" id="btnLedgerSubmit" class="btn btn-primary" style="float:right">Submit</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-------------Sub-Ledger------------------>
+                                <div class="col-md-7">
+                                    <div class="card card-primary">
+                                        <div class="card-header">
+                                            <h3 class="card-title"><b>Sub Ledger</b></h3>
+                                        </div>
+                                        <div class="card-body">                                          
+                                            <table id="tblSubLedger" class="table table-bordered table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th width="30%"> Ledger</th>
+                                                        <th width="30%">SubLedger</th>
+                                                        <th width="20%">Opening Bal</th>
+                                                        <th width="20%">Bal.Type</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>
+                                                            <div class="form-group">
+                                                                <select class="form-control select2bs4" style="width: 100%;" id="SubLedgerLedgerId" name="ddnSubLedgerLedgerId">
+                                                                </select>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="form-group">
+                                                                <input type="text" class="form-control" id="SubledgerName" name="SubledgerName">
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="form-group">
+                                                                <input type="text" class="form-control" id="SubledgerOpeningBal" name="SubledgerOpeningBal">
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="form-group">
+                                                                <div class="form-group">
+                                                                    <select class="form-control select2bs4" style="width: 100%;" name="SubLedgerBalanceType">
+                                                                        <option value="Dr">Dr</option>
+                                                                        <option value="Cr">Cr</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="card-footer">
+                                            <button type="button" id="btnSubLedgerSubmit" class="btn btn-primary" style="float:right">Submit</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="card card-default">
+                        <div class="card-header">
+                            <h3 class="card-title"></h3>
+                            <a href="#LedgerBalanceList" class="btn btn-primary btn-link ml-1" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;">
+                                <i class="fa-solid fa-eye"></i> <b>Ledger Balance</b>
+                            </a>
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <button type="button" class="btn btn-tool" data-card-widget="remove">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            <div id="loader" style="display:none;"></div>
+                            <div class="tblLedgerBalanceList">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="card card-default">
+                        <div class="card-header">
+                            <h3 class="card-title"></h3>
+                            <a href="#SubLedgerBalanceList" class="btn btn-primary btn-link ml-1" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;">
+                                <i class="fa-solid fa-eye"></i> <b>SubLedger Balance</b>
+                            </a>
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <button type="button" class="btn btn-tool" data-card-widget="remove">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            <div id="loader" style="display:none;"></div>
+                            <div class="tblSubLedgerBalanceList">
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+@await Html.PartialAsync("_FooterScript")
+<script src="~/scripts/FormScript.js"></script>
+<script src="~/viewscripts/master/accountmaster.js"></script>

@@ -1,0 +1,74 @@
+﻿@{
+    ViewData["Title"] = "Token";
+    Layout = "_Layout";
+}
+
+
+<div class="content-wrapper">
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1></h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="col-md-4">
+                        <div class="card card-primary">
+                            <div class="card-header">
+                                <h3 class="card-title">Create Token</h3>
+                            </div>
+
+                            @using (Html.BeginForm("CreateToken", "Admin", FormMethod.Post))
+                            {
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="fa-solid fa-pen-nib"></i></span>
+                                            </div>
+                                            <input type="text" class="form-control" placeholder="Enter Token" name="Token" data-inputmask="'mask': ['999-999-9999']" data-mask>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-footer">
+                                    <button type="submit" class="btn btn-primary">Create</button>
+                                </div>
+                            }
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+@await Html.PartialAsync("_FooterScript")
+<script src="~/scripts/FormScript.js"></script>
+<script src="~/viewscripts/admin/createtoken.js"></script>
+@if (TempData["SuccessMsg"] != null)
+{
+    <script>
+        toastr.success('@TempData["SuccessMsg"]');
+    </script>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <script>
+        toastr.error('@TempData["ErrorMsg"]');
+    </script>
+}
+<script>
+    $('[data-mask]').inputmask()
+</script>

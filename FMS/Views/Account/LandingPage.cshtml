@@ -1,0 +1,183 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href="~/assets/images/favicon/favicon.ico" rel="icon">
+    <link href="https://fonts.googleapis.com/css?family=Poppins:300i,400,400i,500,600,700,800%7CLora:400,400i,700,700i" rel="stylesheet">
+    <link href="~/assets/css/external.css" rel="stylesheet">
+    <link href="~/assets/css/cons.css" rel="stylesheet">
+    <link href="~/assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="~/assets/css/style.css" rel="stylesheet">
+    <title>Factory Management System</title>
+</head>
+
+<body class="body-scroll">
+    <div id="wrapper" class="wrapper clearfix">
+        <header id="navbar-spy" class="header header-1 header-transparent header-fixed">
+            <nav id="primary-menu" class="navbar navbar-fixed-top">
+                <div class="container">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse-1" aria-expanded="false">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                    </div>
+                    <div class="collapse navbar-collapse pull-right" id="navbar-collapse-1">
+                        <ul class="nav navbar-nav navbar-left nav-split nav-pos-right">
+                            <li>
+                                <a data-scroll="scrollTo" href="@Url.Action("Login","Account")">Login</a>
+                            </li>
+                            <li>
+                                <a data-scroll="scrollTo" href="@Url.Action("SignUp","Account")">Sign Up</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <!--/.nav-collapse -->
+                </div>
+            </nav>
+        </header>
+        <section id="hero" class="section hero hero-12 text-center bg-overlay bg-overlay-dark bg-parallax fullscreen">
+            <div class="bg-section">
+                <img src="~/assets/images/Background/background.jpeg" alt="Background" />
+            </div>
+            <div class="pos-vertical-center">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-10 col-md-offset-1">
+                            <div class="hero--content">
+                                <h1 class="hero--headline"></h1>
+                                <p class="hero--bio"></p>
+                            </div>
+                        </div>
+                        <!-- .col-md-10 end -->
+                    </div>
+                    <!-- .row end -->
+                </div>
+            </div>
+            <!-- .container end -->
+        </section>
+        <section id="feature" class="section feature feature-1 bg-white text-center">
+            <div class="container">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-12 col-md-6 col-md-offset-3">
+                        <div class="heading mb-70">
+                            <h2 class="heading--title">Our Services</h2>
+                            <p class="heading--subtitle">Duis sed odio sit amet nibh vulputate cursus a sit amet mauris morbi accumsan ipsum velit. Nam nec tellus a odio tincidunt auctor a ornare odio.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12 col-sm-6 col-md-3">
+                        <div class="feature-panel">
+                            <div class="feature--icon">
+                                <i class="flaticon-excavator"></i>
+                            </div>
+                            <div class="feature--content">
+                                <h3>Service 1</h3>
+                                <p>Duis sed odio sit amet nibh vulputate cursus a sit amet mauris morbi accumsan ipsum velit. Nam nec tellus a odio tincidunt auctor a ornare odio.</p>
+                            </div>
+                        </div>
+                        <!-- .feature-panel end -->
+                    </div>
+                    <div class="col-xs-12 col-sm-6 col-md-3">
+                        <div class="feature-panel">
+                            <div class="feature--icon">
+                                <i class="flaticon-crane"></i>
+                            </div>
+                            <div class="feature--content">
+                                <h3>Service 2</h3>
+                                <p>Duis sed odio sit amet nibh vulputate cursus a sit amet mauris morbi accumsan ipsum velit. Nam nec tellus a odio tincidunt auctor a ornare odio.</p>
+                            </div>
+                        </div>
+                        <!-- .feature-panel end -->
+                    </div>
+                    <div class="col-xs-12 col-sm-6 col-md-3">
+                        <div class="feature-panel">
+                            <div class="feature--icon">
+                                <i class="flaticon-helmet"></i>
+                            </div>
+                            <div class="feature--content">
+                                <h3>Service 3</h3>
+                                <p>Duis sed odio sit amet nibh vulputate cursus a sit amet mauris morbi accumsan ipsum velit. Nam nec tellus a odio tincidunt auctor a ornare odio. </p>
+                            </div>
+                        </div>
+                        <!-- .feature-panel end -->
+                    </div>
+                    <div class="col-xs-12 col-sm-6 col-md-3">
+                        <div class="feature-panel">
+                            <div class="feature--icon">
+                                <i class="flaticon-skyline"></i>
+                            </div>
+                            <div class="feature--content">
+                                <h3>Service 4</h3>
+                                <p>Duis sed odio sit amet nibh vulputate cursus a sit amet mauris morbi accumsan ipsum velit. Nam nec tellus a odio tincidunt auctor a ornare odio.</p>
+                            </div>
+                        </div>
+                        <!-- .feature-panel end -->
+                    </div>
+                </div>
+            </div>
+        </section>
+        <footer id="footer9" class="footer footer-5 footer-8 footer-9 bg-white text-center-xs pt-0 pb-0">
+            <div class="footer-widget">
+                <div class="container">
+                    <div class="row widget--boxes text-center">
+                        <div class="col-xs-12 col-sm-4 col-md-4">
+                            <div class="widget--info-box">
+                                <i class="ti-home"></i>
+                                <h4>Address</h4>
+                                <p>Cuttack , 754011 </p>
+                            </div>
+                            <!-- .widget-info-box end -->
+                        </div>
+                        <!-- .col-md-4 end -->
+                        <div class="col-xs-12 col-sm-4 col-md-4">
+                            <div class="widget--info-box">
+                                <i class="ti-mobile"></i>
+                                <h4>Phone</h4>
+                                <p>Phone: +91 8080808080</p>
+                            </div>
+                            <!-- .widget-info-box end -->
+                        </div>
+                        <!-- .col-md-4 end -->
+                        <div class="col-xs-12 col-sm-4 col-md-4">
+                            <div class="widget--info-box">
+                                <i class="ti-email"></i>
+                                <h4>Email</h4>
+                                <p>support@Horizon.com</p>
+                            </div>
+                            <!-- .widget-info-box end -->
+                        </div>
+                        <!-- .col-md-4 end -->
+                    </div>
+                    <!-- .row end -->
+                </div>
+                <!-- .container end -->
+            </div>
+            <!-- .footer-widget end -->
+            <div class="footer-bar">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-6 col-md-6">
+                            <div class="widget--copyright">
+                                <span>&copy; Horizon 2016, All Rights Reserved.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+    <script src="~/assets/js/jquery-2.2.4.min.js"></script>
+    <script src="~/assets/js/plugins.js"></script>
+    <script src="~/assets/js/functions.js"></script>
+</body>
+</html>

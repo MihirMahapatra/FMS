@@ -1,0 +1,3 @@
+$(function () {
+    $("#DashboardLink").addClass("active");
+});

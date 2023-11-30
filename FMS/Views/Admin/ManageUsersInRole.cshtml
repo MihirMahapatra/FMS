@@ -1,0 +1,110 @@
+﻿@model RoleModel
+
+@{
+    ViewData["Title"] = "UserRole";
+    Layout = "_Layout";
+}
+
+<div class="content-wrapper">
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1></h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card card-primary">
+                        <div class="card-header">
+                            <h3 class="card-title">User's in @TempData["Rolename"] Role</h3>
+                        </div>
+                        <form action="/Admin/ManageUsersInRole" method="post" enctype="multipart/form-data">
+
+                            <div class="card-body">
+                                <div class="row">
+                                    <input type="hidden" name="Id" value="@TempData["roleId"]" />
+
+                                    @for (int i = 0; i < Model.Users.Count; i++)
+                                    {
+                                        <div class="col-lg-6">
+                                            <input type="hidden" asp-for="@Model.Users[i].UserId" />
+                                            <div class="input-group mb-1">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">
+                                                        <input type="checkbox" asp-for="@Model.Users[i].IsRoleSelected">
+                                                    </span>
+                                                </div>
+                                                <input type="text" class="form-control" asp-for="@Model.Users[i].UserName" disabled>
+                                                <div class="input-group-append">
+                                                    <button type="button" class="btn btn-default" data-toggle="modal" data-target="#modal-default_@Model.Users[i].UserId">
+                                                        Manage Claims
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!--Modal-->
+                                        <div class="modal fade" id="modal-default_@Model.Users[i].UserId">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h4 class="modal-title">User Claims</h4>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        @for (int j = 0; j < Model.Users[i].Cliams.Count(); j++)
+                                                        {
+                                                            <input type="hidden" asp-for="@Model.Users[i].Cliams[j].ClaimType" />
+
+                                                            <div class="input-group mb-1">
+                                                                <div class="input-group-prepend">
+                                                                    <span class="input-group-text">
+                                                                        <input type="checkbox" asp-for="@Model.Users[i].Cliams[j].IsClaimSelected">
+                                                                    </span>
+                                                                </div>
+                                                                <input type="text" class="form-control" asp-for="@Model.Users[i].Cliams[j].ClaimType" disabled>
+                                                            </div>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!---->
+                                    }
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <button type="submit" class="btn btn-primary">Update</button>
+                                <a type="button" href="@Url.Action("ListRoles", "Admin")" class="btn btn-primary">Cancel</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+@await Html.PartialAsync("_FooterScript")
+@if (TempData["SuccessMsg"] != null)
+{
+    <script>
+        toastr.success('@TempData["SuccessMsg"]');
+    </script>
+}
+@if (TempData["ErrorMsg"] != null)
+{
+    <script>
+        toastr.error('@TempData["ErrorMsg"]');
+    </script>
+}

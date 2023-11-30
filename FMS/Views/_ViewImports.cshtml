@@ -1,0 +1,10 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Http
+@using FMS.Db.DbEntity;
+@using FMS.Model.CommonModel
+@using FMS.Model.ViewModel
+@inject IAuthorizationService _authorizationService
+@inject SignInManager<AppUser> _signInManager
+@inject IHttpContextAccessor _httpContext
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers

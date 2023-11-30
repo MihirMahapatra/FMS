@@ -1,0 +1,29 @@
+﻿using FMS.Model;
+using FMS.Model.CommonModel;
+using FMS.Model.ViewModel;
+
+namespace FMS.Service.Reports
+{
+    public interface IReportSvcs
+    {
+        #region Stock Report 
+        Task<StockReportViewModel> GetSummerizedStockReports(StockReportDataRequest requestData);
+        Task<ProductViewModel> GetDetailedStockReport(StockReportDataRequest requestData);
+        #endregion
+        #region Labour Report
+        Task<LaborReportViewModel> GetSummerizedLabourReport(LabourReportDataRequest requestData);
+        Task<LabourViewModel> GetDetailedLabourReport(LabourReportDataRequest requestData);
+        #endregion
+        #region Customer Report
+        Task<PartyReportViewModel> GetSummerizedCustomerReport(PartyReportDataRequest requestData);
+        Task<PartyViewModel> GetDetailedCustomerReport(PartyReportDataRequest requestData);
+        #endregion
+        #region Supplyer Report
+        Task<PartyReportViewModel> GetSummerizedSupplyerReport(PartyReportDataRequest requestData);
+        Task<PartyViewModel> GetDetailedSupplyerReport(PartyReportDataRequest requestData);
+        #endregion
+        #region DaySheet
+        public Task<DaySheetViewModel> GetDaySheet(string Date);
+        #endregion
+    }
+}

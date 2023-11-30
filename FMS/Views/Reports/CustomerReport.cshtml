@@ -1,0 +1,163 @@
+﻿@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Customer Report";
+}
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1></h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                    </ol>
+                </div>
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Customer Report</h3>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body">
+                    <ul class="nav nav-tabs" id="custom-content-below-tab" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="tab-SummerizedReport" data-toggle="pill" href="#SummerizedReport" role="tab" aria-controls="SummerizedReport" aria-selected="true"><b>Summerized Report</b></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="tab-DetailedReport" data-toggle="pill" href="#DetailedReport" role="tab" aria-controls="DetailedReport" aria-selected="false"><b>Detailed Report</b></a>
+                        </li>
+                    </ul>
+                    <div class="tab-content pt-3" id="custom-content-below-tabContent">
+                        <div class="tab-pane fade show active" id="SummerizedReport" role="tabpanel" aria-labelledby="tab-SummerizedReport">
+                            <div class="card card-primary card-outline">
+                                <div class="card-header">
+                                    <i class="fa-solid fa-file-invoice"></i>
+                                    Summerized List
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label>From Date</label>
+                                                <div class="input-group  date" id="FromDateSummerized" data-target-input="nearest">
+                                                    <input type="text" class="form-control datetimepicker-input" data-target="#FromDateSummerized" name="FromDateSummerized" />
+                                                    <div class="input-group-append" data-target="#FromDateSummerized" data-toggle="datetimepicker">
+                                                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label>To Date</label>
+                                                <div class="input-group  date" id="ToDateSummerized" data-target-input="nearest">
+                                                    <input type="text" class="form-control datetimepicker-input" data-target="#ToDateSummerized" name="ToDateSummerized" />
+                                                    <div class="input-group-append" data-target="#ToDateSummerized" data-toggle="datetimepicker">
+                                                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label>Zero Valued</label>
+                                                <select class="form-control select2bs4" style="width: 100%" name="ddlZerovalued">
+                                                    <option value="No" selected>No</option>
+                                                    <option value="Yes">Yes</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <button type="button" id="btnViewSummerized" class="btn btn-primary" style="float:left; margin-top:32px">View</button>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div id="loader" style="display:none;"></div>
+                                            <div class="tblSummerizedList" id="example1_wrapper">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="DetailedReport" role="tabpanel" aria-labelledby="tab-DetailedReport">
+                            <div class="card card-primary card-outline">
+                                <div class="card-header">
+                                    <i class="fa-solid fa-file-invoice"></i>
+                                    Detailed List
+                                </div>
+                                <div class="card-body">
+                                  <div class="row">
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label>Customer Name</label>
+                                                <select class="form-control select2bs4" style="width: 100%" id="CustomerId" name="ddlCustomerId">
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label>From Date</label>
+                                                <div class="input-group  date" id="FromDateDetailed" data-target-input="nearest">
+                                                    <input type="text" class="form-control datetimepicker-input" data-target="#FromDateDetailed" name="FromDateDetailed" />
+                                                    <div class="input-group-append" data-target="#FromDateDetailed" data-toggle="datetimepicker">
+                                                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label>To Date</label>
+                                                <div class="input-group  date" id="ToDateDetailed" data-target-input="nearest">
+                                                    <input type="text" class="form-control datetimepicker-input" data-target="#ToDateDetailed" name="ToDateDetailed" />
+                                                    <div class="input-group-append" data-target="#ToDateDetailed" data-toggle="datetimepicker">
+                                                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <button type="button" id="btnViewDetailed" class="btn btn-primary" style="float:left; margin-top:32px">View</button>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div id="loader" style="display:none;"></div>
+                                            <div class="tblDetailedList" id="example2_wrapper">
+                                            </div>
+                                        </div>
+                                  </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.card-body -->
+            </div>
+        </div>
+    </section>
+</div>
+@await Html.PartialAsync("_FooterScript")
+<script src="~/scripts/FormScript.js"></script>
+<script src="~/scripts/datepicker.js"></script>
+<script src="~/viewscripts/reports/customerreport.js"></script>
+<script>
+    $('#FromDateSummerized').datetimepicker({
+        format: 'DD/MM/YYYY'
+    });
+    $('#ToDateSummerized').datetimepicker({
+        format: 'DD/MM/YYYY'
+    });
+    $('#FromDateDetailed').datetimepicker({
+        format: 'DD/MM/YYYY'
+    });
+    $('#ToDateDetailed').datetimepicker({
+        format: 'DD/MM/YYYY'
+    });
+</script>

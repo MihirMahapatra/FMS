@@ -1,0 +1,145 @@
+﻿@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "_Layout";
+
+}
+
+<div class="content-wrapper">
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0">Dashboard</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="#">Home</a></li>
+                        <li class="breadcrumb-item active">Dashboard</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-3 col-6">
+                    <!-- small box -->
+                    <div class="small-box bg-info">
+                        <div class="inner">
+                            <h3>65</h3>
+                            <p>Active Employee</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fa-sharp fa-solid fa-people-group"></i>
+                        </div>
+                        <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-6">
+                    <!-- small box -->
+                    <div class="small-box bg-success">
+                        <div class="inner">
+                            <h3>65</h3>
+                            <p>Present Employee</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fa-solid fa-user-check"></i>
+                        </div>
+                        <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-6">
+                    <!-- small box -->
+                    <div class="small-box bg-danger">
+                        <div class="inner">
+                            <h3>65</h3>
+                            <p>Absent Employee</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fa-solid fa-user-xmark"></i>
+                        </div>
+                        <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-6">
+                    <!-- small box -->
+                    <div class="small-box bg-warning ">
+                        <div class="inner">
+                            <h3>65</h3>
+                            <p>Today Interview</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fa-solid fa-people-arrows"></i>
+                        </div>
+                        <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <section class="col-lg-6">
+                    <div class="card bg-info">
+                        <div class="card-header border-0">
+                            <h3 class="card-title">
+                                <i class="fas fa-th mr-1"></i>
+                                Attandance Chart
+                            </h3>
+
+                            <div class="card-tools">
+                                <button type="button" class="btn bg-info btn-sm" data-card-widget="collapse">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <button type="button" class="btn bg-info btn-sm" data-card-widget="remove">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart">
+                                <canvas id="barChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                            </div>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                </section>
+                <section class="col-lg-6">
+                    <div class="card bg-info">
+                        <div class="card-header border-0">
+                            <h3 class="card-title">
+                                <i class="fas fa-th mr-1"></i>
+                                Salary Chart
+                            </h3>
+
+                            <div class="card-tools">
+                                <button type="button" class="btn bg-info btn-sm" data-card-widget="collapse">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <button type="button" class="btn bg-info btn-sm" data-card-widget="remove">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart">
+                                <canvas id="stackedBarChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                            </div>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                </section>
+            </div>
+        </div>
+    </section>
+</div>
+@await Html.PartialAsync("_FooterScript")
+<script src="~/scripts/ChartScript.js"></script>
+<script src="~/scripts/DataTableScript.js"></script>
+<script src="~/viewscripts/dashboard/dashboard.js"></script>
+@if (TempData["SuccessMsg"] != null)
+{
+    <script>
+        toastr.success('@TempData["SuccessMsg"]');
+    </script>
+}
+

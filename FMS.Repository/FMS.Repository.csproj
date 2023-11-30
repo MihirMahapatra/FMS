@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FMS.Api\FMS.Api.csproj" />
+    <ProjectReference Include="..\FMS.Db\FMS.Db.csproj" />
+    <ProjectReference Include="..\FMS.Model\FMS.Model.csproj" />
+    <ProjectReference Include="..\FMS.Utility\FMS.Utility.csproj" />
+  </ItemGroup>
+
+</Project>

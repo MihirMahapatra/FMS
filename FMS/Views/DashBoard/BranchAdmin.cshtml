@@ -1,0 +1,54 @@
+﻿@model SessionModel
+@{
+    ViewData["Title"] = "";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Factory Management System</title>
+    @await Html.PartialAsync("_Head")
+
+</head>
+<body class="hold-transition login-page">
+    <div class="login-box">
+        <div class="card">
+            <div class="card-body login-card-body">
+                <form action="/DashBoard/BranchAdmin" method="post" enctype="multipart/form-data">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-group mb-3">
+                                <select class="form-control select2bs4" style="width: 100%;" id="BranchId" name="BranchId" asp-for="BranchId">
+                                    
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <select class="form-control select2bs4" style="width: 100%;" name="FinancialYearId" asp-for="FinancialYearId">
+                               
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-8"></div>
+                        <div class="col-4">
+                            <button type="submit" class="btn btn-primary btn-block">Finish</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    @await Html.PartialAsync("_FooterScript")
+    <script src="~/scripts/FormScript.js"></script>
+    <script src="~/viewscripts/dashboard/branchadmin.js"></script>
+    @if (TempData["SuccessMsg"] != null)
+    {
+        <script>
+            toastr.success('@TempData["SuccessMsg"]');
+        </script>
+    }
+</body>
+</html>
+

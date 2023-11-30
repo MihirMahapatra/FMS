@@ -1,0 +1,262 @@
+﻿@{
+    ViewData["Title"] = "Production";
+    Layout = "_Layout";
+}
+
+<div class="content-wrapper">
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1></h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="content">
+        <div class="container-fluid">
+            <div class="card card-primary card-outline">
+                <div class="card-body">
+                    <ul class="nav nav-tabs" id="custom-content-below-tab" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="tab-CreateProductionEntry" data-toggle="pill" href="#CreateProductionEntry" role="tab" aria-controls="CreateProductionEntry" aria-selected="true"><b>Production Entry</b></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="tab-ProductionEntryList" data-toggle="pill" href="#ProductionEntryList" role="tab" aria-controls="ProductionEntryList" aria-selected="false"><b>Production Entry List</b></a>
+                        </li>
+                    </ul>
+                    <div class="tab-content pt-3" id="custom-content-below-tabContent">
+                        <div class="tab-pane fade show active" id="CreateProductionEntry" role="tabpanel" aria-labelledby="tab-CreateProductionEntry">
+                            <div class="card card-primary card-outline">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-3"> </div>
+                                        <div class="col-md-6">
+                                            <div class="card card-primary card-outline">
+                                                <div class="card-body">
+                                                    <div class="card card-primary">
+                                                        <div class="card-header">
+                                                            <h3 class="card-title"><b>Raw Material</b></h3>
+                                                        </div>
+                                                        <div class="card-body">
+                                                            <div class="row">
+                                                                <div class="col-md-12">
+                                                                    <table id="tblRawMaterialDetails" class="table table-bordered table-hover">
+                                                                        <thead>
+                                                                            <tr>
+                                                                                <th style="width:80%">Raw Material</th>
+                                                                                <th style="width:20%">Quantity</th>
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3"> </div>
+                                        <div class="col-md-12">
+                                            <div class="card card-primary card-outline">
+                                                <div class="card-body">
+                                                    <div class="card card-primary">
+                                                        <div class="card-header">
+                                                            <h3 class="card-title"><b>Production Entry</b></h3>
+                                                        </div>
+                                                        <div class="card-body">
+                                                            <div class="row">
+                                                                <div class="col-md-3">
+                                                                    <div class="form-group">
+                                                                        <label class="pt-2">Production Date</label>
+                                                                        <div class="input-group  date" id="reservationdate" data-target-input="nearest">
+                                                                            <input type="text" class="form-control datetimepicker-input" data-target="#reservationdate" name="ProductionDate" />
+                                                                            <div class="input-group-append" data-target="#reservationdate" data-toggle="datetimepicker">
+                                                                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-6"></div>
+                                                                <div class="col-md-3">
+                                                                    <div class="form-group row mt-1 float-right">
+                                                                        <label class="pt-2">Transaction No</label>
+                                                                        <input type="text" class="form-control" disabled name="ProductionNo">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-12">
+                                                                    <table id="tblProuctionEntry" class="table table-bordered table-hover">
+                                                                        <thead>
+                                                                            <tr>
+                                                                                <th style="width:20%">Finished Good</th>
+                                                                                <th style="width:20%">Labour Name</th>
+                                                                                <th style="width:20%">Labour Type</th>
+                                                                                <th style="width:10%">Quantity</th>
+                                                                                <th style="width:10%">Rate</th>
+                                                                                <th style="width:10%">Amount</th>
+                                                                                <th style="width:10%">Action</th>
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                            <tr>
+                                                                                <td> <div class="form-group"><select class="form-control select2bs4 finishedGood" style="width: 100%;" name="ddlFinishedGoodId"></select></div></td>
+                                                                                <td> <div class="form-group"><select class="form-control select2bs4 labour" style="width: 100%;" name="ddlLabourId"></select></div></td>
+                                                                                <td><div class="form-group"><input type="text" class="form-control" disabled></div></td>
+                                                                                <td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>
+                                                                                <td><div class="form-group"><input type="text" class="form-control" disabled></div></td>
+                                                                                <td><div class="form-group"><input type="text" class="form-control" disabled></div></td>
+                                                                                <td style="background-color:#ffe6e6;">
+                                                                                    <button class="btn btn-primary btn-link addBtn" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-plus"></i></button>
+                                                                                    <button class="btn btn-primary btn-link deleteBtn" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;" disabled> <i class="fa-solid fa-trash-can"></i></button>
+                                                                                </td>
+                                                                            </tr>
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="card-footer">
+                                                        <button type="button" id="btnSave" class="btn btn-primary" style="float:right">Submit</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="ProductionEntryList" role="tabpanel" aria-labelledby="tab-ProductionEntryList">
+                            <div class="card card-primary card-outline">
+                                <div class="card-header">
+                                    <i class="fa-solid fa-file-invoice"></i>
+                                    Production Entry List
+                                </div>
+                                <div class="card-body">
+                                    <div class="col-md-12">
+                                        <div id="loader" style="display:none;"></div>
+                                        <div class="tblProductionEntryList">
+                                           
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+<!--MODAL-->
+<div class="modal fade" id="modal-edit-production-entry">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Update</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div class="row">
+                    <input type="hidden" name="mdlProductionEntryId" />
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Production No</label>
+                            <input type="text" class="form-control" id="" name="mdlProductionNo" disabled>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Production Date</label>
+                            <div class="input-group  date" id="reservationdate1" data-target-input="nearest">
+                                <input type="text" class="form-control datetimepicker-input" data-target="#reservationdate1" name="mdlProductionDate" />
+                                <div class="input-group-append" data-target="#reservationdate1" data-toggle="datetimepicker">
+                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Product Name</label>
+                            <select class="form-control select2bs4" style="width: 100%;" name="mdlProductId">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Labour Name</label>
+                            <select class="form-control select2bs4" style="width: 100%;" name="mdlLabourId">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Labour Type</label>
+                            <input type="text" class="form-control" id="" name="mdlLabourType" disabled>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Quantity</label>
+                            <input type="text" class="form-control" id="" name="mdlQuantity"  value="0">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Rate</label>
+                            <input type="text" class="form-control" id="" name="mdlRate" value="0" disabled>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Amount</label>
+                            <input type="text" class="form-control" id="" name="mdlAmount" value="0" disabled>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary btnUpdate">Save changes</button>
+            </div>
+
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!--.END MODAL-->
+<!--Script Section -->
+@await Html.PartialAsync("_FooterScript")
+<script src="~/scripts/FormScript.js"></script>
+<script src="~/viewscripts/Transaction/Production.js"></script>
+@if (TempData["SuccessMsg"] != null)
+{
+    <script>
+        toastr.success('@TempData["SuccessMsg"]');
+    </script>
+}
+@if (TempData["ErrorMsg"] != null)
+{
+    <script>
+        toastr.error('@TempData["ErrorMsg"]');
+    </script>
+}
+<script>
+    $('#reservationdate').datetimepicker({
+        format: 'DD/MM/YYYY'
+    });
+    $('#reservationdate1').datetimepicker({
+        format: 'DD/MM/YYYY'
+    });
+</script>

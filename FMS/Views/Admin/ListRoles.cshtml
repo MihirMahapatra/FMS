@@ -1,0 +1,151 @@
+﻿@model List<IdentityRole>
+@{
+    ViewData["Title"] = "Roles";
+    Layout = "_Layout";
+}
+<div class="content-wrapper">
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1></h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li>
+
+                            @if (_signInManager.IsSignedIn(User) && (User.IsInRole("Admin") || User.IsInRole("Devloper")) && (await _authorizationService.AuthorizeAsync(User, "Create")).Succeeded)
+                            {
+                                <a href="#" data-toggle="modal" data-target="#modal-sm" style="text-decoration: none !important;border: 0px;padding: 5px 8px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px; margin-right: -3px;box-shadow: 1px 2px 8px #888;">
+                                    <i class="fa fa-fw fa-plus"></i><span style="font-size: 14px;"><strong>Add New Role</strong></span>
+                                </a>
+                            }
+                            <!--Create Role Modal-->
+                            <div class="modal fade" id="modal-sm">
+                                <div class="modal-dialog modal-sm">
+                                    <div class="modal-content">
+
+                                        <form action="/Admin/CreateRole" method="post" enctype="multipart/form-data">
+                                            <div class="modal-header">
+                                                <h4 class="modal-title">Create Role</h4>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="form-group">
+                                                    <input type="text" class="form-control" id="txtRole" name="RoleName" placeholder="Enter Role">
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer justify-content-between">
+                                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                <button type="submit" class="btn btn-primary">Save</button>
+                                            </div>
+                                        </form>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <!---------->
+
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                @if (Model.Any())
+                {
+                    foreach (var role in Model)
+                    {
+                        <div class="col-lg-3 col-6">
+                            <div class="small-box bg-success">
+                                <div class="inner">
+                                    <input type="hidden" value="@role.Id" />
+                                    <h3>@role.Name</h3>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            @if (_signInManager.IsSignedIn(User) && (User.IsInRole("Admin") || User.IsInRole("Devloper")) && (await _authorizationService.AuthorizeAsync(User, "Edit")).Succeeded)
+                                            {
+                                                <button type="button" class="btn btn-block btn-outline-warning btn-sm" data-toggle="modal" data-target="#modal-sm_@role.Id" style="color: white;">Edit</button>
+                                            }
+                                            @if (
+                                           _signInManager.IsSignedIn(User) && (User.IsInRole("Admin") || User.IsInRole("Devloper")) && (await _authorizationService.AuthorizeAsync(User, "Delete")).Succeeded)
+                                            {
+                                                <a type="button" href="@Url.Action("DeleteRole","Admin",new{id = role.Id})" class="btn btn-block btn-outline-warning btn-sm" style="color: white;">Delete</a>
+                                            }
+                                        </div>
+                                        <div class="col-6">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="icon">
+                                    <i class="fa-solid fa-circle-user"></i>
+                                </div>
+                                <a href="@Url.Action("ManageUsersInRole","Admin",new {roleId =@role.Id } )" class="small-box-footer">User In @role.Name Role <i class="fas fa-arrow-circle-right"></i></a>
+                            </div>
+                        </div>
+
+                        <!--Edit Role Modal-->
+                        <div class="modal fade" id="modal-sm_@role.Id">
+                            <div class="modal-dialog modal-sm">
+                                <div class="modal-content">
+
+                                    <form action="/Admin/EditRole" method="post" enctype="multipart/form-data">
+                                        <div class="modal-header">
+                                            <h4 class="modal-title">Update Role</h4>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <input type="hidden" id="txtId" name="Id" value="@role.Id" />
+                                            <div class="form-group">
+                                                <input type="text" class="form-control" id="txtRole" name="RoleName" value="@role.Name">
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer justify-content-between">
+                                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                            <button type="submit" class="btn btn-primary">Update</button>
+                                        </div>
+                                    </form>
+
+                                </div>
+                            </div>
+                        </div>
+                        <!---------->
+                    }
+                }
+                else
+                {
+                    <div class="col-lg-3 col-6">
+                        <div class="small-box bg-warning">
+                            <div class="inner">
+                                <h3>No Role Yet!</h3>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+</div>
+
+@await Html.PartialAsync("_FooterScript")
+<script src="~/viewscripts/admin/listroles.js"></script>
+@if (TempData["SuccessMsg"] != null)
+{
+    <script>
+        toastr.success('@TempData["SuccessMsg"]');
+    </script>
+}
+@if (TempData["ErrorMsg"] != null)
+{
+    <script>
+        toastr.error('@TempData["ErrorMsg"]');
+    </script>
+}

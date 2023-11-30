@@ -1,0 +1,365 @@
+﻿@*@using namespace
+@model modelType*@
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "";
+}
+<style>
+    .cust-btn {
+        margin-top: 32px !important;
+    }
+
+</style>
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1></h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                    </ol>
+                </div>
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="card card-primary card-outline">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-edit"></i>
+                        Devloper Setup
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-4 col-sm-2">
+                            <div class="nav flex-column nav-tabs h-100" id="vert-tabs-tab" role="tablist" aria-orientation="vertical">
+                                <a class="nav-link active" id="tab-BranchMaster" data-toggle="pill" href="#BranchMaster" role="tab" aria-controls="BranchMaster" aria-selected="true"><b>Branch</b></a>
+                                <a class="nav-link" id="tab-FinancialYearMaster" data-toggle="pill" href="#FinancialYearMaster" role="tab" aria-controls="FinancialYearMaster" aria-selected="false"><b>Financial Year</b></a>
+                                <a class="nav-link" id="tab-AccountMaster" data-toggle="pill" href="#AccountMaster" role="tab" aria-controls="AccountMaster" aria-selected="false"><b>Accounting</b></a>
+                            </div>
+                        </div>
+                        <div class="col-8 col-sm-10">
+                            <div class="tab-content" id="vert-tabs-tabContent">
+                                <div class="tab-pane text-left fade show active" id="BranchMaster" role="tabpanel" aria-labelledby="tab-BranchMaster">
+                                    <!--Branche-->
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Branch Name</label>
+                                                <input type="text" class="form-control" id="txtBranchName">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Contact Number</label>
+                                                <input type="text" class="form-control" id="txtContactNumber" maxlength="10">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Branch Address</label>
+                                                <input type="text" class="form-control" id="txtBranchAddress">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Branch Code</label>
+                                                <input type="text" class="form-control" id="txtBranchCode">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-10"></div>
+                                        <div class="col-md-2">
+                                            <button type="button" class="btn btn-block btn-outline-primary btn-Branch-create mt-1"><b>Submit</b></button>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="tblBranch">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--.end Branch-->
+                                </div>
+                                <div class="tab-pane fade" id="FinancialYearMaster" role="tabpanel" aria-labelledby="tab-FinancialYearMaster">
+                                    <!--FinancialYear Master-->
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Financial Year</label>
+                                                <input type="text" class="form-control" id="txtFinancialYear">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>For Branch</label>
+                                                <select class="form-control  select2bs4" style="width: 100%;" name="ddlFinancialYearBranchId">
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Start Date</label>
+                                                <div class="input-group date" id="reservationdate1" data-target-input="nearest">
+                                                    <input type="text" class="form-control datetimepicker-input" data-target="#reservationdate1" name="StartDate" />
+                                                    <div class="input-group-append" data-target="#reservationdate1" data-toggle="datetimepicker">
+                                                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>End Date</label>
+                                                <div class="input-group date" id="reservationdate2" data-target-input="nearest">
+                                                    <input type="text" class="form-control datetimepicker-input" data-target="#reservationdate2" name="EndDate" />
+                                                    <div class="input-group-append" data-target="#reservationdate2" data-toggle="datetimepicker">
+                                                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6"></div>
+                                        <div class="col-md-10"></div>
+                                        <div class="col-md-2">
+                                            <div class="form-group">
+                                                <label></label>
+                                                <button type="button" class="btn btn-block btn-outline-primary btn-financialyear-create mt-1 cust-btn"><b>Submit</b></button>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4"></div>
+                                        <div class="col-md-12">
+                                            <div class="tblFinancialYear">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--.end Financial Year Master-->
+                                </div>
+                                <div class="tab-pane fade" id="AccountMaster" role="tabpanel" aria-labelledby="tab-AccountMaster">
+                                    <!--Group-->
+                                    <div class="card card-primary">
+                                        <div class="card-header">
+                                            <h3 class="card-title"><b>Group</b></h3>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label>Group</label>
+                                                        <select class="form-control select2bs4" style="width: 100%;" name="LedgerGroupId">
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <button class="btn btn-primary btn-link cust-btn" id="btnLedgerGrupAdd" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-plus"></i></button>
+                                                    <button class="btn btn-primary btn-link cust-btn" id="btnLedgerGrupEdit" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"><i class="fa-solid fa-edit"></i></button>
+                                                    <button class="btn btn-primary btn-link cust-btn" id="btnLedgerGrupDelete" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"><i class="fa-solid fa-trash-can"></i></button>
+                                                </div>
+                                                <div class="col-md-6"></div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label>Ledger Branch</label>
+                                                        <select class="form-control  select2bs4" style="width: 100%;" name="ddlLedgerBranchId">
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label>SubGroup (optional)</label>
+                                                        <select class="form-control select2bs4" style="width: 100%;" name="LedgerSubGroupId" disabled>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <button class="btn btn-primary btn-link cust-btn" id="btnLedgerSubGrupAdd" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-plus"></i></button>
+                                                    <button class="btn btn-primary btn-link cust-btn" id="btnLedgerSubGrupEdit" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"><i class="fa-solid fa-edit"></i></button>
+                                                    <button class="btn btn-primary btn-link cust-btn" id="btnLedgerSubGrupDelete" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"><i class="fa-solid fa-trash-can"></i></button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--Ledger-->
+                                    <div class="card card-primary">
+                                        <div class="card-header">
+                                            <h3 class="card-title"><b>Ledger</b></h3>
+                                            <a href="@Url.Action("Ledger", "Devloper")" class="btn btn-primary btn-link ml-1" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px; float:right">
+                                                <i class="fa-solid fa-eye"></i>
+                                            </a>
+                                            <button class="btn btn-primary btn-link" id="addLedgerRowBtn" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px; float:right"> <i class="fa-solid fa-plus"></i></button>
+                                        </div>
+                                        <div class="card-body">
+                                            <table id="tblLedger" class="table table-bordered table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th>ledger Type</th>
+                                                        <th>Ledger Name</th>
+                                                        <th>Opening Balance</th>
+                                                        <th>Opening Bal. Type</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="card-footer">
+                                            <button type="button" id="btnLedger" class="btn btn-primary" style="float:right">Submit</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.card -->
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+</div>
+<!--Modal Add Group-->
+<div class="modal fade" id="modal-add-group">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Add New Group</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>Group Name</label>
+                            <input type="text" class="form-control" id="" name="mdlLedgerGroupAdd">
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary ledgerGroupAdd">Save changes</button>
+            </div>
+
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!--.end Modal Add Group-->
+<!--Modal Update Group-->
+<div class="modal fade" id="modal-edit-group">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Update Group</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <input type="hidden" name="mdlLedgerGroupId" />
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>Group Name</label>
+                            <input type="text" class="form-control" id="" name="mdlLedgerGroupEdit">
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary ledgerGroupEdit">Save changes</button>
+            </div>
+
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!--.end Modal Update Group-->
+<!--Modal Add SUbGroup-->
+<div class="modal fade" id="modal-add-subgroup">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Add SubGroup</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>SubGroup Name</label>
+                            <input type="text" class="form-control" id="" name="mdlLedgerSubGroupAdd">
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary ledgerSubGroupAdd">Save changes</button>
+            </div>
+
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!--.end Modal Add SUbGroup-->
+<!--Modal Update SUbGroup-->
+<div class="modal fade" id="modal-edit-subgroup">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Update SubGroup</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <input type="hidden" name="mdlLedgerSubGroupId" />
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>SubGroup Name</label>
+                            <input type="text" class="form-control" id="" name="mdlLedgerSubGroupEdit">
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary ledgerSubGroupEdit">Save changes</button>
+            </div>
+
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!--.end Modal Update SUbGroup-->
+@await Html.PartialAsync("_FooterScript")
+<script src="~/scripts/FormScript.js"></script>
+<script src="~/viewscripts/devlopermaster/master.js"></script>
+<script>
+    $('#reservationdate1').datetimepicker({
+        format: 'DD/MM/YYYY'
+    });
+    $('#reservationdate2').datetimepicker({
+        format: 'DD/MM/YYYY'
+    });
+</script>
+
+

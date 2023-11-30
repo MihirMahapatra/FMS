@@ -1,0 +1,447 @@
+﻿﻿@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Sales";
+}
+
+<style>
+    .cust-btn {
+        margin-top: 32px !important;
+    }
+</style>
+
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1></h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                    </ol>
+                </div>
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="card card-primary card-outline">
+                <div class="card-body">
+                    <ul class="nav nav-tabs" id="custom-content-below-tab" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="tab-CreateSale" data-toggle="pill" href="#CreateSale" role="tab" aria-controls="CreateSale" aria-selected="true"><b>Sales</b></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="tab-SaleList" data-toggle="pill" href="#SaleList" role="tab" aria-controls="SaleList" aria-selected="false"><b>Sales List</b></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="tab-CreateSalesReturn" data-toggle="pill" href="#CreateSalesReturn" role="tab" aria-controls="CreateSalesReturn" aria-selected="false"><b>Sales Return</b></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="tab-SalesReturnList" data-toggle="pill" href="#SalesReturnList" role="tab" aria-controls="SalesReturnList" aria-selected="false"><b>Sales Return List</b></a>
+                        </li>
+                    </ul>
+                    <div class="tab-content pt-3" id="custom-content-below-tabContent">
+                        <div class="tab-pane fade show active" id="CreateSale" role="tabpanel" aria-labelledby="tab-CreateSale">
+                            <div class="card card-primary card-outline">
+                                <div class="card-header">
+                                    <div class="row">
+                                        <input type="hidden" name="hdnSaleOrderId" value="" />
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label class="pt-2">Transaction Date</label>
+                                                <div class="input-group  date" id="reservationdate3" data-target-input="nearest">
+                                                    <input type="text" class="form-control datetimepicker-input" data-target="#reservationdate3" name="TransactionDate" />
+                                                    <div class="input-group-append" data-target="#reservationdate3" data-toggle="datetimepicker">
+                                                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label class="pt-2">Transaction Type</label>
+                                                <select class="form-control select2bs4 PaymentOptions" style="width: 100%" name="ddlPayment" tabindex="1">
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3"></div>
+                                        <div class="col-md-3">
+                                            <div class="form-group row mt-1 float-right">
+                                                <label class="pt-2">Transaction No</label>
+                                                <input type="text" class="form-control" disabled name="TransactionNo">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <!-----------Customer-------------->
+                                    <div class="card card-primary">
+                                        <div class="card-header">
+                                            <h3 class="card-title"><b>Customer</b></h3>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-md-3 ">
+                                                    <div class="form-group hdnddn" style=" display:none">
+                                                        <label>Customer Name</label>
+                                                        <select class="form-control select2bs4 " style="width: 100%" name="ddlCustomerId">    </select>
+
+                                                    </div>
+                                                    <div class="form-group hdntxt">
+                                                        <label>Customer Name</label>
+                                                        <input type="text" class="form-control" id="" name="CustomerName" tabindex="2">
+                                                    </div>
+                                                </div>
+
+                                              
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label>Order No</label>
+                                                        <input type="text" class="form-control" id="" name="OrderNo" tabindex="3">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label for="">Order Date</label>
+                                                        <div class="input-group  date" id="reservationdate2" data-target-input="nearest">
+                                                            <input type="text" class="form-control datetimepicker-input" data-target="#reservationdate2" name="OrderDate" tabindex="4" />
+                                                            <div class="input-group-append" data-target="#reservationdate2" data-toggle="datetimepicker">
+                                                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label>Vehicle No</label>
+                                                        <input type="text" class="form-control" id="" name="VehicleNo" tabindex="5">
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                            <div class="row">
+                                               
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label>Transpoter Name</label>
+                                                        <input type="text" class="form-control" id="" name="TranspoterName" tabindex="6">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label>Receiving Person</label>
+                                                        <input type="text" class="form-control" id="" name="ReceivingPerson" tabindex="7">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-------------Sales------------------>
+                                    <div class="card card-primary">
+                                        <div class="card-header">
+                                            <h3 class="card-title"><b>Sales</b></h3>
+                                            <button class="btn btn-primary btn-link" id="addSalesRowBtn" tabindex="8" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px; float:right"> <i class="fa-solid fa-plus"></i></button>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-md-12 table-responsive">
+                                                    <table id="tblSales" class="table table-bordered table-hover">
+                                                        <thead>
+                                                            <tr style="text-align:center">
+                                                                <th hidden>Sales Id</th>
+                                                                <th style="width:25%">Product Name</th>
+                                                                <th style="width:10%">Qty</th>
+                                                                <th style="width:10%">Rate</th>
+                                                                <th style="width:10%">Disc %</th>
+                                                                <th style="width:10%">Disc Amt</th>
+                                                                <th style="width:10%">GST</th>
+                                                                <th style="width:10%">GST Amt</th>
+                                                                <th style="width:10%">Amount</th>
+                                                                <th style="width:5%">Action</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="row">
+                                                        <div class="col-md-12 table-responsive">
+                                                            <table id="tblGstdifference" class="table table-bordered table-hover">
+                                                                <thead>
+                                                                    <tr style="text-align:center">
+
+                                                                        <th>Gst Differences</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2"></div>
+                                                <div class="col-md-4 table-responsive pt-1">
+                                                    <table class="table">
+                                                        <tr>
+                                                            <th>Discount</th>
+                                                            <td><input type="text" class="form-control form-control-sm" id="" value="0" name="TotalDiscountAmount" disabled></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th style="width:40%">Sub total</th>
+                                                            <td><input type="text" class="form-control form-control-sm" id="" name="SubTotal" value="0" disabled></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>GST Amount</th>
+                                                            <td><input type="text" class="form-control form-control-sm" id="" value="0" name="GstAmount" disabled></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Grand Amt:</th>
+                                                            <td><input type="text" class="form-control form-control-sm" id="" name="GrandTotal" value="0" disabled></td>
+                                                        </tr>
+
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card-footer">
+                                            <button type="button" id="btnSave" tabindex="9" class="btn btn-primary" style="float:right">Submit</button>
+                                            <button type="button" id="btnUpdate" tabindex="10" class="btn btn-primary" style="float:right; display:none">Update</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="SaleList" role="tabpanel" aria-labelledby="tab-SaleList">
+                            <div class="card card-primary card-outline">
+                                <div class="card-header">
+                                    <i class="fa-solid fa-file-invoice"></i>
+                                    Sales List
+                                </div>
+                                <div class="card-body">
+                                    <div class="col-md-12">
+                                        <div id="loader" style="display:none;"></div>
+                                        <div class="tblSalesList">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="CreateSalesReturn" role="tabpanel" aria-labelledby="tab-CreateSalesReturn">
+                            <div class="card card-primary card-outline">
+                                <div class="card-header">
+                                    <div class="row">
+                                        <input type="hidden" name="hdnSaleReturnOrderId" value="" />
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label class="pt-2">Transaction Date</label>
+                                                <div class="input-group  date" id="reservationdate4" data-target-input="nearest">
+                                                    <input type="text" class="form-control datetimepicker-input" data-target="#reservationdate4" name="Sr_TransactionDate" />
+                                                    <div class="input-group-append" data-target="#reservationdate4" data-toggle="datetimepicker">
+                                                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label class="pt-2">Payment Method</label>
+                                                <select class="form-control select2bs4" style="width: 100%" name="Sr_ddlPayment" tabindex="1">
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3"></div>
+                                        <div class="col-md-3">
+                                            <div class="form-group row mt-1 float-right">
+                                                <label class="pt-2">Transaction No</label>
+                                                <input type="text" class="form-control" disabled name="Sr_TransactionNo">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <!-----------Customer-------------->
+                                    <div class="card card-primary">
+                                        <div class="card-header">
+                                            <h3 class="card-title"><b>Customer</b></h3>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-md-3 ">
+                                                    <div class="form-group Sr_hdnddn" style=" display:none">
+                                                        <label>Customer Name</label>
+                                                        <select class="form-control select2bs4 " style="width: 100%" name="Sr_ddlCustomerId">    </select>
+
+                                                    </div>
+                                                    <div class="form-group Sr_hdntxt">
+                                                        <label>Customer Name</label>
+                                                        <input type="text" class="form-control" id="" name="Sr_CustomerName" tabindex="2">
+                                                    </div>
+                                                </div>
+                                             
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label>Order No</label>
+                                                        <input type="text" class="form-control" id="" name="Sr_OrderNo" tabindex="3">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label for="">Order Date</label>
+                                                        <div class="input-group  date" id="reservationdate6" data-target-input="nearest">
+                                                            <input type="text" class="form-control datetimepicker-input" data-target="#reservationdate6" name="Sr_OrderDate" tabindex="4" />
+                                                            <div class="input-group-append" data-target="#reservationdate6" data-toggle="datetimepicker">
+                                                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label>Vehicle No</label>
+                                                        <input type="text" class="form-control" id="" name="Sr_VehicleNo" tabindex="5">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label>Transpoter Name</label>
+                                                        <input type="text" class="form-control" id="" name="Sr_TranspoterName" tabindex="6">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label>Receiving Person</label>
+                                                        <input type="text" class="form-control" id="" name="Sr_ReceivingPerson" tabindex="7">
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-------------Sales Return------------------>
+                                    <div class="card card-primary">
+                                        <div class="card-header">
+                                            <h3 class="card-title"><b>Sales</b></h3>
+                                            <button class="btn btn-primary btn-link" id="addSalesReturnRowBtn" tabindex="8" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px; float:right"> <i class="fa-solid fa-plus"></i></button>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-md-12 table-responsive">
+                                                    <table id="tblSalesReturn" class="table table-bordered table-hover">
+                                                        <thead>
+                                                            <tr style="text-align:center">
+                                                                <th hidden>Sales Id</th>
+                                                                <th style="width:25%">Product Name</th>
+                                                                <th style="width:10%">Qty</th>
+                                                                <th style="width:10%">Rate</th>
+                                                                <th style="width:10%">Disc %</th>
+                                                                <th style="width:10%">Disc Amt</th>
+                                                                <th style="width:10%">GST</th>
+                                                                <th style="width:10%">GST Amt</th>
+                                                                <th style="width:10%">Amount</th>
+                                                                <th style="width:5%">Action</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="row">
+                                                        <div class="col-md-12 table-responsive">
+                                                            <table id="tblGstdifferencert" class="table table-bordered table-hover">
+                                                                <thead>
+                                                                    <tr style="text-align:center">
+                                                                        <th>Gst Differences</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2"></div>
+                                                <div class="col-md-4 table-responsive pt-1">
+                                                    <table class="table">
+                                                        <tr>
+                                                            <th>Discount</th>
+                                                            <td><input type="text" class="form-control form-control-sm" id="" value="0" name="Sr_DiscountAmount" disabled></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th style="width:40%">Sub total</th>
+                                                            <td><input type="text" class="form-control form-control-sm" id="" name="Sr_SubTotal" value="0" disabled></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>GST Amount</th>
+                                                            <td><input type="text" class="form-control form-control-sm" id="" value="0" name="Sr_GstAmount" disabled></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Grand Amt:</th>
+                                                            <td><input type="text" class="form-control form-control-sm" id="" name="Sr_GrandTotal" value="0" disabled></td>
+                                                        </tr>
+
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card-footer">
+                                            <button type="button" id="Sr_btnSave" tabindex="9" class="btn btn-primary" style="float:right">Submit</button>
+                                            <button type="button" id="Sr_btnUpdate" tabindex="10" class="btn btn-primary" style="float:right" hidden="hidden">Update</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="SalesReturnList" role="tabpanel" aria-labelledby="tab-SalesReturnList">
+                            <div class="card card-primary card-outline">
+                                <div class="card-header">
+                                    <i class="fa-solid fa-file-invoice"></i>
+                                    Sales Return List
+                                </div>
+                                <div class="card-body">
+                                    <div class="col-md-12">
+                                        <div id="loader" style="display:none;"></div>
+                                        <div class="tblSalesReturnList">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- /.content -->
+</div>
+@await Html.PartialAsync("_FooterScript")
+<script src="~/scripts/FormScript.js"></script>
+<script src="~/viewscripts/transaction/salestransaction.js"></script>
+<script>
+    $('#reservationdate1').datetimepicker({
+        format: 'DD/MM/YYYY'
+    });
+    $('#reservationdate2').datetimepicker({
+        format: 'DD/MM/YYYY'
+    });
+    $('#reservationdate3').datetimepicker({
+        format: 'DD/MM/YYYY'
+    });
+    $('#reservationdate4').datetimepicker({
+        format: 'DD/MM/YYYY'
+    });
+    $('#reservationdate5').datetimepicker({
+        format: 'DD/MM/YYYY'
+    });
+    $('#reservationdate6').datetimepicker({
+        format: 'DD/MM/YYYY'
+    });
+</script>
+

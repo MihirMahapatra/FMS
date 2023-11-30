@@ -1,0 +1,296 @@
+﻿@{
+    var BranchId = Context.Request.HttpContext.Session.GetString("BranchId");
+}
+<aside class="main-sidebar sidebar-dark-primary elevation-4">
+    <a href="#" class="brand-link">
+        <img src="~/assets/images/logo/logo.png" alt="Logo" class="brand-image elevation-3" style="opacity: .8;margin-left: 5px;">
+        <span class="brand-text font-weight-light ml-4" style="font-family: Segoe Print;">B.P.P.L</span>
+    </a>
+    <div class="sidebar">
+        <div class="form-inline mt-2">
+            <div class="input-group" data-widget="sidebar-search">
+                <input class="form-control form-control-sidebar" type="search" placeholder="Search" aria-label="Search">
+                <div class="input-group-append">
+                    <button class="btn btn-sidebar">
+                        <i class="fas fa-search fa-fw"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <nav class="mt-2">
+            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                <li class="nav-item">
+                    <a href="@Url.Action("DashBoard","DashBoard")" class="nav-link" id="DashboardLink">
+                        <i class="nav-icon fas fa-tachometer-alt"></i>
+                        <p>
+                            Dashboard
+                        </p>
+                    </a>
+                </li>
+                @if (BranchId != "All")
+                {
+                    @if (_signInManager.IsSignedIn(User) && User.IsInRole("Devloper"))
+                    {
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" id="developerLink">
+                                <i class=" nav-icon fa-solid fa-user-gear"></i>
+                                <p style="font-weight: bold;">
+                                    Devloper
+                                    <i class="right fa-solid fa-angle-left"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="@Url.Action("DevloperMaster","Devloper")" class="nav-link" id="Setuplink">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Setup</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    }
+                    @if (_signInManager.IsSignedIn(User) && (User.IsInRole("Admin") || User.IsInRole("Devloper")))
+                    {
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" id="AdminLink">
+                                <i class=" nav-icon fa-solid fa-user-lock"></i>
+                                <p style="font-weight: bold;">
+                                    Admin
+                                    <i class="right fa-solid fa-angle-left"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="@Url.Action("DataBaseBackup","Admin")" class="nav-link" id="DataBaseBackupLink">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Database Backup</p>
+                                    </a>
+                                </li>
+                            </ul>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="@Url.Action("CompanyInfo","Admin")" class="nav-link" id="CompanyInfoLink">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Company Info</p>
+                                    </a>
+                                </li>
+                            </ul>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="@Url.Action("CreateToken","Admin")" class="nav-link" id="CreateTokenLink">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Generate SignUp Token</p>
+                                    </a>
+                                </li>
+                            </ul>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="@Url.Action("ListRoles","Admin")" class="nav-link" id="ListRolesLink">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Manage Roles</p>
+                                    </a>
+                                </li>
+                            </ul>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="@Url.Action("AllocateBranch","Admin")" class="nav-link" id="AllocateBranchLink">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Allocate Branch</p>
+                                    </a>
+                                </li>
+                            </ul>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="@Url.Action("ProductConfig","Admin")" class="nav-link" id="ProductConfigLink">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Product Config</p>
+                                    </a>
+                                </li>
+                            </ul>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="@Url.Action("AccountConfig","Admin")" class="nav-link" id="AccountConfigLink">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Account Config</p>
+                                    </a>
+                                </li>
+                            </ul>          
+                        </li>
+                    }
+                    @if (_signInManager.IsSignedIn(User) && (User.IsInRole("Admin") || User.IsInRole("Devloper") || User.IsInRole("User")))
+                    {
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" id="MasterLink">
+                                <i class="nav-icon fas fa-globe"></i>
+                                <p style="font-weight: bold;">
+                                    Master
+                                    <i class="fas fa-angle-left right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="@Url.Action("AccountMaster","Master")" class="nav-link" id="AccountMasterLink">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Account Master</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="@Url.Action("ProductMaster","Master")" class="nav-link" id="ProductMasterLink">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Product Master</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="@Url.Action("PartyMaster","Master")" class="nav-link" id="PartyMasterLink">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Party Master</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="@Url.Action("LabourMaster","Master")" class="nav-link" id="LabourMasterLink">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Labour Master</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" id="TransactionLink">
+                                <i class="fa-solid fa-money-bill-transfer"></i>
+                                <p style="font-weight: bold;" class="ml-1">
+                                    Transaction
+                                    <i class="fas fa-angle-left right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="@Url.Action("PurchaseTransaction","Transaction")" class="nav-link" id="PurchaseTransactionLink">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Purchase</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="@Url.Action("Production","Transaction")" class="nav-link" id="ProductionLink">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Production</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="@Url.Action("SalesTransaction","Transaction")" class="nav-link" id="SalesTransactionLink">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Sales</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="@Url.Action("DamageTransaction","Transaction")" class="nav-link" id="DamageTransactionLink">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Damage</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="@Url.Action("InwardSupplyTransaction","Transaction")" class="nav-link" id="InwardSupplyTransactionLink">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Inward Supply</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="@Url.Action("OutwardSupplyTransaction","Transaction")" class="nav-link" id="OutwardSupplyTransactionLink">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Outward Supply</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" id="AccountingLink">
+                                <i class="fa-solid fa-calculator"></i>
+                                <p style="font-weight: bold;" class="ml-1">
+                                    Accounting
+                                    <i class="fas fa-angle-left right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="@Url.Action("Journal","Accounting")" class="nav-link" id="JournalLink">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Journal Voucher</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="@Url.Action("Payment","Accounting")" class="nav-link" id="PaymentLink">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Payment Voucher</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="@Url.Action("Receipt","Accounting")" class="nav-link" id="ReceiptLink">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Receipt Voucher</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="@Url.Action("Transfer","Accounting")" class="nav-link" id="TransferLink">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Fund Transfer</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    }
+                }
+                <li class="nav-item">
+                    <a href="#" class="nav-link" id="ReportsLink">
+                        <i class="fa-solid fa-book-open"></i>
+                        <p style="font-weight: bold;" class="ml-1">
+                            Reports
+                            <i class="fas fa-angle-left right"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="@Url.Action("StockReport","Reports")" class="nav-link" id="StockReportLink">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Stock Report</p>
+                            </a>
+                        </li>
+                    </ul>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="@Url.Action("LabourReport","Reports")" class="nav-link" id="LabourReportLink">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Labour Report</p>
+                            </a>
+                        </li>
+                    </ul>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="@Url.Action("CustomerReport","Reports")" class="nav-link" id="CustomerReportLink">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Customer Report</p>
+                            </a>
+                        </li>
+                    </ul>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="@Url.Action("SupplyerReport","Reports")" class="nav-link" id="SupplyerReportLink">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Supplyer Report</p>
+                            </a>
+                        </li>
+                    </ul>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="@Url.Action("DaySheet","Reports")" class="nav-link" id="DaySheetLink">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Day Sheet</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</aside>
+
+

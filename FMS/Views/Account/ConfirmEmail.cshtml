@@ -1,0 +1,52 @@
+﻿
+@model EmailConfirmModel
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Factory Management System</title>
+    @await Html.PartialAsync("_Head")
+</head>
+<body class="hold-transition register-page">
+    <div class ="register-box">
+        <div class="row text-center">
+            <div class="col-md-4">
+            </div>
+            <div class="col-md-4">
+                @if (Model.EmailVerified == true)
+                {
+                    <div class="alert alert-success" role="alert">
+                        <p>Your email has been verified successfully.</p>
+                    </div>
+                }
+                else
+                {
+                    if (Model.EmailSent)
+                    {
+                        <p>Email sent on your registered email id.</p>
+                    }
+
+                    else
+                    {
+                        <p>We have sent an email on your email id. Click on the link to login.</p>
+                    }
+
+                    <form action="/Account/ConfirmEmail" method="post" enctype="multipart/form-data">
+                        <input type="hidden" name="Email" value="@Model.Email" />
+                        <p>Did not get any email of deleted by mistake?</p>
+                        <div class="form-group">
+                            <input type="submit" value="Resend confirmation email" class="btn btn-primary" />
+                        </div>
+                    </form>
+                }
+            </div>
+        </div>
+    </div>
+    @await Html.PartialAsync("_FooterScript")
+</body>
+</html>

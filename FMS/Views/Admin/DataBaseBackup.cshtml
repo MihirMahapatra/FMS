@@ -1,0 +1,48 @@
+﻿@{
+    ViewData["Title"] = "BackUp DataBase";
+    Layout = "_Layout";
+}
+<div class="content-wrapper">
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1></h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-3 col-6">
+                    @using (Html.BeginForm("CreateDataBaseBackup", "Admin", FormMethod.Post))
+                    {
+                        <div class="small-box bg-info">
+                            <div class="inner" style="text-align:center">
+                                <h3><i class="fa-solid fa-database"></i></h3>
+                            </div>
+                            <button class="small-box-footer" type="submit">BackUp DataBase</button>
+                        </div>
+                    }
+                </div>
+                <div class="col-lg-3 col-6">
+                    <!-- small box -->
+                    <div class="small-box bg-info">
+                        <div class="inner" style="text-align:center">
+                            <h3><i class="fa-solid fa-table-cells"></i></h3>
+                        </div>
+                        <a href="#" class="small-box-footer">Clean Tables</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+@await Html.PartialAsync("_FooterScript")
+

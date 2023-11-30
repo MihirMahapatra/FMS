@@ -1,0 +1,20 @@
+//*****************************************************first user setup ******************************************//
+STEP 1:
+SELECT * FROM RegisterTokens
+INSERT INTO RegisterTokens (TokenValue) VALUES ('111-111-1111')
+STEP 2: create User In app
+STEP 3:
+SELECT * FROM AspNetRoles
+INSERT INTO AspNetRoles (Id,Name,NormalizedName) VALUES('04aecffd-617c-4a43-8009-6d0c90f4a588','Admin','ADMIN'),('afe03e9e-563a-4d95-84b1-3b46389fcc52','Devloper','DEVLOPER'),('4d7882c2-a729-4fba-ae39-db647aecbe22','User','USER')
+SEEP 4:
+SELECT * from AspNetUsers --08553de3-71a2-4d84-827d-28c8db181d4a
+SELECT * FROM AspNetUserRoles
+INSERT INTO AspNetUserRoles(UserId,RoleId) VALUES('08553de3-71a2-4d84-827d-28c8db181d4a','afe03e9e-563a-4d95-84b1-3b46389fcc52')
+STEP 5:
+SELECT * from AspNetUserClaims
+INSERT INTO AspNetUserClaims(UserId	,ClaimType	,ClaimValue) VALUES('08553de3-71a2-4d84-827d-28c8db181d4a','Create Role','true'),('08553de3-71a2-4d84-827d-28c8db181d4a','Edit Role','true'),('08553de3-71a2-4d84-827d-28c8db181d4a','Delete Role','true')
+
+
+
+
+

@@ -1,0 +1,120 @@
+﻿@{
+    ViewData["Title"] = "DaySheet";
+    Layout = "_Layout";
+}
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1></h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                    </ol>
+                </div>
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
+
+    <section class="content">
+        <div class="container-fluid">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Day Sheet</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label> Date</label>
+                                <div class="input-group  date" id="Date" data-target-input="nearest">
+                                    <input type="text" class="form-control datetimepicker-input" data-target="#FromDateSummerized" name="Date" />
+                                    <div class="input-group-append" data-target="#Date" data-toggle="datetimepicker">
+                                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <button type="button" id="btnView" class="btn btn-primary" style="float:left; margin-top:32px">View</button>
+                        </div>
+                        <div class="col-md-12 hdnDiv" style="display:none">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Cash Sales</label>
+                                        <input type="text" class="form-control" id="" name="CashSale" disabled>
+                                    </div>
+                                </div>
+                                <div class="col-md-6"></div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Opening Cash Bal.</label>
+                                        <input type="text" class="form-control" id="" name="OpnCashBal" disabled>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Credit Sales</label>
+                                        <input type="text" class="form-control" id="" name="CreditSale" disabled>
+                                    </div>
+                                </div>
+                                <div class="col-md-6"></div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Opening Bank Bal.</label>
+                                        <input type="text" class="form-control" id="" name="OpnBankBal" disabled>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div id="loader" style="display:none;"></div>
+                            <div class="tblPurchase" id="example1_wrapper">
+                            </div>
+                            <div class="tblCreditSale" id="example1_wrapper">
+                            </div>
+                            <div class="tblCashSale" id="example1_wrapper">
+                            </div>
+                            <div class="tblRecive" id="example1_wrapper">
+                            </div>
+                            <div class="tblPayment" id="example1_wrapper">
+                            </div>
+                        </div>
+                        <div class="col-md-12 hdnDiv" style="display:none">
+                            <div class="row">
+                                <div class="col-md-9"></div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Closing Cash Bal</label>
+                                        <input type="text" class="form-control" id="" name="ClosingCashBal" disabled>
+                                    </div>
+                                </div>
+                                <div class="col-md-9"></div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Closing Bank Bal</label>
+                                        <input type="text" class="form-control" id="" name="ClosingBankBal" disabled>
+                                    </div>
+                                    <button type="button" id="BtnPrint" class="btn btn-primary" style="float:right; margin-top:30px">Print</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+@await Html.PartialAsync("_FooterScript")
+<script src="~/scripts/FormScript.js"></script>
+<script src="~/scripts/datepicker.js"></script>
+<script src="~/viewscripts/reports/daysheet.js"></script>
+<script>
+    $('#Date').datetimepicker({
+        format: 'DD/MM/YYYY'
+    });
+</script>
+

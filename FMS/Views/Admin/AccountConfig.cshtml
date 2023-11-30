@@ -1,0 +1,170 @@
+﻿@{
+    Layout = "_Layout";
+    ViewData["Title"] = "";
+}
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1></h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                    </ol>
+                </div>
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card card-primary card-outline">
+                        <div class="card-header">
+                            <i class="fa-solid fa-file-invoice"></i>
+                            Account Config
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <!-----------Group & SubGroup-------------->
+                                <div class="col-md-12">
+                                    <div class="card card-primary">
+                                        <div class="card-header">
+                                            <h3 class="card-title"><b>Group</b></h3>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label>Group Name</label>
+                                                        <select class="form-control select2bs4" style="width: 100%;" name="LedgerGroupId">
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label>SubGroup (optional)</label>
+                                                        <select class="form-control select2bs4" style="width: 100%;" name="LedgerSubGroupId" disabled>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <button class="btn btn-primary btn-link cust-btn" id="btnLedgerSubGrupAdd" style=" margin-top: 32px !important;border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-plus"></i></button>
+                                                    <button class="btn btn-primary btn-link cust-btn" id="btnLedgerSubGrupEdit" style=" margin-top: 32px !important;border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"><i class="fa-solid fa-edit"></i></button>
+                                                    <button class="btn btn-primary btn-link cust-btn" id="btnLedgerSubGrupDelete" style=" margin-top: 32px !important;border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"><i class="fa-solid fa-trash-can"></i></button>
+                                                </div>
+                                                <!-------------Ledger------------>
+                                                <div class="col-md-3"></div>
+                                                <div class="col-md-6">
+                                                    <div class="card card-primary">
+                                                        <div class="card-header">
+                                                            <h3 class="card-title"><b>Ledger</b></h3>
+                                                            <a href="@Url.Action("Ledger", "Admin")" class="btn btn-primary btn-link ml-1" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px; float:right">
+                                                                <i class="fa-solid fa-eye"></i>
+                                                            </a>
+                                                            <button class="btn btn-primary btn-link" id="addLedgerRowBtn" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px; float:right"> <i class="fa-solid fa-plus"></i></button>
+                                                        </div>
+                                                        <div class="card-body">
+                                                            <table id="tblLedger" class="table table-bordered table-hover">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>ledger Type</th>
+                                                                        <th>Ledger Name</th>
+                                                                        <th>SubLedger</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                        <div class="card-footer">
+                                                            <button type="button" id="btnLedger" class="btn btn-primary" style="float:right">Submit</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- /.content -->
+</div>
+<!--Modal Add SUbGroup-->
+<div class="modal fade" id="modal-add-subgroup">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Add SubGroup</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>SubGroup Name</label>
+                            <input type="text" class="form-control" id="" name="mdlLedgerSubGroupAdd">
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary ledgerSubGroupAdd">Save changes</button>
+            </div>
+
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!--.end Modal Add SUbGroup-->
+<!--Modal Update SUbGroup-->
+<div class="modal fade" id="modal-edit-subgroup">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Update SubGroup</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <input type="hidden" name="mdlLedgerSubGroupId" />
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>SubGroup Name</label>
+                            <input type="text" class="form-control" id="" name="mdlLedgerSubGroupEdit">
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary ledgerSubGroupEdit">Save changes</button>
+            </div>
+
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!--.end Modal Update SUbGroup-->
+@await Html.PartialAsync("_FooterScript")
+<script src="~/scripts/FormScript.js"></script>
+<script src="~/viewscripts/admin/accountconfig/master.js"></script>

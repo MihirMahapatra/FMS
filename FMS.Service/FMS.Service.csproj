@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FMS.Api\FMS.Api.csproj" />
+    <ProjectReference Include="..\FMS.Model\FMS.Model.csproj" />
+    <ProjectReference Include="..\FMS.Repository\FMS.Repository.csproj" />
+    <ProjectReference Include="..\FMS.Utility\FMS.Utility.csproj" />
+  </ItemGroup>
+
+</Project>
