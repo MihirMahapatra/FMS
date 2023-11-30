@@ -77,6 +77,7 @@ namespace FMS.Repository.Admin
         #region Company Info
         public async Task<Result<bool>> CreateCompany(CompanyDetailsModel data)
         {
+            Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
             Result<bool> _Result = new();
             try
             {
@@ -89,7 +90,8 @@ namespace FMS.Repository.Admin
                     GSTIN = data.GSTIN,
                     Email = data.Email,
                     Phone = data.Phone,
-
+                    logo = data.logo,
+                    Fk_BranchId = BranchId
                 };
                 await _appDbContext.CompanyDetails.AddAsync(newCompanyDetails);
                 int count = await _appDbContext.SaveChangesAsync();
@@ -100,32 +102,32 @@ namespace FMS.Repository.Admin
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in MasterRepo/CreateLabourRate", _Exception);
-                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/CreateLabourRate : {_Exception.Message}");
+                _logger.LogError("exception Occours in MasterRepo/CreateCompany", _Exception);
+                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/CreateCreateCompany : {_Exception.Message}");
             }
             return _Result;
         }
         public async Task<Result<CompanyDetailsModel>> GetCompany()
         {
+            Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
+            string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
             Result<CompanyDetailsModel> _Result = new();
             try
             {
-                var Query = await _appDbContext.CompanyDetails.Select(s => new CompanyDetailsModel
+                var Query = await _appDbContext.CompanyDetails.Where(s => s.Fk_BranchId == BranchId).Select(s => new CompanyDetailsModel
                 {
                     Name = s.Name,
                     GSTIN = s.GSTIN,
                     Adress = s.Adress,
                     Email = s.Email,
                     Phone = s.Phone,
-                    State = s.State
-
-
-                }).ToListAsync();
-                if (Query.Count > 0)
+                    State = s.State,
+                    logo = s.logo,
+                    BranchName = branchName
+                }).SingleOrDefaultAsync();
+                if (Query != null)
                 {
-                    var companyDetails = Query;
-                    _Result.CollectionObjData = companyDetails = Query;
-                    ;
+                    _Result.SingleObjData = Query;
                     _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
                 }
                 _Result.IsSuccess = true;

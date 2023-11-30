@@ -92,10 +92,10 @@ namespace FMS.Controllers.Admin
             var result = await _adminSvcs.CreateCompany(data);
             return new JsonResult(result);
         }
-        [HttpPost]
+        [HttpGet]
         public async Task<IActionResult> GetCompany()
         {
-            var result = await _adminSvcs.GetAllUserAndBranch();
+            var result = await _adminSvcs.GetCompany();
             return new JsonResult(result);
         }
         [HttpGet]

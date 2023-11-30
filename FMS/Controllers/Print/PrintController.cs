@@ -1,11 +1,19 @@
 ﻿using FMS.Model.CommonModel;
+using FMS.Model.ViewModel;
+using FMS.Service.Admin;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+
 
 namespace FMS.Controllers.Print
 {
     public class PrintController : Controller
     {
+        private readonly IAdminSvcs _adminSvcs;
+        public PrintController(IAdminSvcs adminSvcs)
+        {
+            _adminSvcs = adminSvcs;
+        }
         [HttpPost]
         public IActionResult SalesPrintData([FromBody] SalesDataRequest requestData)
         {
@@ -21,7 +29,7 @@ namespace FMS.Controllers.Print
             return View(requestData);
         }
         [HttpPost]
-        public IActionResult DaySheetPrintData([FromBody] DaySheetModel requestData)      
+        public IActionResult DaySheetPrintData([FromBody] DaySheetModel requestData)
         {
             var json = JsonConvert.SerializeObject(requestData);
             var url = Url.Action("DaySheetPrint", "Print", new { data = json });
@@ -31,7 +39,12 @@ namespace FMS.Controllers.Print
         public IActionResult DaySheetPrint(string data)
         {
             var requestPrintData = JsonConvert.DeserializeObject<DaySheetModel>(data);
-            return View(requestPrintData);
+            var DaysheetPrintModel = new DaysheetPrintModel()
+            {
+                Cmopany =  _adminSvcs.GetCompany().Result.GetCompany,
+                daySheet = requestPrintData
+            };
+            return View(DaysheetPrintModel);
         }
     }
 }

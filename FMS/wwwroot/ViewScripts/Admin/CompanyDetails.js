@@ -1,34 +1,42 @@
 ﻿$(function () {
     //----------------------------------------varible declaration-----------------------------------------//
-    var CompanyName = $('input[name="name"]');
-    var Phone = $('input[name="Phone"]');
+    var CompanyName = $('input[name="Name"]');
+    var Phone = $('input[name="ContactNo"]');
     var Email = $('input[name="Email"]');
     var State = $('input[name="State"]');
-    var GSTIN = $('input[name="GSTIN"]');
-    var address = $('input[name="Address"]');
-    var ddlBranch = $('select[name="ddlBranch"]');
+    var GSTIN = $('input[name="GstNo"]');
+    var address = $('textarea[name="Address"]');
+    var Branch = $('input[name="Branch"]');
+    var logo = $('input[name="logo"]')
     //-------------------------------------------screen-----------------------------------------------//
-    loadBranch();
-    function loadBranch() {
+
+    loadCompany();
+    function loadCompany() {
         $.ajax({
-            url: "/Admin/GetAllBranch",
+            url: "/Admin/GetCompany",
             type: "GET",
             contentType: "application/json;charset=utf-8",
             dataType: "json",
             success: function (result) {
                 if (result.ResponseCode == 302) {
-                    ddlBranch.empty();
-                    var defaultOption = $('<option></option>').val('').text('--Select Option--');
-                    ddlBranch.append(defaultOption);
-                    $.each(result.Branches, function (key, item) {
-                        var option = $('<option></option>').val(item.BranchId).text(item.BranchName);
-                        ddlBranch.append(option);
-                    });
+                    CompanyName.val(result.GetCompany.Name);
+                    Phone.val(result.GetCompany.Phone);
+                    Email.val(result.GetCompany.Email);
+                    State.val(result.GetCompany.State);
+                    GSTIN.val(result.GetCompany.GSTIN);
+                    address.val(result.GetCompany.Adress);
+                    Branch.val(result.GetCompany.BranchName);
+                    logo.val(result.GetCompany.logo);
                 }
-                else {                  
-                    ddlBranch.empty();
-                var defaultOption = $('<option></option>').val('').text('--Select Option--');
-                    ddlBranch.append(defaultOption);
+                else {
+                    CompanyName.val('');
+                    Phone.val('');
+                    Email.val('');
+                    State.val('');
+                    GSTIN.val('');
+                    address.val('');
+                    logo.val('');
+                    Branch.val(result.GetCompany.BranchName);
                 }
             },
             error: function (errormessage) {
@@ -40,6 +48,7 @@
             }
         });
     }
+
     $('#btnSave').on('click', function () {
         var Data = {
             Name: CompanyName.val(),
@@ -48,6 +57,8 @@
             State: State.val(),
             GSTIN: GSTIN.val(),
             Adress: address.val(),
+            logo: logo.val(),
+            Fk_BranchId: ddlBranch.val(),
         };
         $.ajax({
             type: "POST",
@@ -58,6 +69,13 @@
             success: function (Response) {
                 if (Response.ResponseCode == 201) {
                     toastr.success(Response.SuccessMsg);
+                    CompanyName.val('');
+                    Phone.val('');
+                    Email.val('');
+                    State.val('');
+                    GSTIN.val('');
+                    address.val('');
+                    logo.val('');
                 }
                 else {
                     toastr.error(Response.ErrorMsg);

@@ -9,7 +9,7 @@ namespace FMS.Service.Admin
     {
         Task<Base> CreateToken(string Token);
         Task<Base> CreateCompany(CompanyDetailsModel data);
-        Task<CompanyDetailsModel> GetCompany();
+        Task<CompanyDetailsViewModel> GetCompany();
         #region Roles and Claims
         Task<List<IdentityRole>> UserRoles();
         Task<Base> CreateRole(RoleModel model);

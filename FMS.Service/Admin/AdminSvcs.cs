@@ -108,9 +108,9 @@ namespace FMS.Service.Admin
             return Obj;
 
         }
-        public async Task<CompanyDetailsModel> GetCompany()
+        public async Task<CompanyDetailsViewModel> GetCompany()
         {
-            CompanyDetailsModel Obj;
+            CompanyDetailsViewModel Obj;
             var result = await _adminRepo.GetCompany();
             if (result.IsSuccess)
             {
@@ -118,18 +118,18 @@ namespace FMS.Service.Admin
                 {
                     Obj = new()
                     {
-                        //ResponseStatus = result.Response,
-                        //ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
-                        //Productions = result.CollectionObjData,
+                        ResponseStatus = result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
+                        GetCompany = result.SingleObjData,
                     };
                 }
                 else
                 {
                     Obj = new()
                     {
-                        //ResponseStatus = result.Response,
-                        //ResponseCode = Convert.ToInt32(ResponseCode.Status.NotFound),
-                        //Message = "No Record Found"
+                        ResponseStatus = result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.NotFound),
+                        Message = "No Record Found"
                     };
                 }
             }
@@ -137,10 +137,10 @@ namespace FMS.Service.Admin
             {
                 Obj = new()
                 {
-                    //ResponseStatus = result.Response,
-                    //ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                   // Exception = result.Exception,
-                    //Message = "Some Eroor Occoured"
+                    ResponseStatus = result.Response,
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = result.Exception,
+                    Message = "Some Eroor Occoured"
                 };
             }
             return Obj;

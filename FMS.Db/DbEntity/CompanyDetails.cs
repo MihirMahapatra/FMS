@@ -12,8 +12,6 @@ namespace FMS.Db.DbEntity
         public string Phone { get; set; }
         public string GSTIN { get; set; }
         public Branch Branch { get; set; }
-
-
-
+        public string logo { get; set; }
     }
 }
