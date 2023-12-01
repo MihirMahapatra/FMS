@@ -76,11 +76,7 @@ $(function () {
     receivingPerson.on('blur', function () {
         $(this).css('border-color', ''); // Reset background color on blur
     });
-    $('#addSalesRowBtn').on('keydown', function (e) {
-        if (e.key === 'Insert' || e.keyCode === 45) {
-            $('#addSalesRowBtn').click();
-        }
-    });
+   
     var chkPage = false;
     $('a[href="#CreateSale"]').on('click', function () {
         chkPage = false;
@@ -232,11 +228,6 @@ $(function () {
     });
     Sr_receivingPerson.on('blur', function () {
         $(this).css('border-color', ''); // Reset background color on blur
-    });
-    $('#addSalesReturnRowBtn').on('keydown', function (e) {
-        if (e.key === 'Insert' || e.keyCode === 45) {
-            $('#addSalesReturnRowBtn').click();
-        }
     });
 
     $('a[href="#CreateSalesReturn"]').on('click', function () {

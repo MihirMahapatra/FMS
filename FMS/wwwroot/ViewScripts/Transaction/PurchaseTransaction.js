@@ -86,15 +86,11 @@ $(function () {
         $(this).css('border-color', ''); // Reset background color on blur
     });
 
-    $('#addPurchaseRowBtn').on('keydown', function (e) {
-        if (e.key === 'Insert' || e.keyCode === 45) {
-            $('#addPurchaseRowBtn').click();
-        }
-    });
     var chkPage = false;
     $('a[href="#CreatePurchase"]').on('click', function () {
         chkPage = false;
     });
+
     $(document).on('keydown', function (e) {
         if (e.key === 'Insert' || e.keyCode === 45) {
             if (!chkPage) {
@@ -246,14 +242,11 @@ $(function () {
         $(this).css('border-color', ''); // Reset background color on blur
     });
 
-    $('#addPurchaseReturnRowBtn').on('keydown', function (e) {
-        if (e.key === 'Insert' || e.keyCode === 45) {
-            $('#addPurchaseReturnRowBtn').click();
-        }
-    });
+
     $('a[href="#CreatePurchaseReturn"]').on('click', function () {
         chkPage = true;
     });
+
     $(document).on('keydown', function (e) {
         if (e.key === 'Insert' || e.keyCode === 45) {
             if (chkPage) {
@@ -265,6 +258,7 @@ $(function () {
     $('#addPurchaseReturnRowBtn').on('focus', function () {
         $(this).css('background-color', 'black');
     });
+
     $('#addPurchaseReturnRowBtn').on('blur', function () {
         $(this).css('background-color', '');
     });
