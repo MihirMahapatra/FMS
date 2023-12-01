@@ -50,6 +50,64 @@ $(function () {
             }
         });
     }
+    $('#addJournalRowBtn').on('click', function () {
+        var uniqueId = 'ddlitem' + new Date().getTime();
+        $.ajax({
+            url: "/Accounting/GetLedgers",
+            type: "GET",
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            success: function (result) {
+                if (result.ResponseCode == 302) {
+                    var html = '<tr class="tr">';
+                    html += '<td style="width:10px">';
+                    html += '<div class="form-group">';
+                    html += '<select class="form-control select2bs4 mySelection" style = "width: 100%"  name = "BalanceType">';
+                    html += '<option value="DR" selected = "selected" > DR </option>';
+                    html += '<option value ="CR"> CR </option>';
+                    html += '</select>';
+                    html += '</div>';
+                    html += '</td>';
+                    html += '<td style = "width:45px">';
+                    html += '<div class="form-group row">';
+                    html += '<div class="col-sm-6">';
+                    html += '<select class="select2bs4 ledgerType" style = "width: 100%;" data-target="additionalDropdown_' + uniqueId + '" name="ddlLedgerId">';
+                    html += '<option>--Select Option--</option>';
+                    $.each(result.Ledgers, function (key, item) {
+                        var option = $('<option></option>').val(item.LedgerId).text(item.LedgerName);
+                        html += option.prop('outerHTML');
+                    });
+                    html += '</select>';
+                    html += '</div>';
+                    html += '<label name="LadgerCurBal" class="col-sm-3 col-form-label" > Cur Bal: </label>';
+                    html += '</div>';
+                    html += '<div class="additionalDropdown" data-id="additionalDropdown_' + uniqueId + '"> </div>';
+                    html += '</td>';
+                    html += '<td style = "width:15px">';
+                    html += '<div class="form-group">';
+                    html += '<input type="text" class="form-control" id = "txtDrAmount" name = "DrBalance">';
+                    html += '</div>';
+                    html += '</td>';
+                    html += '<td style = "width:15px">';
+                    html += '<div class="form-group">';
+                    html += '<input type="text" class="form-control" id = "txtCrAmount" name = "CrBalance" disabled>';
+                    html += '</div>';
+                    html += '</td>';
+                    html += '<td style = "width:15px">';
+                    html += ' <button class="btn btn-primary btn-link journalRemoveBtn" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button>';
+                    html += '</td>';
+                    html += '</tr>';
+                    var newRow = JournalTable.row.add($(html)).draw(false).node();
+                    $(newRow).find('.select2bs4').select2({
+                        theme: 'bootstrap4'
+                    });
+                }
+            },
+            error: function (errormessage) {
+                console.log(errormessage)
+            }
+        });
+    });
     $(document).on('change', '.mySelection', function () {
         var $select = $(this);
         var $tr = $select.closest('tr');
@@ -103,17 +161,6 @@ $(function () {
                             theme: 'bootstrap4'
                         });
                     }
-                    $(document).on('change', 'input[name="SubledgerAmunt"]', function () {
-                        var totalSum = 0;
-                        $('input[name="SubledgerAmunt"]').each(function () {
-                            var inputValue = parseFloat($(this).val());
-                            if (!isNaN(inputValue)) {
-                                totalSum += inputValue;
-                            }
-                        });
-                        $('input[name="DrBalance"]').val(totalSum);
-
-                    });
                 },
                 error: function (errormessage) {
                     console.log(errormessage)
@@ -138,6 +185,15 @@ $(function () {
             });
         }
     });
+    $(document).on('input', 'input[name="SubledgerAmunt"]', function () {
+        var $row = $(this).closest('.tr');
+        var totalSum = 0;
+        $row.find('input[name="SubledgerAmunt"]').each(function () {
+            var value = parseFloat($(this).val()) || 0;
+            totalSum += value;
+        });
+        $row.find('input[name="DrBalance"]').val(totalSum.toFixed(2));
+    });
     var selectedOptions = "";
     $(document).on('change', '.SubledgerType', function () {
         selectedOptions = $(this).val();
@@ -161,6 +217,7 @@ $(function () {
                     }
                 }
             });
+            //
         }
     });
     $(document).on('click', '.deleteBtns', function () {
@@ -168,16 +225,19 @@ $(function () {
     });
     $(document).on('click', '.addSubLedgerBtn', function () {
         var clickedButton = $(this);
+        var i = 0;
         $.ajax({
+
             url: '/Accounting/GetSubLedgersById?LedgerId=' + selectedOption + '',
             type: "GET",
             contentType: "application/json;charset=utf-8",
             dataType: "json",
             success: function (result) {
                 if (result.ResponseCode == 302) {
+                    i++
                     var html = "";
                     html += '<div class="form-group row">';
-                    html += '<label name="SubLadgerCurBal" class="col-sm-2 col-form-label">Cur Bal: </label>';
+                    html += '<label name="SubLadgerCurBal' + i + '" class="col-sm-2 col-form-label">Cur Bal: </label>';
                     html += '<div class="col-sm-5" >';
                     html += '<select class= "select2bs4 SubledgerType"  style = "width: 100%;" name="ddlSubledgerId">';
                     html += '<option>--Select Option--</option>';
@@ -191,7 +251,7 @@ $(function () {
                     html += '</div>';
                     html += '<div class="col-sm-2">';
                     html += '<button class="btn btn-primary btn-link addSubLedgerBtn" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-plus"></i></button>';
-                    html += ' <button class="btn btn-primary btn-link deleteBtn" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button>';
+                    html += ' <button class="btn btn-primary btn-link removeSubladgerBtn" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button>';
                     html += '</div>';
                     html += '</div>';
                     clickedButton.closest('.form-group.row').after(html);
@@ -205,64 +265,11 @@ $(function () {
             }
         });
     });
-    $(document).on('click', '.deleteBtn', function () {
+    $(document).on('click', '.removeSubladgerBtn', function () {
         $(this).closest('.form-group.row').remove();
     });
-    $('#addJournalRowBtn').on('click', function () {
-        var uniqueId = 'ddlitem' + new Date().getTime();
-
-        $.ajax({
-            url: "/Accounting/GetLedgers",
-            type: "GET",
-            contentType: "application/json;charset=utf-8",
-            dataType: "json",
-            success: function (result) {
-                if (result.ResponseCode == 302) {
-                    var html = '<tr>';
-                    html += '<td style="width:10px">';
-                    html += '<div class="form-group">';
-                    html += '<select class="form-control select2bs4 mySelection" style = "width: 100%"  name = "BalanceType">';
-                    html += '<option value="DR" selected = "selected" > DR </option>';
-                    html += '<option value ="CR"> CR </option>';
-                    html += '</select>';
-                    html += '</div>';
-                    html += '</td>';
-                    html += '<td style = "width:60px">';
-                    html += '<div class="form-group row">';
-                    html += '<div class="col-sm-6">';
-                    html += '<select class="select2bs4 ledgerType" style = "width: 100%;" data-target="additionalDropdown_' + uniqueId + '" name="ddlLedgerId">';
-                    html += '<option>--Select Option--</option>';
-                    $.each(result.Ledgers, function (key, item) {
-                        var option = $('<option></option>').val(item.LedgerId).text(item.LedgerName);
-                        html += option.prop('outerHTML');
-                    });
-                    html += '</select>';
-                    html += '</div>';
-                    html += '<label name="LadgerCurBal" class="col-sm-3 col-form-label" > Cur Bal: </label>';
-                    html += '</div>';
-                    html += '<div class="additionalDropdown" data-id="additionalDropdown_' + uniqueId + '"> </div>';
-                    html += '</td>';
-                    html += '<td style = "width:15px">';
-                    html += '<div class="form-group">';
-                    html += '<input type="text" class="form-control" id = "txtDrAmount" name = "DrBalance">';
-                    html += '</div>';
-                    html += '</td>';
-                    html += '<td style = "width:15px">';
-                    html += '<div class="form-group">';
-                    html += '<input type="text" class="form-control" id = "txtCrAmount" name = "CrBalance" disabled>';
-                    html += '</div>';
-                    html += '</td>';
-                    html += '</tr>';
-                    var newRow = JournalTable.row.add($(html)).draw(false).node();
-                    $(newRow).find('.select2bs4').select2({
-                        theme: 'bootstrap4'
-                    });
-                }
-            },
-            error: function (errormessage) {
-                console.log(errormessage)
-            }
-        });
+    $(document).on('click', '.journalRemoveBtn', function () {
+        $(this).closest('.tr').remove();
     });
     $('#btnSave').on('click', function () {
         if (!VoucherDate.val()) {

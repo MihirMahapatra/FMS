@@ -1,6 +1,6 @@
-﻿@* 
-@using FMS.Model.CommonModel
+﻿@using FMS.Model.CommonModel
 @model DaysheetPrintModel
+
 @{
     Layout = null;
 }
@@ -9,6 +9,15 @@
 
 <html>
 <head>
+    <style>
+        .small-text {
+            font-size: 0.8em; /* Adjust the font size as needed */
+        }
+
+        .small-row td {
+            font-size: 0.8em; /* Adjust the font size as needed */
+        }
+    </style>
     <meta name="viewport" content="width=device-width" />
     <title>SalesPrint</title>
     <link rel="stylesheet" href="~/invoice/assets/css/app.min.css">
@@ -18,21 +27,26 @@
     <div class="invoice-container-wrap">
         <div class="invoice-container">
             <main>
+
                 <div class="th-invoice invoice_style8" data-bg-src="~/invoice/assets/img/template/hospital_bg.png">
+
                     <div class="download-inner" id="download_section">
+
                         <header class="th-header header-layout5">
                             <div class="row justify-content-between">
+
                                 <div class="col-auto">
                                     <div class="header-logo">
                                         <a href="index.html">
-                                            <img src="~/invoice/assets/img/logo-hospital.svg" alt="Invar">
+                                            <img src="~/assets/images/logo/logo.png" alt="logo" style="width:50%" />
                                         </a>
                                     </div>
                                 </div>
+
                                 <div class="col-auto">
-                                    <h1 class="big-title">Sales Invoice</h1>
-                                    <p class="invoice-number mb-2"><b>Invoice No: </b>@Model.ClosingBankBal</p>
-                                    <p class="invoice-date"><b>Date: </b>@Model.ClosingBankBal</p>
+                                    <h6 style="text-align:center" class="invoice-number Text-Center">Day Sheet</h6>
+                                    <p class="invoice-number mb-2"><b>GSTIN: </b>@Model.Cmopany.GSTIN</p>
+                                    <p class="invoice-date"><b>Date: </b>@DateTime.Now.ToString("dd/MM/yyyy")</p>
                                 </div>
                             </div>
                         </header>
@@ -41,67 +55,213 @@
                                 <div class="invoice-left">
                                     <b>Address:</b>
                                     <address>
-                                        Alex Farnandes<br>450 E 96th St, Indianapolis,<br>WRHX+8Q IN
-                                        46240,<br>United States
+                                        @Model.Cmopany.Adress<br>@Model.Cmopany.Email,<br>
+                                        @Model.Cmopany.Phone,<br>Odisha
                                     </address>
                                 </div>
                             </div>
                             <div class="col-auto">
-                                <div class="invoice-right">
-                                    <b>Bill Details</b>
-                                    <p class="mb-2">Customer Name: @Model.ClosingBankBal</p>
+                                <div class="invoice-left">
                                 </div>
+                            </div>
+                            <div class="col-auto">
+                                <table class="total-table3">
+                                    <tr>
+                                        <th>Opening Bank Bal</th>
+                                        <td>@Model.daySheet.OpeningBankBal</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Opening Cash Bal</th>
+                                        <td>@Model.daySheet.OpeningCashBal</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Credit Sale</th>
+                                        <td>@Model.daySheet.CreditSale</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Cash Sale</th>
+                                        <td>@Model.daySheet.CashSale</td>
+                                    </tr>
+                                </table>
                             </div>
                         </div>
                         <table class="invoice-table table-stripe-column">
                             <thead>
-                                <tr>
-                                    <th style="width:30%">Product</th>
+                                <tr class="small-row">
+                                    <th style="width:30%">Trxn No</th>
+                                    <th style="width:10%">Naration</th>
+                                    <th style="width:10%">Item</th>
                                     <th style="width:10%">Qty</th>
                                     <th style="width:10%">Rate</th>
-                                    <th style="width:10%">Disc(%)</th>
-                                    <th style="width:10%">Disc.</th>
-                                    <th style="width:10%">Gst(%)</th>
-                                    <th style="width:10%">Gst</th>
                                     <th style="width:10%">Amount</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                
+                                @if (Model.daySheet.Purchases != null && Model.daySheet.Purchases.Any())
+                                {
+                                    @foreach (var purchase in Model.daySheet.Purchases)
+                                    {
+                                        <tr class="small-row">
+                                            <td>@purchase.TransactionNo</td>
+                                            <td>@purchase.PartyName</td>
+                                            @foreach (var purchaseTransaction in purchase.PurchaseTransactions)
+                                            {
+                                                <td>@purchaseTransaction.ProductName</td>
+                                                <td>@purchaseTransaction.Quantity</td>
+                                                <td>@purchaseTransaction.Rate</td>
+                                                <td>@purchaseTransaction.Amount</td>
+                                            }
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr class="small-row">
+                                        <td colspan="6">No purchases available</td>
+                                    </tr>
+                                }
                             </tbody>
 
                         </table>
                         <table class="invoice-table table-stripe-column">
                             <thead>
-                                <tr>
-                                    <th style="width:30%">Product</th>
+                                <tr class="small-row">
+                                    <th style="width:30%">Trxn No</th>
+                                    <th style="width:10%">Naration</th>
+                                    <th style="width:10%">Item</th>
                                     <th style="width:10%">Qty</th>
                                     <th style="width:10%">Rate</th>
-                                    <th style="width:10%">Disc(%)</th>
-                                    <th style="width:10%">Disc.</th>
-                                    <th style="width:10%">Gst(%)</th>
-                                    <th style="width:10%">Gst</th>
                                     <th style="width:10%">Amount</th>
                                 </tr>
                             </thead>
                             <tbody>
+                                @if (Model.daySheet.CashSales != null && Model.daySheet.CashSales.Any())
+                                {
+                                    @foreach (var Cashsale in Model.daySheet.CashSales)
+                                    {
+                                        <tr class="small-row">
+                                            <td>@Cashsale.TransactionNo</td>
+                                            <td>@Cashsale.CustomerName</td>
+                                            @foreach (var Salestransation in Cashsale.SalesTransactions)
+                                            {
+                                                <td>@Salestransation.ProductName</td>
+                                                <td>@Salestransation.Quantity</td>
+                                                <td>@Salestransation.Rate</td>
+                                                <td>@Salestransation.Amount</td>
+                                            }
+                                        </tr>
+
+                                    }
+                                }
+                                else
+                                {
+                                    <tr class="small-row">
+                                        <td colspan="6">No Cash Sales available</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                        <table class="invoice-table table-stripe-column">
+                            <thead>
+                                <tr class="small-row">
+                                    <th style="width:30%">Trxn No</th>
+                                    <th style="width:10%">Naration</th>
+                                    <th style="width:10%">Item</th>
+                                    <th style="width:10%">Qty</th>
+                                    <th style="width:10%">Rate</th>
+                                    <th style="width:10%">Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.daySheet.CreditSales != null && Model.daySheet.CreditSales.Any())
+                                {
+                                    @foreach (var CreditSale in Model.daySheet.CreditSales)
+                                    {
+                                        <tr class="small-row">
+                                            <td>@CreditSale.TransactionNo</td>
+                                            <td>@CreditSale.CustomerName</td>
+                                            @foreach (var SaleTransaction in CreditSale.SalesTransactions)
+                                            {
+                                                <td>@SaleTransaction.ProductName</td>
+                                                <td>@SaleTransaction.Quantity</td>
+                                                <td>@SaleTransaction.Rate</td>
+                                                <td>@SaleTransaction.Amount</td>
+                                            }
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr class="small-row">
+                                        <td colspan="6">No Credit Sales available</td>
+                                    </tr>
+                                }
                             </tbody>
 
                         </table>
                         <table class="invoice-table table-stripe-column">
                             <thead>
-                                <tr>
-                                    <th style="width:30%">Product</th>
-                                    <th style="width:10%">Qty</th>
-                                    <th style="width:10%">Rate</th>
-                                    <th style="width:10%">Disc(%)</th>
-                                    <th style="width:10%">Disc.</th>
-                                    <th style="width:10%">Gst(%)</th>
-                                    <th style="width:10%">Gst</th>
+                                <tr class="small-row">
+                                    <th style="width:30%">Trxn No</th>
+                                    <th style="width:10%">Naration</th>
+                                    <th style="width:10%">Cash/Bank</th>
+                                    <th style="width:10%">From A/C</th>
                                     <th style="width:10%">Amount</th>
                                 </tr>
                             </thead>
                             <tbody>
+                                @if (Model.daySheet.Receipts != null && Model.daySheet.Receipts.Any())
+                                {
+                                    @foreach (var Receipt in Model.daySheet.Receipts)
+                                    {
+                                        <tr class="small-row">
+                                            <td>@Receipt.VouvherNo</td>
+                                            <td>@Receipt.narration</td>
+                                            <td>@Receipt.CashBank</td>
+                                            <td>@Receipt.FromAcc</td>
+                                            <td>@Receipt.Amount</td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr class="small-row">
+                                        <td colspan="6">No Receipt available</td>
+                                    </tr>
+                                }
+                            </tbody>
+
+                        </table>
+                        <table class="invoice-table table-stripe-column">
+                            <thead>
+                                <tr class="small-row">
+                                    <th style="width:30%">Trxn No</th>
+                                    <th style="width:10%">Naration</th>
+                                    <th style="width:10%">Cash/Bank</th>
+                                    <th style="width:10%">From A/C</th>
+                                    <th style="width:10%">Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.daySheet.Payments != null && Model.daySheet.Payments.Any())
+                                {
+                                    @foreach (var Payment in Model.daySheet.Payments)
+                                    {
+                                        <tr class="small-row">
+                                            <td>@Payment.VouvherNo</td>
+                                            <td>@Payment.narration</td>
+                                            <td>@Payment.CashBank</td>
+                                            <td>@Payment.ToAcc</td>
+                                            <td>@Payment.Amount</td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr class="small-row">
+                                        <td colspan="6">No Credit Sales available</td>
+                                    </tr>
+                                }
                             </tbody>
 
                         </table>
@@ -113,20 +273,12 @@
                             <div class="col-auto">
                                 <table class="total-table3">
                                     <tr>
-                                        <th>Discount:</th>
-                                        <td>@Model.ClosingBankBal</td>
+                                        <th>Closing Bank Bal</th>
+                                        <td>@Model.daySheet.ClosingBankBal</td>
                                     </tr>
                                     <tr>
-                                        <th>SubTotal:</th>
-                                        <td>@Model.ClosingBankBal</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Gst Amount:</th>
-                                        <td>@Model.ClosingBankBal</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Grant Amount:</th>
-                                        <td>@Model.ClosingBankBal</td>
+                                        <th>Closing Cash Bal</th>
+                                        <td>@Model.daySheet.ClosingCashBal</td>
                                     </tr>
                                 </table>
                             </div>
@@ -160,4 +312,3 @@
     <script src="~/invoice/assets/js/main.js"></script>
 </body>
 </html>
- *@
