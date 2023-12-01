@@ -295,9 +295,9 @@ namespace FMS.Controllers.Transaction
             return new JsonResult(result);
         }
         [HttpPost]
-        public async Task<IActionResult> DeleteSalesSalesReturn([FromQuery] Guid Id)
+        public async Task<IActionResult> DeleteSalesReturn([FromQuery] Guid Id)
         {
-            var result = await _transactionSvcs.DeleteSalesSalesReturn(Id);
+            var result = await _transactionSvcs.DeleteSalesReturn(Id);
             return new JsonResult(result);
         }
         #endregion

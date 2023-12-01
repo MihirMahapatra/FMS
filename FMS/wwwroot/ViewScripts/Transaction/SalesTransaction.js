@@ -1750,11 +1750,13 @@ $(function () {
                     success: function (result) {
                         if (result.ResponseCode == 200) {
                             toastr.success(result.SuccessMsg);
+                            GetSalesReturnList();
+                            GetLastSalesReturnTransaction();
                         }
                         else {
                             toastr.error(result.ErrorMsg);
                         }
-                        GetSalesList();
+                        
                     },
                     error: function (error) {
                         console.log(error);

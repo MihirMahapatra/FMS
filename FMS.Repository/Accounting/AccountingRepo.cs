@@ -898,6 +898,7 @@ namespace FMS.Repository.Accounting
                                 if (updateLedgerBalance != null)
                                 {
                                     updateLedgerBalance.RunningBalance += Balance;
+                                    updateLedgerBalance.RunningBalanceType = updateLedgerBalance.RunningBalance > 0 ? "Dr" : "Cr";
                                     await _appDbContext.SaveChangesAsync();
                                 }
                             }
@@ -907,6 +908,7 @@ namespace FMS.Repository.Accounting
                                 if (updateSubLedgerBalance != null)
                                 {
                                     updateSubLedgerBalance.RunningBalance += Balance;
+                                    updateSubLedgerBalance.RunningBalanceType = updateSubLedgerBalance.RunningBalance > 0 ? "Dr" : "Cr";
                                     await _appDbContext.SaveChangesAsync();
                                 }
                             }
@@ -914,20 +916,19 @@ namespace FMS.Repository.Accounting
                             {
                                 var updateSubLedgerBalance = await _appDbContext.LedgerBalances.Where(l => l.Fk_LedgerId == item.CashBankLedgerId).SingleOrDefaultAsync();
                                 updateSubLedgerBalance.RunningBalance += Balance;
+                                updateSubLedgerBalance.RunningBalanceType = updateSubLedgerBalance.RunningBalance > 0 ? "Dr" : "Cr";
                                 await _appDbContext.SaveChangesAsync();
                             }
                             else
                             {
                                 var updateSubLedgerBalance = await _appDbContext.LedgerBalances.Where(l => l.Fk_LedgerId == MappingLedgers.CashAccount).SingleOrDefaultAsync();
                                 updateSubLedgerBalance.RunningBalance += Balance;
+                                updateSubLedgerBalance.RunningBalanceType = updateSubLedgerBalance.RunningBalance > 0 ? "Dr" : "Cr";
                                 await _appDbContext.SaveChangesAsync();
                             }
                         }
                         _appDbContext.Receipts.RemoveRange(GetRecipts);
                         await _appDbContext.SaveChangesAsync();
-                        _Result.IsSuccess = true;
-                        transaction.Commit();
-                        _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Deleted);
                         _Result.IsSuccess = true;
                         localTransaction.Commit();
                         _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Deleted);

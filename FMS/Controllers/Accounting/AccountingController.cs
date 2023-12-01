@@ -141,6 +141,12 @@ namespace FMS.Controllers.Accounting
             var result = await _accountingSvcs.GetReceipts();
              return new JsonResult(result);
         }
+        [HttpPost]
+        public async Task<IActionResult> DeleteReceipt([FromQuery] string id)
+        {
+            var result = await _accountingSvcs.DeleteReceipt(id);
+            return new JsonResult(result);
+        }
         #endregion
         #region Transfer
         [HttpGet]
@@ -152,12 +158,7 @@ namespace FMS.Controllers.Accounting
             ViewBag.FinancialYear = FinancialYear;
             return View();
         }
-        [HttpPost]
-        public async Task<IActionResult> DeleteReceipt([FromQuery] string id)
-        {
-            var result = await _accountingSvcs.DeleteReceipt(id);
-            return new JsonResult(result);
-        }
+  
         #endregion
         #endregion
     }

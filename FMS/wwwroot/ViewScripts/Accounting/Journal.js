@@ -136,7 +136,6 @@ $(function () {
                     }
                 }
             });
-            //
         }
     });
     var selectedOptions = "";
@@ -162,7 +161,6 @@ $(function () {
                     }
                 }
             });
-            //
         }
     });
     $(document).on('click', '.deleteBtns', function () {
@@ -332,13 +330,11 @@ $(function () {
             });
         }
     });
-    //_______________________________________________Journal Details________________________________________________________________________//
-
+    //_______________________________________________Journal List ________________________________________________________________________//
     $('a[href="#JournalList"]').on('click', function () {
         LoadJournals();
     });
-    function LoadJournals(
-    ) {
+    function LoadJournals() {
         $('#loader').show();
         $('.JournalList').empty();
         $.ajax({
@@ -396,8 +392,8 @@ $(function () {
 
                     });
                 }
-
                 else {
+                    $('#loader').hide();
                     html += '<tr>';
                     html += '<td colspan="9">No record</td>';
                     html += '</tr>';
@@ -429,7 +425,6 @@ $(function () {
             }
         });
     }
-
     //------------------------------Delete Journals---------//
     $(document).on('click', '.btn-Journal-delete', (event) => {
         const value = $(event.currentTarget).data('id');
@@ -454,8 +449,8 @@ $(function () {
                     success: function (result) {
                         if (result.ResponseCode == 200) {
                             toastr.success(result.SuccessMsg);
-                            GetProductionEntry();
-                            GetLastProductionNo();
+                            LoadJournals();
+                            GetJournalVoucherNo();
                         }
                         else {
                             toastr.error(result.ErrorMsg);

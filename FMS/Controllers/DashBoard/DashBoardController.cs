@@ -2,6 +2,7 @@
 using FMS.Model.CommonModel;
 using FMS.Model.ViewModel;
 using FMS.Service.Devloper;
+using FMS.Service.Reports;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,11 +13,12 @@ namespace FMS.Controllers.DashBoard
     {
         private readonly IDevloperSvcs _devloperSvcs;
         private readonly IHttpContextAccessor _HttpContextAccessor;
-
-        public DashBoardController(IDevloperSvcs devloperSvcs, IHttpContextAccessor httpContextAccessor)
+        private readonly IReportSvcs _reportSvcs;
+        public DashBoardController(IDevloperSvcs devloperSvcs,IReportSvcs reportSvcs, IHttpContextAccessor httpContextAccessor):base()
         {
             _devloperSvcs = devloperSvcs;
             _HttpContextAccessor = httpContextAccessor;
+            _reportSvcs = reportSvcs;
         }
         [HttpGet]
         public IActionResult DashBoard(string SuccessMsg, string eMail)
@@ -29,7 +31,10 @@ namespace FMS.Controllers.DashBoard
             {
                 TempData["SuccessMsg"] = SuccessMsg;
             }
-            return View();
+            DateTime currentDate = DateTime.Today;
+            string formattedDate = currentDate.ToString("dd/MM/yyyy");
+             var daysheet =_reportSvcs.GetDaySheet(formattedDate);
+            return View(daysheet.Result.DaySheet);
         }
         [HttpGet]
         public async Task<IActionResult> GetFinancialYears(string BranchId)

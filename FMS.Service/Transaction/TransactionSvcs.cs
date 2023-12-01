@@ -1129,9 +1129,9 @@ namespace FMS.Service.Transaction
             }
             return Obj;
         }
-        public async Task<Base> DeleteSalesSalesReturn(Guid Id)
+        public async Task<Base> DeleteSalesReturn(Guid Id)
         {
-            var Result = await _transactionRepo.DeleteSales(Id, null, false);
+            var Result = await _transactionRepo.DeleteSalesReturn(Id, null, false);
             Base Obj = new();
             if (Result.IsSuccess)
             {

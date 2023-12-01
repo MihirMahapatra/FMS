@@ -49,7 +49,7 @@ namespace FMS.Service.Transaction
         Task<SalesReturnOrderViewModel> GetSalesReturns();
         Task<SalesReturnOrderViewModel> GetSalesReturnById(Guid Id);
         Task<Base> UpdateSalesReturn(SalesDataRequest data);
-        Task<Base> DeleteSalesSalesReturn(Guid Id);
+        Task<Base> DeleteSalesReturn(Guid Id);
         #endregion
         #endregion
         #region Inward Supply Transaction

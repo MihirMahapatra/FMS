@@ -1,4 +1,5 @@
-﻿@{
+﻿@model DaySheetModel
+@{
     ViewData["Title"] = "Dashboard";
     Layout = "_Layout";
 
@@ -27,8 +28,8 @@
                     <!-- small box -->
                     <div class="small-box bg-info">
                         <div class="inner">
-                            <h3>65</h3>
-                            <p>Active Employee</p>
+                            <h3>@Model.CashSale</h3>
+                            <p>Cash Sale</p>
                         </div>
                         <div class="icon">
                             <i class="fa-sharp fa-solid fa-people-group"></i>
@@ -40,8 +41,8 @@
                     <!-- small box -->
                     <div class="small-box bg-success">
                         <div class="inner">
-                            <h3>65</h3>
-                            <p>Present Employee</p>
+                            <h3>@Model.CreditSale</h3>
+                            <p>Credit Sale</p>
                         </div>
                         <div class="icon">
                             <i class="fa-solid fa-user-check"></i>
@@ -54,8 +55,8 @@
                     <!-- small box -->
                     <div class="small-box bg-danger">
                         <div class="inner">
-                            <h3>65</h3>
-                            <p>Absent Employee</p>
+                            <h3>@(Model.OpeningBankBal + Model.OpeningCashBal)</h3>
+                            <p>Today Opening</p>
                         </div>
                         <div class="icon">
                             <i class="fa-solid fa-user-xmark"></i>
@@ -67,8 +68,8 @@
                     <!-- small box -->
                     <div class="small-box bg-warning ">
                         <div class="inner">
-                            <h3>65</h3>
-                            <p>Today Interview</p>
+                            <h3>@(Model.ClosingBankBal + Model.ClosingCashBal)</h3>
+                            <p>Today Closing</p>
                         </div>
                         <div class="icon">
                             <i class="fa-solid fa-people-arrows"></i>
@@ -83,7 +84,7 @@
                         <div class="card-header border-0">
                             <h3 class="card-title">
                                 <i class="fas fa-th mr-1"></i>
-                                Attandance Chart
+                                 Chart 1
                             </h3>
 
                             <div class="card-tools">
@@ -108,7 +109,7 @@
                         <div class="card-header border-0">
                             <h3 class="card-title">
                                 <i class="fas fa-th mr-1"></i>
-                                Salary Chart
+                                 Chart 2
                             </h3>
 
                             <div class="card-tools">

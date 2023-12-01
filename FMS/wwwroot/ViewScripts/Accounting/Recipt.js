@@ -38,7 +38,7 @@ $(function () {
     const VoucherDate = $('input[name="VoucherDate"]');
     VoucherDate.val(todayDate);
     const Narration = $('textarea[name="Narration"]');
-    //-------------------------------------------------------------Journal --------------------------------------------------------//
+    //-------------------------------------------------------------Recipts --------------------------------------------------------//
     GetReceiptVoucherNo();
     function GetReceiptVoucherNo() {
         selectedOption = CashBank.val();
@@ -376,8 +376,8 @@ $(function () {
                 html += '<table class="table table-bordered table-hover text-center mt-1 ReceiptList" style="width:100%">';
                 html += '<thead>'
                 html += '<tr>'
-                html += '<th> VouvherNo</th>'
-                html += '<th>VoucherDate</th>'
+                html += '<th> Voucher No</th>'
+                html += '<th>Date</th>'
                 html += '<th>Ledger</th>'
                 html += '<th>SubLedger</th>'
                 html += '<th>narration</th>'
@@ -407,8 +407,8 @@ $(function () {
                             html += '<td>' + Receipt.DrCr + '</td>';
                             if (firstRow) {
                                 html += '<td style="background-color:#ffe6e6;border-bottom: none;">';
-                                html += '<button class="btn btn-primary btn-link btn-sm btn-receipt-edit"   id="btnreceiptEdit_' + item.VouvherNo + '" data-id="' + item.VouvherNo + '" data-toggle="modal" data-target="#modal-edit-Product" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-edit"></i></button>';
-                                html += ' <button class="btn btn-primary btn-link btn-sm btn-receipt-delete" id="btnreceiptDelete_' + item.VouvherNo + '"   data-id="' + item.VouvherNo + '" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button>';
+                                html += '<button class="btn btn-primary btn-link btn-sm btn-receipt-edit"   id="btnreceiptEdit_' + item.VoucherNo + '" data-id="' + item.VoucherNo + '" data-toggle="modal" data-target="#modal-edit-Product" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-edit"></i></button>';
+                                html += ' <button class="btn btn-primary btn-link btn-sm btn-receipt-delete" id="btnreceiptDelete_' + item.VoucherNo + '"   data-id="' + item.VoucherNo + '" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button>';
                                 html += '</td>';
                                 html += '</tr >';
                                 firstRow = false;
@@ -420,6 +420,7 @@ $(function () {
                     });
                 }
                 else {
+                    $('#loader').hide();
                     html += '<tr>';
                     html += '<td colspan="9">No record</td>';
                     html += '</tr>';
@@ -454,9 +455,9 @@ $(function () {
     //------------------------------Delete Payments---------//
     $(document).on('click', '.btn-receipt-delete', (event) => {
         const value = $(event.currentTarget).data('id');
-        DeletePaymentsDetails(value);
+        DeleteReciptssDetails(value);
     });
-    function DeletePaymentsDetails(Id) {
+    function DeleteReciptssDetails(Id) {
         Swal.fire({
             title: 'Are you sure?',
             text: "You won't be able to revert this!",
@@ -475,8 +476,8 @@ $(function () {
                     success: function (result) {
                         if (result.ResponseCode == 200) {
                             toastr.success(result.SuccessMsg);
-                            GetProductionEntry();
-                            GetLastProductionNo();
+                            LoadReceipts();
+                            GetReceiptVoucherNo();
                         }
                         else {
                             toastr.error(result.ErrorMsg);
