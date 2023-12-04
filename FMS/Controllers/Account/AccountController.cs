@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FMS.Controllers.Account
-
 {
     public class AccountController : Controller
     {

@@ -227,7 +227,6 @@ $(function () {
         var clickedButton = $(this);
         var i = 0;
         $.ajax({
-
             url: '/Accounting/GetSubLedgersById?LedgerId=' + selectedOption + '',
             type: "GET",
             contentType: "application/json;charset=utf-8",
@@ -295,6 +294,7 @@ $(function () {
                     "subledgerData": []
                 };
                 row.find(".additionalDropdown[data-id^='additionalDropdown_']").each(function () {
+                    debugger;
                     var subledgerRow = $(this);
                     var subledgerData = {
                         "ddlSubledgerId": [],
@@ -302,13 +302,13 @@ $(function () {
                     };
                     subledgerRow.find("select[name='ddlSubledgerId']").each(function () {
                         subledgerData.ddlSubledgerId.push($(this).val());
-                        rowData.subledgerData.push(subledgerData);
                     });
                     subledgerRow.find("input[name='SubledgerAmunt']").each(function () {
                         subledgerData.SubledgerAmunt.push($(this).val());
-                        rowData.subledgerData.push(subledgerData);
                     });
-
+                    if (subledgerData.ddlSubledgerId.length > 0 || subledgerData.SubledgerAmunt.length > 0) {
+                        rowData.subledgerData.push(subledgerData);
+                    }
                 });
                 requestData.arr.push(rowData);
             });

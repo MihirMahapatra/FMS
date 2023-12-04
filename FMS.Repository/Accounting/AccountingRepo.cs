@@ -151,7 +151,7 @@ namespace FMS.Repository.Accounting
                             }
                         }
                         _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Created);
-                        //transaction.Commit();
+                        transaction.Commit();
                         _Result.IsSuccess = true;
                     }
                 }

@@ -66,18 +66,6 @@ public partial class AppDbContext : IdentityDbContext<AppUser>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.HasDefaultSchema("dbo");
-
-        //modelBuilder.Entity<IdentityRole>().HasData(
-        //new IdentityRole { Id = "04aecffd-617c-4a43-8009-6d0c90f4a588", Name = "Admin", NormalizedName = "ADMIN" },
-        //new IdentityRole { Id = "afe03e9e-563a-4d95-84b1-3b46389fcc52", Name = "Devloper", NormalizedName = "DEVLOPER" },
-        //new IdentityRole { Id = "4d7882c2-a729-4fba-ae39-db647aecbe22", Name = "User", NormalizedName = "USER" }
-        //);
-        //modelBuilder.Entity<IdentityUserRole<string>>().HasData(new IdentityUserRole<string>{ UserId = "08553de3-71a2-4d84-827d-28c8db181d4a", RoleId = "afe03e9e-563a-4d95-84b1-3b46389fcc52"});
-        //modelBuilder.Entity<IdentityUserClaim<string>>().HasData(
-        //new IdentityUserClaim<string>{ UserId = "08553de3-71a2-4d84-827d-28c8db181d4a",ClaimType = "Create Role", ClaimValue = "true"},
-        //new IdentityUserClaim<string>{ UserId = "08553de3-71a2-4d84-827d-28c8db181d4a",ClaimType = "Edit Role",ClaimValue = "true"},
-        //new IdentityUserClaim<string>{UserId = "08553de3-71a2-4d84-827d-28c8db181d4a",ClaimType = "Delete Role",ClaimValue = "true"}
-        //);
         #region EntityConfig
         new AppUserConfig().Configure(modelBuilder.Entity<AppUser>());
         new FinancialYearConfig().Configure(modelBuilder.Entity<FinancialYear>());
