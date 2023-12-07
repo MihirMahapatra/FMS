@@ -110,7 +110,6 @@ namespace FMS.Repository.Reports
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in ReportRepo/GetSummerizedStockReports", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"ReportRepo/GetSummerizedStockReports : {_Exception.Message}");
             }
             return _Result;
@@ -207,7 +206,6 @@ namespace FMS.Repository.Reports
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in ReportRepo/GetDetailedStockReport", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"ReportRepo/GetDetailedStockReport : {_Exception.Message}");
             }
             return _Result;
@@ -277,7 +275,6 @@ namespace FMS.Repository.Reports
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in ReportRepo/GetSummerizedLabourReport", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"ReportRepo/GetSummerizedLabourReport : {_Exception.Message}");
             }
             return _Result;
@@ -344,7 +341,6 @@ namespace FMS.Repository.Reports
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in ReportRepo/GetDetailedLabourReport", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"ReportRepo/GetDetailedLabourReport : {_Exception.Message}");
             }
             return _Result;
@@ -400,7 +396,6 @@ namespace FMS.Repository.Reports
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in ReportRepo/GetSummerizedCustomerReport", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"ReportRepo/GetSummerizedCustomerReport : {_Exception.Message}");
             }
             return _Result;
@@ -450,7 +445,6 @@ namespace FMS.Repository.Reports
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in ReportRepo/GetDetailedCustomerReport", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"ReportRepo/GetDetailedCustomerReport : {_Exception.Message}");
             }
             return _Result;
@@ -506,7 +500,6 @@ namespace FMS.Repository.Reports
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in ReportRepo/GetSummerizedSupplyerReport", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"ReportRepo/GetSummerizedSupplyerReport : {_Exception.Message}");
             }
             return _Result;
@@ -556,7 +549,6 @@ namespace FMS.Repository.Reports
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in ReportRepo/GetDetailedSupplyerReport", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"ReportRepo/GetDetailedSupplyerReport : {_Exception.Message}");
             }
             return _Result;
@@ -738,7 +730,6 @@ namespace FMS.Repository.Reports
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in ReportRepo/GetDaySheet", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"ReportRepo/GetDaySheet : {_Exception.Message}");
             }
             return _Result;

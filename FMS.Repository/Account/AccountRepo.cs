@@ -60,7 +60,6 @@ namespace FMS.Repository.Account
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in AccountRepo/IsTokenValid", _Exception);
             }
             return _Result;
         }
@@ -93,7 +92,6 @@ namespace FMS.Repository.Account
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in AccountRepo/CreateUser", _Exception);
             }
             return _Result;
         }
@@ -122,7 +120,6 @@ namespace FMS.Repository.Account
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in AccountRepo/GenerateEmailConfirmationToken", _Exception);
             }
             return _Result;
         }
@@ -172,8 +169,6 @@ namespace FMS.Repository.Account
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-
-                _logger.LogError("exception Occours in AccountRepo/Mailconformed", _Exception);
             }
             return _Result;
         }
@@ -199,8 +194,6 @@ namespace FMS.Repository.Account
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-
-                _logger.LogError("exception Occours in AccountRepo/IsEmailInUse", _Exception);
             }
             return _Result;
         }
@@ -219,7 +212,6 @@ namespace FMS.Repository.Account
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in AccountRepo/PasswordSignIn", _Exception);
             }
             return _Result;
         }
@@ -245,8 +237,6 @@ namespace FMS.Repository.Account
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-
-                _logger.LogError("exception Occours in AccountRepo/ForgotPassword", _Exception);
             }
             return _Result;
         }
@@ -271,8 +261,6 @@ namespace FMS.Repository.Account
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-
-                _logger.LogError("exception Occours in AccountRepo/ResetPassword", _Exception);
             }
             return _Result;
         }
@@ -309,9 +297,6 @@ namespace FMS.Repository.Account
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-
-                _logger.LogError("exception Occours in AccountRepo/ChangePassword", _Exception);
-
             }
             return _Result;
         }

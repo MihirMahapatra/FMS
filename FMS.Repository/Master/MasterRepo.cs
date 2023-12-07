@@ -71,7 +71,6 @@ namespace FMS.Repository.Master
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in MasterRepo/GetLedgerBalances", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/GetLedgerBalances : {_Exception.Message}");
             }
             return _Result;
@@ -102,7 +101,6 @@ namespace FMS.Repository.Master
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in MasterRepo/GetSubLedgersByBranch", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/GetSubLedgersByBranch : {_Exception.Message}");
             }
             return _Result;
@@ -148,7 +146,6 @@ namespace FMS.Repository.Master
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in MasterRepo/CreateLedgerBalance", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/CreateLedgerBalance : {_Exception.Message}");
             }
             return _Result;
@@ -177,7 +174,6 @@ namespace FMS.Repository.Master
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in MasterRepo/UpdateLedgerBalance", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/UpdateLedgerBalance : {_Exception.Message}");
             }
             return _Result;
@@ -215,7 +211,6 @@ namespace FMS.Repository.Master
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in MasterRepo/DeleteLedgerBalance", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/DeleteLedgerBalance : {_Exception.Message}");
             }
 
@@ -261,7 +256,6 @@ namespace FMS.Repository.Master
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in AdminRepo/GetSubLedgers", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"AdminRepo/GetSubLedgers : {_Exception.Message}");
             }
             return _Result;
@@ -289,7 +283,6 @@ namespace FMS.Repository.Master
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in AdminRepo/GetSubLedgersById", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"AdminRepo/GetSubLedgersById : {_Exception.Message}");
             }
             return _Result;
@@ -392,7 +385,6 @@ namespace FMS.Repository.Master
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in AdminRepo/CreateSubLedger", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $" AdminRepo/CreateSubLedger : {_Exception.Message}");
             }
             return _Result;
@@ -415,7 +407,6 @@ namespace FMS.Repository.Master
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in AdminRepo/UpdateSubLedger", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"AdminRepo/UpdateSubLedger : {_Exception.Message}");
             }
             return _Result;
@@ -454,7 +445,6 @@ namespace FMS.Repository.Master
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in AdminRepo/DeleteSubLedger", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $" AdminRepo/DeleteSubLedger : {_Exception.Message}");
             }
 
@@ -500,7 +490,6 @@ namespace FMS.Repository.Master
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in MasterRepo/GetSubLedgerBalances", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/GetSubLedgerBalances : {_Exception.Message}");
             }
             return _Result;
@@ -528,7 +517,6 @@ namespace FMS.Repository.Master
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in MasterRepo/UpdateSubLedgerBalance", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/UpdateSubLedgerBalance : {_Exception.Message}");
             }
             return _Result;
@@ -566,7 +554,6 @@ namespace FMS.Repository.Master
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in MasterRepo/DeleteSubLedgerBalance", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/DeleteSubLedgerBalance : {_Exception.Message}");
             }
             return _Result;
@@ -592,7 +579,6 @@ namespace FMS.Repository.Master
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in MasterRepo/GetAllItemTypes", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/GetAllItemTypes : {_Exception.Message}");
             }
             return _Result;
@@ -622,7 +608,6 @@ namespace FMS.Repository.Master
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in MasterRepo/GetAllGroups", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/GetAllGroups : {_Exception.Message}");
             }
             return _Result;
@@ -646,7 +631,6 @@ namespace FMS.Repository.Master
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in MasterRepo/CreateGroup", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/CreateGroup : {_Exception.Message}");
             }
             return _Result;
@@ -669,7 +653,6 @@ namespace FMS.Repository.Master
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in MasterRepo/UpdateGroup", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/UpdateGroup : {_Exception.Message}");
             }
             return _Result;
@@ -707,7 +690,6 @@ namespace FMS.Repository.Master
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in MasterRepo/DeleteGroup", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/DeleteGroup : {_Exception.Message}");
             }
             return _Result;
@@ -736,7 +718,6 @@ namespace FMS.Repository.Master
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in MasterRepo/GetSubGroups", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/GetSubGroups : {_Exception.Message}");
             }
             return _Result;
@@ -760,7 +741,6 @@ namespace FMS.Repository.Master
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in MasterRepo/CreateSubGroup", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/CreateSubGroup : {_Exception.Message}");
             }
             return _Result;
@@ -783,7 +763,6 @@ namespace FMS.Repository.Master
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in MasterRepo/UpdateSubGroup", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/UpdateSubGroup : {_Exception.Message}");
             }
             return _Result;
@@ -821,7 +800,6 @@ namespace FMS.Repository.Master
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in MasterRepo/DeleteSubGroup", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/DeleteSubGroup : {_Exception.Message}");
             }
             return _Result;
@@ -850,7 +828,6 @@ namespace FMS.Repository.Master
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in MasterRepo/GetAllUnits", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/GetAllUnits : {_Exception.Message}");
             }
             return _Result;
@@ -874,7 +851,6 @@ namespace FMS.Repository.Master
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in MasterRepo/CreateUnit", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/CreateUnit : {_Exception.Message}");
             }
             return _Result;
@@ -897,7 +873,6 @@ namespace FMS.Repository.Master
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in MasterRepo/UpdateUnit", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/UpdateUnit : {_Exception.Message}");
             }
             return _Result;
@@ -935,7 +910,6 @@ namespace FMS.Repository.Master
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in MasterRepo/DeleteUnit", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/DeleteUnit : {_Exception.Message}");
             }
             return _Result;
@@ -971,7 +945,6 @@ namespace FMS.Repository.Master
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in MasterRepo/GetAllProducts", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/GetAllProducts : {_Exception.Message}");
             }
             return _Result;
@@ -993,7 +966,6 @@ namespace FMS.Repository.Master
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in MasterRepo/GetProductByTypeId", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/GetProductByTypeId : {_Exception.Message}");
             }
             return _Result;
@@ -1023,7 +995,6 @@ namespace FMS.Repository.Master
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("Exception Occurs in GetProductDetailsSelected", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Exception", $"GetProductDetailsSelected : {_Exception.Message}");
             }
             return _Result;
@@ -1047,7 +1018,6 @@ namespace FMS.Repository.Master
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in MasterRepo/CreateProduct", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/CreateProduct : {_Exception.Message}");
             }
             return _Result;
@@ -1070,7 +1040,6 @@ namespace FMS.Repository.Master
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in MasterRepo/UpdateProduct", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/UpdateProduct : {_Exception.Message}");
             }
             return _Result;
@@ -1105,7 +1074,6 @@ namespace FMS.Repository.Master
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in MasterRepo/DeleteProduct", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/DeleteProduct : {_Exception.Message}");
             }
 
@@ -1145,7 +1113,6 @@ namespace FMS.Repository.Master
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in MasterRepo/GetStocks", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/GetStocks : {_Exception.Message}");
             }
             return _Result;
@@ -1180,7 +1147,6 @@ namespace FMS.Repository.Master
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in MasterRepo/GetProductsWhichNotInStock", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/GetProductsWhichNotInStock : {_Exception.Message}");
             }
             return _Result;
@@ -1227,7 +1193,6 @@ namespace FMS.Repository.Master
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in MasterRepo/CreateStock", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/CreateStock : {_Exception.Message}");
             }
             return _Result;
@@ -1286,7 +1251,6 @@ namespace FMS.Repository.Master
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("Exception Occurs in MasterRepo/UpdateStock", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Exception", $"MasterRepo/UpdateStock : {_Exception.Message}");
             }
             return _Result;
@@ -1324,7 +1288,6 @@ namespace FMS.Repository.Master
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in MasterRepo/DeleteStock", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/DeleteStock : {_Exception.Message}");
             }
             return _Result;
@@ -1374,7 +1337,6 @@ namespace FMS.Repository.Master
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in MasterRepo/GetParties", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/GetParties : {_Exception.Message}");
             }
             return _Result;
@@ -1466,7 +1428,6 @@ namespace FMS.Repository.Master
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in MasterRepo/CreateParty", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $" MasterRepo/CreateParty : {_Exception.Message}");
             }
             return _Result;
@@ -1498,7 +1459,6 @@ namespace FMS.Repository.Master
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in MasterRepo/UpdateParty", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/UpdateParty : {_Exception.Message}");
             }
             return _Result;
@@ -1594,7 +1554,6 @@ namespace FMS.Repository.Master
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in MasterRepo/DeleteParty", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/DeleteParty : {_Exception.Message}");
             }
             return _Result;
@@ -1625,7 +1584,6 @@ namespace FMS.Repository.Master
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in MasterRepo/GetStates", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/GetStates : {_Exception.Message}");
             }
             return _Result;
@@ -1651,7 +1609,6 @@ namespace FMS.Repository.Master
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in MasterRepo/CreateState", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/CreateState : {_Exception.Message}");
             }
             return _Result;
@@ -1676,7 +1633,6 @@ namespace FMS.Repository.Master
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in MasterRepo/UpdateState", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/UpdateState : {_Exception.Message}");
             }
             return _Result;
@@ -1714,7 +1670,6 @@ namespace FMS.Repository.Master
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in MasterRepo/DeleteState", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/DeleteState : {_Exception.Message}");
             }
             return _Result;
@@ -1745,7 +1700,6 @@ namespace FMS.Repository.Master
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in MasterRepo/GetCities", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/GetCities : {_Exception.Message}");
             }
             return _Result;
@@ -1771,7 +1725,6 @@ namespace FMS.Repository.Master
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in MasterRepo/CreateCity", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/CreateCity : {_Exception.Message}");
             }
             return _Result;
@@ -1796,7 +1749,6 @@ namespace FMS.Repository.Master
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in MasterRepo/UpdateCity", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/UpdateCity : {_Exception.Message}");
             }
             return _Result;
@@ -1834,7 +1786,6 @@ namespace FMS.Repository.Master
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in MasterRepo/DeleteCity", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/DeleteCity : {_Exception.Message}");
             }
             return _Result;
@@ -1866,7 +1817,6 @@ namespace FMS.Repository.Master
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in MasterRepo/GetAllLabourTypes", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/GetAllLabourTypes : {_Exception.Message}");
             }
             return _Result;
@@ -1890,7 +1840,6 @@ namespace FMS.Repository.Master
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in MasterRepo/CreateLabourType", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/CreateLabourType : {_Exception.Message}");
             }
             return _Result;
@@ -1913,7 +1862,6 @@ namespace FMS.Repository.Master
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in MasterRepo/UpdateLabourType", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/UpdateLabourType : {_Exception.Message}");
             }
             return _Result;
@@ -1951,7 +1899,6 @@ namespace FMS.Repository.Master
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in MasterRepo/DeleteLabourType", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/DeleteLabourType : {_Exception.Message}");
             }
             return _Result;
@@ -2004,7 +1951,6 @@ namespace FMS.Repository.Master
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in MasterRepo/GetAllLabourDetails", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/GetAllLabourDetails : {_Exception.Message}");
             }
             return _Result;
@@ -2035,7 +1981,6 @@ namespace FMS.Repository.Master
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in MasterRepo/GetLabourDetailById", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/GetLabourDetailById : {_Exception.Message}");
             }
             return _Result;
@@ -2150,7 +2095,6 @@ namespace FMS.Repository.Master
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in MasterRepo/CreateLabourDetail", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/CreateLabourDetail : {_Exception.Message}");
             }
             return _Result;
@@ -2175,7 +2119,6 @@ namespace FMS.Repository.Master
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in MasterRepo/UpdateLabourDetail", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/UpdateLabourDetail : {_Exception.Message}");
             }
             return _Result;
@@ -2247,7 +2190,6 @@ namespace FMS.Repository.Master
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in MasterRepo/DeleteLabourDetail", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/DeleteLabourDetail : {_Exception.Message}");
             }
             return _Result;
@@ -2280,7 +2222,6 @@ namespace FMS.Repository.Master
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in MasterRepo/GetAllLabourRates", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/GetAllLabourRates : {_Exception.Message}");
             }
             return _Result;
@@ -2304,7 +2245,6 @@ namespace FMS.Repository.Master
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in MasterRepo/GetLabourRateByProductId", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/GetLabourRateByProductId : {_Exception.Message}");
             }
             return _Result;
@@ -2336,7 +2276,6 @@ namespace FMS.Repository.Master
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in MasterRepo/CreateLabourRate", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/CreateLabourRate : {_Exception.Message}");
             }
             return _Result;
@@ -2367,7 +2306,6 @@ namespace FMS.Repository.Master
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in MasterRepo/UpdateLabourRate", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/UpdateLabourRate : {_Exception.Message}");
             }
             return _Result;
@@ -2405,7 +2343,6 @@ namespace FMS.Repository.Master
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in MasterRepo/DeleteLabourRate", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/DeleteLabourRate : {_Exception.Message}");
             }
             return _Result;

@@ -57,7 +57,6 @@ namespace FMS.Repository.Accounting
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in AccountingRepo/GetJournalVoucherNo", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"AccountingRepo/GetJournalVoucherNo : {_Exception.Message}");
             }
             return _Result;
@@ -164,7 +163,6 @@ namespace FMS.Repository.Accounting
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in AccountingRepo/CreateJournal", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"AccountingRepo/CreateJournal : {_Exception.Message}");
             }
             return _Result;
@@ -223,7 +221,6 @@ namespace FMS.Repository.Accounting
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in MasterRepo/GetAllProducts", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/GetAllProducts : {_Exception.Message}");
             }
             return _Result;
@@ -304,7 +301,6 @@ namespace FMS.Repository.Accounting
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in AccountingRepo/DeleteJournal", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"AccountingRepo/DeleteJournal : {_Exception.Message}");
             }
             return _Result;
@@ -341,7 +337,6 @@ namespace FMS.Repository.Accounting
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in AccountingRepo/GetPaymentVoucherNo", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"AccountingRepo/GetPaymentVoucherNo : {_Exception.Message}");
             }
             return _Result;
@@ -369,7 +364,6 @@ namespace FMS.Repository.Accounting
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in AccountingRepo/GetBankLedgers", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"AccountingRepo/GetBankLedgers : {_Exception.Message}");
             }
             return _Result;
@@ -524,7 +518,6 @@ namespace FMS.Repository.Accounting
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in AccountingRepo/CreatePayment", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"AccountingRepo/CreatePayment : {_Exception.Message}");
             }
             return _Result;
@@ -566,7 +559,6 @@ namespace FMS.Repository.Accounting
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in MasterRepo/GetAllProducts", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/GetAllProducts : {_Exception.Message}");
             }
             return _Result;
@@ -637,7 +629,6 @@ namespace FMS.Repository.Accounting
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in AccountingRepo/DeletePayment", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"AccountingRepo/DeletePayment : {_Exception.Message}");
             }
             return _Result;
@@ -674,7 +665,6 @@ namespace FMS.Repository.Accounting
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in AccountingRepo/GetReceiptVoucherNo", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"AccountingRepo/GetReceiptVoucherNo : {_Exception.Message}");
             }
             return _Result;
@@ -826,7 +816,6 @@ namespace FMS.Repository.Accounting
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in AccountingRepo/CreateRecipt", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"AccountingRepo/CreateRecipt : {_Exception.Message}");
             }
             return _Result;
@@ -869,7 +858,6 @@ namespace FMS.Repository.Accounting
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in MasterRepo/GetAllProducts", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/GetAllProducts : {_Exception.Message}");
             }
             return _Result;
@@ -943,7 +931,6 @@ namespace FMS.Repository.Accounting
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in AccountingRepo/DeleteRecipt", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"AccountingRepo/DeleteRecipt : {_Exception.Message}");
             }
             return _Result;

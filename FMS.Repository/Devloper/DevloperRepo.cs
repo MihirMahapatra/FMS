@@ -49,7 +49,6 @@ namespace FMS.Repository.Devloper
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in AccountRepository/CreateToken", _Exception);
             }
             return _Result;
         }
@@ -81,7 +80,6 @@ namespace FMS.Repository.Devloper
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in AccountRepository/CreateToken", _Exception);
             }
             return _Result;
         }
@@ -115,7 +113,6 @@ namespace FMS.Repository.Devloper
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in AccountRepository/CreateToken", _Exception);
             }
             return _Result;
         }
@@ -230,7 +227,6 @@ namespace FMS.Repository.Devloper
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in AccountRepository/CreateToken", _Exception);
             }
             return _Result;
         }
@@ -261,7 +257,6 @@ namespace FMS.Repository.Devloper
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in AccountRepository/CreateToken", _Exception);
             }
             return _Result;
         }
@@ -317,7 +312,6 @@ namespace FMS.Repository.Devloper
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in AccountRepository/CreateToken", _Exception);
             }
             return _Result;
         }
@@ -417,7 +411,6 @@ namespace FMS.Repository.Devloper
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in DevloperRepo/GetLedgerGroups", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"DevloperRepo/GetLedgerGroups : {_Exception.Message}");
             }
             return _Result;
@@ -444,7 +437,6 @@ namespace FMS.Repository.Devloper
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in DevloperRepo/CreateLedgerGroup", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"DevloperRepo/CreateLedgerGroup : {_Exception.Message}");
             }
             return _Result;
@@ -471,7 +463,6 @@ namespace FMS.Repository.Devloper
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in DevloperRepo/UpdateLedgerGroup", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"DevloperRepo/UpdateLedgerGroup : {_Exception.Message}");
             }
             return _Result;
@@ -512,7 +503,6 @@ namespace FMS.Repository.Devloper
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in DevloperRepo/DeleteLedgerGroup", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"DevloperRepo/DeleteLedgerGroup : {_Exception.Message}");
             }                               
             return _Result;
@@ -542,7 +532,6 @@ namespace FMS.Repository.Devloper
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in DevloperRepo/GetLedgerSubGroups", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"DevloperRepo/GetLedgerSubGroups : {_Exception.Message}");
             }
             return _Result;
@@ -569,7 +558,6 @@ namespace FMS.Repository.Devloper
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in DevloperRepo/CreateLedgerSubGroup", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"DevloperRepo/CreateLedgerSubGroup : {_Exception.Message}");
             }
             return _Result;
@@ -596,7 +584,6 @@ namespace FMS.Repository.Devloper
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in DevloperRepo/UpdateLedgerSubGroup", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"DevloperRepo/UpdateLedgerSubGroup : {_Exception.Message}");
             }
             return _Result;
@@ -637,7 +624,6 @@ namespace FMS.Repository.Devloper
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in DevloperRepo/DeleteLedgerSubGroup", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"DevloperRepo/DeleteLedgerSubGroup : {_Exception.Message}");
             }                                
             return _Result;
@@ -670,7 +656,6 @@ namespace FMS.Repository.Devloper
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in DevloperRepo/GetLedgers", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $" DevloperRepo/GetLedgers : {_Exception.Message}");
             }
             return _Result;
@@ -717,7 +702,6 @@ namespace FMS.Repository.Devloper
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in DevloperRepo/CreateLedger", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $" DevloperRepo/CreateLedger : {_Exception.Message}");
             }
             return _Result;
@@ -744,7 +728,6 @@ namespace FMS.Repository.Devloper
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in DevloperRepo/UpdateLedger", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $" DevloperRepo/UpdateLedger : {_Exception.Message}");
             }
 
@@ -786,7 +769,6 @@ namespace FMS.Repository.Devloper
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in DevloperRepo/DeleteLedger", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"DevloperRepo/DeleteLedger : {_Exception.Message}");
             }
             
