@@ -69,7 +69,6 @@ namespace FMS.Repository.Admin
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in AdminRepo/CreateToken", _Exception);
             }
             return _Result;
         }
@@ -102,7 +101,6 @@ namespace FMS.Repository.Admin
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in MasterRepo/CreateCompany", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/CreateCreateCompany : {_Exception.Message}");
             }
             return _Result;
@@ -135,7 +133,6 @@ namespace FMS.Repository.Admin
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in AdminRepo/GetProductionConfig", _Exception);
             }
             return _Result;
         }
@@ -157,7 +154,6 @@ namespace FMS.Repository.Admin
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in AdminRepo/UserRoles", _Exception);
             }
             return _Result;
         }
@@ -185,7 +181,6 @@ namespace FMS.Repository.Admin
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in AdminRepo/CreateRole", _Exception);
             }
             return _Result;
         }
@@ -210,7 +205,6 @@ namespace FMS.Repository.Admin
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in AdminRepo/UpdateRole", _Exception);
             }
             return _Result;
         }
@@ -250,7 +244,6 @@ namespace FMS.Repository.Admin
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in AdminRepo/DeleteRole", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"AdminRepo/DeleteRole : {_Exception.Message}");
             }
             return _Result;
@@ -272,7 +265,6 @@ namespace FMS.Repository.Admin
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in AdminRepo/FindRoleById", _Exception);
             }
             return _Result;
         }
@@ -337,8 +329,6 @@ namespace FMS.Repository.Admin
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-
-                _logger.LogError("exception Occours in AdminRepo/FindUserwithClaimsForRole", _Exception);
             }
             return _Result;
         }
@@ -381,8 +371,6 @@ namespace FMS.Repository.Admin
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-
-                _logger.LogError("exception Occours in AdminRepo/UpdateUserwithClaimsForRole", _Exception);
             }
 
             return _Result;
@@ -437,7 +425,6 @@ namespace FMS.Repository.Admin
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in AdminRepo/GetAllUserAndBranch", _Exception);
             }
             return _Result;
         }
@@ -467,7 +454,6 @@ namespace FMS.Repository.Admin
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in AdminRepo/CreateBranchAlloction", _Exception);
             }
             return _Result;
         }
@@ -533,7 +519,6 @@ namespace FMS.Repository.Admin
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in AdminRepo/DeleteBranchAlloction", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"AdminRepo/DeleteBranchAlloction : {_Exception.Message}");
             }
             return _Result;
@@ -557,7 +542,6 @@ namespace FMS.Repository.Admin
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in AdminRepo/GetAllRawMaterial", _Exception);
 
             }
             return _Result;
@@ -584,7 +568,6 @@ namespace FMS.Repository.Admin
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in AdminRepo/GetProductUnit", _Exception);
 
             }
             return _Result;
@@ -612,7 +595,6 @@ namespace FMS.Repository.Admin
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in AdminRepo/GetAllFinishedGood", _Exception);
             }
             return _Result;
         }
@@ -640,7 +622,6 @@ namespace FMS.Repository.Admin
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in AdminRepo/GetProductionConfig", _Exception);
             }
             return _Result;
         }
@@ -674,7 +655,6 @@ namespace FMS.Repository.Admin
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in AdminRepo/CreateProductConfig", _Exception);
             }
             return _Result;
         }
@@ -698,7 +678,6 @@ namespace FMS.Repository.Admin
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in MasterRepo/UpdateGroup", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/UpdateGroup : {_Exception.Message}");
             }
             return _Result;
@@ -736,7 +715,6 @@ namespace FMS.Repository.Admin
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in AdminRepo/DeleteProductConfig", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"AdminRepo/DeleteProductConfig : {_Exception.Message}");
             }
             return _Result;
@@ -766,7 +744,6 @@ namespace FMS.Repository.Admin
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in AdminRepo/GetLedgerGroups", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"AdminRepo/GetLedgerGroups : {_Exception.Message}");
             }
             return _Result;
@@ -807,7 +784,6 @@ namespace FMS.Repository.Admin
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in AdminRepo/GetLedgerSubGroups", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"AdminRepo/GetLedgerSubGroups : {_Exception.Message}");
             }
             return _Result;
@@ -833,7 +809,6 @@ namespace FMS.Repository.Admin
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in AdminRepo/CreateLedgerSubGroup", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"AdminRepo/CreateLedgerSubGroup : {_Exception.Message}");
             }
             return _Result;
@@ -858,7 +833,6 @@ namespace FMS.Repository.Admin
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in AdminRepo/UpdateLedgerSubGroup", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"AdminRepo/UpdateLedgerSubGroup : {_Exception.Message}");
             }
             return _Result;
@@ -896,7 +870,6 @@ namespace FMS.Repository.Admin
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in AdminRepo/DeleteLedgerSubGroup", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"AdminRepo/DeleteLedgerSubGroup : {_Exception.Message}");
             }
             
@@ -943,7 +916,6 @@ namespace FMS.Repository.Admin
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in AdminRepo/GetLedgers", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $" AdminRepo/GetLedgers : {_Exception.Message}");
             }
             return _Result;
@@ -972,7 +944,6 @@ namespace FMS.Repository.Admin
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in AdminRepo/GetLedgersHasSubLedger", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $" AdminRepo/GetLedgersHasSubLedger : {_Exception.Message}");
             }
             return _Result;
@@ -1010,7 +981,6 @@ namespace FMS.Repository.Admin
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in AdminRepo/GetLedgersHasSubLedger", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $" AdminRepo/GetLedgersHasSubLedger : {_Exception.Message}");
             }
             return _Result;
@@ -1056,7 +1026,6 @@ namespace FMS.Repository.Admin
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in AdminRepo/CreateLedger", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $" AdminRepo/CreateLedger : {_Exception.Message}");
             }
             return _Result;
@@ -1089,7 +1058,6 @@ namespace FMS.Repository.Admin
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in AdminRepo/UpdateLedger", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $" AdminRepo/UpdateLedger : {_Exception.Message}");
             }
 
@@ -1131,7 +1099,6 @@ namespace FMS.Repository.Admin
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in AdminRepo/DeleteLedger", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"AdminRepo/DeleteLedger : {_Exception.Message}");
             }
             return _Result;

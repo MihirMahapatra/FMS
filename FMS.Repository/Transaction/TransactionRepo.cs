@@ -55,7 +55,6 @@ namespace FMS.Repository.Transaction
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in TransactionRepo/GetSundryCreditors", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"TransactionRepo/GetSundryCreditors : {_Exception.Message}");
             }
             return _Result;
@@ -89,7 +88,6 @@ namespace FMS.Repository.Transaction
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in TransactionRepo/GetLastPurchaseTransaction", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"TransactionRepo/GetLastPurchaseTransaction : {_Exception.Message}");
             }
             return _Result;
@@ -123,7 +121,6 @@ namespace FMS.Repository.Transaction
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in TransactionRepo/GetPurchases", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"TransactionRepo/GetPurchases : {_Exception.Message}");
             }
             return _Result;
@@ -178,7 +175,6 @@ namespace FMS.Repository.Transaction
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in TransactionRepo/GetPurchaseById", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"TransactionRepo/GetPurchaseById : {_Exception.Message}");
             }
             return _Result;
@@ -366,7 +362,6 @@ namespace FMS.Repository.Transaction
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in TransactionRepo/CreatePurchase", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"TransactionRepo/CreatePurchase : {_Exception.Message}");
             }
             return _Result;
@@ -591,7 +586,6 @@ namespace FMS.Repository.Transaction
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in TransactionRepo/UpdatePurchase", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"TransactionRepo/UpdatePurchase : {_Exception.Message}");
             }
             return _Result;
@@ -674,7 +668,6 @@ namespace FMS.Repository.Transaction
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in TransactionRepo/DeletePurchase", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"TransactionRepo/DeletePurchase : {_Exception.Message}");
             }
             return _Result;
@@ -709,7 +702,6 @@ namespace FMS.Repository.Transaction
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in TransactionRepo/GetLastPurchaseReturnTransaction", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"TransactionRepo/GetLastPurchaseReturnTransaction : {_Exception.Message}");
             }
             return _Result;
@@ -743,7 +735,6 @@ namespace FMS.Repository.Transaction
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in TransactionRepo/GetPurchaseReturns", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"TransactionRepo/GetPurchaseReturns : {_Exception.Message}");
             }
             return _Result;
@@ -797,7 +788,6 @@ namespace FMS.Repository.Transaction
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in TransactionRepo/GetPurchaseReturnById", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"TransactionRepo/GetPurchaseReturnById : {_Exception.Message}");
             }
             return _Result;
@@ -983,7 +973,6 @@ namespace FMS.Repository.Transaction
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in TransactionRepo/CreatetPurchaseReturn", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"TransactionRepo/CreatetPurchaseReturn : {_Exception.Message}");
             }
             return _Result;
@@ -1207,7 +1196,6 @@ namespace FMS.Repository.Transaction
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in TransactionRepo/UpdatetPurchaseReturn", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"TransactionRepo/UpdatetPurchaseReturn : {_Exception.Message}");
             }
             return _Result;
@@ -1291,7 +1279,6 @@ namespace FMS.Repository.Transaction
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in TransactionRepo/DeletetPurchaseReturn", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"TransactionRepo/DeletetPurchaseReturn : {_Exception.Message}");
             }
             return _Result;
@@ -1328,7 +1315,6 @@ namespace FMS.Repository.Transaction
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in MasterRepo/GetLastProductionNo", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/GetLastProductionNo : {_Exception.Message}");
             }
             return _Result;
@@ -1362,7 +1348,6 @@ namespace FMS.Repository.Transaction
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in MasterRepo/GetProductionConfig", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/GetProductionConfig : {_Exception.Message}");
             }
             return _Result;
@@ -1398,7 +1383,6 @@ namespace FMS.Repository.Transaction
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in MasterRepo/GetProductionEntry", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/GetProductionEntry : {_Exception.Message}");
             }
             return _Result;
@@ -1534,7 +1518,6 @@ namespace FMS.Repository.Transaction
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in MasterRepo/CreateProductionEntry", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/CreateProductionEntry : {_Exception.Message}");
             }
             return _Result;
@@ -1729,7 +1712,6 @@ namespace FMS.Repository.Transaction
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in MasterRepo/UpdateProductionEntry", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/UpdateProductionEntry : {_Exception.Message}");
             }
             return _Result;
@@ -1829,7 +1811,6 @@ namespace FMS.Repository.Transaction
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in MasterRepo/DeleteProductionEntry", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/DeleteProductionEntry : {_Exception.Message}");
             }
             return _Result;
@@ -1859,7 +1840,6 @@ namespace FMS.Repository.Transaction
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in TransactionRepo/GetSundryDebtors", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"TransactionRepo/GetSundryDebtors : {_Exception.Message}");
             }
             return _Result;
@@ -1894,7 +1874,6 @@ namespace FMS.Repository.Transaction
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in TransactionRepo/GetLastSalesTransaction", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"TransactionRepo/GetLastSalesTransaction : {_Exception.Message}");
             }
             return _Result;
@@ -1928,7 +1907,6 @@ namespace FMS.Repository.Transaction
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in TransactionRepo/GetSales", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"TransactionRepo/GetSales : {_Exception.Message}");
             }
             return _Result;
@@ -1983,7 +1961,6 @@ namespace FMS.Repository.Transaction
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in TransactionRepo/GetSalesById", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"TransactionRepo/GetSalesById : {_Exception.Message}");
             }
             return _Result;
@@ -2258,7 +2235,6 @@ namespace FMS.Repository.Transaction
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in TransactionRepo/CreateSales", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"TransactionRepo/CreateSales : {_Exception.Message}");
             }
             return _Result;
@@ -2714,7 +2690,6 @@ namespace FMS.Repository.Transaction
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in TransactionRepo/UpdateSales", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"TransactionRepo/UpdateSales : {_Exception.Message}");
             }
             return _Result;
@@ -2833,7 +2808,6 @@ namespace FMS.Repository.Transaction
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in TransactionRepo/DeleteSales", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"TransactionRepo/DeleteSales : {_Exception.Message}");
             }
             return _Result;
@@ -2868,7 +2842,6 @@ namespace FMS.Repository.Transaction
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in TransactionRepo/GetLastSalesReturnTransaction", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"TransactionRepo/GetLastSalesReturnTransaction : {_Exception.Message}");
             }
             return _Result;
@@ -2900,7 +2873,6 @@ namespace FMS.Repository.Transaction
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in TransactionRepo/GetSalesReturns", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"TransactionRepo/GetSalesReturns : {_Exception.Message}");
             }
             return _Result;
@@ -2954,7 +2926,6 @@ namespace FMS.Repository.Transaction
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in TransactionRepo/GetSalesReturnById", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"TransactionRepo/GetSalesReturnById : {_Exception.Message}");
             }
             return _Result;
@@ -3225,7 +3196,6 @@ namespace FMS.Repository.Transaction
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in TransactionRepo/CreateSalesReturn", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"TransactionRepo/CreateSalesReturn : {_Exception.Message}");
             }
             return _Result;
@@ -3256,7 +3226,6 @@ namespace FMS.Repository.Transaction
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in TransactionRepo/UpdatePurchase", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"TransactionRepo/UpdatePurchase : {_Exception.Message}");
             }
             return _Result;
@@ -3373,7 +3342,6 @@ namespace FMS.Repository.Transaction
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in TransactionRepo/DeletetPurchaseReturn", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"TransactionRepo/DeletetPurchaseReturn : {_Exception.Message}");
             }
             return _Result;
@@ -3409,7 +3377,6 @@ namespace FMS.Repository.Transaction
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in TransactionRepo/GetLastInwardSupply", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"TransactionRepo/GetLastInwardSupply : {_Exception.Message}");
             }
             return _Result;
@@ -3442,7 +3409,6 @@ namespace FMS.Repository.Transaction
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in TransactionRepo/GetInwardSupply", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"TransactionRepo/GetInwardSupply : {_Exception.Message}");
             }
             return _Result;
@@ -3485,7 +3451,6 @@ namespace FMS.Repository.Transaction
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in TransactionRepo/GetInwardSupplyById", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"TransactionRepo/GetInwardSupplyById : {_Exception.Message}");
             }
             return _Result;
@@ -3567,7 +3532,6 @@ namespace FMS.Repository.Transaction
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in TransactionRepo/CreateInwardSupply", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"TransactionRepo/CreateInwardSupply : {_Exception.Message}");
             }
             return _Result;
@@ -3698,7 +3662,6 @@ namespace FMS.Repository.Transaction
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in TransactionRepo/UpdateInwardSupply", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"TransactionRepo/UpdateInwardSupply : {_Exception.Message}");
             }
             return _Result;
@@ -3754,7 +3717,6 @@ namespace FMS.Repository.Transaction
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in TransactionRepo/DeleteInwardSupply", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"TransactionRepo/DeleteInwardSupply : {_Exception.Message}");
             }
             return _Result;
@@ -3789,7 +3751,6 @@ namespace FMS.Repository.Transaction
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in TransactionRepo/GetLastOutwardSupply", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"TransactionRepo/GetLastOutwardSupply : {_Exception.Message}");
             }
             return _Result;
@@ -3822,7 +3783,6 @@ namespace FMS.Repository.Transaction
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in TransactionRepo/GetOutwardSupply", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"TransactionRepo/GetOutwardSupply : {_Exception.Message}");
             }
             return _Result;
@@ -3865,7 +3825,6 @@ namespace FMS.Repository.Transaction
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in TransactionRepo/GetOutwardSupplyById", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"TransactionRepo/GetOutwardSupplyById : {_Exception.Message}");
             }
             return _Result;
@@ -3942,7 +3901,6 @@ namespace FMS.Repository.Transaction
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in TransactionRepo/CreateOutwardSupply", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"TransactionRepo/CreateOutwardSupply : {_Exception.Message}");
             }
             return _Result;
@@ -4060,7 +4018,6 @@ namespace FMS.Repository.Transaction
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in TransactionRepo/UpdateOutwardSupply", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"TransactionRepo/UpdateOutwardSupply : {_Exception.Message}");
             }
             return _Result;
@@ -4116,7 +4073,6 @@ namespace FMS.Repository.Transaction
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in TransactionRepo/DeleteOutwardSupply", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"TransactionRepo/DeleteOutwardSupply : {_Exception.Message}");
             }
             return _Result;
@@ -4151,7 +4107,6 @@ namespace FMS.Repository.Transaction
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in TransactionRepo/GetLastDamageEntry", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"TransactionRepo/GetLastDamageEntry : {_Exception.Message}");
             }
             return _Result;
@@ -4186,7 +4141,6 @@ namespace FMS.Repository.Transaction
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in TransactionRepo/GetDamages", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"TransactionRepo/GetDamages : {_Exception.Message}");
             }
             return _Result;
@@ -4230,7 +4184,6 @@ namespace FMS.Repository.Transaction
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in TransactionRepo/GetDamageById", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"TransactionRepo/GetDamageById : {_Exception.Message}");
             }
             return _Result;
@@ -4334,7 +4287,6 @@ namespace FMS.Repository.Transaction
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in TransactionRepo/CreateDamage", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"TransactionRepo/CreateDamage : {_Exception.Message}");
             }
             return _Result;
@@ -4452,7 +4404,6 @@ namespace FMS.Repository.Transaction
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in TransactionRepo/UpdateDamage", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"TransactionRepo/UpdateDamage : {_Exception.Message}");
             }
             return _Result;
@@ -4508,7 +4459,6 @@ namespace FMS.Repository.Transaction
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                _logger.LogError("exception Occours in TransactionRepo/DeleteDamage", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"TransactionRepo/DeleteDamage : {_Exception.Message}");
             }
             return _Result;
