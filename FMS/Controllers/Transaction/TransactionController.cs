@@ -3,6 +3,7 @@ using FMS.Service.Devloper;
 using FMS.Service.Master;
 using FMS.Service.Transaction;
 using FMS.Utility;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FMS.Controllers.Transaction
@@ -67,23 +68,37 @@ namespace FMS.Controllers.Transaction
         }
         [HttpGet]
         public async Task<IActionResult> GetProductGstWithRate([FromQuery] Guid id)
-         {
+        {
             var result = await _masterSvcs.GetProductGstWithRate(id);
             return new JsonResult(result);
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Create")]
         public async Task<IActionResult> CreatePurchase([FromBody] PurchaseDataRequest requestData)
         {
-            var result = await _transactionSvcs.CreatePurchase(requestData);
-            return new JsonResult(result);
+            if (ModelState.IsValid)
+            {
+                var result = await _transactionSvcs.CreatePurchase(requestData);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Update")]
         public async Task<IActionResult> UpdatePurchase([FromBody] PurchaseDataRequest requestData)
         {
-            var result = await _transactionSvcs.UpdatePurchase(requestData);
-            return new JsonResult(result);
+            if (ModelState.IsValid)
+            {
+                var result = await _transactionSvcs.UpdatePurchase(requestData);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Delete")]
         public async Task<IActionResult> DeletePurchase([FromQuery] Guid Id)
         {
             var result = await _transactionSvcs.DeletePurchase(Id);
@@ -109,19 +124,34 @@ namespace FMS.Controllers.Transaction
             var result = await _transactionSvcs.GetPurchaseReturnById(Id);
             return new JsonResult(result);
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Create")]
         public async Task<IActionResult> CreatetPurchaseReturn([FromBody] PurchaseDataRequest requestData)
         {
-            var result = await _transactionSvcs.CreatetPurchaseReturn(requestData);
-            return new JsonResult(result);
+            if (ModelState.IsValid)
+            {
+                var result = await _transactionSvcs.CreatetPurchaseReturn(requestData);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Update")]
         public async Task<IActionResult> UpdatetPurchaseReturn([FromBody] PurchaseDataRequest requestData)
         {
-            var result = await _transactionSvcs.UpdatetPurchaseReturn(requestData);
-            return new JsonResult(result);
+
+            if (ModelState.IsValid)
+            {
+                var result = await _transactionSvcs.UpdatetPurchaseReturn(requestData);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Delete")]
         public async Task<IActionResult> DeletetPurchaseReturn([FromQuery] Guid Id)
         {
             var result = await _transactionSvcs.DeletetPurchaseReturn(Id);
@@ -174,19 +204,35 @@ namespace FMS.Controllers.Transaction
             var result = await _transactionSvcs.GetProductionConfig(ProductId);
             return new JsonResult(result);
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Create")]
         public async Task<IActionResult> CreateProductionEntry([FromBody] ProductionEntryRequest data)
         {
-            var result = await _transactionSvcs.CreateProductionEntry(data);
-            return new JsonResult(result);
+            if (ModelState.IsValid)
+            {
+                var result = await _transactionSvcs.CreateProductionEntry(data);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
+
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Update")]
         public async Task<IActionResult> UpdateProductionEntry([FromBody] ProductionEntryModel model)
         {
-            var result = await _transactionSvcs.UpdateProductionEntry(model);
-            return new JsonResult(result);
+            if (ModelState.IsValid)
+            {
+                var result = await _transactionSvcs.UpdateProductionEntry(model);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
+
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Delete")]
         public async Task<IActionResult> DeleteProductionEntry([FromQuery] string id)
         {
             Guid ProductionEntryId = Guid.Parse(id);
@@ -244,19 +290,35 @@ namespace FMS.Controllers.Transaction
             var result = await _transactionSvcs.GetSalesById(Id);
             return new JsonResult(result);
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Create")]
         public async Task<IActionResult> CreateSale([FromBody] SalesDataRequest requestData)
         {
-            var result = await _transactionSvcs.CreateSale(requestData);
-            return new JsonResult(result);
+            if (ModelState.IsValid)
+            {
+                var result = await _transactionSvcs.CreateSale(requestData);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
+
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Update")]
         public async Task<IActionResult> UpdateSales([FromBody] SalesDataRequest requestData)
         {
-            var result = await _transactionSvcs.UpdatSales(requestData);
-            return new JsonResult(result);
+            if (ModelState.IsValid)
+            {
+                var result = await _transactionSvcs.UpdatSales(requestData);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
+
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Delete")]
         public async Task<IActionResult> DeleteSales([FromQuery] Guid Id)
         {
             var result = await _transactionSvcs.DeleteSales(Id);
@@ -282,19 +344,35 @@ namespace FMS.Controllers.Transaction
             var result = await _transactionSvcs.GetSalesReturnById(Id);
             return new JsonResult(result);
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Create")]
         public async Task<IActionResult> CreateSalesReturn([FromBody] SalesDataRequest requestData)
         {
-            var result = await _transactionSvcs.CreateSalesReturn(requestData);
-            return new JsonResult(result);
+            if (ModelState.IsValid)
+            {
+                var result = await _transactionSvcs.CreateSalesReturn(requestData);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
+
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Update")]
         public async Task<IActionResult> UpdateSalesReturn([FromBody] SalesDataRequest requestData)
         {
-            var result = await _transactionSvcs.UpdateSalesReturn(requestData);
-            return new JsonResult(result);
+            if (ModelState.IsValid)
+            {
+                var result = await _transactionSvcs.UpdateSalesReturn(requestData);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
+
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Delete")]
         public async Task<IActionResult> DeleteSalesReturn([FromQuery] Guid Id)
         {
             var result = await _transactionSvcs.DeleteSalesReturn(Id);
@@ -343,19 +421,35 @@ namespace FMS.Controllers.Transaction
             var result = await _transactionSvcs.GetInwardSupplyById(Id);
             return new JsonResult(result);
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Create")]
         public async Task<IActionResult> CreateInwardSupply([FromBody] SupplyDataRequest requestData)
         {
-            var result = await _transactionSvcs.CreateInwardSupply(requestData);
-            return new JsonResult(result);
+            if (ModelState.IsValid)
+            {
+                var result = await _transactionSvcs.CreateInwardSupply(requestData);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
+
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Update")]
         public async Task<IActionResult> UpdateInwardSupply([FromBody] SupplyDataRequest requestData)
         {
-            var result = await _transactionSvcs.UpdateInwardSupply(requestData);
-            return new JsonResult(result);
+            if (ModelState.IsValid)
+            {
+                var result = await _transactionSvcs.UpdateInwardSupply(requestData);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
+
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Delete")]
         public async Task<IActionResult> DeleteInwardSupply([FromQuery] Guid Id)
         {
             var result = await _transactionSvcs.DeleteInwardSupply(Id);
@@ -390,19 +484,35 @@ namespace FMS.Controllers.Transaction
             var result = await _transactionSvcs.GetOutwardSupplyById(Id);
             return new JsonResult(result);
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Create")]
         public async Task<IActionResult> CreateOutwardSupply([FromBody] SupplyDataRequest requestData)
         {
-            var result = await _transactionSvcs.CreateOutwardSupply(requestData);
-            return new JsonResult(result);
+            if (ModelState.IsValid)
+            {
+                var result = await _transactionSvcs.CreateOutwardSupply(requestData);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
+
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Update")]
         public async Task<IActionResult> UpdateOutwardSupply([FromBody] SupplyDataRequest requestData)
         {
-            var result = await _transactionSvcs.UpdateOutwardSupply(requestData);
-            return new JsonResult(result);
+            if (ModelState.IsValid)
+            {
+                var result = await _transactionSvcs.UpdateOutwardSupply(requestData);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
+
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Delete")]
         public async Task<IActionResult> DeleteOutwardSupply([FromQuery] Guid Id)
         {
             var result = await _transactionSvcs.DeleteOutwardSupply(Id);
@@ -444,19 +554,35 @@ namespace FMS.Controllers.Transaction
             var result = await _transactionSvcs.GetDamageById(Id);
             return new JsonResult(result);
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Create")]
         public async Task<IActionResult> CreateDamage([FromBody] DamageRequestData requestData)
         {
-            var result = await _transactionSvcs.CreateDamage(requestData);
-            return new JsonResult(result);
+            if (ModelState.IsValid)
+            {
+                var result = await _transactionSvcs.CreateDamage(requestData);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
+
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Update")]
         public async Task<IActionResult> UpdateDamage([FromBody] DamageRequestData requestData)
         {
-            var result = await _transactionSvcs.UpdateDamage(requestData);
-            return new JsonResult(result);
+            if (ModelState.IsValid)
+            {
+                var result = await _transactionSvcs.UpdateDamage(requestData);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
+
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Delete")]
         public async Task<IActionResult> DeleteDamage([FromQuery] Guid Id)
         {
             var result = await _transactionSvcs.DeleteDamage(Id);

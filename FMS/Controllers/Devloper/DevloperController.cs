@@ -25,19 +25,19 @@ namespace FMS.Controllers.Devloper
             var Branches = await _devloperSvcs.GetAllBranch();
             return new JsonResult(Branches);
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Create")]
         public async Task<IActionResult> CreateBranch([FromBody] BranchModel model)
         {
             var result = await _devloperSvcs.CreateBranch(model);
             return new JsonResult(result);
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Update")]
         public async Task<IActionResult> UpdateBranch([FromBody] BranchModel model)
         {
             var result = await _devloperSvcs.UpdateBranch(model);
             return new JsonResult(result);
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Delete")]
         public async Task<IActionResult> DeleteBranch([FromQuery] string id)
         {
             Guid BranchId = Guid.Parse(id);
@@ -53,19 +53,19 @@ namespace FMS.Controllers.Devloper
             var result = await _devloperSvcs.GetFinancialYears();
             return new JsonResult(result);
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Create")]
         public async Task<IActionResult> CreateFinancialYear([FromBody] FinancialYearModel model)
         {
             var result = await _devloperSvcs.CreateFinancialYear(model);
             return new JsonResult(result);
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Update")]
         public async Task<IActionResult> UpdateFinancialYear([FromBody] FinancialYearModel model)
         {
             var result = await _devloperSvcs.UpdateFinancialYear(model);
             return new JsonResult(result);
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Delete")]
         public async Task<IActionResult> DeleteFinancialYear([FromQuery] string id)
         {
             Guid BranchId = Guid.Parse(id);
@@ -81,19 +81,19 @@ namespace FMS.Controllers.Devloper
             var result = await _devloperSvcs.GetLedgerGroups();
             return new JsonResult(result);
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Create")]
         public async Task<IActionResult> CreateLedgerGroup([FromBody] LedgerGroupModel model)
         {
             var result = await _devloperSvcs.CreateLedgerGroup(model);
             return new JsonResult(result);
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Update")]
         public async Task<IActionResult> UpdateLedgerGroup([FromBody] LedgerGroupModel model)
         {
             var result = await _devloperSvcs.UpdateLedgerGroup(model);
             return new JsonResult(result);
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Delete")]
         public async Task<IActionResult> DeleteLedgerGroup([FromQuery] string id)
         {
             Guid Id = Guid.Parse(id);
@@ -108,19 +108,19 @@ namespace FMS.Controllers.Devloper
             var result = await _devloperSvcs.GetLedgerSubGroups(BranchId, GroupId);
             return new JsonResult(result);
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Create")]
         public async Task<IActionResult> CreateLedgerSubGroup([FromBody] LedgerSubGroupModel model)
         {
             var result = await _devloperSvcs.CreateLedgerSubGroup(model);
             return new JsonResult(result);
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Update")]
         public async Task<IActionResult> UpdateLedgerSubGroup([FromBody] LedgerSubGroupModel model)
         {
             var result = await _devloperSvcs.UpdateLedgerSubGroup(model);
             return new JsonResult(result);
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Delete")]
         public async Task<IActionResult> DeleteLedgerSubGroup([FromQuery] Guid BranchId, [FromQuery] string id)
         {
             Guid Id = Guid.Parse(id);

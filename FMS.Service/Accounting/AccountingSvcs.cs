@@ -108,6 +108,43 @@ namespace FMS.Service.Accounting
             }
             return Obj;
         }
+        public async Task<JournalViewModel> GetJournalById(string Id)
+        {
+            JournalViewModel Obj;
+            var Result = await _accountingRepo.GetJournalById(Id);
+            if (Result.IsSuccess)
+            {
+                if (Result.Response == "success")
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
+                        GroupedJournals = Result.CollectionObjData,
+                    };
+                }
+                else
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.NotFound),
+                        Message = "No Record Found"
+                    };
+                }
+            }
+            else
+            {
+                Obj = new()
+                {
+                    ResponseStatus = Result.Response,
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    Message = "Some Eroor Occoured"
+                };
+            }
+            return Obj;
+        }
         public async Task<Base> DeleteJournal(string Id)
         {
             var Result = await _accountingRepo.DeleteJournal(Id, null);
@@ -279,6 +316,43 @@ namespace FMS.Service.Accounting
             }
             return Obj;
         }
+        public async Task<PaymentViewModel> GetPaymentById(string Id)
+        {
+            PaymentViewModel Obj;
+            var Result = await _accountingRepo.GetPayments();
+            if (Result.IsSuccess)
+            {
+                if (Result.Response == "success")
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
+                        GroupedPayments = Result.CollectionObjData,
+                    };
+                }
+                else
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.NotFound),
+                        Message = "No Record Found"
+                    };
+                }
+            }
+            else
+            {
+                Obj = new()
+                {
+                    ResponseStatus = Result.Response,
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    Message = "Some Eroor Occoured"
+                };
+            }
+            return Obj;
+        }
         public async Task<Base> DeletePayment(string Id)
         {
 
@@ -318,7 +392,6 @@ namespace FMS.Service.Accounting
 
             return Obj;
         }
-
         #endregion
         #region Receipt
         public async Task<Base> GetReceiptVoucherNo(string CashBank)
@@ -378,9 +451,6 @@ namespace FMS.Service.Accounting
             }
             return Obj;
         }
-
-
-
         public async Task<ReceiptViewModel> GetReceipts()
         {
             ReceiptViewModel Obj;
@@ -418,7 +488,43 @@ namespace FMS.Service.Accounting
             }
             return Obj;
         }
-
+        public async Task<ReceiptViewModel> GetReceiptById(string Id)
+        {
+            ReceiptViewModel Obj;
+            var Result = await _accountingRepo.GetReceipts();
+            if (Result.IsSuccess)
+            {
+                if (Result.Response == "success")
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
+                        GroupedReceipts = Result.CollectionObjData,
+                    };
+                }
+                else
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.NotFound),
+                        Message = "No Record Found"
+                    };
+                }
+            }
+            else
+            {
+                Obj = new()
+                {
+                    ResponseStatus = Result.Response,
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    Message = "Some Eroor Occoured"
+                };
+            }
+            return Obj;
+        }
         public async Task<Base> DeleteReceipt(string Id)
         {
             var Result = await _accountingRepo.DeleteRecipt(Id, null);
@@ -457,11 +563,6 @@ namespace FMS.Service.Accounting
 
             return Obj;
         }
-
-
-
-
-
         #endregion
     }
 }

@@ -6,6 +6,7 @@ using FMS.Service.Master;
 using FMS.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace FMS.Controllers.Master
 {
@@ -16,7 +17,7 @@ namespace FMS.Controllers.Master
         private readonly IAdminSvcs _adminSvcs;
         private readonly IDevloperSvcs _devloperSvcs;
         private readonly IHttpContextAccessor _HttpContextAccessor;
-        public MasterController(IMasterSvcs masterSvcs, IDevloperSvcs devloperSvcs, IAdminSvcs adminSvcs,  IHttpContextAccessor httpContextAccessor) : base()
+        public MasterController(IMasterSvcs masterSvcs, IDevloperSvcs devloperSvcs, IAdminSvcs adminSvcs, IHttpContextAccessor httpContextAccessor) : base()
         {
             _masterSvcs = masterSvcs;
             _devloperSvcs = devloperSvcs;
@@ -52,19 +53,33 @@ namespace FMS.Controllers.Master
             var result = await _masterSvcs.GetSubLedgersByBranch(LedgerId);
             return new JsonResult(result);
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Create")]
         public async Task<IActionResult> CreateLedgerBalance([FromBody] LedgerBalanceRequest data)
         {
-            var result = await _masterSvcs.CreateLedgerBalance(data);
-            return new JsonResult(result);
+            if (ModelState.IsValid)
+            {
+                var result = await _masterSvcs.CreateLedgerBalance(data);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Update")]
         public async Task<IActionResult> UpdateLedgerBalance([FromBody] LedgerBalanceModel data)
         {
-            var result = await _masterSvcs.UpdateLedgerBalance(data);
-            return new JsonResult(result);
+            if (ModelState.IsValid)
+            {
+                var result = await _masterSvcs.UpdateLedgerBalance(data);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Delete")]
         public async Task<IActionResult> DeleteLedgerBalance([FromQuery] string id)
         {
             Guid Id = Guid.Parse(id);
@@ -88,11 +103,18 @@ namespace FMS.Controllers.Master
             ViewBag.FinancialYear = FinancialYear;
             return View();
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Create")]
         public async Task<IActionResult> CreateSubLedgers([FromBody] SubLedgerDataRequest requestData)
         {
-            var result = await _masterSvcs.CreateSubLedger(requestData);
-            return new JsonResult(result);
+            if (ModelState.IsValid)
+            {
+                var result = await _masterSvcs.CreateSubLedger(requestData);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
         [HttpGet]
         public async Task<IActionResult> GetSubLedgers()
@@ -106,13 +128,20 @@ namespace FMS.Controllers.Master
             var result = await _masterSvcs.GetSubLedgersById(LedgerId);
             return new JsonResult(result);
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Update")]
         public async Task<IActionResult> UpdateSubLedger([FromBody] SubLedgerModel model)
         {
-            var result = await _masterSvcs.UpdateSubLedger(model);
-            return new JsonResult(result);
+            if (ModelState.IsValid)
+            {
+                var result = await _masterSvcs.UpdateSubLedger(model);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Delete")]
         public async Task<IActionResult> DeleteSubLedger([FromQuery] string id)
         {
             Guid Id = Guid.Parse(id);
@@ -128,13 +157,20 @@ namespace FMS.Controllers.Master
             var result = await _masterSvcs.GetSubLedgerBalances();
             return new JsonResult(result);
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Update")]
         public async Task<IActionResult> UpdateSubLedgerBalance([FromBody] SubLedgerBalanceModel data)
         {
-            var result = await _masterSvcs.UpdateSubLedgerBalance(data);
-            return new JsonResult(result);
+            if (ModelState.IsValid)
+            {
+                var result = await _masterSvcs.UpdateSubLedgerBalance(data);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Delete")]
         public async Task<IActionResult> DeleteSubLedgerBalance([FromQuery] string id)
         {
             Guid Id = Guid.Parse(id);
@@ -168,19 +204,33 @@ namespace FMS.Controllers.Master
             var Groups = await _masterSvcs.GetAllGroups();
             return new JsonResult(Groups);
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Create")]
         public async Task<IActionResult> CreateGroup([FromBody] GroupModel model)
         {
-            var result = await _masterSvcs.CreateGroup(model);
-            return new JsonResult(result);
+            if (ModelState.IsValid)
+            {
+                var result = await _masterSvcs.CreateGroup(model);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Update")]
         public async Task<IActionResult> UpdateGroup([FromBody] GroupModel model)
         {
-            var result = await _masterSvcs.UpdateGroup(model);
-            return new JsonResult(result);
+            if (ModelState.IsValid)
+            {
+                var result = await _masterSvcs.UpdateGroup(model);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Delete")]
         public async Task<IActionResult> DeleteGroup([FromQuery] string id)
         {
             Guid GroupId = Guid.Parse(id);
@@ -195,19 +245,34 @@ namespace FMS.Controllers.Master
             var SubGroups = await _masterSvcs.GetSubGroups(Groupid);
             return new JsonResult(SubGroups);
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Create")]
         public async Task<IActionResult> CreateSubGroup([FromBody] SubGroupModel model)
         {
-            var result = await _masterSvcs.CreateSubGroup(model);
-            return new JsonResult(result);
+            if (ModelState.IsValid)
+            {
+                var result = await _masterSvcs.CreateSubGroup(model);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Update")]
         public async Task<IActionResult> UpdateSubGroup([FromBody] SubGroupModel model)
         {
-            var result = await _masterSvcs.UpdateSubGroup(model);
-            return new JsonResult(result);
+            if (ModelState.IsValid)
+            {
+                var result = await _masterSvcs.UpdateSubGroup(model);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
+
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Delete")]
         public async Task<IActionResult> DeleteSubGroup([FromQuery] string id)
         {
             Guid SubGroupId = Guid.Parse(id);
@@ -221,19 +286,34 @@ namespace FMS.Controllers.Master
             var result = await _masterSvcs.GetAllUnits();
             return new JsonResult(result);
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Create")]
         public async Task<IActionResult> CreateUnit([FromBody] UnitModel model)
         {
-            var result = await _masterSvcs.CreateUnit(model);
-            return new JsonResult(result);
+            if (ModelState.IsValid)
+            {
+                var result = await _masterSvcs.CreateUnit(model);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
+
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Update")]
         public async Task<IActionResult> UpdateUnit([FromBody] UnitModel model)
         {
-            var result = await _masterSvcs.UpdateUnit(model);
-            return new JsonResult(result);
+            if (ModelState.IsValid)
+            {
+                var result = await _masterSvcs.UpdateUnit(model);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Delete")]
         public async Task<IActionResult> DeleteUnit([FromQuery] string id)
         {
             Guid UnitId = Guid.Parse(id);
@@ -248,19 +328,35 @@ namespace FMS.Controllers.Master
             var result = await _masterSvcs.GetAllProducts();
             return new JsonResult(result);
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Create")]
         public async Task<IActionResult> CreateProduct([FromBody] ProductModel model)
         {
-            var result = await _masterSvcs.CreateProduct(model);
-            return new JsonResult(result);
+            if (ModelState.IsValid)
+            {
+                var result = await _masterSvcs.CreateProduct(model);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
+
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Update")]
         public async Task<IActionResult> UpdateProduct([FromBody] ProductModel model)
         {
-            var result = await _masterSvcs.UpdateProduct(model);
-            return new JsonResult(result);
+            if (ModelState.IsValid)
+            {
+                var result = await _masterSvcs.UpdateProduct(model);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
+
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Delete")]
         public async Task<IActionResult> DeleteProduct([FromQuery] string id)
         {
             Guid GroupId = Guid.Parse(id);
@@ -281,20 +377,33 @@ namespace FMS.Controllers.Master
             var result = await _masterSvcs.GetProductsWhichNotInStock();
             return new JsonResult(result);
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Create")]
         public async Task<IActionResult> CreateStock([FromBody] StockModel model)
         {
-            var result = await _masterSvcs.CreateStock(model);
-            return new JsonResult(result);
+            if (ModelState.IsValid)
+            {
+                var result = await _masterSvcs.CreateStock(model);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Update")]
         public async Task<IActionResult> UpdateStock([FromBody] StockModel model)
         {
-
-            var result = await _masterSvcs.UpdateStock(model);
-            return new JsonResult(result);
+            if (ModelState.IsValid)
+            {
+                var result = await _masterSvcs.UpdateStock(model);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Delete")]
         public async Task<IActionResult> DeleteStock([FromQuery] string id)
         {
             Guid Id = Guid.Parse(id);
@@ -340,19 +449,33 @@ namespace FMS.Controllers.Master
             var result = await _masterSvcs.GetStates();
             return new JsonResult(result);
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Create")]
         public async Task<IActionResult> CreateState([FromBody] StateModel model)
         {
-            var result = await _masterSvcs.CreateState(model);
-            return new JsonResult(result);
+            if (ModelState.IsValid)
+            {
+                var result = await _masterSvcs.CreateState(model);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Update")]
         public async Task<IActionResult> UpdateState([FromBody] StateModel model)
         {
-            var result = await _masterSvcs.UpdateState(model);
-            return new JsonResult(result);
+            if (ModelState.IsValid)
+            {
+                var result = await _masterSvcs.UpdateState(model);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Delete")]
         public async Task<IActionResult> DeleteState([FromQuery] string id)
         {
             Guid Id = Guid.Parse(id);
@@ -368,19 +491,33 @@ namespace FMS.Controllers.Master
             var result = await _masterSvcs.GetCities(Id);
             return new JsonResult(result);
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Create")]
         public async Task<IActionResult> CreateCity([FromBody] CityModel model)
         {
-            var result = await _masterSvcs.CreateCity(model);
-            return new JsonResult(result);
+            if (ModelState.IsValid)
+            {
+                var result = await _masterSvcs.CreateCity(model);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Update")]
         public async Task<IActionResult> UpdateCity([FromBody] CityModel model)
         {
-            var result = await _masterSvcs.UpdateCity(model);
-            return new JsonResult(result);
+            if (ModelState.IsValid)
+            {
+                var result = await _masterSvcs.UpdateCity(model);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Delete")]
         public async Task<IActionResult> DeleteCity([FromQuery] string id)
         {
             Guid Id = Guid.Parse(id);
@@ -395,19 +532,33 @@ namespace FMS.Controllers.Master
             var result = await _masterSvcs.GetParties();
             return new JsonResult(result);
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Create")]
         public async Task<IActionResult> CreateParty([FromBody] PartyModel model)
         {
-            var result = await _masterSvcs.CreateParty(model);
-            return new JsonResult(result);
+            if (ModelState.IsValid)
+            {
+                var result = await _masterSvcs.CreateParty(model);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Update")]
         public async Task<IActionResult> UpdateParty([FromBody] PartyModel model)
         {
-            var result = await _masterSvcs.UpdateParty(model);
-            return new JsonResult(result);
+            if (ModelState.IsValid)
+            {
+                var result = await _masterSvcs.UpdateParty(model);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Delete")]
         public async Task<IActionResult> DeleteParty([FromQuery] string id)
         {
             Guid Id = Guid.Parse(id);
@@ -433,19 +584,34 @@ namespace FMS.Controllers.Master
             var LabourTypes = await _masterSvcs.GetAllLabourTypes();
             return new JsonResult(LabourTypes);
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Create")]
         public async Task<IActionResult> CreateLabourType([FromBody] LabourTypeModel data)
         {
-            var result = await _masterSvcs.CreateLabourType(data);
-            return new JsonResult(result);
+            if (ModelState.IsValid)
+            {
+                var result = await _masterSvcs.CreateLabourType(data);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
-        [HttpPost]
+
+        [HttpPost, Authorize(Policy = "Update")]
         public async Task<IActionResult> UpdateLabourType([FromBody] LabourTypeModel data)
         {
-            var result = await _masterSvcs.UpdateLabourType(data);
-            return new JsonResult(result);
+            if (ModelState.IsValid)
+            {
+                var result = await _masterSvcs.UpdateLabourType(data);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Delete")]
         public async Task<IActionResult> DeleteLabourType([FromQuery] string Id)
         {
             Guid LabourTypeId = Guid.Parse(Id);
@@ -460,19 +626,34 @@ namespace FMS.Controllers.Master
             var LabourDetails = await _masterSvcs.GetAllLabourDetails();
             return new JsonResult(LabourDetails);
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Create")]
         public async Task<IActionResult> CreateLabourDetail([FromBody] LabourModel data)
         {
-            var result = await _masterSvcs.CreateLabourDetail(data);
-            return new JsonResult(result);
+            if (ModelState.IsValid)
+            {
+                var result = await _masterSvcs.CreateLabourDetail(data);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Update")]
         public async Task<IActionResult> UpdateLabourDetail([FromBody] LabourModel data)
         {
-            var result = await _masterSvcs.UpdateLabourDetail(data);
-            return new JsonResult(result);
+            if (ModelState.IsValid)
+            {
+                var result = await _masterSvcs.UpdateLabourDetail(data);
+                return new JsonResult(result);
+            }
+            else
+            {
+                var result = await _masterSvcs.UpdateLabourDetail(data);
+                return new JsonResult(result);
+            }
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Delete")]
         public async Task<IActionResult> DeleteLabourDetail([FromQuery] string Id)
         {
             Guid LabourDetailId = Guid.Parse(Id);
@@ -494,19 +675,33 @@ namespace FMS.Controllers.Master
             var result = await _masterSvcs.GetProductByTypeId(ProductType);
             return new JsonResult(result);
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Create")]
         public async Task<IActionResult> CreateLabourRate([FromBody] LabourRateModel data)
         {
-            var result = await _masterSvcs.CreateLabourRate(data);
-            return new JsonResult(result);
+            if (ModelState.IsValid)
+            {
+                var result = await _masterSvcs.CreateLabourRate(data);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Update")]
         public async Task<IActionResult> UpdateLabourRate([FromBody] LabourRateModel data)
         {
-            var result = await _masterSvcs.UpdateLabourRate(data);
-            return new JsonResult(result);
+            if (ModelState.IsValid)
+            {
+                var result = await _masterSvcs.UpdateLabourRate(data);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Delete")]
         public async Task<IActionResult> DeleteLabourRate([FromQuery] string Id)
         {
             Guid LabourRateId = Guid.Parse(Id);

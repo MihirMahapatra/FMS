@@ -22,7 +22,7 @@ namespace FMS.Controllers.Admin
         private readonly IDevloperSvcs _devloperSvcs;
         private readonly IHttpContextAccessor _HttpContextAccessor;
         private readonly IConfiguration _configuration;
-        public AdminController(RoleManager<IdentityRole> roleManager, UserManager<AppUser> userManager, IAdminSvcs adminSvcs, IMasterSvcs masterSvcs, IHttpContextAccessor httpContextAccessor, IConfiguration configuration,IDevloperSvcs devloperSvcs) : base()
+        public AdminController(RoleManager<IdentityRole> roleManager, UserManager<AppUser> userManager, IAdminSvcs adminSvcs, IMasterSvcs masterSvcs, IHttpContextAccessor httpContextAccessor, IConfiguration configuration, IDevloperSvcs devloperSvcs) : base()
         {
             RoleManager = roleManager;
             UserManager = userManager;
@@ -89,8 +89,15 @@ namespace FMS.Controllers.Admin
         [HttpPost]
         public async Task<IActionResult> CreateCompany([FromBody] CompanyDetailsModel data)
         {
-            var result = await _adminSvcs.CreateCompany(data);
-            return new JsonResult(result);
+            if (ModelState.IsValid)
+            {
+                var result = await _adminSvcs.CreateCompany(data);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
         [HttpGet]
         public async Task<IActionResult> GetCompany()
@@ -140,7 +147,6 @@ namespace FMS.Controllers.Admin
         #endregion
         #endregion
         #region Role & Claims 
-
         [HttpGet]
         public async Task<IActionResult> ListRoles()
         {
@@ -151,36 +157,48 @@ namespace FMS.Controllers.Admin
             var roles = await _adminSvcs.UserRoles();
             return View(roles);
         }
-
         [HttpPost, Authorize(Policy = "Create")]
         public async Task<IActionResult> CreateRole(RoleModel model)
         {
-            var result = await _adminSvcs.CreateRole(model);
-            if (result.ResponseCode == 201)
+            if (ModelState.IsValid)
             {
-                return RedirectToAction("ListRoles", "Admin", new { SuccessMsg = result.SuccessMsg.ToString() });
+                var result = await _adminSvcs.CreateRole(model);
+                if (result.ResponseCode == 201)
+                {
+                    return RedirectToAction("ListRoles", "Admin", new { SuccessMsg = result.SuccessMsg.ToString() });
+                }
+                else
+                {
+                    return RedirectToAction("ListRoles", "Admin", new { ErrorMsg = result.ErrorMsg.ToString() });
+                }
             }
             else
             {
-                return RedirectToAction("ListRoles", "Admin", new { ErrorMsg = result.ErrorMsg.ToString() });
+                return BadRequest();
             }
         }
-
         [HttpPost, Authorize(Policy = "Edit")]
         public async Task<IActionResult> EditRole(RoleModel model)
         {
-            var result = await _adminSvcs.UpdateRole(model);
-
-            if (result.ResponseCode == 200)
+            if (ModelState.IsValid)
             {
-                return RedirectToAction("ListRoles", "Admin", new { SuccessMsg = result.SuccessMsg.ToString() });
+                var result = await _adminSvcs.UpdateRole(model);
+
+                if (result.ResponseCode == 200)
+                {
+                    return RedirectToAction("ListRoles", "Admin", new { SuccessMsg = result.SuccessMsg.ToString() });
+                }
+                else
+                {
+                    return RedirectToAction("ListRoles", "Admin", new { ErrorMsg = result.ErrorMsg.ToString() });
+                }
             }
             else
             {
-                return RedirectToAction("ListRoles", "Admin", new { ErrorMsg = result.ErrorMsg.ToString() });
+                return BadRequest();
             }
-        }
 
+        }
         [HttpGet, Authorize(Policy = "Delete")]
         public async Task<IActionResult> DeleteRole(string id)
         {
@@ -195,7 +213,6 @@ namespace FMS.Controllers.Admin
                 return RedirectToAction("ListRoles", "Admin", new { ErrorMsg = result.Message });
             }
         }
-
         [HttpGet]
         public async Task<IActionResult> ManageUsersInRole(string roleId)
         {
@@ -217,25 +234,31 @@ namespace FMS.Controllers.Admin
                 return RedirectToAction("ListRoles", "Admin", new { ErrorMsg = "Some Error Occured" });
             }
         }
-
         [HttpPost]
         public async Task<IActionResult> ManageUsersInRole(RoleModel model)
         {
-            var Rolename = await _adminSvcs.FindRoleById(model.Id);
-            if (Rolename != null)
+            if (ModelState.IsValid)
             {
-                var UpdateUserWithClaims = await _adminSvcs.UpdateUserwithClaimsForRole(model, Rolename);
-                if (UpdateUserWithClaims.ResponseCode == 200)
+                var Rolename = await _adminSvcs.FindRoleById(model.Id);
+                if (Rolename != null)
                 {
-                    return RedirectToAction("ListRoles", "Admin", new { SuccessMsg = UpdateUserWithClaims.SuccessMsg });
+                    var UpdateUserWithClaims = await _adminSvcs.UpdateUserwithClaimsForRole(model, Rolename);
+                    if (UpdateUserWithClaims.ResponseCode == 200)
+                    {
+                        return RedirectToAction("ListRoles", "Admin", new { SuccessMsg = UpdateUserWithClaims.SuccessMsg });
+                    }
+                    else
+                    {
+                        return RedirectToAction("ListRoles", "Admin", new { ErrorMsg = UpdateUserWithClaims.ErrorMsg });
+                    }
                 }
-                else
-                {
-                    return RedirectToAction("ListRoles", "Admin", new { ErrorMsg = UpdateUserWithClaims.ErrorMsg });
-                }
-            }
 
-            return RedirectToAction("ListRoles", "Admin", new { ErrorMsg = "Some Error Occoured" });
+                return RedirectToAction("ListRoles", "Admin", new { ErrorMsg = "Some Error Occoured" });
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
         #endregion
         #region Allocate Branch
@@ -254,19 +277,19 @@ namespace FMS.Controllers.Admin
             var result = await _adminSvcs.GetAllUserAndBranch();
             return new JsonResult(result);
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Create")]
         public async Task<IActionResult> CreateBranchAlloction([FromBody] UserBranchModel data)
         {
             var result = await _adminSvcs.CreateBranchAlloction(data);
             return new JsonResult(result);
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Update")]
         public async Task<IActionResult> UpdateBranchAlloction([FromBody] UserBranchModel data)
         {
             var result = await _adminSvcs.UpdateBranchAlloction(data);
             return RedirectToAction("AllocateBranch", "Admin", new { successMsg = result.SuccessMsg, ErrorMsg = result.ErrorMsg });
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Delete")]
         public async Task<IActionResult> DeleteBranchAlloction(string id)
         {
             Guid Id = Guid.Parse(id);
@@ -310,19 +333,33 @@ namespace FMS.Controllers.Admin
             var result = await _adminSvcs.GetProductionConfig();
             return new JsonResult(result);
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Create")]
         public async Task<IActionResult> CreateProductConfig([FromBody] ProductConfigDataRequest requestData)
         {
-            var result = await _adminSvcs.CreateProductConfig(requestData);
-            return new JsonResult(result);
+            if (ModelState.IsValid)
+            {
+                var result = await _adminSvcs.CreateProductConfig(requestData);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Update")]
         public async Task<IActionResult> UpdateProductConfig([FromBody] ProductionModel data)
         {
-            var result = await _adminSvcs.UpdateProductConfig(data);
-            return new JsonResult(result);
+            if (ModelState.IsValid)
+            {
+                var result = await _adminSvcs.UpdateProductConfig(data);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Delete")]
         public async Task<IActionResult> DeleteProductConfig([FromQuery] string Id)
         {
             Guid id = Guid.Parse(Id);
@@ -355,19 +392,34 @@ namespace FMS.Controllers.Admin
             var result = await _adminSvcs.GetLedgerSubGroups(GroupId);
             return new JsonResult(result);
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Create")]
         public async Task<IActionResult> CreateLedgerSubGroup([FromBody] LedgerSubGroupModel model)
         {
-            var result = await _adminSvcs.CreateLedgerSubGroup(model);
-            return new JsonResult(result);
+            if (ModelState.IsValid)
+            {
+                var result = await _adminSvcs.CreateLedgerSubGroup(model);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Update")]
         public async Task<IActionResult> UpdateLedgerSubGroup([FromBody] LedgerSubGroupModel model)
         {
-            var result = await _adminSvcs.UpdateLedgerSubGroup(model);
-            return new JsonResult(result);
+
+            if (ModelState.IsValid)
+            {
+                var result = await _adminSvcs.UpdateLedgerSubGroup(model);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Delete")]
         public async Task<IActionResult> DeleteLedgerSubGroup([FromQuery] string id)
         {
             Guid Id = Guid.Parse(id);
@@ -385,24 +437,31 @@ namespace FMS.Controllers.Admin
             ViewBag.FinancialYear = FinancialYear;
             return View();
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Create")]
         public async Task<IActionResult> CreateLedgers([FromBody] LedgerDataRequest requestData)
         {
-            LedgerViewModel model = new();
-            foreach (var item in requestData.RowData)
+            if (ModelState.IsValid)
             {
-                LedgerModel data = new()
+                LedgerViewModel model = new();
+                foreach (var item in requestData.RowData)
                 {
-                    Fk_LedgerGroupId = Guid.Parse(requestData.LedgerGroupId),
-                    Fk_LedgerSubGroupId = !string.IsNullOrEmpty(requestData.LedgerSubGroupId) ? Guid.Parse(requestData.LedgerSubGroupId) : null,
-                    LedgerType = item[0],
-                    LedgerName = item[1],
-                    HasSubLedger = item[2]
-                };
-                model.Ledgers.Add(data);
+                    LedgerModel data = new()
+                    {
+                        Fk_LedgerGroupId = Guid.Parse(requestData.LedgerGroupId),
+                        Fk_LedgerSubGroupId = !string.IsNullOrEmpty(requestData.LedgerSubGroupId) ? Guid.Parse(requestData.LedgerSubGroupId) : null,
+                        LedgerType = item[0],
+                        LedgerName = item[1],
+                        HasSubLedger = item[2]
+                    };
+                    model.Ledgers.Add(data);
+                }
+                var result = await _adminSvcs.CreateLedger(model);
+                return new JsonResult(result);
             }
-            var result = await _adminSvcs.CreateLedger(model);
-            return new JsonResult(result);
+            else
+            {
+                return BadRequest();
+            }
         }
         [HttpGet]
         public async Task<IActionResult> GetLedgers()
@@ -410,13 +469,20 @@ namespace FMS.Controllers.Admin
             var result = await _adminSvcs.GetLedgers();
             return new JsonResult(result);
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Update")]
         public async Task<IActionResult> UpdateLedger([FromBody] LedgerModel model)
         {
-            var result = await _adminSvcs.UpdateLedger(model);
-            return new JsonResult(result);
+            if (ModelState.IsValid)
+            {
+                var result = await _adminSvcs.UpdateLedger(model);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Delete")]
         public async Task<IActionResult> DeleteLedger([FromQuery] string id)
         {
             Guid Id = Guid.Parse(id);

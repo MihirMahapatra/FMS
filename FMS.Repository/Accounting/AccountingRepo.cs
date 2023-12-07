@@ -225,6 +225,50 @@ namespace FMS.Repository.Accounting
             }
             return _Result;
         }
+        public async Task<Result<GroupedJournalModel>> GetJournalById(string Id)
+        {
+            Result<GroupedJournalModel> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
+                Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
+                var Query = await _appDbContext.Journals.Where(s => s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear && s.VouvherNo == Id).Select(s =>
+                                   new JournalModel()
+                                   {
+                                       JournalId = s.JournalId,
+                                       VouvherNo = s.VouvherNo,
+                                       VoucherDate = s.VoucherDate,
+                                       LedgerDevName = _appDbContext.LedgersDev.Where(l => l.LedgerId == s.Fk_LedgerId).Select(l => l.LedgerName).SingleOrDefault(),
+                                       LedgerName = _appDbContext.Ledgers.Where(l => l.LedgerId == s.Fk_LedgerId).Select(l => l.LedgerName).SingleOrDefault(),
+                                       SubLedgerName = s.SubLedger != null ? s.SubLedger.SubLedgerName : "-",
+                                       narration = s.Narration,
+                                       Amount = s.Amount,
+                                       DrCr = s.DrCr
+                                   }).ToListAsync();
+
+                var groupedQuery = Query.GroupBy(journal => journal.VouvherNo)
+                        .Select(group => new GroupedJournalModel
+                        {
+                            VoucherNo = group.Key,
+                            Journals = group.ToList()
+                        }).ToList();
+
+                if (groupedQuery.Count > 0)
+                {
+                    _Result.CollectionObjData = groupedQuery;
+                    _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
+                }
+                _Result.IsSuccess = true;
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                _logger.LogError("exception Occours in MasterRepo/GetAllProducts", _Exception);
+                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/GetAllProducts : {_Exception.Message}");
+            }
+            return _Result;
+        }
         public async Task<Result<bool>> DeleteJournal(string Id, IDbContextTransaction transaction)
         {
             Result<bool> _Result = new();
@@ -563,6 +607,48 @@ namespace FMS.Repository.Accounting
             }
             return _Result;
         }
+        public async Task<Result<GroupedPaymentModel>> GetPaymentById(string Id)
+        {
+            Result<GroupedPaymentModel> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
+                Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
+                var Query = await _appDbContext.Payments.Where(s => s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear && s.VouvherNo == Id).Select(s =>
+                                   new PaymentModel()
+                                   {
+                                       PaymentId = s.PaymentId,
+                                       VouvherNo = s.VouvherNo,
+                                       VoucherDate = s.VoucherDate,
+                                       LedgerDevName = _appDbContext.LedgersDev.Where(l => l.LedgerId == s.Fk_LedgerId).Select(l => l.LedgerName).SingleOrDefault(),
+                                       LedgerName = _appDbContext.Ledgers.Where(l => l.LedgerId == s.Fk_LedgerId).Select(l => l.LedgerName).SingleOrDefault(),
+                                       SubLedgerName = s.SubLedger != null ? s.SubLedger.SubLedgerName : "-",
+                                       narration = s.narration,
+                                       Amount = s.Amount,
+                                       DrCr = s.DrCr
+                                   }).ToListAsync();
+                var groupedQuery = Query.GroupBy(Payment => Payment.VouvherNo)
+                        .Select(group => new GroupedPaymentModel
+                        {
+                            VoucherNo = group.Key,
+                            Payments = group.ToList()
+                        }).ToList();
+                if (groupedQuery.Count > 0)
+                {
+                    _Result.CollectionObjData = groupedQuery;
+                    _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
+                }
+                _Result.IsSuccess = true;
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                _logger.LogError("exception Occours in MasterRepo/GetAllProducts", _Exception);
+                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/GetAllProducts : {_Exception.Message}");
+            }
+            return _Result;
+        }
         public async Task<Result<bool>> DeletePayment(string Id, IDbContextTransaction transaction)
         {
             Result<bool> _Result = new();
@@ -858,6 +944,46 @@ namespace FMS.Repository.Accounting
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/GetAllProducts : {_Exception.Message}");
+            }
+            return _Result;
+        }
+        public async Task<Result<GroupedReceptModel>> GetReceiptById(string Id)
+        {
+            Result<GroupedReceptModel> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
+                Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
+                var Query = await _appDbContext.Receipts.Where(s => s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear && s.VouvherNo == Id).Select(s =>
+                                   new ReceiptModel()
+                                   {
+                                       ReceiptId = s.ReceiptId,
+                                       VouvherNo = s.VouvherNo,
+                                       VoucherDate = s.VoucherDate,
+                                       SubLedgerName = s.SubLedger != null ? s.SubLedger.SubLedgerName : "-",
+                                       narration = s.narration,
+                                       Amount = s.Amount,
+                                       DrCr = s.DrCr
+                                   }).ToListAsync();
+                var groupedQuery = Query.GroupBy(Receipt => Receipt.VouvherNo)
+                       .Select(group => new GroupedReceptModel
+                       {
+                           VoucherNo = group.Key,
+                           Receipts = group.ToList()
+                       }).ToList();
+                if (groupedQuery.Count > 0)
+                {
+                    _Result.CollectionObjData = groupedQuery;
+                    _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
+                }
+                _Result.IsSuccess = true;
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                _logger.LogError("exception Occours in MasterRepo/GetAllProducts", _Exception);
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/GetAllProducts : {_Exception.Message}");
             }
             return _Result;

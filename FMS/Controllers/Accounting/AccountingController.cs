@@ -4,6 +4,7 @@ using FMS.Service.Accounting;
 using FMS.Service.Admin;
 using FMS.Service.Devloper;
 using FMS.Service.Master;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FMS.Controllers.Accounting
@@ -58,11 +59,18 @@ namespace FMS.Controllers.Accounting
             var result = await _accountingSvcs.GetJournalVoucherNo();
             return new JsonResult(result);
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Create")]
         public async Task<IActionResult> CreateJournal([FromBody] JournalDataRequest requestData)
         {
-            var result = await _accountingSvcs.CreateJournal(requestData);
-            return new JsonResult(result);
+            if (ModelState.IsValid)
+            {
+                var result = await _accountingSvcs.CreateJournal(requestData);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
         [HttpGet]
         public async Task<IActionResult> GetJournals()
@@ -70,7 +78,13 @@ namespace FMS.Controllers.Accounting
             var result = await _accountingSvcs.GetJournals();
             return new JsonResult(result);
         }
-        [HttpPost]
+        [HttpGet]
+        public async Task<IActionResult> GetJournalById([FromQuery] string Id)
+        {
+            var result = await _accountingSvcs.GetJournalById(Id);
+            return new JsonResult(result);
+        }
+        [HttpPost, Authorize(Policy = "Delete")]
         public async Task<IActionResult> DeleteJournal([FromQuery] string id)
         {
             var result = await _accountingSvcs.DeleteJournal(id);
@@ -94,11 +108,18 @@ namespace FMS.Controllers.Accounting
             return new JsonResult(result);
         }
 
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Create")]
         public async Task<IActionResult> CreatePayment([FromBody] PaymentDataRequest requestData)
         {
-            var result = await _accountingSvcs.CreatePayment(requestData);
-            return new JsonResult(result);
+            if (ModelState.IsValid)
+            {
+                var result = await _accountingSvcs.CreatePayment(requestData);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
         [HttpGet]
         public async Task<IActionResult> GetPayments()
@@ -106,12 +127,19 @@ namespace FMS.Controllers.Accounting
             var result = await _accountingSvcs.GetPayments();
             return new JsonResult(result);
         }
-        [HttpPost]
+        [HttpGet]
+        public async Task<IActionResult> GetPaymentById([FromQuery] string Id)
+        {
+            var result = await _accountingSvcs.GetPaymentById(Id);
+            return new JsonResult(result);
+        }
+        [HttpPost, Authorize(Policy = "Delete")]
         public async Task<IActionResult> DeletePayment([FromQuery] string id)
         {
             var result = await _accountingSvcs.DeletePayment(id);
             return new JsonResult(result);
         }
+
         #endregion
         #region Receipt
         [HttpGet]
@@ -129,19 +157,32 @@ namespace FMS.Controllers.Accounting
             var result = await _accountingSvcs.GetReceiptVoucherNo(CashBank);
             return new JsonResult(result);
         }
-        [HttpPost]
+        [HttpPost, Authorize(Policy = "Create")]
         public async Task<IActionResult> CreateRecipt([FromBody] ReciptsDataRequest requestData)
         {
-            var result = await _accountingSvcs.CreateRecipt(requestData);
-            return new JsonResult(result);
+            if (ModelState.IsValid)
+            {
+                var result = await _accountingSvcs.CreateRecipt(requestData);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
         [HttpGet]
         public async Task<IActionResult> GetReceipts()
         {
             var result = await _accountingSvcs.GetReceipts();
-             return new JsonResult(result);
+            return new JsonResult(result);
         }
-        [HttpPost]
+        [HttpGet]
+        public async Task<IActionResult> GetReceiptById([FromQuery] string Id)
+        {
+            var result = await _accountingSvcs.GetReceiptById(Id);
+            return new JsonResult(result);
+        }
+        [HttpPost, Authorize(Policy = "Delete")]
         public async Task<IActionResult> DeleteReceipt([FromQuery] string id)
         {
             var result = await _accountingSvcs.DeleteReceipt(id);
@@ -158,7 +199,7 @@ namespace FMS.Controllers.Accounting
             ViewBag.FinancialYear = FinancialYear;
             return View();
         }
-  
+
         #endregion
         #endregion
     }
