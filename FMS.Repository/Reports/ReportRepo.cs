@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Globalization;
 using System.Text;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace FMS.Repository.Reports
 {
@@ -735,5 +736,130 @@ namespace FMS.Repository.Reports
             return _Result;
         }
         #endregion
+        #region CashBook
+        public async Task<Result<CashBookModal>> CashBookReport(CashBookDataRequest requestData)
+        {
+            Result<CashBookModal> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                if (DateTime.TryParseExact(requestData.FromDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedFromDate) && DateTime.TryParseExact(requestData.ToDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedToDate))
+                {
+                    if (_HttpContextAccessor.HttpContext.Session.GetString("BranchId") != "All")
+                    {
+                        Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
+                        Guid FinancialYearId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
+                        var Receipts = await _appDbContext.Receipts.Where(s => s.VoucherDate >= convertedFromDate && s.VoucherDate <= convertedToDate && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYearId).Select(s => new ReceiptModel
+                        {
+                            VouvherNo = s.VouvherNo,
+                            VoucherDate = s.VoucherDate,
+                            CashBank = s.CashBank,
+                            DrCr = s.DrCr,
+                            narration = s.narration,
+                            FromAcc = _appDbContext.Parties.Where(p => p.Fk_SubledgerId == s.Fk_SubLedgerId).Select(p => p.PartyName).SingleOrDefault(),                   
+                            Amount = s.Amount
+                            
+                        }).ToListAsync();
+                        var Payments = await _appDbContext.Payments.Where(s => s.VoucherDate >= convertedFromDate && s.VoucherDate <= convertedToDate && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYearId).Select(s => new PaymentModel
+                        {
+                            VouvherNo = s.VouvherNo,
+                            VoucherDate = s.VoucherDate,
+                            CashBank = s.CashBank,
+                            narration = s.narration,
+                            DrCr = s.DrCr,
+                            ToAcc = _appDbContext.Parties.Where(p => p.Fk_SubledgerId == s.Fk_SubLedgerId).Select(p => p.PartyName).SingleOrDefault(),
+                            Amount = s.Amount
+                        }).ToListAsync();
+                        decimal OpeningBal = await _appDbContext.Receipts.Where(x => x.VoucherDate < convertedFromDate && x.Fk_BranchId == BranchId && x.Fk_FinancialYearId == FinancialYearId && x.CashBank == "Cash").SumAsync(x => x.Amount) - await _appDbContext.Payments.Where(x => x.VoucherDate < convertedToDate && x.Fk_BranchId == BranchId && x.Fk_FinancialYearId == FinancialYearId && x.CashBank == "Cash").SumAsync(x => x.Amount);
+                        decimal ClosingBal = OpeningBal + (await _appDbContext.Receipts.Where(x => x.VoucherDate >= convertedFromDate && x.VoucherDate <= convertedToDate && x.CashBank == "cash" && x.Fk_BranchId == BranchId && x.Fk_FinancialYearId == FinancialYearId).SumAsync(x => x.Amount) - await _appDbContext.Payments.Where(x => x.VoucherDate >= convertedFromDate && x.VoucherDate <= convertedToDate && x.CashBank == "cash" && x.Fk_BranchId == BranchId && x.Fk_FinancialYearId == FinancialYearId).SumAsync(x => x.Amount));
+                        var Data = new CashBookModal
+                        {
+                            OpeningBal = OpeningBal,
+                            ClosingBal = ClosingBal,
+                            Receipts = Receipts,
+                            Payments = Payments
+                        };
+                        if (Data != null)
+                        {
+                            _Result.SingleObjData = Data;
+                            _Result.IsSuccess = true;
+                            _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
+                        }
+                    }
+
+                }
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"ReportRepo/GetSummerizedLabourReport : {_Exception.Message}");
+            }
+            return _Result;
+        }
+        #endregion
+        #region BankBook
+        public async Task<Result<BankBookModal>> BankBookReport(BankBookDataRequest requestData)
+        {
+            Result<BankBookModal> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                if (DateTime.TryParseExact(requestData.FromDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedFromDate) && DateTime.TryParseExact(requestData.ToDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedToDate))
+                {
+                    if (_HttpContextAccessor.HttpContext.Session.GetString("BranchId") != "All")
+                    {   
+                        Guid Fk_BankID = Guid.Parse(requestData.BankId);
+                        Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
+                        Guid FinancialYearId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
+                        var Receipts = await _appDbContext.Receipts.Where(s => s.VoucherDate >= convertedFromDate && s.VoucherDate <= convertedToDate && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYearId).Select(s => new ReceiptModel
+                        {
+                            VouvherNo = s.VouvherNo,
+                            CashBank = s.CashBank,
+                            narration = s.narration,
+                            TransactionNo = s.TransactionNo,
+                            FromAcc = _appDbContext.Parties.Where(p => p.Fk_SubledgerId == s.Fk_SubLedgerId).Select(p => p.PartyName).SingleOrDefault(),
+                            Amount = s.Amount
+                        }).ToListAsync();
+                        var Payments = await _appDbContext.Payments.Where(s => s.VoucherDate >= convertedFromDate && s.VoucherDate <= convertedToDate && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYearId).Select(s => new PaymentModel
+                        {
+                            VouvherNo = s.VouvherNo,
+                            CashBank = s.CashBank,
+                            narration = s.narration,
+                            ToAcc = _appDbContext.Parties.Where(p => p.Fk_SubledgerId == s.Fk_SubLedgerId).Select(p => p.PartyName).SingleOrDefault(),
+                            Amount = s.Amount
+                        }).ToListAsync();
+                        string BankName = _appDbContext.Ledgers.Where(l => l.LedgerId == Fk_BankID).Select(l => l.LedgerName).SingleOrDefault();
+                        decimal OpeningBal = await _appDbContext.Receipts.Where(x => x.VoucherDate < convertedToDate && x.Fk_BranchId == BranchId &&
+                        x.Fk_FinancialYearId == FinancialYearId && x.CashBank == "Bank").SumAsync(x => x.Amount) - await _appDbContext.Payments
+                        .Where(x => x.VoucherDate < convertedToDate && x.Fk_BranchId == BranchId && x.Fk_FinancialYearId == FinancialYearId && x.CashBank == "Bank").SumAsync(x => x.Amount);
+                        decimal ClosingBal = await _appDbContext.Receipts.Where(x => x.VoucherDate <= convertedToDate && x.CashBank == "Bank" && x.Fk_BranchId == BranchId && x.Fk_FinancialYearId == FinancialYearId).SumAsync(x => x.Amount) - await _appDbContext.Payments.Where(x => x.VoucherDate == convertedToDate && x.CashBank == "Bank" && x.Fk_BranchId == BranchId && x.Fk_FinancialYearId == FinancialYearId).SumAsync(x => x.Amount);
+                        var Data = new BankBookModal
+                        {
+                            OpeningBal = OpeningBal,
+                            ClosingBal = ClosingBal,
+                            Receipts = Receipts,
+                            Payments = Payments,
+                            BankName = BankName
+                        };
+                        if (Data != null)
+                        {
+                            _Result.SingleObjData = Data;
+                            _Result.IsSuccess = true;
+                            _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
+                        }
+                    }
+
+                }
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"ReportRepo/GetSummerizedLabourReport : {_Exception.Message}");
+            }
+            return _Result;
+        }
+        #endregion
     }
+
 }
+

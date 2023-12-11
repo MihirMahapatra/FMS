@@ -165,5 +165,47 @@ namespace FMS.Controllers.Reports
             return new JsonResult(result);
         }
         #endregion
+        #region CashBook
+        [HttpGet]
+        public IActionResult CashBook()
+        {
+            string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
+            string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
+            ViewBag.BranchName = branchName;
+            ViewBag.FinancialYear = FinancialYear;
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> CashBookReport([FromBody] CashBookDataRequest requestData)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _reportSvcs.CashBookReport(requestData);
+                return new JsonResult(result);
+            }
+            return BadRequest(ModelState);
+        }
+        #endregion
+        #region BankBook
+        [HttpGet]
+        public IActionResult BankBook()
+        {
+            string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
+            string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
+            ViewBag.BranchName = branchName;
+            ViewBag.FinancialYear = FinancialYear;
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> BankBookReport([FromBody] BankBookDataRequest requestData)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _reportSvcs.BankBookReport(requestData);
+                return new JsonResult(result);
+            }
+            return BadRequest(ModelState);
+        }
+        #endregion
     }
 }

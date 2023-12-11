@@ -25,5 +25,11 @@ namespace FMS.Service.Reports
         #region DaySheet
         public Task<DaySheetViewModel> GetDaySheet(string Date);
         #endregion
+        #region CashBook
+        public Task<CashBookViewModal> CashBookReport(CashBookDataRequest requestData);
+        #endregion
+        #region BankBook
+        public Task<BankBookViewModal> BankBookReport(BankBookDataRequest requestData);
+        #endregion
     }
 }
