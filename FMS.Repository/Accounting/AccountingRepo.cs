@@ -826,33 +826,37 @@ namespace FMS.Repository.Accounting
                             }
                             else
                             {
-                                #region Receipt
-                                var newRecipts = new Receipt()
+                                if(item.ddlLedgerId != null)
                                 {
-                                    CashBank = requestData.CashBank,
-                                    VouvherNo = requestData.VoucherNo,
-                                    VoucherDate = convertedVoucherDate,
-                                    ChequeNo = requestData.ChqNo,
-                                    ChequeDate = convertedChqDate,
-                                    narration = requestData.Narration,
-                                    DrCr = "Dr",
-                                    Fk_LedgerId = Guid.Parse(item.ddlLedgerId),
-                                    Fk_LedgerGroupId = MappingLedgerGroup.CashBankBalance,
-                                    Amount = Convert.ToDecimal(item.CrBalance),
-                                    Fk_BranchId = BranchId,
-                                    Fk_FinancialYearId = FinancialYear
-                                };
-                                await _appDbContext.Receipts.AddAsync(newRecipts);
-                                await _appDbContext.SaveChangesAsync();
-                                #endregion
-                                #region Ledger Balance
-                                var updateLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == Guid.Parse(item.ddlLedgerId) && s.Fk_FinancialYear == FinancialYear && s.Fk_BranchId == BranchId).FirstOrDefaultAsync();
-                                if (updateLedgerBalance != null)
-                                {
-                                    updateLedgerBalance.RunningBalance -= Convert.ToDecimal(item.CrBalance);
-                                    updateLedgerBalance.RunningBalanceType = (updateLedgerBalance.RunningBalance >= 0) ? "Cr" : "Dr";
+                                    #region Receipt
+                                    var newRecipts = new Receipt()
+                                    {
+                                        CashBank = requestData.CashBank,
+                                        VouvherNo = requestData.VoucherNo,
+                                        VoucherDate = convertedVoucherDate,
+                                        ChequeNo = requestData.ChqNo,
+                                        ChequeDate = convertedChqDate,
+                                        narration = requestData.Narration,
+                                        DrCr = "Dr",
+                                        Fk_LedgerId = Guid.Parse(item.ddlLedgerId),
+                                        Fk_LedgerGroupId = MappingLedgerGroup.CashBankBalance,
+                                        Amount = Convert.ToDecimal(item.CrBalance),
+                                        Fk_BranchId = BranchId,
+                                        Fk_FinancialYearId = FinancialYear
+                                    };
+                                    await _appDbContext.Receipts.AddAsync(newRecipts);
+                                    await _appDbContext.SaveChangesAsync();
+                                    #endregion
+                                    #region Ledger Balance
+                                    var updateLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == Guid.Parse(item.ddlLedgerId) && s.Fk_FinancialYear == FinancialYear && s.Fk_BranchId == BranchId).FirstOrDefaultAsync();
+                                    if (updateLedgerBalance != null)
+                                    {
+                                        updateLedgerBalance.RunningBalance -= Convert.ToDecimal(item.CrBalance);
+                                        updateLedgerBalance.RunningBalanceType = (updateLedgerBalance.RunningBalance >= 0) ? "Cr" : "Dr";
+                                    }
+                                    #endregion
                                 }
-                                #endregion
+
                             }
                             #region update Bank/Cash Ledger Balance
                             if (requestData.CashBank == "Bank")

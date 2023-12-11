@@ -49,5 +49,41 @@ namespace FMS.Controllers.Print
             };
             return View(DaysheetPrintModel);
         }
+        [HttpPost]
+        public IActionResult CashBookPrintData([FromBody] CashBookModal requestData)
+        {
+            var json = JsonConvert.SerializeObject(requestData);
+            var url = Url.Action("CashBookPrint", "Print", new { data = json });
+            return Json(new { redirectTo = url });
+        }
+        [HttpGet]
+        public IActionResult CashBookPrint(string data)
+        {
+            var requestPrintData = JsonConvert.DeserializeObject<CashBookModal>(data);
+            var CashBookPrintModel = new  CashBookPrintModel()
+            {
+                Cmopany = _adminSvcs.GetCompany().Result.GetCompany,
+                cashbook = requestPrintData
+            };
+            return View(CashBookPrintModel);
+        }
+        [HttpPost]
+        public IActionResult BankBookPrintData([FromBody] BankBookModal requestData)
+        {
+            var json = JsonConvert.SerializeObject(requestData);
+            var url = Url.Action("BankBookPrint", "Print", new { data = json });
+            return Json(new { redirectTo = url });
+        }
+        [HttpGet]
+        public IActionResult BankBookPrint(string data)
+        {
+            var requestPrintData = JsonConvert.DeserializeObject<BankBookModal>(data);
+            var CashBookPrintModel = new BankBookPrintModel()
+            {
+                Cmopany = _adminSvcs.GetCompany().Result.GetCompany,
+                bankbook = requestPrintData
+            };
+            return View(CashBookPrintModel);
+        }
     }
 }
