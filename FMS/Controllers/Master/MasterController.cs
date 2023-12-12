@@ -66,7 +66,7 @@ namespace FMS.Controllers.Master
                 return BadRequest();
             }
         }
-        [HttpPost, Authorize(Policy = "Update")]
+        [HttpPost, Authorize(Policy = "Edit")]
         public async Task<IActionResult> UpdateLedgerBalance([FromBody] LedgerBalanceModel data)
         {
             if (ModelState.IsValid)
@@ -128,7 +128,7 @@ namespace FMS.Controllers.Master
             var result = await _masterSvcs.GetSubLedgersById(LedgerId);
             return new JsonResult(result);
         }
-        [HttpPost, Authorize(Policy = "Update")]
+        [HttpPost, Authorize(Policy = "Edit")]
         public async Task<IActionResult> UpdateSubLedger([FromBody] SubLedgerModel model)
         {
             if (ModelState.IsValid)
@@ -157,7 +157,7 @@ namespace FMS.Controllers.Master
             var result = await _masterSvcs.GetSubLedgerBalances();
             return new JsonResult(result);
         }
-        [HttpPost, Authorize(Policy = "Update")]
+        [HttpPost, Authorize(Policy = "Edit")]
         public async Task<IActionResult> UpdateSubLedgerBalance([FromBody] SubLedgerBalanceModel data)
         {
             if (ModelState.IsValid)
@@ -217,7 +217,7 @@ namespace FMS.Controllers.Master
                 return BadRequest();
             }
         }
-        [HttpPost, Authorize(Policy = "Update")]
+        [HttpPost, Authorize(Policy = "Edit")]
         public async Task<IActionResult> UpdateGroup([FromBody] GroupModel model)
         {
             if (ModelState.IsValid)
@@ -258,7 +258,7 @@ namespace FMS.Controllers.Master
                 return BadRequest();
             }
         }
-        [HttpPost, Authorize(Policy = "Update")]
+        [HttpPost, Authorize(Policy = "Edit")]
         public async Task<IActionResult> UpdateSubGroup([FromBody] SubGroupModel model)
         {
             if (ModelState.IsValid)
@@ -300,7 +300,7 @@ namespace FMS.Controllers.Master
             }
 
         }
-        [HttpPost, Authorize(Policy = "Update")]
+        [HttpPost, Authorize(Policy = "Edit")]
         public async Task<IActionResult> UpdateUnit([FromBody] UnitModel model)
         {
             if (ModelState.IsValid)
@@ -342,7 +342,7 @@ namespace FMS.Controllers.Master
             }
 
         }
-        [HttpPost, Authorize(Policy = "Update")]
+        [HttpPost, Authorize(Policy = "Edit")]
         public async Task<IActionResult> UpdateProduct([FromBody] ProductModel model)
         {
             if (ModelState.IsValid)
@@ -390,7 +390,7 @@ namespace FMS.Controllers.Master
                 return BadRequest();
             }
         }
-        [HttpPost, Authorize(Policy = "Update")]
+        [HttpPost, Authorize(Policy = "Edit")]
         public async Task<IActionResult> UpdateStock([FromBody] StockModel model)
         {
             if (ModelState.IsValid)
@@ -462,7 +462,7 @@ namespace FMS.Controllers.Master
                 return BadRequest();
             }
         }
-        [HttpPost, Authorize(Policy = "Update")]
+        [HttpPost, Authorize(Policy = "Edit")]
         public async Task<IActionResult> UpdateState([FromBody] StateModel model)
         {
             if (ModelState.IsValid)
@@ -504,7 +504,7 @@ namespace FMS.Controllers.Master
                 return BadRequest();
             }
         }
-        [HttpPost, Authorize(Policy = "Update")]
+        [HttpPost, Authorize(Policy = "Edit")]
         public async Task<IActionResult> UpdateCity([FromBody] CityModel model)
         {
             if (ModelState.IsValid)
@@ -545,7 +545,7 @@ namespace FMS.Controllers.Master
                 return BadRequest();
             }
         }
-        [HttpPost, Authorize(Policy = "Update")]
+        [HttpPost, Authorize(Policy = "Edit")]
         public async Task<IActionResult> UpdateParty([FromBody] PartyModel model)
         {
             if (ModelState.IsValid)
@@ -598,7 +598,7 @@ namespace FMS.Controllers.Master
             }
         }
 
-        [HttpPost, Authorize(Policy = "Update")]
+        [HttpPost, Authorize(Policy = "Edit")]
         public async Task<IActionResult> UpdateLabourType([FromBody] LabourTypeModel data)
         {
             if (ModelState.IsValid)
@@ -639,7 +639,7 @@ namespace FMS.Controllers.Master
                 return BadRequest();
             }
         }
-        [HttpPost, Authorize(Policy = "Update")]
+        [HttpPost, Authorize(Policy = "Edit")]
         public async Task<IActionResult> UpdateLabourDetail([FromBody] LabourModel data)
         {
             if (ModelState.IsValid)
@@ -688,7 +688,7 @@ namespace FMS.Controllers.Master
                 return BadRequest();
             }
         }
-        [HttpPost, Authorize(Policy = "Update")]
+        [HttpPost, Authorize(Policy = "Edit")]
         public async Task<IActionResult> UpdateLabourRate([FromBody] LabourRateModel data)
         {
             if (ModelState.IsValid)

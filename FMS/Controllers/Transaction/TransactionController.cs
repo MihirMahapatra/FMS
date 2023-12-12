@@ -85,7 +85,7 @@ namespace FMS.Controllers.Transaction
                 return BadRequest();
             }
         }
-        [HttpPost, Authorize(Policy = "Update")]
+        [HttpPost, Authorize(Policy = "Edit")]
         public async Task<IActionResult> UpdatePurchase([FromBody] PurchaseDataRequest requestData)
         {
             if (ModelState.IsValid)
@@ -137,7 +137,7 @@ namespace FMS.Controllers.Transaction
                 return BadRequest();
             }
         }
-        [HttpPost, Authorize(Policy = "Update")]
+        [HttpPost, Authorize(Policy = "Edit")]
         public async Task<IActionResult> UpdatetPurchaseReturn([FromBody] PurchaseDataRequest requestData)
         {
 
@@ -218,7 +218,7 @@ namespace FMS.Controllers.Transaction
             }
 
         }
-        [HttpPost, Authorize(Policy = "Update")]
+        [HttpPost, Authorize(Policy = "Edit")]
         public async Task<IActionResult> UpdateProductionEntry([FromBody] ProductionEntryModel model)
         {
             if (ModelState.IsValid)
@@ -304,7 +304,7 @@ namespace FMS.Controllers.Transaction
             }
 
         }
-        [HttpPost, Authorize(Policy = "Update")]
+        [HttpPost, Authorize(Policy = "Edit")]
         public async Task<IActionResult> UpdateSales([FromBody] SalesDataRequest requestData)
         {
             if (ModelState.IsValid)
@@ -358,7 +358,7 @@ namespace FMS.Controllers.Transaction
             }
 
         }
-        [HttpPost, Authorize(Policy = "Update")]
+        [HttpPost, Authorize(Policy = "Edit")]
         public async Task<IActionResult> UpdateSalesReturn([FromBody] SalesDataRequest requestData)
         {
             if (ModelState.IsValid)
@@ -435,7 +435,7 @@ namespace FMS.Controllers.Transaction
             }
 
         }
-        [HttpPost, Authorize(Policy = "Update")]
+        [HttpPost, Authorize(Policy = "Edit")]
         public async Task<IActionResult> UpdateInwardSupply([FromBody] SupplyDataRequest requestData)
         {
             if (ModelState.IsValid)
@@ -498,7 +498,7 @@ namespace FMS.Controllers.Transaction
             }
 
         }
-        [HttpPost, Authorize(Policy = "Update")]
+        [HttpPost, Authorize(Policy = "Edit")]
         public async Task<IActionResult> UpdateOutwardSupply([FromBody] SupplyDataRequest requestData)
         {
             if (ModelState.IsValid)
@@ -568,7 +568,7 @@ namespace FMS.Controllers.Transaction
             }
 
         }
-        [HttpPost, Authorize(Policy = "Update")]
+        [HttpPost, Authorize(Policy = "Edit")]
         public async Task<IActionResult> UpdateDamage([FromBody] DamageRequestData requestData)
         {
             if (ModelState.IsValid)

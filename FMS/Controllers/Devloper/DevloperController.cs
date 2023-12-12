@@ -31,7 +31,7 @@ namespace FMS.Controllers.Devloper
             var result = await _devloperSvcs.CreateBranch(model);
             return new JsonResult(result);
         }
-        [HttpPost, Authorize(Policy = "Update")]
+        [HttpPost, Authorize(Policy = "Edit")]
         public async Task<IActionResult> UpdateBranch([FromBody] BranchModel model)
         {
             var result = await _devloperSvcs.UpdateBranch(model);
@@ -59,7 +59,7 @@ namespace FMS.Controllers.Devloper
             var result = await _devloperSvcs.CreateFinancialYear(model);
             return new JsonResult(result);
         }
-        [HttpPost, Authorize(Policy = "Update")]
+        [HttpPost, Authorize(Policy = "Edit")]
         public async Task<IActionResult> UpdateFinancialYear([FromBody] FinancialYearModel model)
         {
             var result = await _devloperSvcs.UpdateFinancialYear(model);
@@ -87,7 +87,7 @@ namespace FMS.Controllers.Devloper
             var result = await _devloperSvcs.CreateLedgerGroup(model);
             return new JsonResult(result);
         }
-        [HttpPost, Authorize(Policy = "Update")]
+        [HttpPost, Authorize(Policy = "Edit")]
         public async Task<IActionResult> UpdateLedgerGroup([FromBody] LedgerGroupModel model)
         {
             var result = await _devloperSvcs.UpdateLedgerGroup(model);
@@ -114,7 +114,7 @@ namespace FMS.Controllers.Devloper
             var result = await _devloperSvcs.CreateLedgerSubGroup(model);
             return new JsonResult(result);
         }
-        [HttpPost, Authorize(Policy = "Update")]
+        [HttpPost, Authorize(Policy = "Edit")]
         public async Task<IActionResult> UpdateLedgerSubGroup([FromBody] LedgerSubGroupModel model)
         {
             var result = await _devloperSvcs.UpdateLedgerSubGroup(model);

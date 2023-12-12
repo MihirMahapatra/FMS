@@ -61,7 +61,7 @@ namespace FMS.Repository.Master
         #endregion
         #region Labour Rate Master
         Task<Result<LabourRateModel>> GetAllLabourRates();
-        Task<Result<int>> GetLabourRateByProductId(Guid ProductId);
+        Task<Result<decimal>> GetLabourRateByProductId(Guid ProductId);
         Task<Result<bool>> CreateLabourRate(LabourRateModel data);
         Task<Result<bool>> UpdateLabourRate(LabourRateModel data);
         Task<Result<bool>> DeleteLabourRate(Guid Id, IDbContextTransaction transaction, bool IsCallBack);

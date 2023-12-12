@@ -8,7 +8,7 @@
         public string FormtedDate { get; set; }
         public DateTime? Date { get; set; }
         public Guid Fk_ProductId { get; set; }
-        public int Rate { get; set; }
+        public decimal Rate { get; set; }
         public ProductModel Product { get; set; } 
         public BranchModel Branch { get; set; } 
         public FinancialYearModel FinancialYear { get; set; } 

@@ -146,7 +146,7 @@ namespace FMS.Controllers.Admin
         }
         #endregion
         #endregion
-        #region Role & Claims 
+        #region Role & Claims   
         [HttpGet]
         public async Task<IActionResult> ListRoles()
         {
@@ -279,7 +279,7 @@ namespace FMS.Controllers.Admin
             var result = await _adminSvcs.CreateBranchAlloction(data);
             return new JsonResult(result);
         }
-        [HttpPost, Authorize(Policy = "Update")]
+        [HttpPost, Authorize(Policy = "Edit")]
         public async Task<IActionResult> UpdateBranchAlloction([FromBody] UserBranchModel data)
         {
             var result = await _adminSvcs.UpdateBranchAlloction(data);
@@ -342,7 +342,7 @@ namespace FMS.Controllers.Admin
                 return BadRequest();
             }
         }
-        [HttpPost, Authorize(Policy = "Update")]
+        [HttpPost, Authorize(Policy = "Edit")]
         public async Task<IActionResult> UpdateProductConfig([FromBody] ProductionModel data)
         {
             if (ModelState.IsValid)
@@ -401,7 +401,7 @@ namespace FMS.Controllers.Admin
                 return BadRequest();
             }
         }
-        [HttpPost, Authorize(Policy = "Update")]
+        [HttpPost, Authorize(Policy = "Edit")]
         public async Task<IActionResult> UpdateLedgerSubGroup([FromBody] LedgerSubGroupModel model)
         {
 
@@ -465,7 +465,7 @@ namespace FMS.Controllers.Admin
             var result = await _adminSvcs.GetLedgers();
             return new JsonResult(result);
         }
-        [HttpPost, Authorize(Policy = "Update")]
+        [HttpPost, Authorize(Policy = "Edit")]
         public async Task<IActionResult> UpdateLedger([FromBody] LedgerModel model)
         {
             if (ModelState.IsValid)

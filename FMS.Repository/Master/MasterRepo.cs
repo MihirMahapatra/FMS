@@ -2226,9 +2226,9 @@ namespace FMS.Repository.Master
             }
             return _Result;
         }
-        public async Task<Result<int>> GetLabourRateByProductId(Guid ProductId)
+        public async Task<Result<decimal>> GetLabourRateByProductId(Guid ProductId)
         {
-            Result<int> _Result = new();
+            Result<decimal> _Result = new();
             try
             {
                 Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
