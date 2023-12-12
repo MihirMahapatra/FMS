@@ -237,8 +237,7 @@ namespace FMS.Controllers.Admin
         [HttpPost]
         public async Task<IActionResult> ManageUsersInRole(RoleModel model)
         {
-            if (ModelState.IsValid)
-            {
+        
                 var Rolename = await _adminSvcs.FindRoleById(model.Id);
                 if (Rolename != null)
                 {
@@ -254,11 +253,8 @@ namespace FMS.Controllers.Admin
                 }
 
                 return RedirectToAction("ListRoles", "Admin", new { ErrorMsg = "Some Error Occoured" });
-            }
-            else
-            {
-                return BadRequest();
-            }
+            
+         
         }
         #endregion
         #region Allocate Branch
