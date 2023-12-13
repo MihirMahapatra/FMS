@@ -74,7 +74,7 @@ $(function () {
                             html += '<td>' + item.BillingAmt + '</td>';
                             html += '<td>' + item.DamageAmt + '</td>';
                             html += '<td>' + item.PaymentAmt + '</td>';
-                            var Balance = item.BillingAmt - item.DamageAmt - item.PaymentAmt;
+                            var Balance = item.OpeningBal + (item.BillingAmt - item.DamageAmt - item.PaymentAmt);
                             html += '<td>' + Balance + '</td>';
                             html += '</tr >';
                         });
@@ -177,9 +177,9 @@ $(function () {
                         $.each(result.Labours, function (key, item) {
                             var Balance = item.OpeningBalance;
                             html += '<tr>';
+                            html += '<td>-</td>';
+                            html += '<td>-</td>';
                             html += '<td>Opening Bal.</td>';
-                            html += '<td>-</td>';
-                            html += '<td>-</td>';
                             html += '<td>-</td>';
                             html += '<td>-</td>';
                             html += '<td>-</td>';

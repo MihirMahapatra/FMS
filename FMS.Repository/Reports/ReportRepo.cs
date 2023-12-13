@@ -9,7 +9,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Globalization;
 using System.Text;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace FMS.Repository.Reports
 {
@@ -295,7 +294,7 @@ namespace FMS.Repository.Reports
                         Guid FinancialYearId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
                         Models = await _appDbContext.Labours.Where(s => s.LabourId == requestData.LabourId).Select(s => new LabourModel
                         {
-                            ProductionEntries = s.ProductionEntries.Where(d => d.Fk_FinancialYearId == FinancialYearId && d.FK_BranchId == BranchId && d.ProductionDate >= convertedFromDate && d.ProductionDate < convertedToDate).Select(d => new ProductionEntryModel { ProductionDate = d.ProductionDate, ProductionNo = d.ProductionNo, Quantity = d.Quantity, Rate = d.Rate, Amount = d.Amount, Product = new ProductModel { ProductName = d.Product.ProductName } }).ToList(),
+                            ProductionEntries = s.ProductionEntries.Where(d => d.Fk_FinancialYearId == FinancialYearId && d.FK_BranchId == BranchId && d.ProductionDate >= convertedFromDate && d.ProductionDate <= convertedToDate).Select(d => new ProductionEntryModel { ProductionDate = d.ProductionDate, ProductionNo = d.ProductionNo, Quantity = d.Quantity, Rate = d.Rate, Amount = d.Amount, Product = new ProductModel { ProductName = d.Product.ProductName } }).ToList(),
                             Payment = _appDbContext.Payments.Where(l => l.Fk_SubLedgerId == s.Fk_SubLedgerId && l.Fk_FinancialYearId == FinancialYearId && l.Fk_BranchId == BranchId && l.VoucherDate >= convertedFromDate && l.VoucherDate <= convertedToDate).Select(t => new PaymentModel { VoucherDate = t.VoucherDate, VouvherNo = t.VouvherNo, Amount = t.Amount }).ToList(),
                             DamageOrders = s.DamageOrders.Where(l => l.Fk_LabourId == s.LabourId && l.Fk_FinancialYearId == FinancialYearId && l.Fk_BranchId == BranchId && l.TransactionDate >= convertedFromDate && l.TransactionDate <= convertedToDate).Select(d => new DamageOrderModel { TransactionDate = d.TransactionDate, TransactionNo = d.TransactionNo, TotalAmount = d.TotalAmount }).ToList(),
                             OpeningBalance =
@@ -770,7 +769,7 @@ namespace FMS.Repository.Reports
                             ToAcc = _appDbContext.Parties.Where(p => p.Fk_SubledgerId == s.Fk_SubLedgerId).Select(p => p.PartyName).SingleOrDefault(),
                             Amount = s.Amount
                         }).ToListAsync();
-                        decimal OpeningBal = await _appDbContext.Receipts.Where(x => x.VoucherDate < convertedFromDate && x.Fk_BranchId == BranchId && x.Fk_FinancialYearId == FinancialYearId && x.CashBank == "Cash").SumAsync(x => x.Amount) - await _appDbContext.Payments.Where(x => x.VoucherDate < convertedToDate && x.Fk_BranchId == BranchId && x.Fk_FinancialYearId == FinancialYearId && x.CashBank == "Cash").SumAsync(x => x.Amount);
+                        decimal OpeningBal = await _appDbContext.Receipts.Where(x => x.VoucherDate < convertedFromDate && x.Fk_BranchId == BranchId && x.Fk_FinancialYearId == FinancialYearId && x.CashBank == "Cash").SumAsync(x => x.Amount) - await _appDbContext.Payments.Where(x => x.VoucherDate <= convertedToDate && x.Fk_BranchId == BranchId && x.Fk_FinancialYearId == FinancialYearId && x.CashBank == "Cash").SumAsync(x => x.Amount);
                         decimal ClosingBal = OpeningBal + (await _appDbContext.Receipts.Where(x => x.VoucherDate >= convertedFromDate && x.VoucherDate <= convertedToDate && x.CashBank == "cash" && x.Fk_BranchId == BranchId && x.Fk_FinancialYearId == FinancialYearId).SumAsync(x => x.Amount) - await _appDbContext.Payments.Where(x => x.VoucherDate >= convertedFromDate && x.VoucherDate <= convertedToDate && x.CashBank == "cash" && x.Fk_BranchId == BranchId && x.Fk_FinancialYearId == FinancialYearId).SumAsync(x => x.Amount));
                         var Data = new CashBookModal
                         {
@@ -829,9 +828,9 @@ namespace FMS.Repository.Reports
                             Amount = s.Amount
                         }).ToListAsync();
                         string BankName = _appDbContext.Ledgers.Where(l => l.LedgerId == Fk_BankID).Select(l => l.LedgerName).SingleOrDefault();
-                        decimal OpeningBal = await _appDbContext.Receipts.Where(x => x.VoucherDate < convertedToDate && x.Fk_BranchId == BranchId &&
+                        decimal OpeningBal = await _appDbContext.Receipts.Where(x => x.VoucherDate <= convertedToDate && x.Fk_BranchId == BranchId &&
                         x.Fk_FinancialYearId == FinancialYearId && x.CashBank == "Bank").SumAsync(x => x.Amount) - await _appDbContext.Payments
-                        .Where(x => x.VoucherDate < convertedToDate && x.Fk_BranchId == BranchId && x.Fk_FinancialYearId == FinancialYearId && x.CashBank == "Bank").SumAsync(x => x.Amount);
+                        .Where(x => x.VoucherDate <= convertedToDate && x.Fk_BranchId == BranchId && x.Fk_FinancialYearId == FinancialYearId && x.CashBank == "Bank").SumAsync(x => x.Amount);
                         decimal ClosingBal = await _appDbContext.Receipts.Where(x => x.VoucherDate <= convertedToDate && x.CashBank == "Bank" && x.Fk_BranchId == BranchId && x.Fk_FinancialYearId == FinancialYearId).SumAsync(x => x.Amount) - await _appDbContext.Payments.Where(x => x.VoucherDate == convertedToDate && x.CashBank == "Bank" && x.Fk_BranchId == BranchId && x.Fk_FinancialYearId == FinancialYearId).SumAsync(x => x.Amount);
                         var Data = new BankBookModal
                         {
