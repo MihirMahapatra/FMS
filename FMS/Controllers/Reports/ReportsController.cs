@@ -1,4 +1,5 @@
 ﻿using FMS.Model.CommonModel;
+using FMS.Service.Admin;
 using FMS.Service.Master;
 using FMS.Service.Reports;
 using Microsoft.AspNetCore.Authorization;
@@ -11,12 +12,12 @@ namespace FMS.Controllers.Reports
     {
         private readonly IHttpContextAccessor _HttpContextAccessor;
         private readonly IReportSvcs _reportSvcs;
-        private readonly IMasterSvcs _masterSvcs;
-        public ReportsController(IHttpContextAccessor HttpContextAccessor, IReportSvcs reportSvcs, IMasterSvcs masterSvcs)
+        private readonly IAdminSvcs _adminSvcs;
+        public ReportsController(IHttpContextAccessor HttpContextAccessor, IReportSvcs reportSvcs, IAdminSvcs adminSvcs)
         {
             _HttpContextAccessor = HttpContextAccessor;
             _reportSvcs = reportSvcs;
-            _masterSvcs = masterSvcs;
+            _adminSvcs = adminSvcs;
         }
         #region Stock Report
         [HttpGet]
@@ -31,7 +32,7 @@ namespace FMS.Controllers.Reports
         [HttpGet]
         public async Task<IActionResult> GetProductByTypeId([FromQuery] Guid ProductTypeId)
         {
-            var result = await _masterSvcs.GetProductByTypeId(ProductTypeId);
+            var result = await _adminSvcs.GetProductByTypeId(ProductTypeId);
             return new JsonResult(result);
         }
         [HttpPost]

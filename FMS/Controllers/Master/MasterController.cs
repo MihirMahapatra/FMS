@@ -179,9 +179,9 @@ namespace FMS.Controllers.Master
         }
         #endregion
         #endregion
-        #region Product Master
+        #region Stock Master  
         [HttpGet]
-        public IActionResult ProductMaster()
+        public IActionResult StockMaster()
         {
             string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
             string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
@@ -189,182 +189,6 @@ namespace FMS.Controllers.Master
             ViewBag.FinancialYear = FinancialYear;
             return View();
         }
-        #region Product Type
-        [HttpGet]
-        public async Task<IActionResult> GetAllProductTypes()
-        {
-            var result = await _masterSvcs.GetProductTypes();
-            return new JsonResult(result);
-        }
-        #endregion
-        #region Group
-        [HttpGet]
-        public async Task<IActionResult> GetAllGroups()
-        {
-            var Groups = await _masterSvcs.GetAllGroups();
-            return new JsonResult(Groups);
-        }
-        [HttpPost, Authorize(Policy = "Create")]
-        public async Task<IActionResult> CreateGroup([FromBody] GroupModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                var result = await _masterSvcs.CreateGroup(model);
-                return new JsonResult(result);
-            }
-            else
-            {
-                return BadRequest();
-            }
-        }
-        [HttpPost, Authorize(Policy = "Edit")]
-        public async Task<IActionResult> UpdateGroup([FromBody] GroupModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                var result = await _masterSvcs.UpdateGroup(model);
-                return new JsonResult(result);
-            }
-            else
-            {
-                return BadRequest();
-            }
-        }
-        [HttpPost, Authorize(Policy = "Delete")]
-        public async Task<IActionResult> DeleteGroup([FromQuery] string id)
-        {
-            Guid GroupId = Guid.Parse(id);
-            var result = await _masterSvcs.DeleteGroup(GroupId);
-            return new JsonResult(result);
-        }
-        #endregion
-        #region SubGroup
-        [HttpGet]
-        public async Task<IActionResult> GetSubGroups([FromQuery] Guid Groupid)
-        {
-            var SubGroups = await _masterSvcs.GetSubGroups(Groupid);
-            return new JsonResult(SubGroups);
-        }
-        [HttpPost, Authorize(Policy = "Create")]
-        public async Task<IActionResult> CreateSubGroup([FromBody] SubGroupModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                var result = await _masterSvcs.CreateSubGroup(model);
-                return new JsonResult(result);
-            }
-            else
-            {
-                return BadRequest();
-            }
-        }
-        [HttpPost, Authorize(Policy = "Edit")]
-        public async Task<IActionResult> UpdateSubGroup([FromBody] SubGroupModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                var result = await _masterSvcs.UpdateSubGroup(model);
-                return new JsonResult(result);
-            }
-            else
-            {
-                return BadRequest();
-            }
-
-        }
-        [HttpPost, Authorize(Policy = "Delete")]
-        public async Task<IActionResult> DeleteSubGroup([FromQuery] string id)
-        {
-            Guid SubGroupId = Guid.Parse(id);
-            var result = await _masterSvcs.DeleteSubGroup(SubGroupId);
-            return new JsonResult(result);
-        }
-        #endregion
-        #region Unit
-        public async Task<IActionResult> GetAllUnits()
-        {
-            var result = await _masterSvcs.GetAllUnits();
-            return new JsonResult(result);
-        }
-        [HttpPost, Authorize(Policy = "Create")]
-        public async Task<IActionResult> CreateUnit([FromBody] UnitModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                var result = await _masterSvcs.CreateUnit(model);
-                return new JsonResult(result);
-            }
-            else
-            {
-                return BadRequest();
-            }
-
-        }
-        [HttpPost, Authorize(Policy = "Edit")]
-        public async Task<IActionResult> UpdateUnit([FromBody] UnitModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                var result = await _masterSvcs.UpdateUnit(model);
-                return new JsonResult(result);
-            }
-            else
-            {
-                return BadRequest();
-            }
-        }
-        [HttpPost, Authorize(Policy = "Delete")]
-        public async Task<IActionResult> DeleteUnit([FromQuery] string id)
-        {
-            Guid UnitId = Guid.Parse(id);
-            var result = await _masterSvcs.DeleteUnit(UnitId);
-            return new JsonResult(result);
-        }
-        #endregion
-        #region Product
-        [HttpGet]
-        public async Task<IActionResult> GetAllProducts()
-        {
-            var result = await _masterSvcs.GetAllProducts();
-            return new JsonResult(result);
-        }
-        [HttpPost, Authorize(Policy = "Create")]
-        public async Task<IActionResult> CreateProduct([FromBody] ProductModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                var result = await _masterSvcs.CreateProduct(model);
-                return new JsonResult(result);
-            }
-            else
-            {
-                return BadRequest();
-            }
-
-        }
-        [HttpPost, Authorize(Policy = "Edit")]
-        public async Task<IActionResult> UpdateProduct([FromBody] ProductModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                var result = await _masterSvcs.UpdateProduct(model);
-                return new JsonResult(result);
-            }
-            else
-            {
-                return BadRequest();
-            }
-
-        }
-        [HttpPost, Authorize(Policy = "Delete")]
-        public async Task<IActionResult> DeleteProduct([FromQuery] string id)
-        {
-            Guid GroupId = Guid.Parse(id);
-            var result = await _masterSvcs.DeleteProduct(GroupId);
-            return new JsonResult(result);
-        }
-        #endregion
-        #region  Stock
         [HttpGet]
         public async Task<IActionResult> GetStocks()
         {
@@ -410,7 +234,7 @@ namespace FMS.Controllers.Master
             var result = await _masterSvcs.DeleteStock(Id);
             return new JsonResult(result);
         }
-        #endregion
+      
         #endregion       
         #region PartyMaster
         [HttpGet]
@@ -672,7 +496,7 @@ namespace FMS.Controllers.Master
         public async Task<IActionResult> GetAllFinishedGood()
         {
             Guid ProductType = MappingProductType.FinishedGood;
-            var result = await _masterSvcs.GetProductByTypeId(ProductType);
+            var result = await _adminSvcs.GetProductByTypeId(ProductType);
             return new JsonResult(result);
         }
         [HttpPost, Authorize(Policy = "Create")]

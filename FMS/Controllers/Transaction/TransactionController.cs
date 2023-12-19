@@ -1,4 +1,5 @@
 ﻿using FMS.Model.CommonModel;
+using FMS.Service.Admin;
 using FMS.Service.Devloper;
 using FMS.Service.Master;
 using FMS.Service.Transaction;
@@ -13,13 +14,15 @@ namespace FMS.Controllers.Transaction
         private readonly IHttpContextAccessor _HttpContextAccessor;
         public readonly ITransactionSvcs _transactionSvcs;
         public readonly IDevloperSvcs _devloperSvcs;
+        private readonly IAdminSvcs _adminSvcs;
         private readonly IMasterSvcs _masterSvcs;
         #region Constructor
-        public TransactionController(IHttpContextAccessor httpContextAccessor, ITransactionSvcs transactionSvcs, IDevloperSvcs devloperSvcs, IMasterSvcs masterSvcs) : base()
+        public TransactionController(IHttpContextAccessor httpContextAccessor, ITransactionSvcs transactionSvcs, IDevloperSvcs devloperSvcs, IAdminSvcs adminSvcs, IMasterSvcs masterSvcs) : base()
         {
             _HttpContextAccessor = httpContextAccessor;
             _transactionSvcs = transactionSvcs;
             _devloperSvcs = devloperSvcs;
+            _adminSvcs = adminSvcs;
             _masterSvcs = masterSvcs;
         }
         #endregion
@@ -44,7 +47,7 @@ namespace FMS.Controllers.Transaction
         public async Task<IActionResult> GetProductRawMaterial()
         {
             Guid ProductType = MappingProductType.RawMaterial;
-            var result = await _masterSvcs.GetProductByTypeId(ProductType);
+            var result = await _adminSvcs.GetProductByTypeId(ProductType);
             return new JsonResult(result);
         }
         #region Purchase
@@ -69,7 +72,7 @@ namespace FMS.Controllers.Transaction
         [HttpGet]
         public async Task<IActionResult> GetProductGstWithRate([FromQuery] Guid id)
         {
-            var result = await _masterSvcs.GetProductGstWithRate(id);
+            var result = await _adminSvcs.GetProductGstWithRate(id);
             return new JsonResult(result);
         }
         [HttpPost, Authorize(Policy = "Create")]
@@ -261,7 +264,7 @@ namespace FMS.Controllers.Transaction
         public async Task<IActionResult> GetProductFinishedGood()
         {
             Guid ProductType = MappingProductType.FinishedGood;
-            var result = await _masterSvcs.GetProductByTypeId(ProductType);
+            var result = await _adminSvcs.GetProductByTypeId(ProductType);
             return new JsonResult(result);
         }
         #region Sales
@@ -384,7 +387,7 @@ namespace FMS.Controllers.Transaction
         [HttpGet]
         public async Task<IActionResult> GetAllProductTypes()
         {
-            var result = await _masterSvcs.GetProductTypes();
+            var result = await _adminSvcs.GetProductTypes();
             return new JsonResult(result);
         }
         [HttpGet]

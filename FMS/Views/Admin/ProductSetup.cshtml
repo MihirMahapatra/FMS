@@ -1,6 +1,7 @@
-﻿﻿@{
+﻿
+@{
     Layout = "_Layout";
-    ViewData["Title"] = "Product Master";
+    ViewData["Title"] = "Product";
 }
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
@@ -28,17 +29,7 @@
                         Product Setup
                     </h3>
                 </div>
-                <div class="card-body">
-                    <ul class="nav nav-tabs" id="custom-content-below-tab" role="tablist">
-                        <li class="nav-item">
-                            <a class="nav-link active" id="tab-ProductDetail" data-toggle="pill" href="#ProductDetail" role="tab" aria-controls="ProductDetail" aria-selected="true"><b>Product Detail</b></a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" id="tab-StockDetail" data-toggle="pill" href="#StockDetail" role="tab" aria-controls="StockDetail" aria-selected="false"><b>Stock Detail</b></a>
-                        </li>
-                    </ul>
-                    <div class="tab-content pt-3" id="custom-content-below-tabContent">
-                        <div class="tab-pane fade show active" id="ProductDetail" role="tabpanel" aria-labelledby="tab-ProductDetail">
+                <div class="card-body">                      
                             <div class="card card-primary card-outline" style="background:#C7C9DC">
                                 <div class="card-body">
                                     <div class="row">
@@ -52,7 +43,7 @@
                                         <div class="col-md-3">
                                             <div class="form-group">
                                                 <label>Group</label>
-                                                <select class="form-control select2bs4" style="width: 100%;" name="ProductGroupId" tabindex="2">
+                                        <select class="form-control select2bs4" style="width: 100%;" name="ProductGroupId" tabindex="2" disabled>
                                                 </select>
                                             </div>
                                         </div>
@@ -124,64 +115,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="tab-pane fade" id="StockDetail" role="tabpanel" aria-labelledby="tab-StockDetail">
-                            <div class="card card-primary card-outline" style="background:#D9DAE1">
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label for="">Product Name</label>
-                                                <select class="form-control  select2bs4" style="width: 100%;" name="ProductId" tabindex="9">
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <div class="form-group">
-                                                <label for="">Opening Quantity</label>
-                                                <input type="text" class="form-control" id="" name="OpeningQty" tabindex="10">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <div class="form-group">
-                                                <label for="">Opening Rate</label>
-                                                <input type="text" class="form-control" id="" name="OpeningRate" tabindex="11">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <div class="form-group">
-                                                <label for="">Min Qty</label>
-                                                <input type="text" class="form-control" id="" name="MinQty" tabindex="12">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <div class="form-group">
-                                                <label for="">Max Qty</label>
-                                                <input type="text" class="form-control" id="" name="MaxQty" tabindex="13">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-10"></div>
-                                        <div class="col-md-2">
-                                            <button type="button" tabindex="14" class="btn btn-block btn-outline-primary btn-stock-create"><b>Submit</b></button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card card-primary card-outline" style="background:#D9DAE1">
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="tblStock">
-                                                <div id="loader" style="display:none;"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                        </div> 
             </div>
         </div>
     </section>
@@ -520,72 +454,8 @@
     <!-- /.modal-dialog -->
 </div>
 <!--.end Modal Product Details-->
-<!--Modal Stock Details-->
-<div class="modal fade" id="modal-edit-Stock">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title">Update</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-
-            <div class="modal-body">
-                <div class="row">
-                    <input type="hidden" name="mdlStockId" />
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label>Product</label>
-                            <select class="form-control select2bs4" style="width: 100%;" name="mdlProductId">
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="">Opening Qty</label>
-                            <input type="text" class="form-control" id="" name="mdlOpeningQty">
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="">Opening Rate</label>
-                            <input type="text" class="form-control" id="" name="mdlOpeningRate">
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="">Avilable Qty</label>
-                            <input type="text" class="form-control" id="" name="mdlAvilableQty">
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="">Min Qty</label>
-                            <input type="text" class="form-control" id="" name="mdlMinQty">
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="">Max Qty</label>
-                            <input type="text" class="form-control" id="" name="mdlMaxQty">
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-            <div class="modal-footer justify-content-between">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary stock">Save changes</button>
-            </div>
-
-        </div>
-        <!-- /.modal-content -->
-    </div>
-    <!-- /.modal-dialog -->
-</div>
-<!--.end Modal Stock Details-->
 <!---------------------------------------------------------------------------------------------------------------------------->
 @await Html.PartialAsync("_FooterScript")
 <script src="~/scripts/FormScript.js"></script>
-<script src="~/viewscripts/master/productmaster.js"></script>
+<script src="~/viewscripts/admin/productsetup.js"></script>
+

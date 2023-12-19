@@ -6,43 +6,12 @@ namespace FMS.Service.Master
 {
     public interface IMasterSvcs
     {
-        #region Product Master 
-        #region Product Type
-        Task<ProductTypeViewModel> GetProductTypes();
-        #endregion
-        #region Group
-        Task<GroupViewModel> GetAllGroups();
-        Task<Base> CreateGroup(GroupModel data);
-        Task<Base> UpdateGroup(GroupModel data);
-        Task<Base> DeleteGroup(Guid Id);
-        #endregion
-        #region SubGroup
-        Task<SubGroupViewModel> GetSubGroups(Guid GroupId);
-        Task<Base> CreateSubGroup(SubGroupModel data);
-        Task<Base> UpdateSubGroup(SubGroupModel data);
-        Task<Base> DeleteSubGroup(Guid Id);
-        #endregion
-        #region Unit
-        Task<UnitViewModel> GetAllUnits();
-        Task<Base> CreateUnit(UnitModel data);
-        Task<Base> UpdateUnit(UnitModel data);
-        Task<Base> DeleteUnit(Guid Id);
-        #endregion
-        #region Product
-        Task<ProductViewModel> GetAllProducts();
-        Task<ProductViewModel> GetProductByTypeId(Guid ProductTypeId);
-        Task<ProductViewModel> GetProductGstWithRate(Guid id);
-        Task<Base> CreateProduct(ProductModel data);
-        Task<Base> UpdateProduct(ProductModel data);
-        Task<Base> DeleteProduct(Guid Id);
-        #endregion
-        #region  Stock
+        #region Stock Master 
         Task<StockViewModel> GetStocks();
         Task<ProductViewModel> GetProductsWhichNotInStock();
         Task<Base> CreateStock(StockModel data);
         Task<Base> UpdateStock(StockModel data);
-        Task<Base> DeleteStock(Guid Id);
-        #endregion
+        Task<Base> DeleteStock(Guid Id);   
         #endregion
         #region labour Master
         #region Labour Type
@@ -66,6 +35,26 @@ namespace FMS.Service.Master
         Task<Base> DeleteLabourRate(Guid Id);
         #endregion
         #endregion   
+        #region Party Master
+        #region Party
+        Task<PartyViewModel> GetParties();
+        Task<Base> CreateParty(PartyModel data);
+        Task<Base> UpdateParty(PartyModel data);
+        Task<Base> DeleteParty(Guid Id);
+        #endregion
+        #region State
+        Task<StateViewModel> GetStates();
+        Task<Base> CreateState(StateModel data);
+        Task<Base> UpdateState(StateModel data);
+        Task<Base> DeleteState(Guid Id);
+        #endregion
+        #region City
+        Task<CityViewModel> GetCities(Guid Id);
+        Task<Base> CreateCity(CityModel data);
+        Task<Base> UpdateCity(CityModel data);
+        Task<Base> DeleteCity(Guid Id);
+        #endregion
+        #endregion
         #region Account Master
         #region LedgerBalance
         Task<LedgerBalanceViewModel> GetLedgerBalances();
@@ -86,32 +75,6 @@ namespace FMS.Service.Master
         Task<Base> UpdateSubLedgerBalance(SubLedgerBalanceModel data);
         Task<Base> DeleteSubLedgerBalance(Guid Id);
         #endregion
-        #endregion
-        #region Party Master
-        #region Party
-        Task<PartyViewModel> GetParties();
-        Task<Base> CreateParty(PartyModel data);
-        Task<Base> UpdateParty(PartyModel data);
-        Task<Base> DeleteParty(Guid Id);
-        #endregion
-        #region PartyType
-        //Task<PartyTypeViewModel> GetPartyTypes(bool IsActive);
-        //Task<Base> CreatePartyType(PartyTypeModel data);
-        //Task<Base> UpdatePartyType(PartyTypeModel data, bool IsActive);
-        //Task<Base> DeletePartyType(Guid Id, bool IsActive);
-        #endregion
-        #region State
-        Task<StateViewModel> GetStates();
-        Task<Base> CreateState(StateModel data);
-        Task<Base> UpdateState(StateModel data);
-        Task<Base> DeleteState(Guid Id);
-        #endregion
-        #region City
-        Task<CityViewModel> GetCities(Guid Id);
-        Task<Base> CreateCity(CityModel data);
-        Task<Base> UpdateCity(CityModel data);
-        Task<Base> DeleteCity(Guid Id);
-        #endregion
-        #endregion
+        #endregion       
     }
 }

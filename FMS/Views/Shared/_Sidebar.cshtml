@@ -102,9 +102,25 @@
                             </ul>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                    <a href="@Url.Action("ProductConfig","Admin")" class="nav-link" id="ProductConfigLink">
+                                    <a href="@Url.Action("ProductSetup","Admin")" class="nav-link" id="ProductSetupLink">
                                         <i class="far fa-circle nav-icon"></i>
-                                        <p>Product Config</p>
+                                        <p>Product Setup</p>
+                                    </a>
+                                </li>
+                            </ul>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="@Url.Action("AlternateUnit","Admin")" class="nav-link" id="AlternateUnitLink">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Alternate Unit Setup</p>
+                                    </a>
+                                </li>
+                            </ul>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="@Url.Action("ProductionConfig","Admin")" class="nav-link" id="ProductionConfigLink">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Production Setup</p>
                                     </a>
                                 </li>
                             </ul>
@@ -112,10 +128,10 @@
                                 <li class="nav-item">
                                     <a href="@Url.Action("AccountConfig","Admin")" class="nav-link" id="AccountConfigLink">
                                         <i class="far fa-circle nav-icon"></i>
-                                        <p>Account Config</p>
+                                        <p>Account Setup</p>
                                     </a>
                                 </li>
-                            </ul>          
+                            </ul>
                         </li>
                     }
                     @if (_signInManager.IsSignedIn(User) && (User.IsInRole("Admin") || User.IsInRole("Devloper") || User.IsInRole("User")))
@@ -129,16 +145,11 @@
                                 </p>
                             </a>
                             <ul class="nav nav-treeview">
+                             
                                 <li class="nav-item">
-                                    <a href="@Url.Action("AccountMaster","Master")" class="nav-link" id="AccountMasterLink">
+                                    <a href="@Url.Action("StockMaster","Master")" class="nav-link" id="StockMasterLink">
                                         <i class="far fa-circle nav-icon"></i>
-                                        <p>Account Master</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="@Url.Action("ProductMaster","Master")" class="nav-link" id="ProductMasterLink">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Product Master</p>
+                                        <p>Stock Master</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
@@ -151,6 +162,12 @@
                                     <a href="@Url.Action("LabourMaster","Master")" class="nav-link" id="LabourMasterLink">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Labour Master</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="@Url.Action("AccountMaster","Master")" class="nav-link" id="AccountMasterLink">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Account Master</p>
                                     </a>
                                 </li>
                             </ul>

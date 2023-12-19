@@ -1,4 +1,5 @@
-﻿using FMS.Model;
+﻿using FMS.Db.DbEntity;
+using FMS.Model;
 using FMS.Model.CommonModel;
 using FMS.Model.ViewModel;
 using FMS.Repository.Admin;
@@ -15,6 +16,7 @@ namespace FMS.Service.Admin
         {
             _adminRepo = adminRepo;
         }
+        #region Generate SignUp Token
         public async Task<Base> CreateToken(string Token)
         {
             var result = await _adminRepo.CreateToken(Token);
@@ -61,6 +63,8 @@ namespace FMS.Service.Admin
             }
             return Obj;
         }
+        #endregion
+        #region Company Details
         public async Task<Base> CreateCompany(CompanyDetailsModel data)
         {
             Base Obj;
@@ -145,7 +149,7 @@ namespace FMS.Service.Admin
             }
             return Obj;
         }
-
+        #endregion
         #region Role & Claims
         public async Task<List<IdentityRole>> UserRoles()
         {
@@ -507,6 +511,999 @@ namespace FMS.Service.Admin
                     ResponseStatus = result.Response,
                     ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
                     Exception = result.Exception,
+                    ErrorMsg = "Some Error Occourd Try To Contact Your App Devloper"
+                };
+            }
+            return Obj;
+        }
+        #endregion
+        #region Product Setup
+        #region Product Type
+        public async Task<ProductTypeViewModel> GetProductTypes()
+        {
+            ProductTypeViewModel Obj;
+            var Result = await _adminRepo.GetProductTypes();
+            if (Result.IsSuccess)
+            {
+                if (Result.Response == "success")
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
+                        ProductTypes = Result.CollectionObjData,
+                    };
+                }
+                else
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.NotFound),
+                        Message = "No Record Found"
+                    };
+                }
+            }
+            else
+            {
+                Obj = new()
+                {
+                    ResponseStatus = Result.Response,
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    Message = "Some Eroor Occoured"
+                };
+            }
+            return Obj;
+        }
+        #endregion
+        #region Group
+        public async Task<GroupViewModel> GetAllGroups(Guid ProdutTypeId)
+        {
+            GroupViewModel Obj;
+            var Result = await _adminRepo.GetAllGroups(ProdutTypeId);
+            if (Result.IsSuccess)
+            {
+                if (Result.Response == "success")
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
+                        Groups = Result.CollectionObjData,
+                    };
+                }
+                else
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.NotFound),
+                        Message = "No Record Found"
+                    };
+                }
+            }
+            else
+            {
+                Obj = new()
+                {
+                    ResponseStatus = Result.Response,
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    Message = "Some Eroor Occoured"
+                };
+            }
+            return Obj;
+        }
+        public async Task<Base> CreateGroup(GroupModel data)
+        {
+            Base Obj;
+            var Result = await _adminRepo.CreateGroup(data);
+            if (Result.IsSuccess)
+            {
+                if (Result.Response == "created")
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.Created),
+                        SuccessMsg = "Data Saved SuccessFully"
+                    };
+                }
+                else
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                        ErrorMsg = "Data Already Existe"
+                    };
+                }
+            }
+            else if (Result.WarningMessage != null)
+            {
+                Obj = new()
+                {
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    ErrorMsg = Result.WarningMessage,
+                };
+            }
+            else
+            {
+                Obj = new()
+                {
+                    ResponseStatus = Result.Response,
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    ErrorMsg = "Some Error Occourd Try To Contact Your App Devloper"
+                };
+            }
+            return Obj;
+        }
+        public async Task<Base> UpdateGroup(GroupModel data)
+        {
+            var Result = await _adminRepo.UpdateGroup(data);
+            Base Obj;
+            if (Result.IsSuccess)
+            {
+                if (Result.Response == "modified")
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.OK),
+                        SuccessMsg = "Data Updated SuccessFully"
+                    };
+                }
+                else
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                        ErrorMsg = "Failed To Update Data"
+                    };
+                }
+            }
+            else if (Result.WarningMessage != null)
+            {
+                Obj = new()
+                {
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    ErrorMsg = Result.WarningMessage,
+                };
+            }
+            else
+            {
+                Obj = new()
+                {
+                    ResponseStatus = Result.Response,
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    ErrorMsg = "Some Error Occourd Try To Contact Your App Devloper"
+                };
+            }
+            return Obj;
+        }
+        public async Task<Base> DeleteGroup(Guid Id)
+        {
+            var Result = await _adminRepo.DeleteGroup(Id, null, false);
+            Base Obj;
+            if (Result.IsSuccess)
+            {
+                if (Result.Response == "deleted")
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.OK),
+                        SuccessMsg = "Data Deleted Successfully"
+                    };
+                }
+                else
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                        ErrorMsg = "Failed To Delete Data"
+                    };
+                }
+            }
+            else
+            {
+                Obj = new()
+                {
+                    ResponseStatus = Result.Response,
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    ErrorMsg = "Some Error Occourd Try To Contact Your App Devloper"
+                };
+            }
+            return Obj;
+        }
+        #endregion
+        #region SubGroup
+        public async Task<SubGroupViewModel> GetSubGroups(Guid GroupId)
+        {
+            SubGroupViewModel Obj;
+            var Result = await _adminRepo.GetSubGroups(GroupId);
+            if (Result.IsSuccess)
+            {
+                if (Result.Response == "success")
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
+                        SubGroups = Result.CollectionObjData,
+                    };
+                }
+                else
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.NotFound),
+                        Message = "No Record Found"
+                    };
+                }
+            }
+            else
+            {
+                Obj = new()
+                {
+                    ResponseStatus = Result.Response,
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    Message = "Some Eroor Occoured"
+                };
+            }
+            return Obj;
+        }
+        public async Task<Base> CreateSubGroup(SubGroupModel data)
+        {
+            Base Obj;
+            var Result = await _adminRepo.CreateSubGroup(data);
+            if (Result.IsSuccess)
+            {
+                if (Result.Response == "created")
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.Created),
+                        SuccessMsg = "Data Saved SuccessFully"
+                    };
+                }
+                else
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                        ErrorMsg = "Data Already Exist"
+                    };
+                }
+            }
+            else if (Result.WarningMessage != null)
+            {
+                Obj = new()
+                {
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    ErrorMsg = Result.WarningMessage,
+                };
+            }
+            else
+            {
+                Obj = new()
+                {
+                    ResponseStatus = Result.Response,
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    ErrorMsg = "Some Error Occourd Try To Contact Your App Devloper"
+                };
+            }
+            return Obj;
+        }
+        public async Task<Base> UpdateSubGroup(SubGroupModel data)
+        {
+            var Result = await _adminRepo.UpdateSubGroup(data);
+            Base Obj;
+            if (Result.IsSuccess)
+            {
+                if (Result.Response == "modified")
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.OK),
+                        SuccessMsg = "Data Updated SuccessFully"
+                    };
+                }
+                else
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                        ErrorMsg = "Failed To Update Data"
+                    };
+                }
+            }
+            else if (Result.WarningMessage != null)
+            {
+                Obj = new()
+                {
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    ErrorMsg = Result.WarningMessage,
+                };
+            }
+            else
+            {
+                Obj = new()
+                {
+                    ResponseStatus = Result.Response,
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    ErrorMsg = "Some Error Occourd Try To Contact Your App Devloper"
+                };
+            }
+            return Obj;
+        }
+        public async Task<Base> DeleteSubGroup(Guid Id)
+        {
+            var Result = await _adminRepo.DeleteSubGroup(Id, null, false);
+            Base Obj;
+            if (Result.IsSuccess)
+            {
+                if (Result.Response == "deleted")
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.OK),
+                        SuccessMsg = "Data Deleted Successfully"
+                    };
+                }
+                else
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                        ErrorMsg = "Failed To Delete Data"
+                    };
+                }
+            }
+            else
+            {
+                Obj = new()
+                {
+                    ResponseStatus = Result.Response,
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    ErrorMsg = "Some Error Occourd Try To Contact Your App Devloper"
+                };
+            }
+            return Obj;
+        }
+        #endregion
+        #region Unit
+        public async Task<UnitViewModel> GetAllUnits()
+        {
+            UnitViewModel Obj;
+            var Result = await _adminRepo.GetAllUnits();
+            if (Result.IsSuccess)
+            {
+                if (Result.Response == "success")
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
+                        Units = Result.CollectionObjData,
+                    };
+                }
+                else
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.NotFound),
+                        Message = "No Record Found"
+                    };
+                }
+            }
+            else
+            {
+                Obj = new()
+                {
+                    ResponseStatus = Result.Response,
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    Message = "Some Eroor Occoured"
+                };
+            }
+            return Obj;
+        }
+        public async Task<Base> CreateUnit(UnitModel data)
+        {
+            Base Obj;
+            var Result = await _adminRepo.CreateUnit(data);
+            if (Result.IsSuccess)
+            {
+                if (Result.Response == "created")
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.Created),
+                        SuccessMsg = "Data Saved SuccessFully"
+                    };
+                }
+                else
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                        ErrorMsg = "Data Already Exist"
+                    };
+                }
+            }
+            else if (Result.WarningMessage != null)
+            {
+                Obj = new()
+                {
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    ErrorMsg = Result.WarningMessage,
+                };
+            }
+            else
+            {
+                Obj = new()
+                {
+                    ResponseStatus = Result.Response,
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    ErrorMsg = "Some Error Occourd Try To Contact Your App Devloper"
+                };
+            }
+            return Obj;
+        }
+        public async Task<Base> UpdateUnit(UnitModel data)
+        {
+            var Result = await _adminRepo.UpdateUnit(data);
+            Base Obj;
+            if (Result.IsSuccess)
+            {
+                if (Result.Response == "modified")
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.OK),
+                        SuccessMsg = "Data Updated SuccessFully"
+                    };
+                }
+                else
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                        ErrorMsg = "Failed To Update Data"
+                    };
+                }
+            }
+            else if (Result.WarningMessage != null)
+            {
+                Obj = new()
+                {
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    ErrorMsg = Result.WarningMessage,
+                };
+            }
+            else
+            {
+                Obj = new()
+                {
+                    ResponseStatus = Result.Response,
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    ErrorMsg = "Some Error Occourd Try To Contact Your App Devloper"
+                };
+            }
+            return Obj;
+        }
+        public async Task<Base> DeleteUnit(Guid Id)
+        {
+            var Result = await _adminRepo.DeleteUnit(Id, null, false);
+            Base Obj;
+            if (Result.IsSuccess)
+            {
+                if (Result.Response == "deleted")
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.OK),
+                        SuccessMsg = "Data Deleted Successfully"
+                    };
+                }
+                else
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                        ErrorMsg = "Failed To Delete Data\r\n"
+                    };
+                }
+            }
+            else
+            {
+                Obj = new()
+                {
+                    ResponseStatus = Result.Response,
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    ErrorMsg = "Some Error Occourd Try To Contact Your App Devloper"
+                };
+            }
+            return Obj;
+        }
+        #endregion
+        #region Product
+        public async Task<ProductViewModel> GetAllProducts()
+        {
+            ProductViewModel Obj;
+            var Result = await _adminRepo.GetAllProducts();
+            if (Result.IsSuccess)
+            {
+                if (Result.Response == "success")
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
+                        products = Result.CollectionObjData,
+                    };
+                }
+                else
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.NotFound),
+                        Message = "No Record Found"
+                    };
+                }
+            }
+            else
+            {
+                Obj = new()
+                {
+                    ResponseStatus = Result.Response,
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    Message = "Some Eroor Occoured"
+                };
+            }
+            return Obj;
+        }
+        public async Task<ProductViewModel> GetProductById(Guid ProductId)
+        {
+            ProductViewModel Obj;
+            var Result = await _adminRepo.GetProductById(ProductId);
+            if (Result.IsSuccess)
+            {
+                if (Result.Response == "success")
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
+                        product = Result.SingleObjData,
+                    };
+                }
+                else
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.NotFound),
+                        Message = "No Record Found"
+                    };
+                }
+            }
+            else
+            {
+                Obj = new()
+                {
+                    ResponseStatus = Result.Response,
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    ErrorMsg = Result.Exception.InnerException.Message
+                };
+            }
+            return Obj;
+        }
+        public async Task<ProductViewModel> GetProductByTypeId(Guid ProductTypeId)
+        {
+            ProductViewModel Obj;
+            var Result = await _adminRepo.GetProductByTypeId(ProductTypeId);
+            if (Result.IsSuccess)
+            {
+                if (Result.Response == "success")
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
+                        products = Result.CollectionObjData,
+                    };
+                }
+                else
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.NotFound),
+                        Message = "No Record Found"
+                    };
+                }
+            }
+            else
+            {
+                Obj = new()
+                {
+                    ResponseStatus = Result.Response,
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    ErrorMsg = Result.Exception.InnerException.Message
+                };
+            }
+            return Obj;
+        }
+        public async Task<ProductViewModel> GetProductGstWithRate(Guid id)
+        {
+            ProductViewModel Obj;
+            var Result = await _adminRepo.GetProductGstWithRate(id);
+            if (Result.IsSuccess)
+            {
+                if (Result.Response == "success")
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
+                        product = Result.SingleObjData,
+                    };
+                }
+                else
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.NotFound),
+                        Message = "No Record Found"
+                    };
+                }
+            }
+            else
+            {
+                Obj = new()
+                {
+                    ResponseStatus = Result.Response,
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    Message = "Some Eroor Occoured"
+                };
+            }
+            return Obj;
+        }
+        public async Task<Base> CreateProduct(ProductModel data)
+        {
+            Base Obj;
+            var Result = await _adminRepo.CreateProduct(data);
+            if (Result.IsSuccess)
+            {
+                if (Result.Response == "created")
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.Created),
+                        SuccessMsg = "Data Saved SuccessFully"
+                    };
+                }
+                else
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                        ErrorMsg = "Data Already Exist"
+                    };
+                }
+            }
+            else if (Result.WarningMessage != null)
+            {
+                Obj = new()
+                {
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    ErrorMsg = Result.WarningMessage,
+                };
+            }
+            else
+            {
+                Obj = new()
+                {
+                    ResponseStatus = Result.Response,
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    ErrorMsg = "Some Error Occourd Try To Contact Your App Devloper"
+                };
+            }
+            return Obj;
+        }
+        public async Task<Base> UpdateProduct(ProductModel data)
+        {
+            var Result = await _adminRepo.UpdateProduct(data);
+            Base Obj;
+            if (Result.IsSuccess)
+            {
+                if (Result.Response == "modified")
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.OK),
+                        SuccessMsg = "Data Updated SuccessFully"
+                    };
+                }
+                else
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                        ErrorMsg = "Failed To Update Data"
+                    };
+                }
+            }
+            else if (Result.WarningMessage != null)
+            {
+                Obj = new()
+                {
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    ErrorMsg = Result.WarningMessage,
+                };
+            }
+            else
+            {
+                Obj = new()
+                {
+                    ResponseStatus = Result.Response,
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    ErrorMsg = "Some Error Occourd Try To Contact Your App Devloper"
+                };
+            }
+            return Obj;
+        }
+        public async Task<Base> DeleteProduct(Guid Id)
+        {
+            var Result = await _adminRepo.DeleteProduct(Id, null, false);
+            Base Obj;
+            if (Result.IsSuccess)
+            {
+                if (Result.Response == "deleted")
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.OK),
+                        SuccessMsg = "Data Deleted Successfully"
+                    };
+                }
+                else
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                        ErrorMsg = "Failed To Delete Data"
+                    };
+                }
+            }
+            else
+            {
+                Obj = new()
+                {
+                    ResponseStatus = Result.Response,
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    ErrorMsg = "Some Error Occourd Try To Contact Your App Devloper"
+                };
+            }
+
+            return Obj;
+        }
+        #endregion
+        #endregion
+        #region Alternate Unit
+        public async Task<AlternateUnitViewModel> GetAlternateUnits()
+        {
+            AlternateUnitViewModel Obj;
+            var Result = await _adminRepo.GetAlternateUnits();
+            if (Result.IsSuccess)
+            {
+                if (Result.Response == "success")
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
+                        AlternateUnits = Result.CollectionObjData,
+                    };
+                }
+                else
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.NotFound),
+                        Message = "No Record Found"
+                    };
+                }
+            }
+            else
+            {
+                Obj = new()
+                {
+                    ResponseStatus = Result.Response,
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    Message = "Some Eroor Occoured"
+                };
+            }
+            return Obj;
+        }
+        public async Task<Base> CreateAlternateUnit(AlternateUnitModel data)
+        {
+            Base Obj;
+            var Result = await _adminRepo.CreateAlternateUnit(data);
+            if (Result.IsSuccess)
+            {
+                if (Result.Response == "created")
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.Created),
+                        SuccessMsg = "Data Saved SuccessFully"
+                    };
+                }
+                else
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                        ErrorMsg = "Data Already Exist"
+                    };
+                }
+            }
+            else if (Result.WarningMessage != null)
+            {
+                Obj = new()
+                {
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    ErrorMsg = Result.WarningMessage,
+                };
+            }
+            else
+            {
+                Obj = new()
+                {
+                    ResponseStatus = Result.Response,
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    ErrorMsg = "Some Error Occourd Try To Contact Your App Devloper"
+                };
+            }
+            return Obj;
+        }
+        public async Task<Base> UpdateAlternateUnit(AlternateUnitModel data)
+        {
+            var Result = await _adminRepo.UpdateAlternateUnit(data);
+            Base Obj;
+            if (Result.IsSuccess)
+            {
+                if (Result.Response == "modified")
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.OK),
+                        SuccessMsg = "Data Updated SuccessFully"
+                    };
+                }
+                else
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                        ErrorMsg = "Failed To Update Data"
+                    };
+                }
+            }
+            else if (Result.WarningMessage != null)
+            {
+                Obj = new()
+                {
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    ErrorMsg = Result.WarningMessage,
+                };
+            }
+            else
+            {
+                Obj = new()
+                {
+                    ResponseStatus = Result.Response,
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    ErrorMsg = "Some Error Occourd Try To Contact Your App Devloper"
+                };
+            }
+            return Obj;
+        }
+        public async Task<Base> DeleteAlternateUnit(Guid Id)
+        {
+            var Result = await _adminRepo.DeleteAlternateUnit(Id);
+            Base Obj;
+            if (Result.IsSuccess)
+            {
+                if (Result.Response == "deleted")
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.OK),
+                        SuccessMsg = "Data Deleted Successfully"
+                    };
+                }
+                else
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                        ErrorMsg = "Failed To Delete Data\r\n"
+                    };
+                }
+            }
+            else
+            {
+                Obj = new()
+                {
+                    ResponseStatus = Result.Response,
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
                     ErrorMsg = "Some Error Occourd Try To Contact Your App Devloper"
                 };
             }

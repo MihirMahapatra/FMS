@@ -76,44 +76,8 @@ namespace FMS.Controllers.Admin
             return View("DatabaseBackup");
         }
         #endregion
-        #region CompaniDetails
-        [HttpGet]
-        public IActionResult CompanyInfo()
-        {
-            string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
-            string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
-            ViewBag.BranchName = branchName;
-            ViewBag.FinancialYear = FinancialYear;
-            return View();
-        }
-        [HttpPost]
-        public async Task<IActionResult> CreateCompany([FromBody] CompanyDetailsModel data)
-        {
-            if (ModelState.IsValid)
-            {
-                var result = await _adminSvcs.CreateCompany(data);
-                return new JsonResult(result);
-            }
-            else
-            {
-                return BadRequest();
-            }
-        }
-        [HttpGet]
-        public async Task<IActionResult> GetCompany()
-        {
-            var result = await _adminSvcs.GetCompany();
-            return new JsonResult(result);
-        }
-        [HttpGet]
-        public async Task<IActionResult> GetAllBranch()
-        {
-            var result = await _devloperSvcs.GetAllBranch();
-            return new JsonResult(result);
-        }
-        #endregion
+        
         #region Generate SignUp Token
-        #region Token
         [HttpGet]
         public IActionResult CreateToken()
         {
@@ -144,7 +108,6 @@ namespace FMS.Controllers.Admin
 
             return View();
         }
-        #endregion
         #endregion
         #region Role & Claims   
         [HttpGet]
@@ -257,6 +220,42 @@ namespace FMS.Controllers.Admin
          
         }
         #endregion
+        #region Company Details
+        [HttpGet]
+        public IActionResult CompanyInfo()
+        {
+            string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
+            string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
+            ViewBag.BranchName = branchName;
+            ViewBag.FinancialYear = FinancialYear;
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> CreateCompany([FromBody] CompanyDetailsModel data)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _adminSvcs.CreateCompany(data);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetCompany()
+        {
+            var result = await _adminSvcs.GetCompany();
+            return new JsonResult(result);
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetAllBranch()
+        {
+            var result = await _devloperSvcs.GetAllBranch();
+            return new JsonResult(result);
+        }
+        #endregion
         #region Allocate Branch
         [HttpGet]
         public IActionResult AllocateBranch()
@@ -293,9 +292,253 @@ namespace FMS.Controllers.Admin
             return new JsonResult(result);
         }
         #endregion
-        #region Product Configuration
+        #region Product Setup
         [HttpGet]
-        public IActionResult ProductConfig()
+        public IActionResult ProductSetup()
+        {
+            string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
+            string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
+            ViewBag.BranchName = branchName;
+            ViewBag.FinancialYear = FinancialYear;
+            return View();
+        }
+        #region Product Type
+        [HttpGet]
+        public async Task<IActionResult> GetAllProductTypes()
+        {
+            var result = await _adminSvcs.GetProductTypes();
+            return new JsonResult(result);
+        }
+        #endregion
+        #region Group
+        [HttpGet]
+        public async Task<IActionResult> GetAllGroups(Guid ProdutTypeId)
+        {
+            var Groups = await _adminSvcs.GetAllGroups(ProdutTypeId);
+            return new JsonResult(Groups);
+        }
+        [HttpPost, Authorize(Policy = "Create")]
+        public async Task<IActionResult> CreateGroup([FromBody] GroupModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _adminSvcs.CreateGroup(model);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
+        [HttpPost, Authorize(Policy = "Edit")]
+        public async Task<IActionResult> UpdateGroup([FromBody] GroupModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _adminSvcs.UpdateGroup(model);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
+        [HttpPost, Authorize(Policy = "Delete")]
+        public async Task<IActionResult> DeleteGroup([FromQuery] string id)
+        {
+            Guid GroupId = Guid.Parse(id);
+            var result = await _adminSvcs.DeleteGroup(GroupId);
+            return new JsonResult(result);
+        }
+        #endregion
+        #region SubGroup
+        [HttpGet]
+        public async Task<IActionResult> GetSubGroups([FromQuery] Guid Groupid)
+        {
+            var SubGroups = await _adminSvcs.GetSubGroups(Groupid);
+            return new JsonResult(SubGroups);
+        }
+        [HttpPost, Authorize(Policy = "Create")]
+        public async Task<IActionResult> CreateSubGroup([FromBody] SubGroupModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _adminSvcs.CreateSubGroup(model);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
+        [HttpPost, Authorize(Policy = "Edit")]
+        public async Task<IActionResult> UpdateSubGroup([FromBody] SubGroupModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _adminSvcs.UpdateSubGroup(model);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
+
+        }
+        [HttpPost, Authorize(Policy = "Delete")]
+        public async Task<IActionResult> DeleteSubGroup([FromQuery] string id)
+        {
+            Guid SubGroupId = Guid.Parse(id);
+            var result = await _adminSvcs.DeleteSubGroup(SubGroupId);
+            return new JsonResult(result);
+        }
+        #endregion
+        #region Unit
+        [HttpGet]
+        public async Task<IActionResult> GetAllUnits()
+        {
+            var result = await _adminSvcs.GetAllUnits();
+            return new JsonResult(result);
+        }
+        [HttpPost, Authorize(Policy = "Create")]
+        public async Task<IActionResult> CreateUnit([FromBody] UnitModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _adminSvcs.CreateUnit(model);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
+
+        }
+        [HttpPost, Authorize(Policy = "Edit")]
+        public async Task<IActionResult> UpdateUnit([FromBody] UnitModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _adminSvcs.UpdateUnit(model);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
+        [HttpPost, Authorize(Policy = "Delete")]
+        public async Task<IActionResult> DeleteUnit([FromQuery] string id)
+        {
+            Guid UnitId = Guid.Parse(id);
+            var result = await _adminSvcs.DeleteUnit(UnitId);
+            return new JsonResult(result);
+        }
+        #endregion
+        #region Product
+        [HttpGet]
+        public async Task<IActionResult> GetAllProducts()
+        {
+            var result = await _adminSvcs.GetAllProducts();
+            return new JsonResult(result);
+        }
+        [HttpPost, Authorize(Policy = "Create")]
+        public async Task<IActionResult> CreateProduct([FromBody] ProductModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _adminSvcs.CreateProduct(model);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
+
+        }
+        [HttpPost, Authorize(Policy = "Edit")]
+        public async Task<IActionResult> UpdateProduct([FromBody] ProductModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _adminSvcs.UpdateProduct(model);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
+
+        }
+        [HttpPost, Authorize(Policy = "Delete")]
+        public async Task<IActionResult> DeleteProduct([FromQuery] string id)
+        {
+            Guid GroupId = Guid.Parse(id);
+            var result = await _adminSvcs.DeleteProduct(GroupId);
+            return new JsonResult(result);
+        }
+        #endregion
+        #endregion
+        #region Alternate Unit
+        [HttpGet]
+        public IActionResult AlternateUnit()
+        {
+            string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
+            string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
+            ViewBag.BranchName = branchName;
+            ViewBag.FinancialYear = FinancialYear;
+            return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAlternateUnits()
+        {
+            var result = await _adminSvcs.GetAlternateUnits();
+            return new JsonResult(result);
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetProductById(Guid ProductId)
+        {
+            var result = await _adminSvcs.GetProductById(ProductId);
+            return new JsonResult(result);
+        }
+        [HttpPost, Authorize(Policy = "Create")]
+        public async Task<IActionResult> CreateAlternateUnit([FromBody] AlternateUnitModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _adminSvcs.CreateAlternateUnit(model);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
+        [HttpPost, Authorize(Policy = "Edit")]
+        public async Task<IActionResult> UpdateAlternateUnit([FromBody] AlternateUnitModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _adminSvcs.UpdateAlternateUnit(model);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
+        [HttpPost, Authorize(Policy = "Delete")]
+        public async Task<IActionResult> DeleteAlternateUnit([FromQuery] string id)
+        {
+            Guid Id = Guid.Parse(id);
+            var result = await _adminSvcs.DeleteAlternateUnit(Id);
+            return new JsonResult(result);
+        }
+        #endregion
+        #region Production Configuration
+        [HttpGet]
+        public IActionResult ProductionConfig()
         {
             string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
             string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
@@ -330,7 +573,7 @@ namespace FMS.Controllers.Admin
             return new JsonResult(result);
         }
         [HttpPost, Authorize(Policy = "Create")]
-        public async Task<IActionResult> CreateProductConfig([FromBody] ProductConfigDataRequest requestData)
+        public async Task<IActionResult> CreateProductionConfig([FromBody] ProductConfigDataRequest requestData)
         {
             if (ModelState.IsValid)
             {
@@ -343,7 +586,7 @@ namespace FMS.Controllers.Admin
             }
         }
         [HttpPost, Authorize(Policy = "Edit")]
-        public async Task<IActionResult> UpdateProductConfig([FromBody] ProductionModel data)
+        public async Task<IActionResult> UpdateProductionConfig([FromBody] ProductionModel data)
         {
             if (ModelState.IsValid)
             {
@@ -356,7 +599,7 @@ namespace FMS.Controllers.Admin
             }
         }
         [HttpPost, Authorize(Policy = "Delete")]
-        public async Task<IActionResult> DeleteProductConfig([FromQuery] string Id)
+        public async Task<IActionResult> DeleteProductionConfig([FromQuery] string Id)
         {
             Guid id = Guid.Parse(Id);
             var result = await _adminSvcs.DeleteProductConfig(id);

@@ -5,6 +5,7 @@
         public Guid UnitId { get; set; }
         public string UnitName { get; set; }
         public ICollection<Product> Products { get; set; }
+        public ICollection<AlternateUnit> AlternateUnits { get; set;}
 
     }
 }

@@ -57,7 +57,7 @@ try
     builder.Services.AddSingleton(mapper);
     //*******************************************************Session********************************************//
     builder.Services.AddDistributedMemoryCache();
-    builder.Services.AddSession(option => option.IdleTimeout = TimeSpan.FromMinutes(60));
+    builder.Services.AddSession(option => option.IdleTimeout = TimeSpan.FromDays(1));
     builder.Services.AddHttpContextAccessor();
     builder.Services.AddSingleton(option => option.GetService<IHttpContextAccessor>().HttpContext.Session);
     //*******************************************************Identity*********************************************//
@@ -75,10 +75,10 @@ try
         //*email conformation*//
         //options.SignIn.RequireConfirmedEmail = true;
     }).AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
-    //**************************************************set token expiry *******************************************//
+    //**************************************************set token expiry*******************************************//
     builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
     {
-        options.TokenLifespan = TimeSpan.FromMinutes(60);
+        options.TokenLifespan = TimeSpan.FromDays(1);
     });
     //****************************************************Api service***********************************************//
     builder.Services.AddHttpClient();

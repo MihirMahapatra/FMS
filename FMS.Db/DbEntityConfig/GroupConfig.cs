@@ -10,8 +10,10 @@ namespace FMS.Db.DbEntityConfig
         {
             builder.ToTable("Groups", "dbo");
             builder.HasKey(e => e.GroupId);
+            builder.Property(e=>e.Fk_ProductTypeId).IsRequired(false);
             builder.Property(e => e.GroupId).HasDefaultValueSql("(newid())");
             builder.Property(e => e.GroupName).HasMaxLength(500).IsRequired(true);
+            builder.HasOne(p => p.ProductType).WithMany(po => po.Groups).HasForeignKey(po => po.Fk_ProductTypeId).OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
