@@ -3,7 +3,7 @@
     $("#ProductSetupLink").addClass("active");
     $("#ProductSetupLink i.far.fa-circle").removeClass("far fa-circle").addClass("far fa-dot-circle");
     /***************************************Variable Declaration***********************************************************/
-    //products
+    /*---products---*/
     const groupId = $('select[name="ProductGroupId"]');
     const subGroupId = $('select[name="ProductSubGroupId"]');
     const productTypeId = $('select[name="ProductTypeId"]');
@@ -23,7 +23,7 @@
     const ProductName = $('input[name = "ProductName"]')
     const Price = $('input[name = "Price"]')
     const GST = $('input[name = "GST"]')
-    //mdlproduct
+    /*---mdlproduct---*/
     const mdlProductId = $('input[name="mdlProductId"]');
     const mdlProductName = $('input[name="mdlProductName"]');
     const mdlProductType = $('select[name="mdlProductType"]');
@@ -32,7 +32,7 @@
     const mdlSubGroup = $('select[name="mdlSubGroup"]');
     const mdlPrice = $('input[name="mdlPrice"]');
     const mdlGst = $('input[name="mdlGst"]');
-    //-----------------------------------Contorl Foucous Of Element    ProductMaster ProductDetail----------------------------//
+    /***********************************************************Contorl Foucous Of Element***********************************************************/
     productTypeId.focus();
     ProductName.on('focus', function () {
         $(this).css('border-color', 'red');
@@ -77,7 +77,7 @@
         var inputValue = $(this).val().replace(/\D/g, '');
         $(this).val(inputValue);
     }); 
-    /*--------------------------------------Unit-------------------------------------------------*/
+    /***************************************  Unit ***********************************************************/
     loadUnits();
     function loadUnits() {
 
@@ -221,7 +221,7 @@
         }
 
     })
-    /*--------------------------------------Group------------------------------------------------*/
+    /*************************************** Group ***********************************************************/
     productTypeId.on('change', function () {
         enablGroup();
     });
@@ -377,7 +377,7 @@
         }
 
     })
-    /*--------------------------------------SubGroup------------------------------------------------*/
+    /*************************************** SubGroup ***********************************************************/
     groupId.on('change', function () {
         enableSubGroup();
     });
@@ -415,7 +415,8 @@
     $('#btnSubGroupAdd').on('click', function () {
         $('#modal-add-subGroup').modal('show');
     });
-    $('#modal-add-subGroup').on('click', '.subGroupAdd', (event) => {
+    $('.subGroupAdd').on('click', GroupAdd);
+    function GroupAdd() {
         if (!$('input[name="mdlSubGroupAdd"]').val()) {
             toastr.error('Plz Insert SubGroup Name');
             return;
@@ -447,8 +448,9 @@
                 }
             });
         }
-    });
-    $('#btnSubGroupEdit').on('click', function () {
+    }
+    $('#btnSubGroupEdit').on('click', SubGroupEdit);
+    function SubGroupEdit () {
         if (!subGroupId.val() || subGroupId.val() === '--Select Option--') {
             toastr.error('Plz Select a SubGroup Name To Edit');
             return;
@@ -461,8 +463,9 @@
             $("input[name='mdlSubGroupId']").val(value);
             $("input[name='mdlSubGroupEdit']").val(text);
         }
-    });
-    $('#modal-edit-subGroup').on('click', '.subGroupEdit', (event) => {
+    }
+    $('.subGroupEdit').on('click', GroupEdit);
+    function GroupEdit () {
         const data = {
             SubGroupId: $('input[name="mdlSubGroupId"]').val(),
             SubGroupName: $('input[name="mdlSubGroupEdit"]').val(),
@@ -490,8 +493,9 @@
                 console.log(error);
             }
         });
-    });
-    $('#btnSubGroupDelete').on('click', function () {
+    }
+    $('#btnSubGroupDelete').on('click', GroupDelete);
+    function GroupDelete () {
         if (!subGroupId.val() || subGroupId.val() === '--Select Option--') {
             toastr.error('Plz Select a SubGroup Name To Delete');
             return;
@@ -532,8 +536,8 @@
             });
         }
 
-    })
-    /*--------------------------------------Product Types------------------------------------------------*/
+    }
+    /***************************************Product Types***********************************************************/
     loadProductTypes();
     function loadProductTypes() {
         productTypeId.empty();
@@ -557,7 +561,7 @@
             }
         });
     }
-    /*------------------------------------------------ Product--------------------------------------------*/
+   /***************************************Product***********************************************************/
     LoadProducts();
     function LoadProducts() {
         $('#loader').show();
@@ -772,33 +776,6 @@
                 console.log(errormessage)
             }
         });
-        //$.ajax({
-        //    url: '/Admin/GetAllGroups?ProdutTypeId=' + ProductTypeId +'',
-        //    type: "GET",
-        //    contentType: "application/json;charset=utf-8",
-        //    dataType: "json",
-        //    success: function (result) {
-        //        var selectElement = $('select[name="mdlGroup"]');
-        //        if (result.ResponseCode == 302) {
-        //            selectElement.empty();
-        //            $.each(result.Groups, function (key, item) {
-        //                var option = $('<option></option>').val(item.GroupId).text(item.GroupName);
-        //                if (item.GroupName === Group) {
-        //                    option.attr('selected', 'selected');
-        //                    getSubGroup(item.GroupId, SubGroup)
-        //                }
-        //                selectElement.append(option);
-        //            });
-        //        }
-        //        else {
-        //            var defaultOption = $('<option></option>').val('').text('--Select Option--');
-        //            selectElement.append(defaultOption);
-        //        }
-        //    },
-        //    error: function (errormessage) {
-        //        console.log(errormessage)
-        //    }
-        //});
     } 
     $('select[name="mdlProductType"]').on('change', function () {
         const ProductTypeId = $('select[name="mdlProductType"]').val();
@@ -861,8 +838,8 @@
             }
         });
     }
-    $('#modal-edit-Product').on('click', '.product', (event) => {
-
+    $('.btn-product-update').on('click', UpdateProduct);
+    function UpdateProduct () {
         if (!mdlProductId.val()) {
             $('input[name="mdlProductId"]').css('border-color', 'red');
             return;
@@ -878,10 +855,7 @@
         } else if (!mdlGroup.val() || mdlGroup.val() === '--Select Option--') {
             $('input[name="mdlGroup"]').css('border-color', 'red');
             return;
-        } else if (!mdlSubGroup.val() || mdlSubGroup.val() === '--Select Option--') {
-            $('input[name="mdlSubGroup"]').css('border-color', 'red');
-            return;
-        } else if (!mdlPrice.val()) {
+        }  else if (!mdlPrice.val()) {
             $('input[name="mdlPrice"]').css('border-color', 'red');
             return;
         } else if (!mdlGst.val()) {
@@ -920,7 +894,7 @@
                 }
             });
         }
-    });
+    }
     $(document).on('click', '.btn-product-delete', (event) => {
         const value = $(event.currentTarget).data('id');
         DeleteProduct(value);
@@ -957,5 +931,4 @@
             }
         });
     }
-
 })

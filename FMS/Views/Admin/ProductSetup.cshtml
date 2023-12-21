@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     Layout = "_Layout";
     ViewData["Title"] = "Product";
 }
@@ -29,93 +28,93 @@
                         Product Setup
                     </h3>
                 </div>
-                <div class="card-body">                      
-                            <div class="card card-primary card-outline" style="background:#C7C9DC">
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-md-2">
-                                            <div class="form-group">
-                                                <label>Product Type</label>
-                                                <select class="form-control select2bs4" style="width: 100%;" name="ProductTypeId" tabindex="1">
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label>Group</label>
+                <div class="card-body">
+                    <div class="card card-primary card-outline" style="background:#C7C9DC">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label>Product Type</label>
+                                        <select class="form-control select2bs4" style="width: 100%;" name="ProductTypeId" tabindex="1">
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Group</label>
                                         <select class="form-control select2bs4" style="width: 100%;" name="ProductGroupId" tabindex="2" disabled>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <button class="btn btn-primary btn-link cust-btn" id="btnGrupAdd" style="margin-top: 32px !important;border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-plus"></i></button>
-                                            <button class="btn btn-primary btn-link cust-btn" id="btnGrupEdit" style="margin-top: 32px !important;border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"><i class="fa-solid fa-edit"></i></button>
-                                            <button class="btn btn-primary btn-link cust-btn" id="btnGrupDelete" style="margin-top: 32px !important;border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"><i class="fa-solid fa-trash-can"></i></button>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label>Sub Group (Optional)</label>
-                                                <select class="form-control select2bs4" style="width: 100%;" name="ProductSubGroupId" tabindex="3" disabled>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <button class="btn btn-primary btn-link cust-btn" id="btnSubGroupAdd" style="margin-top: 32px !important;border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-plus"></i></button>
-                                            <button class="btn btn-primary btn-link cust-btn" id="btnSubGroupEdit" style="margin-top: 32px !important;border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"><i class="fa-solid fa-edit"></i></button>
-                                            <button class="btn btn-primary btn-link cust-btn" id="btnSubGroupDelete" style="margin-top: 32px !important;border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"><i class="fa-solid fa-trash-can"></i></button>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label for="">Product Name</label>
-                                                <input type="text" class="form-control" id="" name="ProductName" tabindex="4">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <div class="form-group">
-                                                <label>Unit</label>
-                                                <select class="form-control select2bs4" style="width: 100%;" name="ProductUnitId" tabindex="5">
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <button class="btn btn-primary btn-link cust-btn" id="btnUnitAdd" style="margin-top: 32px !important;border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-plus"></i></button>
-                                            <button class="btn btn-primary btn-link cust-btn" id="btnUnitEdit" style="margin-top: 32px !important;border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"><i class="fa-solid fa-edit"></i></button>
-                                            <button class="btn btn-primary btn-link cust-btn" id="btnUnitDelete" style="margin-top: 32px !important;border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"><i class="fa-solid fa-trash-can"></i></button>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <div class="form-group">
-                                                <label for="">Price</label>
-                                                <input type="text" class="form-control" id="" value="0" name="Price" tabindex="6">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <div class="form-group">
-                                                <label for="">GST%</label>
-                                                <input type="text" class="form-control" value="0" id="" name="GST" tabindex="7">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-10"></div>
-                                        <div class="col-md-2">
-                                            <div class="form-group">
-                                                <label></label>
-                                                <button type="button" tabindex="8" class="btn btn-block btn-outline-primary btn-product-create" style="float:right"><b>Submit</b></button>
-                                            </div>
-                                        </div>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <button class="btn btn-primary btn-link cust-btn" id="btnGrupAdd" style="margin-top: 32px !important;border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-plus"></i></button>
+                                    <button class="btn btn-primary btn-link cust-btn" id="btnGrupEdit" style="margin-top: 32px !important;border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"><i class="fa-solid fa-edit"></i></button>
+                                    <button class="btn btn-primary btn-link cust-btn" id="btnGrupDelete" style="margin-top: 32px !important;border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"><i class="fa-solid fa-trash-can"></i></button>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Sub Group (Optional)</label>
+                                        <select class="form-control select2bs4" style="width: 100%;" name="ProductSubGroupId" tabindex="3" disabled>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <button class="btn btn-primary btn-link cust-btn" id="btnSubGroupAdd" style="margin-top: 32px !important;border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-plus"></i></button>
+                                    <button class="btn btn-primary btn-link cust-btn" id="btnSubGroupEdit" style="margin-top: 32px !important;border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"><i class="fa-solid fa-edit"></i></button>
+                                    <button class="btn btn-primary btn-link cust-btn" id="btnSubGroupDelete" style="margin-top: 32px !important;border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"><i class="fa-solid fa-trash-can"></i></button>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="">Product Name</label>
+                                        <input type="text" class="form-control" id="" name="ProductName" tabindex="4">
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label>Unit</label>
+                                        <select class="form-control select2bs4" style="width: 100%;" name="ProductUnitId" tabindex="5">
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <button class="btn btn-primary btn-link cust-btn" id="btnUnitAdd" style="margin-top: 32px !important;border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-plus"></i></button>
+                                    <button class="btn btn-primary btn-link cust-btn" id="btnUnitEdit" style="margin-top: 32px !important;border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"><i class="fa-solid fa-edit"></i></button>
+                                    <button class="btn btn-primary btn-link cust-btn" id="btnUnitDelete" style="margin-top: 32px !important;border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"><i class="fa-solid fa-trash-can"></i></button>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label for="">Price</label>
+                                        <input type="text" class="form-control" id="" value="0" name="Price" tabindex="6">
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label for="">GST%</label>
+                                        <input type="text" class="form-control" value="0" id="" name="GST" tabindex="7">
+                                    </div>
+                                </div>
+                                <div class="col-md-10"></div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label></label>
+                                        <button type="button" tabindex="8" class="btn btn-block btn-outline-primary btn-product-create" style="float:right"><b>Submit</b></button>
                                     </div>
                                 </div>
                             </div>
-                            <div id="loader" style="display:none;"></div>
-                            <div class="card card-primary card-outline" style="background:#C7C9DC">
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="tbProduct">
-                                            </div>
-                                        </div>
+                        </div>
+                    </div>
+                    <div id="loader" style="display:none;"></div>
+                    <div class="card card-primary card-outline" style="background:#C7C9DC">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="tbProduct">
                                     </div>
                                 </div>
                             </div>
-                        </div> 
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -445,7 +444,7 @@
             </div>
             <div class="modal-footer justify-content-between">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary product">Save changes</button>
+                <button type="button" class="btn btn-primary btn-product-update">Save changes</button>
             </div>
 
         </div>
