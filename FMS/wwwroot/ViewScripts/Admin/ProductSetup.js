@@ -105,7 +105,9 @@
     $('#btnUnitAdd').on('click', function () {
         $('#modal-add-unit').modal('show');
     });
-    $('#modal-add-unit').on('click', '.unitAdd', (event) => {
+
+    $('.unitAdd').on('click', UnitAdd);
+    function UnitAdd() {
         if (!$('input[name="mdlUnitAdd"]').val()) {
             toastr.error('Plz Insert Unit Name');
             return;
@@ -136,8 +138,9 @@
                 }
             });
         }
-    });
-    $('#btnUnitEdit').on('click', function () {
+    }
+    $('#btnUnitEdit').on('click', UnitEdit);
+    function UnitEdit() {
         if (!unitId.val() || unitId.val() === '--Select Option--') {
             toastr.error('Plz Select a Unit Name To Edit');
             return;
@@ -148,13 +151,14 @@
             var text = selectedOption.text();
             var value = selectedOption.val();
             $("input[name='mdlUnitId']").val(value);
-            $("input[name='mdlUnitEdit']").val(text);
+            $("input[name='mdlUnitName']").val(text);
         }
-    });
-    $('#modal-edit-unit').on('click', '.unitEdit', (event) => {
+    }
+    $('.mdlUnitUpdate').on('click', UnitUpdate);
+    function UnitUpdate() {
         const data = {
             UnitId: $('input[name="mdlUnitId"]').val(),
-            UnitName: $('input[name="mdlUnitEdit"]').val(),
+            UnitName: $('input[name="mdlUnitName"]').val(),
         }
         $.ajax({
             type: "POST",
@@ -167,7 +171,7 @@
                 if (Response.ResponseCode == 200) {
                     toastr.success(Response.SuccessMsg);
                     $('input[name="mdlUnitId"]').val('');
-                    $('input[name="mdlUnitEdit"]').val('');
+                    $('input[name="mdlUnitName"]').val('');
                 }
                 else {
                     toastr.error(Response.ErrorMsg);
@@ -178,8 +182,9 @@
                 console.log(error);
             }
         });
-    });
-    $('#btnUnitDelete').on('click', function () {
+    }
+    $('#btnUnitDelete').on('click', UnitDelete);
+    function UnitDelete() {
 
         if (!unitId.val() || unitId.val() === '--Select Option--') {
             toastr.error('Plz Select a Unit Name To Delete');
@@ -220,7 +225,7 @@
             });
         }
 
-    })
+    }
     /*************************************** Group ***********************************************************/
     productTypeId.on('change', function () {
         enablGroup();
@@ -260,7 +265,8 @@
     $('#btnGrupAdd').on('click', function () {
         $('#modal-add-group').modal('show');
     });
-    $('#modal-add-group').on('click', '.groupAdd', (event) => {
+    $('.groupAdd').on('click', GroupAdd);
+    function GroupAdd () {
         if (!$('input[name="mdlGroupAdd"]').val()) {
             toastr.error('Plz Insert Group Name');
             return;
@@ -292,8 +298,9 @@
                 }
             });
         }
-    });
-    $('#btnGrupEdit').on('click', function () {
+    }
+    $('#btnGrupEdit').on('click', GrupEdit);
+    function GrupEdit() {
         if (!groupId.val() || groupId.val() === '--Select Option--') {
             toastr.error('Plz Select a Group Name To Edit');
             return;
@@ -306,8 +313,9 @@
             $("input[name='mdlGroupId']").val(value);
             $("input[name='mdlGroupEdit']").val(text);
         }
-    });
-    $('#modal-edit-group').on('click', '.groupEdit', (event) => {
+    }
+    $('.groupUpdate').on('click', GroupUpdate);
+    function GroupUpdate() {
         const data = {
             GroupId: $('input[name="mdlGroupId"]').val(),
             GroupName: $('input[name="mdlGroupEdit"]').val(),
@@ -335,8 +343,9 @@
                 console.log(error);
             }
         });
-    });
-    $('#btnGrupDelete').on('click', function () {
+    }
+    $('#btnGrupDelete').on('click', GrupDelete)
+    function GrupDelete() {
         if (!groupId.val() || groupId.val() === '--Select Option--') {
             toastr.error('Plz Select a Group Name To Delete');
             return;
@@ -375,8 +384,7 @@
                 }
             });
         }
-
-    })
+    }
     /*************************************** SubGroup ***********************************************************/
     groupId.on('change', function () {
         enableSubGroup();
@@ -415,8 +423,8 @@
     $('#btnSubGroupAdd').on('click', function () {
         $('#modal-add-subGroup').modal('show');
     });
-    $('.subGroupAdd').on('click', GroupAdd);
-    function GroupAdd() {
+    $('.subGroupAdd').on('click', SubGroupAdd);
+    function SubGroupAdd() {
         if (!$('input[name="mdlSubGroupAdd"]').val()) {
             toastr.error('Plz Insert SubGroup Name');
             return;
@@ -464,8 +472,8 @@
             $("input[name='mdlSubGroupEdit']").val(text);
         }
     }
-    $('.subGroupEdit').on('click', GroupEdit);
-    function GroupEdit () {
+    $('.subGroupUpdate').on('click', UpdateSubGroup);
+    function UpdateSubGroup () {
         const data = {
             SubGroupId: $('input[name="mdlSubGroupId"]').val(),
             SubGroupName: $('input[name="mdlSubGroupEdit"]').val(),
