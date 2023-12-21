@@ -53,10 +53,10 @@ namespace FMS.Service.Master
             }
             return Obj;
         }
-        public async Task<ProductViewModel> GetProductsWhichNotInStock()
+        public async Task<ProductViewModel> GetProductsWhichNotInStock(Guid GroupId, Guid SubGroupId)
         {
             ProductViewModel Obj;
-            var Result = await _masterRepo.GetProductsWhichNotInStock();
+            var Result = await _masterRepo.GetProductsWhichNotInStock(GroupId, SubGroupId);
             if (Result.IsSuccess)
             {
                 if (Result.Response == "success")

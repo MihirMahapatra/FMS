@@ -36,6 +36,7 @@ namespace FMS.Repository.Admin
         Task<Result<ProductTypeModel>> GetProductTypes();
         #endregion
         #region Group
+        Task<Result<GroupModel>> GetAllGroups();
         Task<Result<GroupModel>> GetAllGroups(Guid ProdutTypeId);
         Task<Result<bool>> CreateGroup(GroupModel data);
         Task<Result<bool>> UpdateGroup(GroupModel data);

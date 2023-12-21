@@ -62,7 +62,7 @@ namespace FMS.Service.Reports
                     {
                         ResponseStatus = Result.Response,
                         ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
-                        products = Result.CollectionObjData,
+                        product = Result.SingleObjData,
                     };
                 }
                 else

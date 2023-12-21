@@ -547,6 +547,33 @@ namespace FMS.Repository.Admin
         }
         #endregion
         #region Group
+        public async Task<Result<GroupModel>> GetAllGroups()
+        {
+            Result<GroupModel> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                var Query = await _appDbContext.Groups.Select(s =>
+                    new GroupModel
+                    {
+                        GroupId = s.GroupId,
+                        GroupName = s.GroupName,
+                    }).ToListAsync();
+                if (Query.Count > 0)
+                {
+                    var GroupList = Query;
+                    _Result.CollectionObjData = GroupList;
+                    _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
+                }
+                _Result.IsSuccess = true;
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/GetAllGroups : {_Exception.Message}");
+            }
+            return _Result;
+        }
         public async Task<Result<GroupModel>> GetAllGroups(Guid ProdutTypeId)
         {
             Result<GroupModel> _Result = new();

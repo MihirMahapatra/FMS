@@ -251,9 +251,8 @@
                     html += '</thead>'
                     html += '<tbody>';
                     if (result.ResponseCode == 302) {
+                        let item = result.product
                         var Stock = 0;
-                        $.each(result.products, function (key, item) {
-                            console.log(result.products)
                             html += '<tr>';
                             html += '<td></td>';
                             html += '<td></td>';
@@ -390,8 +389,6 @@
                                     html += '</tr >';
                                 });
                             }
-
-                        });
                     }
                     else {
                         html += '<tr>';

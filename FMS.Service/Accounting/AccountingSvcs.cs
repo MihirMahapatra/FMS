@@ -355,7 +355,6 @@ namespace FMS.Service.Accounting
         }
         public async Task<Base> DeletePayment(string Id)
         {
-
             var Result = await _accountingRepo.DeletePayment(Id, null);
             Base Obj;
             if (Result.IsSuccess)

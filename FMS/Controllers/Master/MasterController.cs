@@ -89,12 +89,6 @@ namespace FMS.Controllers.Master
         #endregion
         #region SubLedger
         [HttpGet]
-        public async Task<IActionResult> GetLedgersHasSubLedger()
-        {
-            var result = await _adminSvcs.GetLedgersHasSubLedger();
-            return new JsonResult(result);
-        }
-        [HttpGet]
         public IActionResult SubLedger()
         {
             string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
@@ -103,6 +97,13 @@ namespace FMS.Controllers.Master
             ViewBag.FinancialYear = FinancialYear;
             return View();
         }
+        [HttpGet]
+        public async Task<IActionResult> GetLedgersHasSubLedger()
+        {
+            var result = await _adminSvcs.GetLedgersHasSubLedger();
+            return new JsonResult(result);
+        }
+
         [HttpPost, Authorize(Policy = "Create")]
         public async Task<IActionResult> CreateSubLedgers([FromBody] SubLedgerDataRequest requestData)
         {
@@ -148,7 +149,6 @@ namespace FMS.Controllers.Master
             var result = await _masterSvcs.DeleteSubLedger(Id);
             return new JsonResult(result);
         }
-
         #endregion
         #region SubLedger Balance
         [HttpGet]
@@ -196,9 +196,21 @@ namespace FMS.Controllers.Master
             return new JsonResult(result);
         }
         [HttpGet]
-        public async Task<IActionResult> GetProductsWhichNotInStock()
+        public async Task<IActionResult> GetAllGroups()
         {
-            var result = await _masterSvcs.GetProductsWhichNotInStock();
+            var result = await _adminSvcs.GetAllGroups();
+            return new JsonResult(result);
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetSubGroups(Guid GroupId)
+        {
+            var result = await _adminSvcs.GetSubGroups(GroupId);
+            return new JsonResult(result);
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetProductsWhichNotInStock(Guid GroupId,Guid SubGroupId)
+        {
+            var result = await _masterSvcs.GetProductsWhichNotInStock(GroupId, SubGroupId);
             return new JsonResult(result);
         }
         [HttpPost, Authorize(Policy = "Create")]

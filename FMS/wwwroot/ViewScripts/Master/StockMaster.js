@@ -17,9 +17,11 @@ $(function () {
     const minQty = $('input[name = "MinQty"]');
     const maxQty = $('input[name = "MaxQty"]')
     const productId = $('select[name="ProductId"]');
+    const groupId = $('select[name="GroupId"]');
+    const subGroupId = $('select[name="SubGroupId"]');
 
     //-----------------------------------Contorl Foucous Of Element   ProductMaster StockDetail----------------------------//
-    productId.focus();
+    groupId.focus();
     openingQty.on('focus', function () {
         $(this).css('border-color', 'red');
     });
@@ -73,14 +75,81 @@ $(function () {
         $(this).val(inputValue);
     });
     /*--------------------------------------------------------------- Stock Details--------------------------------------------*/
-    LoadProductForStock();
-    LoadStocks();
-    function LoadProductForStock() {
+    LoadGroups();
+    function LoadGroups() {
+        groupId.empty();
+        var defaultOption = $('<option></option>').val('').text('--Select Option--');
+        groupId.append(defaultOption);
+        $.ajax({
+            url: "/Master/GetAllGroups",
+            type: "GET",
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            success: function (result) {
+                if (result.ResponseCode == 302) {
+                    $.each(result.Groups, function (key, item) {
+                        var option = $('<option></option>').val(item.GroupId).text(item.GroupName);
+                        groupId.append(option);
+                    });
+                }
+            },
+            error: function (errormessage) {
+                console.log(errormessage)
+            }
+        });
+    }
+    groupId.on('change', function () {
+        var SelectedGroupId = groupId.val();
+        if (SelectedGroupId) {
+            subGroupId.prop("disabled", false);
+            LoadSubGroup(SelectedGroupId);
+        } else {
+            subGroupId.prop("disabled", true);
+            productId.prop("disabled", false);
+        }
+    });
+    function LoadSubGroup(GroupId) {
+        subGroupId.empty();
+        var defaultOption = $('<option></option>').val('').text('--Select Option--');
+        subGroupId.append(defaultOption);
+        $.ajax({
+            url: '/Master/GetSubGroups?GroupId=' + GroupId + '',
+            type: "GET",
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            success: function (result) {
+                if (result.ResponseCode == 302) {
+                    $.each(result.SubGroups, function (key, item) {
+                        var option = $('<option></option>').val(item.SubGroupId).text(item.SubGroupName);
+                        subGroupId.append(option);
+                    });
+                }
+                else {
+                    LoadProducts(GroupId);
+                    productId.prop("disabled", false);
+                }
+            },
+            error: function (errormessage) {
+                console.log(errormessage)
+            }
+        });
+    }
+    subGroupId.on('change', function () {
+        var SelectedGroupId = groupId.val();
+        var SelectedSubGroupId = subGroupId.val();
+        if (SelectedGroupId && SelectedSubGroupId) {
+            productId.prop("disabled", false);
+            LoadProducts(SelectedGroupId, SelectedSubGroupId)
+        } else {
+            productId.prop("disabled", true);
+        }
+    });
+    function LoadProducts(GroupId, SubGroupId) {
         productId.empty();
         var defaultOption = $('<option></option>').val('').text('--Select Option--');
         productId.append(defaultOption);
         $.ajax({
-            url: "/Master/GetProductsWhichNotInStock",
+            url: '/Master/GetProductsWhichNotInStock?GroupId=' + GroupId + '&&SubGroupId=' + SubGroupId + '',
             type: "GET",
             contentType: "application/json;charset=utf-8",
             dataType: "json",
@@ -95,6 +164,7 @@ $(function () {
             }
         });
     }
+    LoadStocks();
     function LoadStocks() {
         $('#loader').show();
         $('.tblStock').empty();

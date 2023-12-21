@@ -34,6 +34,7 @@ namespace FMS.Service.Admin
         Task<ProductTypeViewModel> GetProductTypes();
         #endregion
         #region Group
+        Task<GroupViewModel> GetAllGroups();
         Task<GroupViewModel> GetAllGroups(Guid ProdutTypeId);
         Task<Base> CreateGroup(GroupModel data);
         Task<Base> UpdateGroup(GroupModel data);
