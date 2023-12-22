@@ -242,7 +242,8 @@ $(function () {
             });
         }
     }
-    $('#modal-party-edit').on('click', '.btn-party-edit', (event) => {
+    $('.btn-party-update').on('click', UpdateParty);
+    function UpdateParty() {
         const data = {
             PartyId: $('input[name="mdlPartyId"]').val(),
             Fk_PartyType: $('select[name="ddnPartyTypeId"]').val(),
@@ -255,7 +256,6 @@ $(function () {
             GstNo: $('input[name="GstNo"]').val(),
             CreditLimit: $('input[name="CreditLimit"]').val(),
         }
-        console.log(data);
         $.ajax({
             type: "POST",
             url: '/Master/UpdateParty',
@@ -277,8 +277,7 @@ $(function () {
                 console.log(error);
             }
         });
-    });
-
+    }
     $(document).on('click', '.btn-party-delete', (event) => {
         const value = $(event.currentTarget).data('id');
         DeleteParty(value);

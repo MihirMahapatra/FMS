@@ -1718,6 +1718,7 @@ namespace FMS.Repository.Admin
                 var ledger = await _appDbContext.Ledgers.Where(s => s.LedgerId == data.LedgerId).FirstOrDefaultAsync();
                 if (ledger != null)
                 {
+                   // ledger.HasSubLedger = data.HasSubLedger;
                     _mapper.Map(data, ledger);
                     int count = await _appDbContext.SaveChangesAsync();
                     _Result.Response = (count > 0) ? ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Modified) : ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Error);

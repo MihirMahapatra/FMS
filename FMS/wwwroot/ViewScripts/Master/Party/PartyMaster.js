@@ -177,7 +177,8 @@ $(function () {
             }
         });
     }
-    $('#modal-add-state').on('click', '.StateAdd', (event) => {
+    $('.StateAdd').on('click',StateAdd);
+    function StateAdd() {
         const data = {
             StateName: $('input[name="mdlStateAdd"]').val(),
         }
@@ -202,8 +203,9 @@ $(function () {
                 console.log(error);
             }
         });
-    });
-    $("#btnStateEdit").on('click',function () {
+    }
+    $("#btnStateEdit").on('click', StateEdit);
+    function StateEdit() {
         if (!ddlState.val() || ddlState.val() === '--Select Option--') {
             toastr.error('Plz Select a State To Edit');
             return;
@@ -215,8 +217,9 @@ $(function () {
             $("input[name='mdlStateEdit']").val(text);
             $("input[name='mdlStateId']").val(value);
         }
-    });
-    $('#modal-edit-state').on('click', '.StateEdit', (event) => {
+    }
+    $('.StateUpdate').on('click', StateUpdate);
+    function StateUpdate() {
         const data = {
             StateId: $('input[name="mdlStateId"]').val(),
             StateName: $('input[name="mdlStateEdit"]').val(),
@@ -244,8 +247,9 @@ $(function () {
                 console.log(error);
             }
         });
-    });
-    $('#btnStateDelete').on('click', function () {
+    }
+    $('#btnStateDelete').on('click', StateDelete)
+    function StateDelete() {
 
         if (!ddlState.val() || ddlState.val() === '--Select Option--') {
             toastr.error('Plz Select a State To Delete');
@@ -284,9 +288,8 @@ $(function () {
                 });
             }
         });
-    })
+    }
     //**************************************City*************************************//
-  
     $("#stateId").on("change", function () {
         $("#cityId").prop("disabled", false);
         $("#cityId").empty();
@@ -326,7 +329,8 @@ $(function () {
             return;
         }
     });
-    $('#modal-add-city').on('click', '.CityeAdd', (event) => {
+    $('.CityeAdd').on('click', CreateCity);
+    function CreateCity(){
         const selectedOption = ddlState.find('option:selected');
         const data = {
             Fk_StateId: selectedOption.val(),
@@ -353,9 +357,9 @@ $(function () {
                 console.log(error);
             }
         });
-    });
-    $("#btnCityEdit").on('click',function () {
-
+    }
+    $("#btnCityEdit").on('click', CityEdit);
+    function CityEdit() {
         if (!ddlState.val() || ddlState.val() === '--Select Option--') {
             toastr.error('Plz Select a State For Which You Update A City');
             return;
@@ -373,8 +377,9 @@ $(function () {
             $("input[name='mdlCityId']").val(value);
             $("input[name='mdlStateId']").val(selectedStateOption.val());
         }
-    });
-    $('#modal-edit-city').on('click', '.CityEdit', (event) => {
+    }
+    $('.CityUpdate').on('click', UpdateCity);
+    function UpdateCity() {
         const data = {
             CityId: $('input[name="mdlCityId"]').val(),
             Fk_StateId: $('input[name="mdlStateId"]').val(),
@@ -403,9 +408,9 @@ $(function () {
                 console.log(error);
             }
         });
-    });
-    $('#btnCityDelete').on('click', function () {
-
+    }
+    $('#btnCityDelete').on('click', CityDelete)
+    function CityDelete() {
         if (!ddlState.val() || ddlState.val() === '--Select Option--') {
             toastr.error('Plz Select a State For City Which You Want To Delete');
             return;
@@ -452,11 +457,9 @@ $(function () {
                 }
             });
         }
-    })
+    }
     //**************************************Party*************************************//
-
-    
-    $(document).on('click', '.btn-party-create', CreateParty);
+    $('.btn-party-create').on('click', CreateParty);
     function CreateParty() {
         if (!partyTypeId.val() || partyTypeId.val() === '--Select Option--') {
             toastr.error('Plz Select a Party Type');

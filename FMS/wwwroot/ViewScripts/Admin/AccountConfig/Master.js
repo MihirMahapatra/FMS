@@ -94,7 +94,8 @@ $(function () {
         }
         $('#modal-add-subgroup').modal('show');
     });
-    $('#modal-add-subgroup').on('click', '.ledgerSubGroupAdd', (event) => {
+    $('.ledgerSubGroupAdd').on('click', LedgerSubGroupAdd);
+    function LedgerSubGroupAdd () {
         const data = {
             Fk_LedgerGroupId: ddlLedgerGroup.val(),
             SubGroupName: $('input[name="mdlLedgerSubGroupAdd"]').val(),
@@ -121,8 +122,9 @@ $(function () {
                 console.log(error);
             }
         });
-    });
-    $('#btnLedgerSubGrupEdit').on('click', function () {
+    }
+    $('#btnLedgerSubGrupEdit').on('click', LedgerSubGrupEdit);
+    function LedgerSubGrupEdit() {
         if (!ddlLedgerGroup.val() || ddlLedgerGroup.val() === '--Select Option--') {
             toastr.error('Plz Select a Group Name');
             return;
@@ -139,8 +141,9 @@ $(function () {
             $("input[name='mdlLedgerSubGroupId']").val(value);
             $('#modal-edit-subgroup').modal('show');
         }
-    });
-    $('#modal-edit-subgroup').on('click', '.ledgerSubGroupEdit', (event) => {
+    }
+    $('.ledgerSubGroupUpdate').on('click', LedgerSubGroupUpdate);
+    function LedgerSubGroupUpdate() {
         const data = {
             LedgerSubGroupId: $('input[name="mdlLedgerSubGroupId"]').val(),
             SubGroupName: $('input[name="mdlLedgerSubGroupEdit"]').val(),
@@ -168,8 +171,9 @@ $(function () {
                 console.log(error);
             }
         });
-    });
-    $('#btnLedgerSubGrupDelete').on('click', function () {
+    }
+    $('#btnLedgerSubGrupDelete').on('click', LedgerSubGrupDelete)
+    function LedgerSubGrupDelete() {
         if (!ddlLedgerSubGroup.val() || ddlLedgerSubGroup.val() === '--Select Option--') {
             toastr.error('Plz Select a SubGroup Name To Edit');
             return;
@@ -207,7 +211,7 @@ $(function () {
                 });
             }
         });
-    })
+    }
     //******************************************Ledger***************************************************//
     $('#addLedgerRowBtn').click(function () {
         var newRowData = [

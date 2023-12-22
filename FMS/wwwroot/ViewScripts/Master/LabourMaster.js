@@ -235,7 +235,7 @@ $(function () {
             }
         });
     }
-    $(document).on('click', '.btn-labourtype-create', CreateLabourType);
+    $('.btn-labourtype-create').on('click',CreateLabourType);
     function CreateLabourType() {
 
         if (!labourType.val()) {
@@ -818,7 +818,7 @@ $(function () {
             }
         });
     }
-    $(document).on('click', '.btn-labourrate-create', CreateLabourRate);
+    $('.btn-labourrate-create').on('click', CreateLabourRate);
     function CreateLabourRate() {
         if (!date.val()) {
             toastr.error("Date is required.");

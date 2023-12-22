@@ -196,6 +196,12 @@ namespace FMS.Controllers.Master
             return new JsonResult(result);
         }
         [HttpGet]
+        public async Task<IActionResult> GetAllProducts()
+        {
+            var result = await _adminSvcs.GetAllProducts();
+            return new JsonResult(result);
+        }
+        [HttpGet]
         public async Task<IActionResult> GetAllGroups()
         {
             var result = await _adminSvcs.GetAllGroups();

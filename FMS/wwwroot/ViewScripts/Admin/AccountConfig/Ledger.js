@@ -158,7 +158,8 @@ $(function () {
         const GroupId = $('select[name="mdlLedgerGroupId"]').val();
         getSubGroup(GroupId);
     });
-    $('#modal-edit-ledger').on('click', '.btnLedgerModal', (event) => {
+    $('.btnLedgerModal').on('click', UpdateLedger);
+    function UpdateLedger() {
         const data = {
             LedgerId: $('input[name="mdlLedgerId"]').val(),
             Fk_LedgerGroupId: $('select[name="mdlLedgerGroupId"]').val(),
@@ -166,7 +167,6 @@ $(function () {
             LedgerType: $('select[name="mdlLedgerType"]').val(),
             LedgerName: $('input[name="mdlLedgerName"]').val(),
         }
-   
         $.ajax({
             type: "POST",
             url: '/Admin/UpdateLedger',
@@ -187,7 +187,7 @@ $(function () {
                 console.log(error);
             }
         });
-    });
+    }
     $(document).on('click', '.btn-ledger-delete', (event) => {
         const value = $(event.currentTarget).data('id');
         DeleteLedger(value);
