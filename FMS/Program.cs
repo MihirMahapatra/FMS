@@ -23,6 +23,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Serialization;
 using NLog;
 using NLog.Web;
@@ -32,7 +33,11 @@ try
 {
     var builder = WebApplication.CreateBuilder(args);
     //***************************************************Add Connection to Db**************************************//
-    builder.Services.AddDbContext<AppDbContext>(option => option.UseSqlServer(builder.Configuration.GetConnectionString("DBCS")));
+    builder.Services.AddDbContext<AppDbContext>(option =>
+    option.UseSqlServer(builder.Configuration.GetConnectionString("DBCS"))
+    .EnableSensitiveDataLogging()
+    .UseLoggerFactory(LoggerFactory.Create(builder => builder.AddConsole())) 
+    );
     //****************************************************Email setup************************************************//
     builder.Services.Configure<SMTPConfigModel>(builder.Configuration.GetSection("SMTPConfig"));
     //*************************************************Dependancy Injection***************************************// 
@@ -123,7 +128,11 @@ try
     //*******************************************************Nlog Configuration***************************************************************//
     builder.Logging.ClearProviders();
     builder.Host.UseNLog();
-    builder.Services.AddLogging();
+    builder.Services.AddLogging(options =>
+    {
+        options.AddConsole();
+        options.AddDebug();
+    });
     var app = builder.Build();
 
     // Configure the HTTP request pipeline.
