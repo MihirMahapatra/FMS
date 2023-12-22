@@ -934,7 +934,9 @@ namespace FMS.Repository.Master
                     Query.Fk_StateId = data.Fk_StateId;
                     Query.Fk_PartyType = data.Fk_PartyType;
                     Query.GstNo = data.GstNo;
+                    Query.PartyName= data.PartyName;
                     Query.Phone = data.Phone;
+
                     int count = await _appDbContext.SaveChangesAsync();
                     _Result.Response = (count > 0) ? ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Modified) : ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Error);
                 }
@@ -1594,7 +1596,12 @@ namespace FMS.Repository.Master
                 if (Query != null)
                 {
                     data.Fk_BranchId = BranchId;
-                    _mapper.Map(data, Query);
+                    Query.Address=data.Address;
+                    Query.LabourName=data.LabourName;
+                    Query.Fk_Labour_TypeId = data.Fk_Labour_TypeId;
+                    Query.Phone=data.Phone;
+                    Query.Reference = data.Reference;
+                    //_mapper.Map(data, Query);
                     int count = await _appDbContext.SaveChangesAsync();
                     _Result.Response = (count > 0) ? ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Modified) : ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Error);
                 }

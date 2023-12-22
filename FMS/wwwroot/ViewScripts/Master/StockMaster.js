@@ -324,7 +324,6 @@ $(function () {
         var avilableQty = $tr.find('td:eq(5)').text().trim();
         var minimumQty = $tr.find('td:eq(6)').text().trim();
         var maximumQty = $tr.find('td:eq(7)').text().trim();
-
         //fill Modal data
         $('input[name="mdlStockId"]').val(Id);
         $('input[name="mdlOpeningQty"]').val(openingQty);
@@ -345,7 +344,7 @@ $(function () {
                     $.each(result.products, function (key, item) {
                         var option = $('<option></option>').val(item.ProductId).text(item.ProductName);
                         if (item.ProductName === productName) {
-                            option.attr('selected', 'selected'); // Set selected attribute
+                            option.attr('selected', 'selected');
                         }
                         selectElement.append(option);
                     });
@@ -357,7 +356,8 @@ $(function () {
             }
         });
     }
-    $('#modal-edit-Stock').on('click', '.stock', (event) => {
+    $('.stock').on('click', UpdateStock);
+    function UpdateStock() {
         if (!mdlStockId.val()) {
             $('input[name="mdlStockId"]').css('border-color', 'red');
             return;
@@ -409,7 +409,7 @@ $(function () {
             });
         }
 
-    });
+    }
 
     //-----------Delete Records-------//
     $(document).on('click', '.btn-stock-delete', (event) => {

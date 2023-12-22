@@ -37,7 +37,7 @@ namespace FMS.Repository.Accounting
                 Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
                 Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
                 _Result.IsSuccess = false;
-                var lastJournalNo = await _appDbContext.Journals.Where(s => s.Fk_BranchId == BranchId && s.Fk_FinancialYearId== FinancialYear).OrderByDescending(s => s.VouvherNo).Select(s => new { s.VouvherNo }).SingleOrDefaultAsync();
+                var lastJournalNo = await _appDbContext.Journals.Where(s => s.Fk_BranchId == BranchId && s.Fk_FinancialYearId== FinancialYear).OrderByDescending(s => s.VouvherNo).Select(s => new { s.VouvherNo }).FirstOrDefaultAsync();
                 if (lastJournalNo != null)
                 {
                     var lastVoucherNo = lastJournalNo.VouvherNo;
@@ -147,13 +147,13 @@ namespace FMS.Repository.Accounting
             }
             return _Result;
         }
-        private Guid GetFkLedgerGroupId(string ledgerId)
+        private async Task<Guid> GetFkLedgerGroupId(string ledgerId)
         {
             Guid ledgerIdGuid = Guid.Parse(ledgerId);
-            var ledgerGroup = _appDbContext.Ledgers.SingleOrDefaultAsync(s => s.LedgerId == ledgerIdGuid);
+            var ledgerGroup = await _appDbContext.Ledgers.SingleOrDefaultAsync(s => s.LedgerId == ledgerIdGuid);
             if (ledgerGroup != null)
             {
-                return ledgerGroup.Result.Fk_LedgerGroupId;
+                return ledgerGroup.Fk_LedgerGroupId;
             }
             var ledgerDevGroup = _appDbContext.LedgersDev.SingleOrDefaultAsync(s => s.LedgerId == ledgerIdGuid);
             if (ledgerDevGroup != null)
@@ -189,7 +189,7 @@ namespace FMS.Repository.Accounting
                                         {
                                             VouvherNo = requestData.VoucherNo,
                                             VoucherDate = convertedVoucherDate,
-                                            Fk_LedgerGroupId = GetFkLedgerGroupId(item.ddlLedgerId),
+                                            Fk_LedgerGroupId = await GetFkLedgerGroupId(item.ddlLedgerId),
                                             Fk_LedgerId = Guid.Parse(item.ddlLedgerId),
                                             Fk_SubLedgerId = Guid.Parse(data.ddlSubledgerId[i]),
                                             Fk_BranchId = BranchId,
@@ -228,7 +228,7 @@ namespace FMS.Repository.Accounting
                                 {
                                     VouvherNo = requestData.VoucherNo,
                                     VoucherDate = convertedVoucherDate,
-                                    Fk_LedgerGroupId = GetFkLedgerGroupId(item.ddlLedgerId),
+                                    Fk_LedgerGroupId = await GetFkLedgerGroupId(item.ddlLedgerId),
                                     Fk_LedgerId = Guid.Parse(item.ddlLedgerId),
                                     Fk_BranchId = BranchId,
                                     Fk_FinancialYearId = FinancialYear,
