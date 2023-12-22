@@ -34,7 +34,6 @@ $(function () {
     //-------------------------------Tab------------------------------------------//
     $(document).ready(function () {
         const elements = $('input, select, button').toArray(); // Select all input, select, and button elements
-
         $(document).on('keydown', 'input, select, button', function (e) {
             if (e.key === 'Tab') {
                 e.preventDefault(); // Prevent default tab behavior
@@ -55,8 +54,6 @@ $(function () {
             }
         });
     });
-
-
     //*------------------------------Ledger  Balance------------------------------*//
     GetLedgersHasNoSubLedger()
     function GetLedgersHasNoSubLedger() {
@@ -81,11 +78,12 @@ $(function () {
             }
         });
     }
-    $('#btnLedgerSubmit').on('click', function () {
+    $('#btnLedgerSubmit').on('click', LedgerSubmit);
+    function LedgerSubmit() {
         if (!ledgerOpeningBal.val()) {
             toastr.error('OpeningBal  Is Required.');
             return;
-        }else if (!ddlLedger.val() || ddlLedger.val() === '--Select Option--') {
+        } else if (!ddlLedger.val() || ddlLedger.val() === '--Select Option--') {
             toastr.error('Ledger Type Is Required.');
             return;
         }
@@ -115,7 +113,7 @@ $(function () {
                 }
             });
         }
-    });
+    }
     //*------------------------------SubLedger Balance------------------------------*//
     GetLedgersHasSubLedger();
     function GetLedgersHasSubLedger() {
@@ -140,7 +138,8 @@ $(function () {
             }
         });
     }
-    $('#btnSubLedgerSubmit').click(function () {
+    $('#btnSubLedgerSubmit').on('click', SubLedgerSubmit); 
+    function SubLedgerSubmit() {
         var requestData = {
             Fk_LedgerId: ddnSubLedgerLedger.val(),
             SubLedgerName: SubledgerName.val(),
@@ -166,7 +165,7 @@ $(function () {
                 console.log(error);
             }
         });
-    }); 
+    }
     //*------------------------------Ledger Balance List------------------------------*//
     $('a[href="#LedgerBalanceList"]').on('click', function () {
         GetLedgerBalances();
