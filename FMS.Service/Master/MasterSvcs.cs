@@ -336,6 +336,43 @@ namespace FMS.Service.Master
             }
             return Obj;
         }
+        public async Task<LabourViewModel> GetLaboursByLabourTypeId(Guid LabourTypeId)
+        {
+            LabourViewModel Obj;
+            var Result = await _masterRepo.GetLaboursByLabourTypeId(LabourTypeId);
+            if (Result.IsSuccess)
+            {
+                if (Result.Response == "success")
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
+                        Labours = Result.CollectionObjData,
+                    };
+                }
+                else
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.NotFound),
+                        Message = "No Record Found"
+                    };
+                }
+            }
+            else
+            {
+                Obj = new()
+                {
+                    ResponseStatus = Result.Response,
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    Message = "Some Eroor Occoured"
+                };
+            }
+            return Obj;
+        }
         public async Task<Base> CreateLabourDetail(LabourModel data)
         {
             Base Obj;

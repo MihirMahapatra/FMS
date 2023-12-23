@@ -136,6 +136,7 @@
     <!-- /.modal-dialog -->
 </div>
 
-@await Html.PartialAsync("_FooterScript")
-<script src="~/scripts/formscript.js"></script>
-<script src="~/viewscripts/devlopermaster/ledger.js"></script>
+@section additionalScripts {
+    <script src="~/scripts/formscript.js"></script>
+    <script src="~/viewscripts/devlopermaster/ledger.js"></script>
+}

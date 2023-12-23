@@ -20,6 +20,7 @@ namespace FMS.Service.Master
         #region Labour Details
         Task<LabourViewModel> GetAllLabourDetails();
         Task<LabourViewModel> GetLabourDetailById(Guid LabourId);
+        Task<LabourViewModel> GetLaboursByLabourTypeId(Guid LabourTypeId);
         Task<Base> CreateLabourDetail(LabourModel data);
         Task<Base> UpdateLabourDetail(LabourModel data);
         Task<Base> DeleteLabourDetail(Guid Id);

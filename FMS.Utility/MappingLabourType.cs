@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FMS.Utility
 {
-    internal class MappingLabourType
+    public class MappingLabourType
     {
         static MappingLabourType()
         {

@@ -30,11 +30,7 @@ namespace FMS.Controllers.Transaction
         [HttpGet]
         public IActionResult PurchaseTransaction()
         {
-            string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
-            string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
-            ViewBag.BranchName = branchName;
-            ViewBag.FinancialYear = FinancialYear;
-            return View();
+            return PartialView();
         }
         [HttpGet]
         public async Task<IActionResult> GetSundryCreditors()
@@ -162,27 +158,7 @@ namespace FMS.Controllers.Transaction
         }
         #endregion
         #endregion
-        #region Production Entry
-        public IActionResult Production()
-        {
-            string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
-            string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
-            ViewBag.BranchName = branchName;
-            ViewBag.FinancialYear = FinancialYear;
-            return View();
-        }
-        [HttpGet]
-        public async Task<IActionResult> GetLastProductionNo()
-        {
-            var result = await _transactionSvcs.GetLastProductionNo();
-            return new JsonResult(result);
-        }
-        [HttpGet]
-        public async Task<IActionResult> GetLabours()
-        {
-            var result = await _masterSvcs.GetAllLabourDetails();
-            return new JsonResult(result);
-        }
+        #region Production & Service Entry
         [HttpGet]
         public async Task<IActionResult> GetProductLabourRate([FromQuery] Guid ProductId)
         {
@@ -193,6 +169,24 @@ namespace FMS.Controllers.Transaction
         public async Task<IActionResult> GetLabourDetailById([FromQuery] Guid LabourId)
         {
             var result = await _masterSvcs.GetLabourDetailById(LabourId);
+            return new JsonResult(result);
+        }
+        #region Production
+        [HttpGet]
+        public IActionResult Production()
+        {
+            return PartialView();
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetLastProductionNo()
+        {
+            var result = await _transactionSvcs.GetLastProductionNo();
+            return new JsonResult(result);
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetProductionLabours()
+        {
+            var result = await _masterSvcs.GetLaboursByLabourTypeId(MappingLabourType.Production);
             return new JsonResult(result);
         }
         [HttpGet]
@@ -243,26 +237,20 @@ namespace FMS.Controllers.Transaction
             return new JsonResult(result);
         }
         #endregion
-        #region Service Entry
+        #region Service
+
+        #endregion
         [HttpGet]
         public IActionResult Service()
         {
-            string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
-            string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
-            ViewBag.BranchName = branchName;
-            ViewBag.FinancialYear = FinancialYear;
-            return View();
+            return PartialView();
         }
         #endregion
         #region Sales Transaction
         [HttpGet]
         public IActionResult SalesTransaction()
         {
-            string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
-            string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
-            ViewBag.BranchName = branchName;
-            ViewBag.FinancialYear = FinancialYear;
-            return View();
+            return PartialView();
         }
         [HttpGet]
         public async Task<IActionResult> GetSundryDebtors()
@@ -411,11 +399,7 @@ namespace FMS.Controllers.Transaction
         [HttpGet]
         public IActionResult InwardSupplyTransaction()
         {
-            string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
-            string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
-            ViewBag.BranchName = branchName;
-            ViewBag.FinancialYear = FinancialYear;
-            return View();
+            return PartialView();
         }
         [HttpGet]
         public async Task<IActionResult> GetLastInwardSupply()
@@ -474,11 +458,7 @@ namespace FMS.Controllers.Transaction
         [HttpGet]
         public IActionResult OutwardSupplyTransaction()
         {
-            string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
-            string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
-            ViewBag.BranchName = branchName;
-            ViewBag.FinancialYear = FinancialYear;
-            return View();
+            return PartialView();
         }
         [HttpGet]
         public async Task<IActionResult> GetLastOutwardSupply()
@@ -544,11 +524,7 @@ namespace FMS.Controllers.Transaction
         [HttpGet]
         public IActionResult DamageTransaction()
         {
-            string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
-            string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
-            ViewBag.BranchName = branchName;
-            ViewBag.FinancialYear = FinancialYear;
-            return View();
+            return PartialView();
         }
         [HttpGet]
         public async Task<IActionResult> GetLastDamageEntry()

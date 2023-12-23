@@ -125,7 +125,7 @@
                                         </div>
                                         <div class="card-footer">
                                             <button type="button" id="btnSave" tabindex="4" class="btn btn-primary" style="float:right">Submit</button>
-                                            <button type="button" id="btnUpdate" tabindex=5" class="btn btn-primary" style="float:right; display:none">Update</button>
+                                            <button type="button" id="btnUpdate" tabindex="5" class="btn btn-primary" style="float:right; display:none">Update</button>
                                         </div>
                                     </div>
                                 </div>
@@ -154,7 +154,7 @@
     </section>
     <!-- /.content -->
 </div>
-@await Html.PartialAsync("_FooterScript")
+@section additionalScripts {
 <script src="~/scripts/FormScript.js"></script>
 <script src="~/viewscripts/transaction/outwardsupplytransaction.js"></script>
 <script>
@@ -168,4 +168,5 @@
         format: 'DD/MM/YYYY'
     });
 </script>
+}
 

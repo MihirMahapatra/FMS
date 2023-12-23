@@ -65,9 +65,9 @@
                                                                 <td><div class="form-group"><input type="text" class="form-control" disabled></div></td>
                                                                 <td style="background-color:#ffe6e6;">
                                                                     <button class="btn btn-primary btn-link addBtn" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-plus"></i></button>
-                                                                   <button class="btn btn-primary btn-link deleteBtn" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;" disabled> <i class="fa-solid fa-trash-can"></i></button>
+                                                                    <button class="btn btn-primary btn-link deleteBtn" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;" disabled> <i class="fa-solid fa-trash-can"></i></button>
                                                                 </td>
-                                                               </tr>
+                                                            </tr>
                                                         </tbody>
                                                     </table>
                                                 </div>
@@ -90,7 +90,6 @@
                                     <div class="col-md-12">
                                         <div id="loader" style="display:none;"></div>
                                         <div class="tblProductionConfigList">
-
                                         </div>
                                     </div>
                                 </div>
@@ -104,20 +103,20 @@
 </div>
 
 <!--Script Section -->
-@await Html.PartialAsync("_FooterScript")
-<script src="~/scripts/FormScript.js"></script>
-<script src="~/viewscripts/admin/productionconfig.js"></script>
-@if (TempData["SuccessMsg"] != null)
-{
-    <script>
-        toastr.success('@TempData["SuccessMsg"]');
-    </script>
+@section additionalScripts {
+    <script src="~/scripts/FormScript.js"></script>
+    <script src="~/viewscripts/admin/productionconfig.js"></script>
+    @if (TempData["SuccessMsg"] != null)
+    {
+        <script>
+            toastr.success('@TempData["SuccessMsg"]');
+        </script>
+    }
+    @if (TempData["ErrorMsg"] != null)
+    {
+        <script>
+            toastr.error('@TempData["ErrorMsg"]');
+        </script>
+    }
 }
-@if (TempData["ErrorMsg"] != null)
-{
-    <script>
-        toastr.error('@TempData["ErrorMsg"]');
-    </script>
-}
-
 

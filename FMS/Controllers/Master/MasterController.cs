@@ -32,7 +32,7 @@ namespace FMS.Controllers.Master
             string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
             ViewBag.BranchName = branchName;
             ViewBag.FinancialYear = FinancialYear;
-            return View();
+            return PartialView();
         }
         #region LedgerBalance
         [HttpGet]
@@ -91,11 +91,7 @@ namespace FMS.Controllers.Master
         [HttpGet]
         public IActionResult SubLedger()
         {
-            string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
-            string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
-            ViewBag.BranchName = branchName;
-            ViewBag.FinancialYear = FinancialYear;
-            return View();
+            return PartialView();
         }
         [HttpGet]
         public async Task<IActionResult> GetLedgersHasSubLedger()
@@ -183,11 +179,7 @@ namespace FMS.Controllers.Master
         [HttpGet]
         public IActionResult StockMaster()
         {
-            string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
-            string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
-            ViewBag.BranchName = branchName;
-            ViewBag.FinancialYear = FinancialYear;
-            return View();
+            return PartialView();
         }
         [HttpGet]
         public async Task<IActionResult> GetStocks()
@@ -258,19 +250,11 @@ namespace FMS.Controllers.Master
         [HttpGet]
         public IActionResult PartyMaster()
         {
-            string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
-            string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
-            ViewBag.BranchName = branchName;
-            ViewBag.FinancialYear = FinancialYear;
-            return View();
+            return PartialView();
         }
         public IActionResult PartyList()
         {
-            string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
-            string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
-            ViewBag.BranchName = branchName;
-            ViewBag.FinancialYear = FinancialYear;
-            return View();
+            return PartialView();
         }
         #region PartyType
         [HttpGet]
@@ -413,11 +397,7 @@ namespace FMS.Controllers.Master
         [HttpGet]
         public IActionResult LabourMaster()
         {
-            string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
-            string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
-            ViewBag.BranchName = branchName;
-            ViewBag.FinancialYear = FinancialYear;
-            return View();
+            return PartialView();
         }
         #region Labour Type
         [HttpGet]

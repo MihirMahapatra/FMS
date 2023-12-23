@@ -37,11 +37,7 @@ namespace FMS.Controllers.Admin
         [HttpGet]
         public IActionResult DataBaseBackup()
         {
-            string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
-            string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
-            ViewBag.BranchName = branchName;
-            ViewBag.FinancialYear = FinancialYear;
-            return View();
+            return PartialView();
         }
         [HttpPost]
         public IActionResult CreateDataBaseBackup()
@@ -80,11 +76,7 @@ namespace FMS.Controllers.Admin
         [HttpGet]
         public IActionResult CreateToken()
         {
-            string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
-            string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
-            ViewBag.BranchName = branchName;
-            ViewBag.FinancialYear = FinancialYear;
-            return View();
+            return PartialView();
         }
         [HttpPost]
         [Authorize(Policy = "Create")]
@@ -105,7 +97,7 @@ namespace FMS.Controllers.Admin
                 TempData["ErrorMsg"] = IsCreatedSuccessFully.ErrorMsg;
             }
 
-            return View();
+            return PartialView();
         }
         #endregion
         #region Role & Claims   
@@ -223,11 +215,7 @@ namespace FMS.Controllers.Admin
         [HttpGet]
         public IActionResult CompanyInfo()
         {
-            string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
-            string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
-            ViewBag.BranchName = branchName;
-            ViewBag.FinancialYear = FinancialYear;
-            return View();
+            return PartialView();
         }
         [HttpPost]
         public async Task<IActionResult> CreateCompany([FromBody] CompanyDetailsModel data)
@@ -259,11 +247,7 @@ namespace FMS.Controllers.Admin
         [HttpGet]
         public IActionResult AllocateBranch()
         {
-            string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
-            string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
-            ViewBag.BranchName = branchName;
-            ViewBag.FinancialYear = FinancialYear;
-            return View();
+            return PartialView();
         }
         [HttpGet]
         public async Task<IActionResult> GetAllUserAndBranch()
@@ -295,11 +279,7 @@ namespace FMS.Controllers.Admin
         [HttpGet]
         public IActionResult ProductSetup()
         {
-            string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
-            string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
-            ViewBag.BranchName = branchName;
-            ViewBag.FinancialYear = FinancialYear;
-            return View();
+            return PartialView();
         }
         #region Product Type
         [HttpGet]
@@ -482,11 +462,8 @@ namespace FMS.Controllers.Admin
         [HttpGet]
         public IActionResult AlternateUnit()
         {
-            string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
-            string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
-            ViewBag.BranchName = branchName;
-            ViewBag.FinancialYear = FinancialYear;
-            return View();
+
+            return PartialView();
         }
 
         [HttpGet]
@@ -545,11 +522,8 @@ namespace FMS.Controllers.Admin
         [HttpGet]
         public IActionResult ProductionConfig()
         {
-            string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
-            string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
-            ViewBag.BranchName = branchName;
-            ViewBag.FinancialYear = FinancialYear;
-            return View();
+
+            return PartialView();
         }
         [HttpGet]
         public async Task<IActionResult> GetRawMaterials()
@@ -615,11 +589,8 @@ namespace FMS.Controllers.Admin
         [HttpGet]
         public IActionResult LabourRateConfig()
         {
-            string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
-            string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
-            ViewBag.BranchName = branchName;
-            ViewBag.FinancialYear = FinancialYear;
-            return View();
+
+            return PartialView();
         }
         [HttpGet]
         public async Task<IActionResult> GetAllLabourRates()
@@ -682,11 +653,8 @@ namespace FMS.Controllers.Admin
         [HttpGet]
         public IActionResult AccountConfig()
         {
-            string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
-            string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
-            ViewBag.BranchName = branchName;
-            ViewBag.FinancialYear = FinancialYear;
-            return View();
+
+            return PartialView();
         }
         #region LedgerGroup
         [HttpGet]
@@ -742,11 +710,8 @@ namespace FMS.Controllers.Admin
         [HttpGet]
         public IActionResult Ledger()
         {
-            string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
-            string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
-            ViewBag.BranchName = branchName;
-            ViewBag.FinancialYear = FinancialYear;
-            return View();
+
+            return PartialView();
         }
         [HttpPost, Authorize(Policy = "Create")]
         public async Task<IActionResult> CreateLedgers([FromBody] LedgerDataRequest requestData)

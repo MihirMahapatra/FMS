@@ -1,3 +1,4 @@
+
 $(function () {
     $("#MasterLink").addClass("active");
     $("#LabourMasterLink").addClass("active");

@@ -250,7 +250,6 @@
     <!-- /.modal-dialog -->
 </div>
 <!--.end Modal Update Unit-->
-
 <!--Modal Add SubGroup-->
 <div class="modal fade" id="modal-add-subGroup">
     <div class="modal-dialog">
@@ -390,7 +389,7 @@
 </div>
 <!--.end Modal Product Details-->
 <!---------------------------------------------------------------------------------------------------------------------------->
-@await Html.PartialAsync("_FooterScript")
-<script src="~/scripts/FormScript.js"></script>
-<script src="~/viewscripts/admin/productsetup.js"></script>
-
+@section additionalScripts {
+    <script src="~/scripts/FormScript.js"></script>
+    <script src="~/viewscripts/admin/productsetup.js"></script>
+}

@@ -1389,6 +1389,36 @@ namespace FMS.Repository.Master
             }
             return _Result;
         }
+        public async Task<Result<LabourModel>> GetLaboursByLabourTypeId(Guid LabourTypeId)
+        {
+            Result<LabourModel> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                var Query = await _appDbContext.Labours.Where(s => s.Fk_Labour_TypeId == LabourTypeId)
+                                   .Select(l => new LabourModel
+                                   {
+                                       LabourId = l.LabourId,
+                                       LabourName = l.LabourName,
+                                       LabourType = l.LabourType != null ? new LabourTypeModel() { Labour_Type = l.LabourType.Labour_Type } : null,
+                                       Address = l.Address,
+                                       Phone = l.Phone,
+                                       Reference = l.Reference,
+                                   }).ToListAsync();
+                if (Query != null)
+                {
+                    _Result.CollectionObjData = Query;
+                    _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
+                }
+                _Result.IsSuccess = true;
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/GetLabourDetailById : {_Exception.Message}");
+            }
+            return _Result;
+        }
         public async Task<Result<bool>> CreateLabourDetail(LabourModel data)
         {
             Result<bool> _Result = new();

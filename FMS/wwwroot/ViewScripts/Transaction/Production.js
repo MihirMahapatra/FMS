@@ -80,7 +80,7 @@ $(function () {
     GetLabours()
     function GetLabours() {
         $.ajax({
-            url: "/Transaction/GetLabours",
+            url: "/Transaction/GetProductionLabours",
             type: "GET",
             contentType: "application/json;charset=utf-8",
             dataType: "json",
@@ -139,7 +139,7 @@ $(function () {
             }
         });
         $.ajax({
-            url: "/Transaction/GetLabours",
+            url: "/Transaction/GetProductionLabours",
             type: "GET",
             contentType: "application/json;charset=utf-8",
             dataType: "json",
@@ -448,7 +448,7 @@ $(function () {
             }
         });
         $.ajax({
-            url: "/Transaction/GetLabours",
+            url: "/Transaction/GetProductionLabours",
             type: "GET",
             contentType: "application/json;charset=utf-8",
             dataType: "json",

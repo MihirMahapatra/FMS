@@ -13,6 +13,7 @@
         @RenderBody()
         @await Html.PartialAsync("_Footer")
     </div>
-    @RenderSection("Scripts", required: false)
+    @await Html.PartialAsync("_FooterScript")
+    @RenderSection("additionalScripts", required: false)
 </body>
 </html>

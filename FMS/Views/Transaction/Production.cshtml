@@ -237,7 +237,7 @@
 </div>
 <!--.END MODAL-->
 <!--Script Section -->
-@await Html.PartialAsync("_FooterScript")
+@section additionalScripts {
 <script src="~/scripts/FormScript.js"></script>
 <script src="~/viewscripts/Transaction/Production.js"></script>
 @if (TempData["SuccessMsg"] != null)
@@ -260,3 +260,4 @@
         format: 'DD/MM/YYYY'
     });
 </script>
+}

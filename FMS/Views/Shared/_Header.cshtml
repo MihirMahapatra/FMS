@@ -5,10 +5,10 @@
             <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" style="font-family: Segoe Print;">Branch: @ViewBag.BranchName</a>
+            <a class="nav-link" style="font-family: Segoe Print;">Branch: @_httpContext.HttpContext.Session.GetString("BranchName")</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" style="font-family: Segoe Print;">Financial Year: @ViewBag.FinancialYear</a>
+            <a class="nav-link" style="font-family: Segoe Print;">Financial Year: @_httpContext.HttpContext.Session.GetString("FinancialYear")</a>
         </li>
     </ul>
     <ul class="navbar-nav ml-auto">
