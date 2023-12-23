@@ -4,6 +4,7 @@ using FMS.Db.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FMS.Db.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231222140042_Mg-007")]
+    partial class Mg007
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -607,10 +610,13 @@ namespace FMS.Db.Migrations
                     b.Property<DateTime?>("Date")
                         .HasColumnType("datetime");
 
-                    b.Property<Guid>("Fk_ProductId")
+                    b.Property<Guid?>("Fk_BranchId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("Fk_ProductTypeId")
+                    b.Property<Guid?>("Fk_FinancialYearId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("Fk_ProductId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("Rate")
@@ -620,9 +626,11 @@ namespace FMS.Db.Migrations
 
                     b.HasKey("LabourRateId");
 
-                    b.HasIndex("Fk_ProductId");
+                    b.HasIndex("Fk_BranchId");
 
-                    b.HasIndex("Fk_ProductTypeId");
+                    b.HasIndex("Fk_FinancialYearId");
+
+                    b.HasIndex("Fk_ProductId");
 
                     b.ToTable("LabourRates", "dbo");
                 });
@@ -2811,20 +2819,27 @@ namespace FMS.Db.Migrations
 
             modelBuilder.Entity("FMS.Db.DbEntity.LabourRate", b =>
                 {
+                    b.HasOne("FMS.Db.DbEntity.Branch", "Branch")
+                        .WithMany("LabourRates")
+                        .HasForeignKey("Fk_BranchId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("FMS.Db.DbEntity.FinancialYear", "FinancialYear")
+                        .WithMany("LabourRates")
+                        .HasForeignKey("Fk_FinancialYearId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("FMS.Db.DbEntity.Product", "Product")
                         .WithMany("LabourRates")
                         .HasForeignKey("Fk_ProductId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("FMS.Db.DbEntity.ProductType", "ProductType")
-                        .WithMany("LabourRates")
-                        .HasForeignKey("Fk_ProductTypeId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                    b.Navigation("Branch");
+
+                    b.Navigation("FinancialYear");
 
                     b.Navigation("Product");
-
-                    b.Navigation("ProductType");
                 });
 
             modelBuilder.Entity("FMS.Db.DbEntity.Ledger", b =>
@@ -3691,6 +3706,8 @@ namespace FMS.Db.Migrations
 
                     b.Navigation("Journals");
 
+                    b.Navigation("LabourRates");
+
                     b.Navigation("Labours");
 
                     b.Navigation("LedgerBalances");
@@ -3761,6 +3778,8 @@ namespace FMS.Db.Migrations
                     b.Navigation("InwardSupplyTransactions");
 
                     b.Navigation("Journals");
+
+                    b.Navigation("LabourRates");
 
                     b.Navigation("LedgerBalances");
 
@@ -3926,8 +3945,6 @@ namespace FMS.Db.Migrations
                     b.Navigation("Groups");
 
                     b.Navigation("InwardSupplyOrders");
-
-                    b.Navigation("LabourRates");
 
                     b.Navigation("OutwardSupplyOrders");
 

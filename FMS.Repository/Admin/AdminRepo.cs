@@ -1106,6 +1106,7 @@ namespace FMS.Repository.Admin
                 {
                     AlternateUnitId = s.AlternateUnitId,
                     Unit = s.Unit != null ? new UnitModel() { UnitName = s.Unit.UnitName } : null,
+                    UnitQuantity=s.UnitQuantity,
                     Product = s.Product != null ? new ProductModel() { ProductName = s.Product.ProductName } : null,
                     AlternateQuantity = s.AlternateQuantity,
                     AlternateUnitName = s.AlternateUnitName,
@@ -1395,6 +1396,147 @@ namespace FMS.Repository.Admin
             {
                 _Result.Exception = _Exception;
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"AdminRepo/DeleteProductConfig : {_Exception.Message}");
+            }
+            return _Result;
+        }
+        #endregion
+        #region Labour Rate Configuration
+        public async Task<Result<LabourRateModel>> GetAllLabourRates()
+        {
+            Result<LabourRateModel> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                var Query = await _appDbContext.LabourRates
+                                   .Select(lr => new LabourRateModel
+                                   {
+                                       LabourRateId = lr.LabourRateId,
+                                       Date = lr.Date,
+                                       ProductType = lr.ProductType != null ? new ProductTypeModel { Product_Type = lr.ProductType.Product_Type } : null,
+                                       Product = lr.Product != null ? new ProductModel { ProductName = lr.Product.ProductName } : null,
+                                       Rate = lr.Rate
+                                   }).ToListAsync();
+                if (Query.Count > 0)
+                {
+                    _Result.CollectionObjData = Query;
+                    _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
+                }
+                _Result.IsSuccess = true;
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/GetAllLabourRates : {_Exception.Message}");
+            }
+            return _Result;
+        }
+        public async Task<Result<decimal>> GetLabourRateByProductId(Guid ProductId)
+        {
+            Result<decimal> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                var lastProduction = await _appDbContext.LabourRates.Where(s => s.Fk_ProductId == ProductId).OrderByDescending(s => s.Date).Select(s => new { s.Rate }).FirstOrDefaultAsync();
+                if (lastProduction != null)
+                {
+                    _Result.SingleObjData = lastProduction.Rate;
+                    _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
+                }
+                _Result.IsSuccess = true;
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/GetLabourRateByProductId : {_Exception.Message}");
+            }
+            return _Result;
+        }
+        public async Task<Result<bool>> CreateLabourRate(LabourRateModel data)
+        {
+            Result<bool> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                if (DateTime.TryParseExact(data.FormtedDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedDate))
+                {
+                    var newLabourRate = new LabourRate
+                    {
+                        Date = convertedDate,
+                        Fk_ProductTypeId = data.Fk_ProductTypeId,
+                        Fk_ProductId = data.Fk_ProductId,
+                        Rate = data.Rate
+                    };
+                    await _appDbContext.LabourRates.AddAsync(newLabourRate);
+                    int count = await _appDbContext.SaveChangesAsync();
+                    _Result.Response = (count > 0) ? ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Created) : ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Error);
+                }
+                _Result.IsSuccess = true;
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/CreateLabourRate : {_Exception.Message}");
+            }
+            return _Result;
+        }
+        public async Task<Result<bool>> UpdateLabourRate(LabourRateModel data)
+        {
+            Result<bool> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                var Query = await _appDbContext.LabourRates.Where(s => s.LabourRateId == data.LabourRateId).FirstOrDefaultAsync();
+                if (Query != null)
+                {
+                    if (DateTime.TryParseExact(data.FormtedDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedDate))
+                    {
+                        data.Date = convertedDate;
+                        _mapper.Map(data, Query);
+                        int count = await _appDbContext.SaveChangesAsync();
+                        _Result.Response = (count > 0) ? ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Modified) : ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Error);
+                    }
+                }
+                _Result.IsSuccess = true;
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/UpdateLabourRate : {_Exception.Message}");
+            }
+            return _Result;
+        }
+        public async Task<Result<bool>> DeleteLabourRate(Guid Id, IDbContextTransaction transaction, bool IsCallBack)
+        {
+            Result<bool> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                using var localTransaction = transaction ?? await _appDbContext.Database.BeginTransactionAsync();
+                try
+                {
+                    if (Id != Guid.Empty)
+                    {
+                        var Query = await _appDbContext.LabourRates.FirstOrDefaultAsync(x => x.LabourRateId == Id);
+                        if (Query != null)
+                        {
+                            _appDbContext.LabourRates.Remove(Query);
+                            int count = await _appDbContext.SaveChangesAsync();
+                            _Result.Response = (count > 0) ? ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Deleted) : ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Error);
+                        }
+                        _Result.IsSuccess = true;
+                        if (IsCallBack == false) localTransaction.Commit();
+                    }
+                }
+                catch
+                {
+                    localTransaction.Rollback();
+                    throw;
+                }
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/DeleteLabourRate : {_Exception.Message}");
             }
             return _Result;
         }

@@ -7,6 +7,7 @@
         public decimal AlternateQuantity {  get; set; }
         public Guid FK_ProductId { get; set; }
         public Guid Fk_UnitId {  get; set; }
+        public decimal UnitQuantity { get; set; }
         public Product Product { get; set; }
         public Unit Unit { get; set; }
     }

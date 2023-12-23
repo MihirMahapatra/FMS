@@ -77,6 +77,13 @@ namespace FMS.Service.Admin
         Task<Base> UpdateProductConfig(ProductionModel data);
         Task<Base> DeleteProductConfig(Guid Id);
         #endregion
+        #region Labour Rate Configuration
+        Task<LabourRateViewModel> GetAllLabourRates();
+        Task<Base> GetLabourRateByProductId(Guid ProductId);
+        Task<Base> CreateLabourRate(LabourRateModel data);
+        Task<Base> UpdateLabourRate(LabourRateModel data);
+        Task<Base> DeleteLabourRate(Guid Id);
+        #endregion
         #region Account Config
         #region LedgerGroup
         Task<LedgerGroupViewModel> GetLedgerGroups();

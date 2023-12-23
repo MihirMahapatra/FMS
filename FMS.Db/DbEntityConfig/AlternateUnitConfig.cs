@@ -14,6 +14,7 @@ namespace FMS.Db.DbEntityConfig
             builder.Property(e => e.Fk_UnitId).IsRequired(true);
             builder.Property(e => e.AlternateUnitName).HasMaxLength(100).IsRequired(true);
             builder.Property(e => e.AlternateQuantity).HasColumnType("decimal(18,2)").IsRequired(true);
+            builder.Property(e => e.UnitQuantity).HasColumnType("decimal(18,2)").IsRequired(true);
             builder.HasOne(p => p.Product).WithMany(po => po.AlternateUnits).HasForeignKey(po => po.FK_ProductId).OnDelete(DeleteBehavior.Restrict);
             builder.HasOne(p => p.Unit).WithMany(po => po.AlternateUnits).HasForeignKey(po => po.Fk_UnitId).OnDelete(DeleteBehavior.Restrict);
         }

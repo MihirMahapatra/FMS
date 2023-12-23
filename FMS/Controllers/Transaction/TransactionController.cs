@@ -186,7 +186,7 @@ namespace FMS.Controllers.Transaction
         [HttpGet]
         public async Task<IActionResult> GetProductLabourRate([FromQuery] Guid ProductId)
         {
-            var result = await _masterSvcs.GetLabourRateByProductId(ProductId);
+            var result = await _adminSvcs.GetLabourRateByProductId(ProductId);
             return new JsonResult(result);
         }
         [HttpGet]
@@ -241,6 +241,17 @@ namespace FMS.Controllers.Transaction
             Guid ProductionEntryId = Guid.Parse(id);
             var result = await _transactionSvcs.DeleteProductionEntry(ProductionEntryId);
             return new JsonResult(result);
+        }
+        #endregion
+        #region Service Entry
+        [HttpGet]
+        public IActionResult Service()
+        {
+            string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
+            string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
+            ViewBag.BranchName = branchName;
+            ViewBag.FinancialYear = FinancialYear;
+            return View();
         }
         #endregion
         #region Sales Transaction

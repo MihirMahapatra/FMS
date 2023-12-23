@@ -76,7 +76,6 @@ namespace FMS.Controllers.Admin
             return View("DatabaseBackup");
         }
         #endregion
-        
         #region Generate SignUp Token
         [HttpGet]
         public IActionResult CreateToken()
@@ -497,6 +496,12 @@ namespace FMS.Controllers.Admin
             return new JsonResult(result);
         }
         [HttpGet]
+        public async Task<IActionResult> GetProductByTypeId()
+        {
+            var result = await _adminSvcs.GetProductByTypeId(MappingProductType.RawMaterial);
+            return new JsonResult(result);
+        }
+        [HttpGet]
         public async Task<IActionResult> GetProductById(Guid ProductId)
         {
             var result = await _adminSvcs.GetProductById(ProductId);
@@ -603,6 +608,73 @@ namespace FMS.Controllers.Admin
         {
             Guid id = Guid.Parse(Id);
             var result = await _adminSvcs.DeleteProductConfig(id);
+            return new JsonResult(result);
+        }
+        #endregion
+        #region Labour Rate Configuration
+        [HttpGet]
+        public IActionResult LabourRateConfig()
+        {
+            string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
+            string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
+            ViewBag.BranchName = branchName;
+            ViewBag.FinancialYear = FinancialYear;
+            return View();
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetAllLabourRates()
+        {
+            var result = await _adminSvcs.GetAllLabourRates();
+            return new JsonResult(result);
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetAllProductTypesForLabour()
+        {
+            var result = await _adminSvcs.GetProductTypes();
+            var elementToRemove = result.ProductTypes.FirstOrDefault(x => x.ProductTypeId == MappingProductType.RawMaterial);
+            if (elementToRemove != null)
+            {
+                result.ProductTypes.Remove(elementToRemove);
+            }
+            return new JsonResult(result);
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetProductByType(Guid ProductType)
+        {
+            var result = await _adminSvcs.GetProductByTypeId(ProductType);
+            return new JsonResult(result);
+        }
+        [HttpPost, Authorize(Policy = "Create")]
+        public async Task<IActionResult> CreateLabourRate([FromBody] LabourRateModel data)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _adminSvcs.CreateLabourRate(data);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
+        [HttpPost, Authorize(Policy = "Edit")]
+        public async Task<IActionResult> UpdateLabourRate([FromBody] LabourRateModel data)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _adminSvcs.UpdateLabourRate(data);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
+        [HttpPost, Authorize(Policy = "Delete")]
+        public async Task<IActionResult> DeleteLabourRate([FromQuery] string Id)
+        {
+            Guid LabourRateId = Guid.Parse(Id);
+            var result = await _adminSvcs.DeleteLabourRate(LabourRateId);
             return new JsonResult(result);
         }
         #endregion

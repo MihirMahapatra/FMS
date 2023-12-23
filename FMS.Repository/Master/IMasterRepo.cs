@@ -18,9 +18,6 @@ namespace FMS.Repository.Master
         #region labour Master
         #region Labour Type
         Task<Result<LabourTypeModel>> GetAllLabourTypes();
-        Task<Result<bool>> CreateLabourType(LabourTypeModel data);
-        Task<Result<bool>> UpdateLabourType(LabourTypeModel data);
-        Task<Result<bool>> DeleteLabourType(Guid Id, IDbContextTransaction transaction, bool IsCallBack);
         #endregion
         #region Labour Details
         Task<Result<LabourModel>> GetAllLabourDetails();
@@ -28,13 +25,6 @@ namespace FMS.Repository.Master
         Task<Result<bool>> CreateLabourDetail(LabourModel data);
         Task<Result<bool>> UpdateLabourDetail(LabourModel data);
         Task<Result<bool>> DeleteLabourDetail(Guid Id, IDbContextTransaction transaction, bool IsCallBack);
-        #endregion
-        #region Labour Rate Master
-        Task<Result<LabourRateModel>> GetAllLabourRates();
-        Task<Result<decimal>> GetLabourRateByProductId(Guid ProductId);
-        Task<Result<bool>> CreateLabourRate(LabourRateModel data);
-        Task<Result<bool>> UpdateLabourRate(LabourRateModel data);
-        Task<Result<bool>> DeleteLabourRate(Guid Id, IDbContextTransaction transaction, bool IsCallBack);
         #endregion
         #endregion
         #region Party Master
