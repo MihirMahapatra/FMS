@@ -10,5 +10,7 @@
         public decimal UnitQuantity { get; set; }
         public Product Product { get; set; }
         public Unit Unit { get; set; }
+        public  ICollection<PurchaseTransaction> PurchaseTransactions { get; set;}
+        public ICollection<PurchaseReturnTransaction> PurchaseReturnTransactions { get; set; }
     }
 }

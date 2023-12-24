@@ -71,6 +71,12 @@ namespace FMS.Controllers.Transaction
             var result = await _adminSvcs.GetProductGstWithRate(id);
             return new JsonResult(result);
         }
+        [HttpGet]
+        public async Task<IActionResult> GetProductAlternateUnit([FromQuery] Guid ProductId)
+        {
+            var result = await _adminSvcs.GetAlternateUnitByProductId(ProductId);
+            return new JsonResult(result);
+        }
         [HttpPost, Authorize(Policy = "Create")]
         public async Task<IActionResult> CreatePurchase([FromBody] PurchaseDataRequest requestData)
         {

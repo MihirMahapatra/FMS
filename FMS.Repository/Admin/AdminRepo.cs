@@ -1125,6 +1125,31 @@ namespace FMS.Repository.Admin
             }
             return _Result;
         }
+        public async Task<Result<AlternateUnitModel>> GetAlternateUnitByProductId(Guid ProductId)
+        {
+            Result<AlternateUnitModel> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                var Query = await _appDbContext.AlternateUnits.Where(s=>s.FK_ProductId== ProductId).Select(s => new AlternateUnitModel
+                {
+                    AlternateUnitId = s.AlternateUnitId,
+                    AlternateUnitName = s.AlternateUnitName,
+                }).ToListAsync();
+                if (Query.Count > 0)
+                {
+                    _Result.CollectionObjData = Query;
+                    _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
+                }
+                _Result.IsSuccess = true;
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/GetAllUnits : {_Exception.Message}");
+            }
+            return _Result;
+        }
         public async Task<Result<bool>> CreateAlternateUnit(AlternateUnitModel data)
         {
             Result<bool> _Result = new();

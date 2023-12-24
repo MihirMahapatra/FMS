@@ -10,10 +10,13 @@
     <div class="wrapper">
         @await Html.PartialAsync("_Header")
         @await Html.PartialAsync("_Sidebar")
+        <div id="app-content">
         @RenderBody()
+        </div>
         @await Html.PartialAsync("_Footer")
     </div>
     @await Html.PartialAsync("_FooterScript")
+    <script src="~/app.js"></script>
     @RenderSection("additionalScripts", required: false)
 </body>
 </html>

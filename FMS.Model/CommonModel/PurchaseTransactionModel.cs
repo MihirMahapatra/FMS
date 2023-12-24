@@ -1,4 +1,6 @@
-﻿namespace FMS.Model.CommonModel
+﻿using FMS.Db.DbEntity;
+
+namespace FMS.Model.CommonModel
 {
     public class PurchaseTransactionModel
     {
@@ -11,6 +13,7 @@
         public Guid Fk_BranchId { get; set; }
         public Guid Fk_FinancialYearId { get; set; }
         public decimal Quantity { get; set; }
+        public Guid Fk_AlternateUnitId { get; set; }
         public decimal Rate { get; set; }
         public decimal Discount { get; set; }
         public decimal GstAmount { get; set; }
@@ -21,5 +24,6 @@
         public FinancialYearModel FinancialYear { get; set; }
         public PurchaseOrderModel PurchaseOrder { get; set; } 
         public ProductModel Product { get; set; }
+        public AlternateUnitModel AlternateUnit { get; set; }
     }
 }

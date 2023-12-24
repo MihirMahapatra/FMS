@@ -17,6 +17,8 @@ namespace FMS.Model.CommonModel
         public decimal UnitQuantity { get; set; }
         public UnitModel Unit { get; set; }
         public ProductModel Product { get; set; }
+        public List<PurchaseTransactionModel> PurchaseTransactions { get; set; }
+        public List<PurchaseReturnTransactionModel> PurchaseReturnTransactions { get; set; }
 
     }
 }

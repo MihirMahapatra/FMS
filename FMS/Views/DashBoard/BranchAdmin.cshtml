@@ -40,7 +40,7 @@
         </div>
     </div>
 
-    <script src="~/plugins/jquery/jquery.min.js"></script>
+    @await Html.PartialAsync("_FooterScript")
     <script src="~/scripts/FormScript.js"></script>
     <script src="~/viewscripts/dashboard/branchadmin.js"></script>
     @if (TempData["SuccessMsg"] != null)

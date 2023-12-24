@@ -64,6 +64,7 @@ namespace FMS.Service.Admin
         #endregion
         #region Alternate Unit
         Task<AlternateUnitViewModel> GetAlternateUnits();
+        Task<AlternateUnitViewModel> GetAlternateUnitByProductId(Guid ProductId);
         Task<Base> CreateAlternateUnit(AlternateUnitModel data);
         Task<Base> UpdateAlternateUnit(AlternateUnitModel data);
         Task<Base> DeleteAlternateUnit(Guid Id);

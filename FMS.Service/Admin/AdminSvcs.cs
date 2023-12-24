@@ -1417,6 +1417,43 @@ namespace FMS.Service.Admin
             }
             return Obj;
         }
+        public async Task<AlternateUnitViewModel> GetAlternateUnitByProductId(Guid ProductId)
+        {
+            AlternateUnitViewModel Obj;
+            var Result = await _adminRepo.GetAlternateUnitByProductId(ProductId);
+            if (Result.IsSuccess)
+            {
+                if (Result.Response == "success")
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
+                        AlternateUnits = Result.CollectionObjData,
+                    };
+                }
+                else
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.NotFound),
+                        Message = "No Record Found"
+                    };
+                }
+            }
+            else
+            {
+                Obj = new()
+                {
+                    ResponseStatus = Result.Response,
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    Message = "Some Eroor Occoured"
+                };
+            }
+            return Obj;
+        }
         public async Task<Base> CreateAlternateUnit(AlternateUnitModel data)
         {
             Base Obj;
