@@ -360,8 +360,7 @@ $(function () {
             }
         });
     }
-    $('#addPurchaseRowBtn').on('click', PurchaseRowBtn);
-    function PurchaseRowBtn() {
+    $(document).on('click', '#addPurchaseRowBtn',function () {
         var uniqueId = 'ddlitem' + new Date().getTime();
         var html = '<tr>';
         html += '<td hidden><input type="hidden" class="form-control" value="0"></td>';
@@ -410,12 +409,11 @@ $(function () {
         $('#tblPurchase tbody').find('.select2bs4').select2({
             theme: 'bootstrap4'
         });
-    }
+        });
     $(document).on('click', '.deleteBtn', function () {
         $(this).closest('tr').remove();
     });
-    $('.Rawmaterial').on('change', GetProductGstWithRate);
-    function GetProductGstWithRate() {
+    $(document).on('change','.Rawmaterial',function () {
         var selectElement = $(this);
         var selectedProductId = selectElement.val();
         if (selectedProductId) {
@@ -465,7 +463,7 @@ $(function () {
                 }
             });
         }
-    }
+        });
     $('#tblPurchase tbody').on('change', 'input[type="text"]', function () {
         var row = $(this).closest('tr');
         var quantity = parseFloat(row.find('input:eq(1)').val());
@@ -1099,7 +1097,12 @@ $(function () {
         var html = '<tr>';
         html += '<td hidden><input type="hidden" class="form-control" value="0"></td>';
         html += '<td><div class="form-group"><select class="form-control form-control-sm select2bs4 Rawmaterial" style="width: 100%;" id="' + uniqueId + '"></select></div></td>';
-        html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
+        html += '<td style="width:8%"><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
+        html += '<td style="width:12%">' +
+            '<div class="form-group">' +
+            '<select class="form-control form-control select2bs4" style="width:100%"></select>' +
+            '</div>' +
+            '</td>';
         html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
         html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
         html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';

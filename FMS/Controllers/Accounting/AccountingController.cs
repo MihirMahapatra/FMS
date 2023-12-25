@@ -47,7 +47,6 @@ namespace FMS.Controllers.Accounting
         #region Journal
         public IActionResult Journal()
         {
-
             return PartialView();
         }
         [HttpGet]

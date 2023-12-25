@@ -440,8 +440,7 @@ $(function () {
     $(document).on('click', '.deleteBtn', function () {
         $(this).closest('tr').remove();
     });
-    $('.FinishedGood').on('change', GetProductGstWithRate);
-    function GetProductGstWithRate()  {
+    $(document).on('change', '.FinishedGood', function ()  {
         var selectElement = $(this);
         var selectedProductId = selectElement.val();
         if (selectedProductId) {
@@ -467,7 +466,7 @@ $(function () {
                 }
             });
         }
-    }
+        });
     $('#tblSales tbody').on('change', 'input[type="text"]', function () {
         var row = $(this).closest('tr');
         var quantity = parseFloat(row.find('input:eq(1)').val());
@@ -1148,7 +1147,16 @@ $(function () {
         var html = '<tr>';
         html += '<td hidden><input type="hidden" class="form-control" value="0"></td>';
         html += '<td><div class="form-group"><select class="form-control form-control-sm select2bs4 GoodsFinishedReturn" style="width: 100%;" id="' + uniqueId + '"></select></div></td>';
-        html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
+        html += '<td>' +
+            '<div class="form-group">' +
+            '<div class="input-group">' +
+            '<input type="text" class="form-control" value="0">' +
+            ' <div class="input-group-append">' +
+            ' <span class="input-group-text" id="Unitrtn">N/A</span>' +
+            '</div>' +
+            '</div>' +
+            '</div>' +
+            '</td>';
         html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
         html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
         html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
@@ -1196,8 +1204,7 @@ $(function () {
             $('.Sr_hdntxt').show();
         }
     });
-    $('.GoodsFinishedReturn').on('change', GetProductGstWithRate);
-    function GetProductGstWithRate() {
+    $(document).on('change', '.GoodsFinishedReturn',  function () {
         var selectElement = $(this);
         var selectedProductId = selectElement.val();
         if (selectedProductId) {
@@ -1208,10 +1215,18 @@ $(function () {
                 dataType: "json",
                 success: function (result) {
                     if (result.ResponseCode == 302) {
-                        var inputGst = selectElement.closest('tr').find('input[type="text"]').eq(4);
-                        var inputPrice = selectElement.closest('tr').find('input[type="text"]').eq(1);
-                        inputGst.val(result.product.GST);
-                        inputPrice.val(result.product.Price);
+                        var Textbox = selectElement.closest('tr').find('input[type="text"]');
+                        for (var i = 0; i < 7; i++) {
+                            Textbox.eq(i).val('0');
+                        }
+                        Textbox.eq(4).val(result.product.GST);
+                        Textbox.eq(1).val(result.product.Price);
+                        var span = selectElement.closest('tr').find('span#Unitrtn'); // Specify the ID of the span for accuracy
+                        span.text(result.product.Unit.UnitName);
+                        //var inputGst = selectElement.closest('tr').find('input[type="text"]').eq(4);
+                        //var inputPrice = selectElement.closest('tr').find('input[type="text"]').eq(1);
+                        //inputGst.val(result.product.GST);
+                        //inputPrice.val(result.product.Price);
                     }
                 },
                 error: function (errormessage) {
@@ -1219,7 +1234,7 @@ $(function () {
                 }
             });
         }
-    }
+    });
     $('#tblSalesReturn tbody').on('change', 'input[type="text"]', function () {
         var row = $(this).closest('tr');
         var quantity = parseFloat(row.find('input:eq(1)').val());

@@ -102,12 +102,20 @@ $(function () {
     }
     $(document).on('click', '.addBtn', function () {
         var uniqueId = 'ddlitem' + new Date().getTime();
-
         var html = '<tr>';
         html += '<td><div class="form-group"><select required class="form-control form-control-sm select2bs4 finishedGood finishedGood_' + uniqueId + '" style="width: 100%;" id="' + uniqueId + '"></select></div></td>';
         html += '<td> <div class="form-group"><select required class=" form-control select2bs4 labour_' + uniqueId + ' labour" style="width: 100%;"></select></div></td>';
         html += ' <td><div class="form-group"><input type="text" class=" form-control" disabled></div></td>';
-        html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
+        html += '<td>' +
+            '<div class="form-group">' +
+            '<div class="input-group">' +
+            '<input type="text" class="form-control" value="0">' +
+            ' <div class="input-group-append">' +
+            ' <span class="input-group-text" id="Unit">N/A</span>' +
+            '</div>' +
+            '</div>' +
+            '</div>' +
+            '</td>';
         html += '<td><div class="form-group"><input type="text" class="form-control" disabled></div></td>';
         html += '<td><div class="form-group"><input type="text" class="form-control" disabled></div></td>';
         html += '<td style="background-color:#ffe6e6;">';
@@ -208,8 +216,17 @@ $(function () {
                     if (result.ResponseCode == 302) {
                         if (result.LabourRate !== null) { 
                         var inputField = selectElement.closest('tr').find('input[type="text"]').eq(2);
-                        inputField.val(result.LabourRate.Rate);
-                        //console.log(result.LabourRate.Product.Unit.UnitName);
+                            inputField.val(result.LabourRate.Rate);
+                            var span = selectElement.closest('tr').find('span#Unit');
+                            var Texthas = result.LabourRate.Product.Unit.UnitName;
+                            if (Texthas != null) {
+                                span.text(result.LabourRate.Product.Unit.UnitName);
+                            } else {
+                                span.text("N/A");
+                            }
+                           
+
+                        //console.log();
                     }
                 }
             },
