@@ -33,6 +33,13 @@ namespace FMS.Repository.Transaction
         Task<Result<bool>> UpdateProductionEntry(ProductionEntryModel data);
         Task<Result<bool>> DeleteProductionEntry(Guid Id, IDbContextTransaction transaction, bool IsCallBack);
         #endregion
+        #region Service Entry
+        Task<Result<string>> GetLastServiceNo();
+        Task<Result<ProductionEntryModel>> GetServiceEntry();
+        Task<Result<bool>> CreateServiceEntry(ProductionEntryRequest data);
+        Task<Result<bool>> UpdateServiceEntry(ProductionEntryModel data);
+        Task<Result<bool>> DeleteServiceEntry(Guid Id, IDbContextTransaction transaction, bool IsCallBack);
+        #endregion
         #region Sales Transaction
         Task<Result<SubLedgerModel>> GetSundryDebtors(Guid PartyTypeId);
         #region Sales

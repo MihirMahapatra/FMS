@@ -80,7 +80,7 @@ namespace FMS.Service.Admin
         #endregion
         #region Labour Rate Configuration
         Task<LabourRateViewModel> GetAllLabourRates();
-        Task<Base> GetLabourRateByProductId(Guid ProductId);
+        Task<LabourRateViewModel> GetLabourRateByProductId(Guid ProductId);
         Task<Base> CreateLabourRate(LabourRateModel data);
         Task<Base> UpdateLabourRate(LabourRateModel data);
         Task<Base> DeleteLabourRate(Guid Id);

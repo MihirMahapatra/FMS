@@ -1312,8 +1312,7 @@ namespace FMS.Repository.Transaction
             {
                 Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
                 _Result.IsSuccess = false;
-                var lastProduction = await _appDbContext.ProductionEntries.Where(s => s.FK_BranchId == BranchId).OrderByDescending(s => s.ProductionNo).Select(s => new { s.ProductionNo }).FirstOrDefaultAsync();
-
+                var lastProduction = await _appDbContext.ProductionEntries.Where(s => s.FK_BranchId == BranchId && s.LabourType.ToLower() == "production").OrderByDescending(s => s.ProductionNo).Select(s => new { s.ProductionNo }).FirstOrDefaultAsync();
                 if (lastProduction != null)
                 {
                     var lastProductionNo = lastProduction.ProductionNo;
@@ -1378,7 +1377,7 @@ namespace FMS.Repository.Transaction
             {
                 Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
                 Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
-                var Query = await _appDbContext.ProductionEntries.Where(s => s.Fk_FinancialYearId == FinancialYear && s.FK_BranchId == BranchId).Select(s => new ProductionEntryModel
+                var Query = await _appDbContext.ProductionEntries.Where(s => s.LabourType.ToLower() == "production" && s.Fk_FinancialYearId == FinancialYear && s.FK_BranchId == BranchId).Select(s => new ProductionEntryModel
                 {
                     ProductionEntryId = s.ProductionEntryId,
                     ProductionNo = s.ProductionNo,
@@ -1835,6 +1834,309 @@ namespace FMS.Repository.Transaction
             return _Result;
         }
         #endregion
+        #region Service Entry
+        public async Task<Result<string>> GetLastServiceNo()
+        {
+            Result<string> _Result = new();
+            try
+            {
+                Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
+                _Result.IsSuccess = false;
+                var lastService = await _appDbContext.ProductionEntries.Where(s => s.FK_BranchId == BranchId && s.LabourType.ToLower() == "service").OrderByDescending(s => s.ProductionNo).Select(s => new { s.ProductionNo }).FirstOrDefaultAsync();
+                if (lastService != null)
+                {
+                    var lastServicnNo = lastService.ProductionNo;
+                    _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
+                    if (int.TryParse(lastServicnNo.AsSpan(2), out int currentId))
+                    {
+                        currentId++;
+                        var newServiceNo = $"SN{currentId:D6}";
+                        _Result.SingleObjData = newServiceNo;
+                    }
+                }
+                else
+                {
+                    _Result.SingleObjData = "SN000001";
+                }
+                _Result.IsSuccess = true;
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/GetLastProductionNo : {_Exception.Message}");
+            }
+            return _Result;
+        }
+        public async Task<Result<ProductionEntryModel>> GetServiceEntry()
+        {
+            Result<ProductionEntryModel> _Result = new();
+            try
+            {
+                Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
+                Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
+                var Query = await _appDbContext.ProductionEntries.Where(s => s.Fk_FinancialYearId == FinancialYear && s.FK_BranchId == BranchId).Select(s => new ProductionEntryModel
+                {
+                    ProductionEntryId = s.ProductionEntryId,
+                    ProductionNo = s.ProductionNo,
+                    ProductionDate = s.ProductionDate,
+                    Product = s.Product != null ? new ProductModel { ProductName = s.Product.ProductName } : null,
+                    Labour = s.Labour != null ? new LabourModel { LabourName = s.Labour.LabourName } : null,
+                    LabourType = s.LabourType,
+                    Quantity = s.Quantity,
+                    Rate = s.Rate,
+                    Amount = s.Amount
+
+                }).ToListAsync();
+                if (Query.Count > 0)
+                {
+                    var ProductEntryList = Query;
+                    _Result.CollectionObjData = ProductEntryList;
+                    _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
+                }
+                _Result.IsSuccess = true;
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/GetProductionEntry : {_Exception.Message}");
+            }
+            return _Result;
+        }
+        public async Task<Result<bool>> CreateServiceEntry(ProductionEntryRequest data)
+        {
+            Result<bool> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
+                Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
+                using var transaction = await _appDbContext.Database.BeginTransactionAsync();
+                try
+                {
+                    if (DateTime.TryParseExact(data.ProductionDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedProductionDate))
+                    {
+                        foreach (var item in data.RowData)
+                        {
+                            #region Production Entry
+                            var newProductionEntry = new ProductionEntry
+                            {
+                                ProductionDate = convertedProductionDate,
+                                ProductionNo = data.ProductionNo,
+                                FK_BranchId = BranchId,
+                                Fk_FinancialYearId = FinancialYear,
+                                Fk_ProductId = Guid.Parse(item[0]),
+                                Fk_LabourId = Guid.Parse(item[1]),
+                                LabourType = item[2],
+                                Quantity = Convert.ToDecimal(item[3]),
+                                Rate = Convert.ToDecimal(item[4]),
+                                Amount = Convert.ToDecimal(item[5])
+                            };
+                            await _appDbContext.ProductionEntries.AddAsync(newProductionEntry);
+                            await _appDbContext.SaveChangesAsync();
+                            #endregion
+                            #region SubLedgerBalance & Ledger Balance
+                            // @Labour A/c------Cr
+                            var getLabourSubLedger = await _appDbContext.Labours.Where(s => s.LabourId == newProductionEntry.Fk_LabourId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
+                            if (getLabourSubLedger != null)
+                            {
+                                var updateLaourSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == getLabourSubLedger.Fk_SubLedgerId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
+                                if (updateLaourSubledgerBalance != null)
+                                {
+                                    updateLaourSubledgerBalance.RunningBalance -= newProductionEntry.Amount;
+                                    updateLaourSubledgerBalance.RunningBalanceType = (updateLaourSubledgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
+                                    var updateLaourLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.LedgerBalanceId == updateLaourSubledgerBalance.Fk_LedgerBalanceId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
+                                    if (updateLaourLedgerBalance != null)
+                                    {
+                                        updateLaourLedgerBalance.RunningBalance -= newProductionEntry.Amount;
+                                        updateLaourLedgerBalance.RunningBalanceType = (updateLaourLedgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
+                                    }
+                                    await _appDbContext.SaveChangesAsync();
+                                }
+                            }
+                            // @labourCharges A/c--------Dr
+                            var updatelabourChargesLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.LabourCharges && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
+                            if (updatelabourChargesLedgerBalance != null)
+                            {
+                                updatelabourChargesLedgerBalance.RunningBalance += newProductionEntry.Amount;
+                                updatelabourChargesLedgerBalance.RunningBalanceType = (updatelabourChargesLedgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
+                                await _appDbContext.SaveChangesAsync();
+                            }
+                            #endregion
+                        }
+                        _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Created);
+                        transaction.Commit();
+                        _Result.IsSuccess = true;
+                    }
+                }
+                catch
+                {
+                    transaction.Rollback();
+                    throw;
+                }
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/CreateProductionEntry : {_Exception.Message}");
+            }
+            return _Result;
+        }
+        public async Task<Result<bool>> UpdateServiceEntry(ProductionEntryModel data)
+        {
+            Result<bool> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
+                Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
+                using var transaction = await _appDbContext.Database.BeginTransactionAsync();
+                try
+                {
+                    if (DateTime.TryParseExact(data.Date, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedProductionDate))
+                    {
+                        var UpdateProductionEntry = await (from s in _appDbContext.ProductionEntries where s.ProductionEntryId == data.ProductionEntryId && s.FK_BranchId == BranchId select s).SingleOrDefaultAsync();
+                        if (UpdateProductionEntry != null)
+                        {
+                            #region Ledger & SubLedger Balance
+                            var difference = data.Amount - UpdateProductionEntry.Amount;
+                            // @Labour A/c------Cr
+                            var getLabourSubLedger = await _appDbContext.Labours.Where(s => s.LabourId == UpdateProductionEntry.Fk_LabourId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
+                            if (getLabourSubLedger != null)
+                            {
+                                var updateSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == getLabourSubLedger.Fk_SubLedgerId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
+                                if (updateSubledgerBalance != null)
+                                {
+                                    if (data.Fk_LabourId == getLabourSubLedger.LabourId)
+                                    {
+                                        updateSubledgerBalance.RunningBalance -= difference;
+                                        updateSubledgerBalance.RunningBalanceType = (updateSubledgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
+                                        var updateLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.LedgerBalanceId == updateSubledgerBalance.Fk_LedgerBalanceId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
+                                        if (updateLedgerBalance != null)
+                                        {
+                                            updateLedgerBalance.RunningBalance -= difference;
+                                            updateLedgerBalance.RunningBalanceType = (updateLedgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
+                                        }
+                                        await _appDbContext.SaveChangesAsync();
+                                    }
+                                }
+                            }
+                            // @labourCharges A/c--------Dr
+                            var updatelabourChargesLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.LabourCharges && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
+                            if (updatelabourChargesLedgerBalance != null)
+                            {
+                                updatelabourChargesLedgerBalance.RunningBalance += difference;
+                                updatelabourChargesLedgerBalance.RunningBalanceType = (updatelabourChargesLedgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
+                                await _appDbContext.SaveChangesAsync();
+                            }
+                            #endregion
+                            #region Update Production Entry
+                            UpdateProductionEntry.ProductionDate = convertedProductionDate;
+                            UpdateProductionEntry.Fk_ProductId = data.Fk_ProductId;
+                            UpdateProductionEntry.Fk_LabourId = data.Fk_LabourId;
+                            UpdateProductionEntry.LabourType = data.LabourType;
+                            UpdateProductionEntry.Quantity = data.Quantity;
+                            UpdateProductionEntry.Rate = data.Rate;
+                            UpdateProductionEntry.Amount = data.Amount;
+                            await _appDbContext.SaveChangesAsync();
+                            #endregion
+                        }
+                    }
+                    _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Modified);
+                    _Result.IsSuccess = true;
+                    transaction.Commit();
+                }
+                catch
+                {
+                    transaction.Rollback();
+                    throw;
+                }
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/UpdateProductionEntry : {_Exception.Message}");
+            }
+            return _Result;
+        }
+        public async Task<Result<bool>> DeleteServiceEntry(Guid Id, IDbContextTransaction transaction, bool IsCallback)
+        {
+            Result<bool> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
+                Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
+                using var localTransaction = transaction ?? await _appDbContext.Database.BeginTransactionAsync();
+                try
+                {
+                    if (Id != Guid.Empty)
+                    {
+                        var DeleteProductionEntry = await (from s in _appDbContext.ProductionEntries where s.ProductionEntryId == Id && s.FK_BranchId == BranchId select s).SingleOrDefaultAsync();
+                        if (DeleteProductionEntry != null)
+                        {
+                            #region Production Entry Transaction 
+                            var DeleteProductionEntryTransacion = await (from s in _appDbContext.ProductionEntryTransactions where s.Fk_ProductionEntryId == Id && s.Fk_BranchId == BranchId select s).ToListAsync();
+                            if (DeleteProductionEntryTransacion != null)
+                            {
+                                _appDbContext.ProductionEntryTransactions.RemoveRange(DeleteProductionEntryTransacion);
+                                await _appDbContext.SaveChangesAsync();
+                            }
+                            #endregion                         
+                            #region SubLedger & Ledger Balances
+                            // @Labour A/c------Cr
+                            var getLabourSubLedger = await _appDbContext.Labours.Where(s => s.LabourId == DeleteProductionEntry.Fk_LabourId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
+                            if (getLabourSubLedger != null)
+                            {
+                                var updateLabourSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == getLabourSubLedger.Fk_SubLedgerId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
+                                if (updateLabourSubledgerBalance != null)
+                                {
+                                    if (DeleteProductionEntry.Fk_LabourId == getLabourSubLedger.LabourId)
+                                    {
+                                        updateLabourSubledgerBalance.RunningBalance += DeleteProductionEntry.Amount;
+                                        updateLabourSubledgerBalance.RunningBalanceType = (updateLabourSubledgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
+                                        var updateLabourLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.LedgerBalanceId == updateLabourSubledgerBalance.Fk_LedgerBalanceId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
+                                        if (updateLabourLedgerBalance != null)
+                                        {
+                                            updateLabourLedgerBalance.RunningBalance += DeleteProductionEntry.Amount;
+                                            updateLabourLedgerBalance.RunningBalanceType = (updateLabourLedgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
+                                        }
+                                        await _appDbContext.SaveChangesAsync();
+                                    }
+                                }
+                            }
+                            // @labourCharges A/c--------Dr
+                            var updatelabourChargesLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.LabourCharges && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
+                            if (updatelabourChargesLedgerBalance != null)
+                            {
+                                updatelabourChargesLedgerBalance.RunningBalance -= DeleteProductionEntry.Amount;
+                                updatelabourChargesLedgerBalance.RunningBalanceType = (updatelabourChargesLedgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
+                                await _appDbContext.SaveChangesAsync();
+                            }
+                            #endregion
+                            //Delete Production Entry
+                            _appDbContext.ProductionEntries.Remove(DeleteProductionEntry);
+                            await _appDbContext.SaveChangesAsync();
+                        }
+                        _Result.IsSuccess = true;
+                        if (IsCallback == false) localTransaction.Commit();
+                        _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Deleted);
+                    }
+                }
+                catch
+                {
+                    localTransaction.Rollback();
+                    throw;
+                }
+
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/DeleteProductionEntry : {_Exception.Message}");
+            }
+            return _Result;
+        }
+        #endregion
         #region Sales Transaction
         public async Task<Result<SubLedgerModel>> GetSundryDebtors(Guid PartyTypeId)
         {
@@ -1966,7 +2268,7 @@ namespace FMS.Repository.Transaction
                         GstAmount = x.GstAmount,
                         Amount = x.Amount,
                         Fk_ProductId = x.Fk_ProductId,
-                        Product = x.Product != null ? new ProductModel { ProductName = x.Product.ProductName } : null,
+                        Product = x.Product != null ? new ProductModel { ProductName = x.Product.ProductName, Unit = x.Product.Unit != null ? new UnitModel { UnitName = x.Product.Unit.UnitName } : null } : null,
                     }).ToList(),
                 }).FirstOrDefaultAsync();
                 if (Query != null)

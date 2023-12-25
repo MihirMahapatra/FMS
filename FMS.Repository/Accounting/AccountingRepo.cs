@@ -10,7 +10,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
 using System.Globalization;
-using System.Security.Policy;
 using System.Text;
 
 namespace FMS.Repository.Accounting
@@ -449,7 +448,7 @@ namespace FMS.Repository.Accounting
                 Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
                 Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
                 _Result.IsSuccess = false;
-                var lastPaymentNo = await _appDbContext.Payments.Where(s => s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear && s.CashBank == CashBank).OrderByDescending(s => s.VouvherNo).Select(s => new { s.VouvherNo }).SingleOrDefaultAsync();
+                var lastPaymentNo = await _appDbContext.Payments.Where(s => s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear && s.CashBank == CashBank).OrderByDescending(s => s.VouvherNo).Select(s => new { s.VouvherNo }).FirstOrDefaultAsync();
                 if (lastPaymentNo != null)
                 {
                     var lastVoucherNo = lastPaymentNo.VouvherNo;
@@ -831,7 +830,7 @@ namespace FMS.Repository.Accounting
                 Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
                 Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
                 _Result.IsSuccess = false;
-                var lastReceiptNo = await _appDbContext.Receipts.Where(s => s.Fk_BranchId == BranchId && s.CashBank == CashBank && s.Fk_FinancialYearId == FinancialYear).OrderByDescending(s => s.VouvherNo).Select(s => new { s.VouvherNo }).SingleOrDefaultAsync();
+                var lastReceiptNo = await _appDbContext.Receipts.Where(s => s.Fk_BranchId == BranchId && s.CashBank == CashBank && s.Fk_FinancialYearId == FinancialYear).OrderByDescending(s => s.VouvherNo).Select(s => new { s.VouvherNo }).FirstOrDefaultAsync();
                 if (lastReceiptNo != null)
                 {
                     var lastVoucherNo = lastReceiptNo.VouvherNo;

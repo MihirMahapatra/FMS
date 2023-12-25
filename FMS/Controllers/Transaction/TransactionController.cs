@@ -243,14 +243,66 @@ namespace FMS.Controllers.Transaction
             return new JsonResult(result);
         }
         #endregion
-        #region Service
-
-        #endregion
+        #region Service Entry
         [HttpGet]
         public IActionResult Service()
         {
             return PartialView();
         }
+        [HttpGet]
+        public async Task<IActionResult> GetLastServiceNo()
+        {
+            var result = await _transactionSvcs.GetLastServiceNo();
+            return new JsonResult(result);
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetServiceGoods()
+        {
+            Guid ProductType = MappingProductType.ServiceGoods;
+            var result = await _adminSvcs.GetProductByTypeId(ProductType);
+            return new JsonResult(result);
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetServiceLabours()
+        {
+            var result = await _masterSvcs.GetLaboursByLabourTypeId(MappingLabourType.Service);
+            return new JsonResult(result);
+        }
+        [HttpPost, Authorize(Policy = "Create")]
+        public async Task<IActionResult> CreateServiceEntry([FromBody] ProductionEntryRequest data)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _transactionSvcs.CreateServiceEntry(data);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
+        [HttpPost, Authorize(Policy = "Edit")]
+        public async Task<IActionResult> UpdateServiceEntry([FromBody] ProductionEntryModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _transactionSvcs.UpdateServiceEntry(model);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
+
+        }
+        [HttpPost, Authorize(Policy = "Delete")]
+        public async Task<IActionResult> DeleteServiceEntry([FromQuery] string id)
+        {
+            Guid ProductionEntryId = Guid.Parse(id);
+            var result = await _transactionSvcs.DeleteServiceEntry(ProductionEntryId);
+            return new JsonResult(result);
+        }
+        #endregion   
         #endregion
         #region Sales Transaction
         [HttpGet]

@@ -996,7 +996,8 @@ namespace FMS.Repository.Admin
                         Price = s.Price,
                         GST = s.GST,
                         ProductName = s.ProductName,
-                    }).FirstOrDefaultAsync();
+                        Unit = s.Unit != null ? new UnitModel() { UnitName = s.Unit.UnitName } : null
+                    }).SingleOrDefaultAsync();
 
                 if (product != null)
                 {
@@ -1106,7 +1107,7 @@ namespace FMS.Repository.Admin
                 {
                     AlternateUnitId = s.AlternateUnitId,
                     Unit = s.Unit != null ? new UnitModel() { UnitName = s.Unit.UnitName } : null,
-                    UnitQuantity=s.UnitQuantity,
+                    UnitQuantity = s.UnitQuantity,
                     Product = s.Product != null ? new ProductModel() { ProductName = s.Product.ProductName } : null,
                     AlternateQuantity = s.AlternateQuantity,
                     AlternateUnitName = s.AlternateUnitName,
@@ -1131,7 +1132,7 @@ namespace FMS.Repository.Admin
             try
             {
                 _Result.IsSuccess = false;
-                var Query = await _appDbContext.AlternateUnits.Where(s=>s.FK_ProductId== ProductId).Select(s => new AlternateUnitModel
+                var Query = await _appDbContext.AlternateUnits.Where(s => s.FK_ProductId == ProductId).Select(s => new AlternateUnitModel
                 {
                     AlternateUnitId = s.AlternateUnitId,
                     AlternateUnitName = s.AlternateUnitName,
@@ -1455,16 +1456,24 @@ namespace FMS.Repository.Admin
             }
             return _Result;
         }
-        public async Task<Result<decimal>> GetLabourRateByProductId(Guid ProductId)
+        public async Task<Result<LabourRateModel>> GetLabourRateByProductId(Guid ProductId)
         {
-            Result<decimal> _Result = new();
+            Result<LabourRateModel> _Result = new();
             try
             {
                 _Result.IsSuccess = false;
-                var lastProduction = await _appDbContext.LabourRates.Where(s => s.Fk_ProductId == ProductId).OrderByDescending(s => s.Date).Select(s => new { s.Rate }).FirstOrDefaultAsync();
+                var lastProduction = await _appDbContext.LabourRates.Where(s => s.Fk_ProductId == ProductId).OrderByDescending(s => s.Date).
+                    Select(s => new LabourRateModel
+                    {
+                        Rate = s.Rate,
+                        Product = new ProductModel
+                        {
+                            Unit = new UnitModel { UnitName = s.Product.Unit.UnitName }
+                        }
+                    }).FirstOrDefaultAsync();
                 if (lastProduction != null)
                 {
-                    _Result.SingleObjData = lastProduction.Rate;
+                    _Result.SingleObjData = lastProduction;
                     _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
                 }
                 _Result.IsSuccess = true;
@@ -1885,7 +1894,7 @@ namespace FMS.Repository.Admin
                 var ledger = await _appDbContext.Ledgers.Where(s => s.LedgerId == data.LedgerId).FirstOrDefaultAsync();
                 if (ledger != null)
                 {
-                   // ledger.HasSubLedger = data.HasSubLedger;
+                    // ledger.HasSubLedger = data.HasSubLedger;
                     _mapper.Map(data, ledger);
                     int count = await _appDbContext.SaveChangesAsync();
                     _Result.Response = (count > 0) ? ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Modified) : ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Error);

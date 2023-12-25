@@ -83,7 +83,7 @@ namespace FMS.Repository.Admin
         #endregion
         #region Labour Rate Configration
         Task<Result<LabourRateModel>> GetAllLabourRates();
-        Task<Result<decimal>> GetLabourRateByProductId(Guid ProductId);
+        Task<Result<LabourRateModel>> GetLabourRateByProductId(Guid ProductId);
         Task<Result<bool>> CreateLabourRate(LabourRateModel data);
         Task<Result<bool>> UpdateLabourRate(LabourRateModel data);
         Task<Result<bool>> DeleteLabourRate(Guid Id, IDbContextTransaction transaction, bool IsCallBack);

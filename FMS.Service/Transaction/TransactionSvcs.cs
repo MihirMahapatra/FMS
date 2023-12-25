@@ -698,6 +698,185 @@ namespace FMS.Service.Transaction
             return Obj;
         }
         #endregion
+        #region Service
+        public async Task<Base> GetLastServiceNo()
+        {
+            var Result = await _transactionRepo.GetLastProductionNo();
+            return new Base()
+            {
+                ResponseStatus = Result.Response,
+                ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
+                Data = Result.SingleObjData,
+            };
+
+        }
+        public async Task<ProductionEntryViewModel> GetServiceEntry()
+        {
+            ProductionEntryViewModel Obj;
+            var Result = await _transactionRepo.GetProductionEntry();
+            if (Result.IsSuccess)
+            {
+                if (Result.Response == "success")
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
+                        ProductionEntries = Result.CollectionObjData,
+                    };
+                }
+                else
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.NotFound),
+                        Message = "No Record Found"
+                    };
+                }
+            }
+            else
+            {
+                Obj = new()
+                {
+                    ResponseStatus = Result.Response,
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    Message = "Some Eroor Occoured"
+                };
+            }
+            return Obj;
+        }
+        public async Task<Base> CreateServiceEntry(ProductionEntryRequest data)
+        {
+            Base Obj;
+            var Result = await _transactionRepo.CreateProductionEntry(data);
+            if (Result.IsSuccess)
+            {
+                if (Result.Response == "created")
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.Created),
+                        SuccessMsg = "Data Saved SuccessFully"
+                    };
+                }
+                else
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                        ErrorMsg = "Data Already Exist"
+                    };
+                }
+            }
+            else if (Result.WarningMessage != null)
+            {
+                Obj = new()
+                {
+                    ResponseStatus = Result.Response,
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    ErrorMsg = Result.WarningMessage
+                };
+            }
+            else
+            {
+                Obj = new()
+                {
+                    ResponseStatus = Result.Response,
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    ErrorMsg = "Some Error Occourd Try To Contact Your App Devloper"
+                };
+            }
+            return Obj;
+        }
+        public async Task<Base> UpdateServiceEntry(ProductionEntryModel data)
+        {
+            var Result = await _transactionRepo.UpdateProductionEntry(data);
+            Base Obj;
+            if (Result.IsSuccess)
+            {
+                if (Result.Response == "modified")
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.OK),
+                        SuccessMsg = "Data Updated SuccessFully"
+                    };
+                }
+                else
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                        ErrorMsg = "Failed To Update Data"
+                    };
+                }
+            }
+            else if (Result.WarningMessage != null)
+            {
+                Obj = new()
+                {
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    ErrorMsg = Result.WarningMessage,
+                };
+            }
+            else
+            {
+                Obj = new()
+                {
+                    ResponseStatus = Result.Response,
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    ErrorMsg = "Some Error Occourd Try To Contact Your App Devloper"
+                };
+            }
+            return Obj;
+        }
+        public async Task<Base> DeleteServiceEntry(Guid Id)
+        {
+            var Result = await _transactionRepo.DeleteProductionEntry(Id, null, false);
+            Base Obj;
+            if (Result.IsSuccess)
+            {
+                if (Result.Response == "deleted")
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.OK),
+                        SuccessMsg = "Data Deleted Successfully"
+                    };
+                }
+                else
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                        ErrorMsg = "Failed To Delete Data"
+                    };
+                }
+            }
+            else
+            {
+                Obj = new()
+                {
+                    ResponseStatus = Result.Response,
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    ErrorMsg = "Some Error Occourd Try To Contact Your App Devloper"
+                };
+            }
+            return Obj;
+        }
+        #endregion
         #region Sales Transaction
         public async Task<SubLedgerViewModel> GetSundryDebtors(Guid PartyTypeId)
         {

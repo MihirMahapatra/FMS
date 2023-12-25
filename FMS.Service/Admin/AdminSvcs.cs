@@ -1910,15 +1910,17 @@ namespace FMS.Service.Admin
             }
             return Obj;
         }
-        public async Task<Base> GetLabourRateByProductId(Guid ProductId)
+        public async Task<LabourRateViewModel> GetLabourRateByProductId(Guid ProductId)
         {
+            LabourRateViewModel obj;
             var Result = await _adminRepo.GetLabourRateByProductId(ProductId);
-            return new Base()
+            obj=new ()
             {
                 ResponseStatus = Result.Response,
                 ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
-                Data = Result.SingleObjData.ToString(),
+                LabourRate = Result.SingleObjData,
             };
+            return obj;
         }
         public async Task<Base> CreateLabourRate(LabourRateModel data)
         {
