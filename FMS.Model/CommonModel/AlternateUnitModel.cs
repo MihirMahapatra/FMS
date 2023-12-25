@@ -14,7 +14,11 @@ namespace FMS.Model.CommonModel
         public decimal AlternateQuantity { get; set; }
         public Guid FK_ProductId { get; set; }
         public Guid Fk_UnitId { get; set; }
-        public ProductModel Product { get; set; }
+        public decimal UnitQuantity { get; set; }
         public UnitModel Unit { get; set; }
+        public ProductModel Product { get; set; }
+        public List<PurchaseTransactionModel> PurchaseTransactions { get; set; }
+        public List<PurchaseReturnTransactionModel> PurchaseReturnTransactions { get; set; }
+
     }
 }

@@ -66,6 +66,7 @@ namespace FMS.Repository.Admin
         #endregion
         #region Alternate Units
         Task<Result<AlternateUnitModel>> GetAlternateUnits();
+        Task<Result<AlternateUnitModel>> GetAlternateUnitByProductId(Guid ProductId);
         Task<Result<bool>> CreateAlternateUnit(AlternateUnitModel data);
         Task<Result<bool>> UpdateAlternateUnit(AlternateUnitModel data);
         Task<Result<bool>> DeleteAlternateUnit(Guid Id);
@@ -79,6 +80,13 @@ namespace FMS.Repository.Admin
         Task<Result<bool>> CreateProductConfig(ProductConfigDataRequest requestData);
         Task<Result<bool>> UpdateProductConfig(ProductionModel data);
         Task<Result<bool>> DeleteProductConfig(Guid Id, IDbContextTransaction transaction);
+        #endregion
+        #region Labour Rate Configration
+        Task<Result<LabourRateModel>> GetAllLabourRates();
+        Task<Result<LabourRateModel>> GetLabourRateByProductId(Guid ProductId);
+        Task<Result<bool>> CreateLabourRate(LabourRateModel data);
+        Task<Result<bool>> UpdateLabourRate(LabourRateModel data);
+        Task<Result<bool>> DeleteLabourRate(Guid Id, IDbContextTransaction transaction, bool IsCallBack);
         #endregion
         #region Account Configuration
         #region LedgerGroup

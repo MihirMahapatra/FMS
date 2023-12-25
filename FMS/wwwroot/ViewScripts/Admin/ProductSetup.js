@@ -289,6 +289,7 @@
                         $('input[name="mdlGroupAdd"]').val('');
                     }
                     else {
+                        $('#modal-add-group').modal('hide');
                         toastr.error(Response.ErrorMsg);
                     }
                     loadGroups(data.Fk_ProductTypeId);
@@ -502,8 +503,8 @@
             }
         });
     }
-    $('#btnSubGroupDelete').on('click', GroupDelete);
-    function GroupDelete () {
+    $('#btnSubGroupDelete').on('click', SubGroupDelete);
+    function SubGroupDelete () {
         if (!subGroupId.val() || subGroupId.val() === '--Select Option--') {
             toastr.error('Plz Select a SubGroup Name To Delete');
             return;

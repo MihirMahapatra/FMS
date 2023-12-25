@@ -382,7 +382,6 @@ $(function () {
                     var option = $('<option></option>').val(key).text(item);
                     ddlPayment.append(option);
                 });
-
             },
             error: function (errormessage) {
                 console.log(errormessage)
@@ -394,7 +393,16 @@ $(function () {
         var html = '<tr>';
         html += '<td hidden><input type="hidden" class="form-control" value="0"></td>';
         html += '<td><div class="form-group"><select class="form-control form-control-sm select2bs4 FinishedGood" style="width: 100%;" id="' + uniqueId + '"></select></div></td>';
-        html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
+        html += '<td>' +
+            '<div class="form-group">' +
+            '<div class="input-group">'+
+            '<input type="text" class="form-control" value="0">' +
+            ' <div class="input-group-append">' +
+            ' <span class="input-group-text" id="Unit">N/A</span>'+
+            '</div>' +
+            '</div>' +
+            '</div>' +
+            '</td>';
         html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
         html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
         html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
@@ -403,7 +411,7 @@ $(function () {
         html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
         html += '<td><button class="btn btn-primary btn-link deleteBtn" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button></td>';
         html += '</tr>';
-        var newRow = SalesTable.row.add($(html)).draw(false).node();
+        SalesTable.row.add($(html)).draw(false).node();
         $.ajax({
             url: "/Transaction/GetProductFinishedGood",
             type: "GET",
@@ -449,6 +457,8 @@ $(function () {
                         }
                         Textbox.eq(4).val(result.product.GST);
                         Textbox.eq(1).val(result.product.Price);
+                        var span = selectElement.closest('tr').find('span#Unit'); // Specify the ID of the span for accuracy
+                        span.text(result.product.Unit.UnitName);
                     }
                 },
                 error: function (errormessage) {
@@ -667,7 +677,6 @@ $(function () {
                 html += '<th>Trxn Dt.</th>'
                 html += '<th>Party</th>'
                 html += '<th>Trxn Type</th>'
-
                 html += '<th>Order No</th>'
                 html += '<th>Grand Total</th>'
                 html += '<th>Action</th>'
@@ -849,7 +858,16 @@ $(function () {
                     var html = '<tr>';
                     html += '<td  hidden><input type="hidden" class="form-control"  value=' + item.SalesId + '></td>';
                     html += '<td><div class="form-group"><select class="form-control form-control-sm select2bs4 FinishedGood" style="width: 100%;" id="ddn_' + item.SalesId + '"> </select></div></td>';
-                    html += '<td><div class="form-group"><input type="text" class="form-control" id="" value=' + item.Quantity + '></div></td>';
+                    html += '<td>' +
+                        '<div class="form-group">' +
+                        '<div class="input-group">' +
+                        '<input type="text" class="form-control" id="" value=' + item.Quantity + '>' +
+                        ' <div class="input-group-append">' +
+                        ' <span class="input-group-text" id="Unit">' + item.Product.Unit.UnitName +'</span>' +
+                        '</div>' +
+                        '</div>' +
+                        '</div>' +
+                        '</td>';
                     html += '<td><div class="form-group"><input type="text" class="form-control" id=""  value=' + item.Rate + '></div></td>';
                     html += '<td><div class="form-group"><input type="text" class="form-control" id=""  value=' + item.Discount + '></div></td>';
                     html += '<td><div class="form-group"><input type="text" class="form-control" id=""  value=' + item.DiscountAmount + '></div></td>';

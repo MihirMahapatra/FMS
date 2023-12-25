@@ -153,7 +153,7 @@
     </section>
     <!-- /.content -->
 </div>
-@await Html.PartialAsync("_FooterScript")
+@section additionalScripts {
 <script src="~/scripts/FormScript.js"></script>
 <script src="~/viewscripts/transaction/inwardsupplytransaction.js"></script>
 <script>
@@ -167,4 +167,5 @@
         format: 'DD/MM/YYYY'
     });
 </script>
+}
 

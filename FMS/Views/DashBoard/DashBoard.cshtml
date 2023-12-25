@@ -84,7 +84,7 @@
                         <div class="card-header border-0">
                             <h3 class="card-title">
                                 <i class="fas fa-th mr-1"></i>
-                                 Chart 1
+                                Chart 1
                             </h3>
 
                             <div class="card-tools">
@@ -109,7 +109,7 @@
                         <div class="card-header border-0">
                             <h3 class="card-title">
                                 <i class="fas fa-th mr-1"></i>
-                                 Chart 2
+                                Chart 2
                             </h3>
 
                             <div class="card-tools">
@@ -133,14 +133,15 @@
         </div>
     </section>
 </div>
-@await Html.PartialAsync("_FooterScript")
-<script src="~/scripts/ChartScript.js"></script>
-<script src="~/scripts/DataTableScript.js"></script>
-<script src="~/viewscripts/dashboard/dashboard.js"></script>
-@if (TempData["SuccessMsg"] != null)
-{
-    <script>
-        toastr.success('@TempData["SuccessMsg"]');
-    </script>
+@section additionalScripts {
+    <script src="~/scripts/ChartScript.js"></script>
+    <script src="~/scripts/DataTableScript.js"></script>
+    <script src="~/viewscripts/dashboard/dashboard.js"></script>
+    @if (TempData["SuccessMsg"] != null)
+    {
+        <script>
+            toastr.success('@TempData["SuccessMsg"]');
+        </script>
+    }
 }
 

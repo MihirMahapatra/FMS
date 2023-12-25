@@ -135,17 +135,18 @@
     </section>
 </div>
 
-@await Html.PartialAsync("_FooterScript")
-<script src="~/viewscripts/admin/listroles.js"></script>
-@if (TempData["SuccessMsg"] != null)
-{
-    <script>
-        toastr.success('@TempData["SuccessMsg"]');
-    </script>
-}
-@if (TempData["ErrorMsg"] != null)
-{
-    <script>
-        toastr.error('@TempData["ErrorMsg"]');
-    </script>
+@section additionalScripts {
+    <script src="~/viewscripts/admin/listroles.js"></script>
+    @if (TempData["SuccessMsg"] != null)
+    {
+        <script>
+            toastr.success('@TempData["SuccessMsg"]');
+        </script>
+    }
+    @if (TempData["ErrorMsg"] != null)
+    {
+        <script>
+            toastr.error('@TempData["ErrorMsg"]');
+        </script>
+    }
 }

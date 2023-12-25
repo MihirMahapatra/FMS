@@ -16,23 +16,14 @@ namespace FMS.Service.Master
         #region labour Master
         #region Labour Type
         Task<LabourTypeViewModel> GetAllLabourTypes();
-        Task<Base> CreateLabourType(LabourTypeModel data);
-        Task<Base> UpdateLabourType(LabourTypeModel data);
-        Task<Base> DeleteLabourType(Guid Id);
         #endregion
         #region Labour Details
         Task<LabourViewModel> GetAllLabourDetails();
         Task<LabourViewModel> GetLabourDetailById(Guid LabourId);
+        Task<LabourViewModel> GetLaboursByLabourTypeId(Guid LabourTypeId);
         Task<Base> CreateLabourDetail(LabourModel data);
         Task<Base> UpdateLabourDetail(LabourModel data);
         Task<Base> DeleteLabourDetail(Guid Id);
-        #endregion
-        #region Labour Rate Master
-        Task<LabourRateViewModel> GetAllLabourRates();
-        Task<Base> GetLabourRateByProductId(Guid ProductId);
-        Task<Base> CreateLabourRate(LabourRateModel data);
-        Task<Base> UpdateLabourRate(LabourRateModel data);
-        Task<Base> DeleteLabourRate(Guid Id);
         #endregion
         #endregion   
         #region Party Master

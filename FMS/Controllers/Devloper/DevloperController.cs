@@ -16,7 +16,7 @@ namespace FMS.Controllers.Devloper
         [HttpGet]
         public IActionResult DevloperMaster()
         {
-            return View();
+            return PartialView();
         }
         #region Branch
         [HttpGet]
@@ -127,53 +127,6 @@ namespace FMS.Controllers.Devloper
             var result = await _devloperSvcs.DeleteLedgerSubGroup(BranchId, Id);
             return new JsonResult(result);
         }
-        #endregion
-        #region Ledger
-        //[HttpPost]
-        //public async Task<IActionResult> CreateLedgers([FromBody] LedgerDataRequest requestData)
-        //{
-        //    List<LedgerModel> model = new();
-        //    foreach (var item in requestData.RowData)
-        //    {
-        //        LedgerModel data = new()
-        //        {
-        //            Fk_LedgerGroupId = Guid.Parse(requestData.LedgerGroupId),
-        //            Fk_LedgerSubGroupId = !string.IsNullOrEmpty(requestData.LedgerSubGroupId)? Guid.Parse(requestData.LedgerSubGroupId) : null,
-        //            Fk_BranchId = Guid.Parse(requestData.BranchId),
-        //            LedgerType = item[0],
-        //            LedgerName = item[1],
-        //            OpeningBalance = item[2] == "" ? 0 : Convert.ToDecimal(item[2]),
-        //            OpeningBalanceType = item[3]
-        //        };
-        //        model.Add(data);
-        //    }
-        //    var result = await _devloperSvcs.CreateLedger(model);
-        //    return new JsonResult(result);
-        //}
-        //[HttpGet]
-        //public IActionResult Ledger()
-        //{
-        //    return View();
-        //}
-        //[HttpGet]
-        //public async Task<IActionResult> GetLedgers([FromQuery] Guid BranchId)
-        //{
-        //    var result = await _devloperSvcs.GetLedgers(BranchId);
-        //    return new JsonResult(result);
-        //}
-        //[HttpPost]
-        //public async Task<IActionResult> UpdateLedger([FromBody] LedgerModel model)
-        //{
-        //    var result = await _devloperSvcs.UpdateLedger(model);
-        //    return new JsonResult(result);
-        //}
-        //[HttpPost]
-        //public async Task<IActionResult> DeleteLedger([FromQuery] string id, [FromQuery] Guid BranchId)
-        //{
-        //    Guid Id = Guid.Parse(id);
-        //    var result = await _devloperSvcs.DeleteLedger(Id, BranchId);
-        //    return new JsonResult(result);
-        //}
         #endregion
         #endregion
     }

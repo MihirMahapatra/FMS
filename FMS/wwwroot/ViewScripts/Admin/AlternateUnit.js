@@ -4,8 +4,9 @@
     $("#AlternateUnitLink i.far.fa-circle").removeClass("far fa-circle").addClass("far fa-dot-circle");
     /***************************************Variable Declaration***********************************************************/
     const ProductId = $('select[name="ProductId"]');
-    const UnitName = $('#Unit');
     const HdnUnitId = $('#HdnUnitId');
+    const UnitName = $('#Unit');
+    const UnitQty = $('input[name = "UnitQty"]');
     const AlternateQty = $('input[name = "AlternateQty"]');
     const AlternateUnit = $('input[name = "AlternateUnit"]');
     LoadProducts();
@@ -14,7 +15,7 @@
         var defaultOption = $('<option></option>').val('').text('--Select Product--');
         ProductId.append(defaultOption);
         $.ajax({
-            url: "/Admin/GetAllProducts",
+            url: "/Admin/GetProductByTypeId",
             type: "GET",
             contentType: "application/json;charset=utf-8",
             dataType: "json",
@@ -52,8 +53,8 @@
                 html += '<tr>'
                 html += '<th hidden>AlternateUnit Id</th>'
                 html += '<th>Product Name</th>'
-                html += '<th colspan=2>Unit</th>'
                 html += '<th colspan=2>Alternate Unit</th>'
+                html += '<th colspan=2>Unit</th>'
                 html += '<th>Action</th>'
                 html += '</tr>'
                 html += '</thead>'
@@ -68,16 +69,17 @@
                         else {
                             html += '<td>-</td>';
                         }
+                        html += '<td>' + item.AlternateQuantity + '</td>';
+                        html += '<td>' + item.AlternateUnitName + '</td>';
                         if (item.Unit !== null) {
-                            html += '<td>1</td>';
+                            html += '<td>' + item.UnitQuantity + '</td>';
                             html += '<td>' + item.Unit.UnitName + '</td>';
                         }
                         else {
                             html += '<td>-</td>';
                             html += '<td>-</td>';
                         }
-                        html += '<td>' + item.AlternateQuantity + '</td>';
-                        html += '<td>' + item.AlternateUnitName + '</td>';
+                    
                         html += '<td style="background-color:#ffe6e6;">';
                         html += '<button class="btn btn-primary btn-link btn-sm btn-alternateunit-edit"   id="btnAlternateUnitEdit_' + item.AlternateUnitId + '" data-id="' + item.AlternateUnitId + '" data-toggle="modal" data-target="#modal-edit-Product" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-edit"></i></button>';
                         html += ' <button class="btn btn-primary btn-link btn-sm btn-alternateunit-delete" id="btnAlternateUnitDelete_' + item.AlternateUnitId + '"   data-id="' + item.AlternateUnitId + '" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button>';
@@ -142,20 +144,21 @@
             ProductId.focus();
             return;
         }
-        else if (!AlternateQty.val()) {
+        else if (!UnitQty.val()) {
             toastr.error('Quantity Is Required.');
-            ProductName.focus();
+            UnitQty.focus();
             return;
         }
         else if (!AlternateUnit.val()) {
             toastr.error('Alternate Unit Is Required.');
-            ProductName.focus();
+            AlternateUnit.focus();
             return;
         }
         else {
             const data = {
                 FK_ProductId: ProductId.val(),
                 Fk_UnitId: HdnUnitId.val(),
+                UnitQuantity: UnitQty.val(),
                 AlternateUnitName: AlternateUnit.val(),
                 AlternateQuantity: AlternateQty.val()
             }
@@ -173,8 +176,8 @@
                         toastr.error(Response.ErrorMsg);
                     }
                     LoadAlternateUnit();
-                    AlternateUnitName.val('');
-                    AlternateQuantity.val('');
+                    AlternateUnit.val('');
+                    UnitQty.val('0');
                 },
                 error: function (error) {
                     console.log(error);

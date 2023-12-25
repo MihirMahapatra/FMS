@@ -54,21 +54,22 @@
     </section>
 </div>
 
-@await Html.PartialAsync("_FooterScript")
-<script src="~/scripts/FormScript.js"></script>
-<script src="~/viewscripts/admin/createtoken.js"></script>
-@if (TempData["SuccessMsg"] != null)
-{
+@section additionalScripts {
+    <script src="~/scripts/FormScript.js"></script>
+    <script src="~/viewscripts/admin/createtoken.js"></script>
+    @if (TempData["SuccessMsg"] != null)
+    {
+        <script>
+            toastr.success('@TempData["SuccessMsg"]');
+        </script>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <script>
+            toastr.error('@TempData["ErrorMsg"]');
+        </script>
+    }
     <script>
-        toastr.success('@TempData["SuccessMsg"]');
+        $('[data-mask]').inputmask()
     </script>
 }
-@if (TempData["ErrorMessage"] != null)
-{
-    <script>
-        toastr.error('@TempData["ErrorMsg"]');
-    </script>
-}
-<script>
-    $('[data-mask]').inputmask()
-</script>

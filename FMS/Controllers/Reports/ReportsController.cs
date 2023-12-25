@@ -27,7 +27,7 @@ namespace FMS.Controllers.Reports
             string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
             ViewBag.BranchName = branchName;
             ViewBag.FinancialYear = FinancialYear;
-            return View();
+            return PartialView();
         }
         [HttpGet]
         public async Task<IActionResult> GetProductByTypeId([FromQuery] Guid ProductTypeId)
@@ -60,11 +60,7 @@ namespace FMS.Controllers.Reports
         [HttpGet]
         public IActionResult LabourReport()
         {
-            string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
-            string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
-            ViewBag.BranchName = branchName;
-            ViewBag.FinancialYear = FinancialYear;
-            return View();
+            return PartialView();
         }
         [HttpPost]
         public async Task<IActionResult> GetSummerizedLabourReport([FromBody] LabourReportDataRequest requestData)
@@ -91,11 +87,7 @@ namespace FMS.Controllers.Reports
         [HttpGet]
         public IActionResult CustomerReport()
         {
-            string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
-            string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
-            ViewBag.BranchName = branchName;
-            ViewBag.FinancialYear = FinancialYear;
-            return View();
+            return PartialView();
         }
         [HttpPost]
         public async Task<IActionResult> GetSummerizedCustomerReport([FromBody] PartyReportDataRequest requestData)
@@ -122,11 +114,7 @@ namespace FMS.Controllers.Reports
         [HttpGet]
         public IActionResult SupplyerReport()
         {
-            string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
-            string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
-            ViewBag.BranchName = branchName;
-            ViewBag.FinancialYear = FinancialYear;
-            return View();
+            return PartialView();
         }
         [HttpPost]
         public async Task<IActionResult> GetSummerizedSupplyerReport([FromBody] PartyReportDataRequest requestData)
@@ -153,11 +141,7 @@ namespace FMS.Controllers.Reports
         [HttpGet]
         public IActionResult DaySheet()
         {
-            string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
-            string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
-            ViewBag.BranchName = branchName;
-            ViewBag.FinancialYear = FinancialYear;
-            return View();
+            return PartialView();
         }
         [HttpGet]
         public async Task<IActionResult> GetDaySheet([FromQuery] string Date)
@@ -170,11 +154,7 @@ namespace FMS.Controllers.Reports
         [HttpGet]
         public IActionResult CashBook()
         {
-            string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
-            string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
-            ViewBag.BranchName = branchName;
-            ViewBag.FinancialYear = FinancialYear;
-            return View();
+            return PartialView();
         }
         [HttpPost]
         public async Task<IActionResult> CashBookReport([FromBody] CashBookDataRequest requestData)
@@ -191,11 +171,7 @@ namespace FMS.Controllers.Reports
         [HttpGet]
         public IActionResult BankBook()
         {
-            string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
-            string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
-            ViewBag.BranchName = branchName;
-            ViewBag.FinancialYear = FinancialYear;
-            return View();
+            return PartialView();
         }
         [HttpPost]
         public async Task<IActionResult> BankBookReport([FromBody] BankBookDataRequest requestData)

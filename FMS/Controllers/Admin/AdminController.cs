@@ -37,11 +37,7 @@ namespace FMS.Controllers.Admin
         [HttpGet]
         public IActionResult DataBaseBackup()
         {
-            string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
-            string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
-            ViewBag.BranchName = branchName;
-            ViewBag.FinancialYear = FinancialYear;
-            return View();
+            return PartialView();
         }
         [HttpPost]
         public IActionResult CreateDataBaseBackup()
@@ -76,16 +72,11 @@ namespace FMS.Controllers.Admin
             return View("DatabaseBackup");
         }
         #endregion
-        
         #region Generate SignUp Token
         [HttpGet]
         public IActionResult CreateToken()
         {
-            string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
-            string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
-            ViewBag.BranchName = branchName;
-            ViewBag.FinancialYear = FinancialYear;
-            return View();
+            return PartialView();
         }
         [HttpPost]
         [Authorize(Policy = "Create")]
@@ -106,7 +97,7 @@ namespace FMS.Controllers.Admin
                 TempData["ErrorMsg"] = IsCreatedSuccessFully.ErrorMsg;
             }
 
-            return View();
+            return PartialView();
         }
         #endregion
         #region Role & Claims   
@@ -224,11 +215,7 @@ namespace FMS.Controllers.Admin
         [HttpGet]
         public IActionResult CompanyInfo()
         {
-            string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
-            string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
-            ViewBag.BranchName = branchName;
-            ViewBag.FinancialYear = FinancialYear;
-            return View();
+            return PartialView();
         }
         [HttpPost]
         public async Task<IActionResult> CreateCompany([FromBody] CompanyDetailsModel data)
@@ -260,11 +247,7 @@ namespace FMS.Controllers.Admin
         [HttpGet]
         public IActionResult AllocateBranch()
         {
-            string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
-            string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
-            ViewBag.BranchName = branchName;
-            ViewBag.FinancialYear = FinancialYear;
-            return View();
+            return PartialView();
         }
         [HttpGet]
         public async Task<IActionResult> GetAllUserAndBranch()
@@ -296,11 +279,7 @@ namespace FMS.Controllers.Admin
         [HttpGet]
         public IActionResult ProductSetup()
         {
-            string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
-            string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
-            ViewBag.BranchName = branchName;
-            ViewBag.FinancialYear = FinancialYear;
-            return View();
+            return PartialView();
         }
         #region Product Type
         [HttpGet]
@@ -483,17 +462,20 @@ namespace FMS.Controllers.Admin
         [HttpGet]
         public IActionResult AlternateUnit()
         {
-            string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
-            string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
-            ViewBag.BranchName = branchName;
-            ViewBag.FinancialYear = FinancialYear;
-            return View();
+
+            return PartialView();
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAlternateUnits()
         {
             var result = await _adminSvcs.GetAlternateUnits();
+            return new JsonResult(result);
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetProductByTypeId()
+        {
+            var result = await _adminSvcs.GetProductByTypeId(MappingProductType.RawMaterial);
             return new JsonResult(result);
         }
         [HttpGet]
@@ -540,11 +522,8 @@ namespace FMS.Controllers.Admin
         [HttpGet]
         public IActionResult ProductionConfig()
         {
-            string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
-            string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
-            ViewBag.BranchName = branchName;
-            ViewBag.FinancialYear = FinancialYear;
-            return View();
+
+            return PartialView();
         }
         [HttpGet]
         public async Task<IActionResult> GetRawMaterials()
@@ -606,15 +585,76 @@ namespace FMS.Controllers.Admin
             return new JsonResult(result);
         }
         #endregion
+        #region Labour Rate Configuration
+        [HttpGet]
+        public IActionResult LabourRateConfig()
+        {
+
+            return PartialView();
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetAllLabourRates()
+        {
+            var result = await _adminSvcs.GetAllLabourRates();
+            return new JsonResult(result);
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetAllProductTypesForLabour()
+        {
+            var result = await _adminSvcs.GetProductTypes();
+            var elementToRemove = result.ProductTypes.FirstOrDefault(x => x.ProductTypeId == MappingProductType.RawMaterial);
+            if (elementToRemove != null)
+            {
+                result.ProductTypes.Remove(elementToRemove);
+            }
+            return new JsonResult(result);
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetProductByType(Guid ProductType)
+        {
+            var result = await _adminSvcs.GetProductByTypeId(ProductType);
+            return new JsonResult(result);
+        }
+        [HttpPost, Authorize(Policy = "Create")]
+        public async Task<IActionResult> CreateLabourRate([FromBody] LabourRateModel data)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _adminSvcs.CreateLabourRate(data);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
+        [HttpPost, Authorize(Policy = "Edit")]
+        public async Task<IActionResult> UpdateLabourRate([FromBody] LabourRateModel data)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _adminSvcs.UpdateLabourRate(data);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
+        [HttpPost, Authorize(Policy = "Delete")]
+        public async Task<IActionResult> DeleteLabourRate([FromQuery] string Id)
+        {
+            Guid LabourRateId = Guid.Parse(Id);
+            var result = await _adminSvcs.DeleteLabourRate(LabourRateId);
+            return new JsonResult(result);
+        }
+        #endregion
         #region Account Configuration
         [HttpGet]
         public IActionResult AccountConfig()
         {
-            string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
-            string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
-            ViewBag.BranchName = branchName;
-            ViewBag.FinancialYear = FinancialYear;
-            return View();
+
+            return PartialView();
         }
         #region LedgerGroup
         [HttpGet]
@@ -670,11 +710,8 @@ namespace FMS.Controllers.Admin
         [HttpGet]
         public IActionResult Ledger()
         {
-            string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
-            string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
-            ViewBag.BranchName = branchName;
-            ViewBag.FinancialYear = FinancialYear;
-            return View();
+
+            return PartialView();
         }
         [HttpPost, Authorize(Policy = "Create")]
         public async Task<IActionResult> CreateLedgers([FromBody] LedgerDataRequest requestData)

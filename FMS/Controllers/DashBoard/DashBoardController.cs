@@ -23,10 +23,6 @@ namespace FMS.Controllers.DashBoard
         [HttpGet]
         public IActionResult DashBoard(string SuccessMsg, string eMail)
         {
-            string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
-            string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
-            ViewBag.BranchName = branchName;
-            ViewBag.FinancialYear = FinancialYear;
             if (SuccessMsg != null)
             {
                 TempData["SuccessMsg"] = SuccessMsg;
@@ -34,7 +30,7 @@ namespace FMS.Controllers.DashBoard
             DateTime currentDate = DateTime.Today;
             string formattedDate = currentDate.ToString("dd/MM/yyyy");
              var daysheet =_reportSvcs.GetDaySheet(formattedDate);
-            return View(daysheet.Result.DaySheet);
+            return PartialView(daysheet.Result.DaySheet);
         }
         [HttpGet]
         public async Task<IActionResult> GetFinancialYears(string BranchId)
@@ -83,7 +79,7 @@ namespace FMS.Controllers.DashBoard
                 }
                 return RedirectToAction("DashBoard", "DashBoard");
             }
-            return View();
+            return PartialView();
         }
         [HttpGet, HttpPost]
         public async Task<IActionResult> BranchUser(string SuccessMsg, string UserId, SessionModel model)
@@ -117,7 +113,7 @@ namespace FMS.Controllers.DashBoard
                     FinancialYears = financialYears.FinancialYears,
                     Branches = GetBranchByUser.Branches,
                 };
-                return View(data);
+                return PartialView(data);
             }
         }
     }

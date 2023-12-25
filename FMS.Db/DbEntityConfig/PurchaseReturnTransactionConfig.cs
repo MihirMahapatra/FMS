@@ -15,6 +15,7 @@ namespace FMS.Db.DbEntityConfig
             builder.Property(e => e.TransactionDate).HasColumnType("datetime").IsRequired(false);
             builder.Property(e => e.Fk_PurchaseReturnOrderId).IsRequired(true);
             builder.Property(e => e.Fk_ProductId).IsRequired(true);
+            builder.Property(e => e.Fk_AlternateUnitId).IsRequired(true);
             builder.Property(e => e.Fk_BranchId).IsRequired(true);
             builder.Property(e => e.Fk_FinancialYearId).IsRequired(true);
             builder.Property(e => e.Quantity).HasColumnType("decimal(18, 2)").HasDefaultValue(0);
@@ -25,6 +26,7 @@ namespace FMS.Db.DbEntityConfig
             builder.Property(e => e.GstAmount).HasColumnType("decimal(18, 2)").HasDefaultValue(0);
             builder.Property(e => e.Amount).HasColumnType("decimal(18, 2)").HasDefaultValue(0);
             builder.HasOne(p => p.PurchaseReturnOrder).WithMany(po => po.PurchaseReturnTransactions).HasForeignKey(po => po.Fk_PurchaseReturnOrderId).OnDelete(DeleteBehavior.Restrict);
+            builder.HasOne(p => p.AlternateUnit).WithMany(po => po.PurchaseReturnTransactions).HasForeignKey(po => po.Fk_AlternateUnitId).OnDelete(DeleteBehavior.Restrict);
             builder.HasOne(p => p.Product).WithMany(po => po.PurchaseReturnTransactions).HasForeignKey(po => po.Fk_ProductId).OnDelete(DeleteBehavior.Restrict);
             builder.HasOne(p => p.Branch).WithMany(po => po.PurchaseReturnTransactions).HasForeignKey(po => po.Fk_BranchId).OnDelete(DeleteBehavior.Restrict);
             builder.HasOne(p => p.FinancialYear).WithMany(po => po.PurchaseReturnTransactions).HasForeignKey(po => po.Fk_FinancialYearId).OnDelete(DeleteBehavior.Restrict);

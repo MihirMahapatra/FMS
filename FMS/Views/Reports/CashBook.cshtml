@@ -74,7 +74,7 @@
         </div>
     </section>
 </div>
-@await Html.PartialAsync("_FooterScript")
+@section additionalScripts {
 <script src="~/scripts/FormScript.js"></script>
 <script src="~/scripts/datepicker.js"></script>
 <script>
@@ -86,5 +86,5 @@
     });
 </script>
 <script src="~/viewscripts/reports/cashbookreport.js"></script>
-
+}
 

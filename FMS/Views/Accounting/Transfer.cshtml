@@ -27,6 +27,7 @@
     <!-- /.content -->
 </div>
 
-@await Html.PartialAsync("_FooterScript")
+@section additionalScripts {
 <script src="~/scripts/FormScript.js"></script>
 <script src="~/viewscripts/accounting/transfer.js"></script>
+}

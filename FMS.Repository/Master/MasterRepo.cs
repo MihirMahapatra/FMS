@@ -934,7 +934,7 @@ namespace FMS.Repository.Master
                     Query.Fk_StateId = data.Fk_StateId;
                     Query.Fk_PartyType = data.Fk_PartyType;
                     Query.GstNo = data.GstNo;
-                    Query.PartyName= data.PartyName;
+                    Query.PartyName = data.PartyName;
                     Query.Phone = data.Phone;
 
                     int count = await _appDbContext.SaveChangesAsync();
@@ -1307,88 +1307,6 @@ namespace FMS.Repository.Master
             }
             return _Result;
         }
-        public async Task<Result<bool>> CreateLabourType(LabourTypeModel data)
-        {
-            Result<bool> _Result = new();
-            try
-            {
-                _Result.IsSuccess = false;
-                var Query = await _appDbContext.LabourTypes.Where(s => s.Labour_Type == data.Labour_Type).FirstOrDefaultAsync();
-                if (Query == null)
-                {
-                    var newLaboutype = _mapper.Map<LabourType>(data);
-                    await _appDbContext.LabourTypes.AddAsync(newLaboutype);
-                    int count = await _appDbContext.SaveChangesAsync();
-                    _Result.Response = (count > 0) ? ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Created) : ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Error);
-                }
-                _Result.IsSuccess = true;
-            }
-            catch (Exception _Exception)
-            {
-                _Result.Exception = _Exception;
-                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/CreateLabourType : {_Exception.Message}");
-            }
-            return _Result;
-        }
-        public async Task<Result<bool>> UpdateLabourType(LabourTypeModel data)
-        {
-            Result<bool> _Result = new();
-            try
-            {
-                _Result.IsSuccess = false;
-                var Query = await _appDbContext.LabourTypes.Where(s => s.LabourTypeId == data.LabourTypeId).FirstOrDefaultAsync();
-                if (Query != null)
-                {
-                    _mapper.Map(data, Query);
-                    int count = await _appDbContext.SaveChangesAsync();
-                    _Result.Response = (count > 0) ? ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Modified) : ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Error);
-                }
-                _Result.IsSuccess = true;
-            }
-            catch (Exception _Exception)
-            {
-                _Result.Exception = _Exception;
-                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/UpdateLabourType : {_Exception.Message}");
-            }
-            return _Result;
-        }
-        public async Task<Result<bool>> DeleteLabourType(Guid Id, IDbContextTransaction transaction, bool IsCallBack)
-        {
-            Result<bool> _Result = new();
-            try
-            {
-                _Result.IsSuccess = false;
-                Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
-                Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
-                using var localTransaction = transaction ?? await _appDbContext.Database.BeginTransactionAsync();
-                try
-                {
-                    if (Id != Guid.Empty)
-                    {
-                        var Query = await _appDbContext.LabourTypes.FirstOrDefaultAsync(x => x.LabourTypeId == Id);
-                        if (Query != null)
-                        {
-                            _appDbContext.LabourTypes.Remove(Query);
-                            int count = await _appDbContext.SaveChangesAsync();
-                            _Result.Response = (count > 0) ? ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Deleted) : ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Error);
-                        }
-                        _Result.IsSuccess = true;
-                        if (IsCallBack == false) localTransaction.Commit();
-                    }
-                }
-                catch
-                {
-                    localTransaction.Rollback();
-                    throw;
-                }
-            }
-            catch (Exception _Exception)
-            {
-                _Result.Exception = _Exception;
-                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/DeleteLabourType : {_Exception.Message}");
-            }
-            return _Result;
-        }
         #endregion
         #region Labour Detail
         public async Task<Result<LabourModel>> GetAllLabourDetails()
@@ -1460,6 +1378,36 @@ namespace FMS.Repository.Master
                 if (Query != null)
                 {
                     _Result.SingleObjData = Query;
+                    _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
+                }
+                _Result.IsSuccess = true;
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/GetLabourDetailById : {_Exception.Message}");
+            }
+            return _Result;
+        }
+        public async Task<Result<LabourModel>> GetLaboursByLabourTypeId(Guid LabourTypeId)
+        {
+            Result<LabourModel> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                var Query = await _appDbContext.Labours.Where(s => s.Fk_Labour_TypeId == LabourTypeId)
+                                   .Select(l => new LabourModel
+                                   {
+                                       LabourId = l.LabourId,
+                                       LabourName = l.LabourName,
+                                       LabourType = l.LabourType != null ? new LabourTypeModel() { Labour_Type = l.LabourType.Labour_Type } : null,
+                                       Address = l.Address,
+                                       Phone = l.Phone,
+                                       Reference = l.Reference,
+                                   }).ToListAsync();
+                if (Query != null)
+                {
+                    _Result.CollectionObjData = Query;
                     _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
                 }
                 _Result.IsSuccess = true;
@@ -1596,10 +1544,10 @@ namespace FMS.Repository.Master
                 if (Query != null)
                 {
                     data.Fk_BranchId = BranchId;
-                    Query.Address=data.Address;
-                    Query.LabourName=data.LabourName;
+                    Query.Address = data.Address;
+                    Query.LabourName = data.LabourName;
                     Query.Fk_Labour_TypeId = data.Fk_Labour_TypeId;
-                    Query.Phone=data.Phone;
+                    Query.Phone = data.Phone;
                     Query.Reference = data.Reference;
                     //_mapper.Map(data, Query);
                     int count = await _appDbContext.SaveChangesAsync();
@@ -1682,159 +1630,6 @@ namespace FMS.Repository.Master
             {
                 _Result.Exception = _Exception;
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/DeleteLabourDetail : {_Exception.Message}");
-            }
-            return _Result;
-        }
-        #endregion
-        #region Labour Rate Master
-        public async Task<Result<LabourRateModel>> GetAllLabourRates()
-        {
-            Result<LabourRateModel> _Result = new();
-            try
-            {
-                _Result.IsSuccess = false;
-                Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
-                Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
-                var Query = await _appDbContext.LabourRates.Where(s => s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear)
-                                   .Select(lr => new LabourRateModel
-                                   {
-                                       LabourRateId = lr.LabourRateId,
-                                       Date = lr.Date,
-                                       Product = lr.Product != null ? new ProductModel { ProductName = lr.Product.ProductName } : null,
-                                       Rate = lr.Rate
-                                   }).ToListAsync();
-                if (Query.Count > 0)
-                {
-                    _Result.CollectionObjData = Query;
-                    _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
-                }
-                _Result.IsSuccess = true;
-            }
-            catch (Exception _Exception)
-            {
-                _Result.Exception = _Exception;
-                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/GetAllLabourRates : {_Exception.Message}");
-            }
-            return _Result;
-        }
-        public async Task<Result<decimal>> GetLabourRateByProductId(Guid ProductId)
-        {
-            Result<decimal> _Result = new();
-            try
-            {
-                Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
-                Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
-                _Result.IsSuccess = false;
-                var lastProduction = await _appDbContext.LabourRates.Where(s => s.Fk_ProductId == ProductId && s.Fk_FinancialYearId == FinancialYear).OrderByDescending(s => s.Date).Select(s => new { s.Rate }).FirstOrDefaultAsync();
-                if (lastProduction != null)
-                {
-                    _Result.SingleObjData = lastProduction.Rate;
-                    _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
-                }
-                _Result.IsSuccess = true;
-            }
-            catch (Exception _Exception)
-            {
-                _Result.Exception = _Exception;
-                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/GetLabourRateByProductId : {_Exception.Message}");
-            }
-            return _Result;
-        }
-        public async Task<Result<bool>> CreateLabourRate(LabourRateModel data)
-        {
-            Result<bool> _Result = new();
-            try
-            {
-                _Result.IsSuccess = false;
-                Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
-                Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
-                if (DateTime.TryParseExact(data.FormtedDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedDate))
-                {
-                    var newLabourRate = new LabourRate
-                    {
-                        Date = convertedDate,
-                        Fk_ProductId = data.Fk_ProductId,
-                        Fk_BranchId = BranchId,
-                        Fk_FinancialYearId = FinancialYear,
-                        Rate = data.Rate
-                    };
-                    await _appDbContext.LabourRates.AddAsync(newLabourRate);
-                    int count = await _appDbContext.SaveChangesAsync();
-                    _Result.Response = (count > 0) ? ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Created) : ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Error);
-                }
-                _Result.IsSuccess = true;
-            }
-            catch (Exception _Exception)
-            {
-                _Result.Exception = _Exception;
-                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/CreateLabourRate : {_Exception.Message}");
-            }
-            return _Result;
-        }
-        public async Task<Result<bool>> UpdateLabourRate(LabourRateModel data)
-        {
-            Result<bool> _Result = new();
-            try
-            {
-                _Result.IsSuccess = false;
-                Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
-                Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
-                var Query = await _appDbContext.LabourRates.Where(s => s.LabourRateId == data.LabourRateId).FirstOrDefaultAsync();
-                if (Query != null)
-                {
-                    if (DateTime.TryParseExact(data.FormtedDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedDate))
-                    {
-                        data.Date = convertedDate;
-                        data.Fk_BranchId = BranchId;
-                        data.Fk_FinancialYearId = FinancialYear;
-                        _mapper.Map(data, Query);
-                        int count = await _appDbContext.SaveChangesAsync();
-                        _Result.Response = (count > 0) ? ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Modified) : ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Error);
-                    }
-                }
-                _Result.IsSuccess = true;
-            }
-            catch (Exception _Exception)
-            {
-                _Result.Exception = _Exception;
-                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/UpdateLabourRate : {_Exception.Message}");
-            }
-            return _Result;
-        }
-        public async Task<Result<bool>> DeleteLabourRate(Guid Id, IDbContextTransaction transaction, bool IsCallBack)
-        {
-            Result<bool> _Result = new();
-            try
-            {
-                _Result.IsSuccess = false;
-                Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
-                Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
-                using var localTransaction = transaction ?? await _appDbContext.Database.BeginTransactionAsync();
-                try
-                {
-                    if (Id != Guid.Empty)
-                    {
-                        var Query = await _appDbContext.LabourRates.FirstOrDefaultAsync(x => x.LabourRateId == Id);
-                        if (Query != null)
-                        {
-                            _appDbContext.LabourRates.Remove(Query);
-                            int count = await _appDbContext.SaveChangesAsync();
-                            _Result.Response = (count > 0) ? ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Deleted) : ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Error);
-                        }
-                        _Result.IsSuccess = true;
-                        if (IsCallBack == false) localTransaction.Commit();
-                    }
-                }
-                catch
-                {
-                    localTransaction.Rollback();
-                    throw;
-                }
-            }
-            catch (Exception _Exception)
-            {
-                _Result.Exception = _Exception;
-                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/DeleteLabourRate : {_Exception.Message}");
             }
             return _Result;
         }

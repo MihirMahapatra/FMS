@@ -12,6 +12,7 @@
         public Guid Fk_BranchId { get; set; }
         public Guid Fk_FinancialYearId { get; set; }
         public decimal Quantity { get; set; }
+        public string UnitName { get; set; }
         public decimal Rate { get; set; }
         public decimal Discount { get; set; }
         public decimal DiscountAmount { get; set; }

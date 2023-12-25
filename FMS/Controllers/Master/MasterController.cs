@@ -32,7 +32,7 @@ namespace FMS.Controllers.Master
             string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
             ViewBag.BranchName = branchName;
             ViewBag.FinancialYear = FinancialYear;
-            return View();
+            return PartialView();
         }
         #region LedgerBalance
         [HttpGet]
@@ -91,11 +91,7 @@ namespace FMS.Controllers.Master
         [HttpGet]
         public IActionResult SubLedger()
         {
-            string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
-            string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
-            ViewBag.BranchName = branchName;
-            ViewBag.FinancialYear = FinancialYear;
-            return View();
+            return PartialView();
         }
         [HttpGet]
         public async Task<IActionResult> GetLedgersHasSubLedger()
@@ -183,11 +179,7 @@ namespace FMS.Controllers.Master
         [HttpGet]
         public IActionResult StockMaster()
         {
-            string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
-            string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
-            ViewBag.BranchName = branchName;
-            ViewBag.FinancialYear = FinancialYear;
-            return View();
+            return PartialView();
         }
         [HttpGet]
         public async Task<IActionResult> GetStocks()
@@ -258,19 +250,11 @@ namespace FMS.Controllers.Master
         [HttpGet]
         public IActionResult PartyMaster()
         {
-            string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
-            string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
-            ViewBag.BranchName = branchName;
-            ViewBag.FinancialYear = FinancialYear;
-            return View();
+            return PartialView();
         }
         public IActionResult PartyList()
         {
-            string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
-            string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
-            ViewBag.BranchName = branchName;
-            ViewBag.FinancialYear = FinancialYear;
-            return View();
+            return PartialView();
         }
         #region PartyType
         [HttpGet]
@@ -413,11 +397,7 @@ namespace FMS.Controllers.Master
         [HttpGet]
         public IActionResult LabourMaster()
         {
-            string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
-            string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
-            ViewBag.BranchName = branchName;
-            ViewBag.FinancialYear = FinancialYear;
-            return View();
+            return PartialView();
         }
         #region Labour Type
         [HttpGet]
@@ -425,40 +405,6 @@ namespace FMS.Controllers.Master
         {
             var LabourTypes = await _masterSvcs.GetAllLabourTypes();
             return new JsonResult(LabourTypes);
-        }
-        [HttpPost, Authorize(Policy = "Create")]
-        public async Task<IActionResult> CreateLabourType([FromBody] LabourTypeModel data)
-        {
-            if (ModelState.IsValid)
-            {
-                var result = await _masterSvcs.CreateLabourType(data);
-                return new JsonResult(result);
-            }
-            else
-            {
-                return BadRequest();
-            }
-        }
-
-        [HttpPost, Authorize(Policy = "Edit")]
-        public async Task<IActionResult> UpdateLabourType([FromBody] LabourTypeModel data)
-        {
-            if (ModelState.IsValid)
-            {
-                var result = await _masterSvcs.UpdateLabourType(data);
-                return new JsonResult(result);
-            }
-            else
-            {
-                return BadRequest();
-            }
-        }
-        [HttpPost, Authorize(Policy = "Delete")]
-        public async Task<IActionResult> DeleteLabourType([FromQuery] string Id)
-        {
-            Guid LabourTypeId = Guid.Parse(Id);
-            var result = await _masterSvcs.DeleteLabourType(LabourTypeId);
-            return new JsonResult(result);
         }
         #endregion
         #region Labour Details
@@ -500,54 +446,6 @@ namespace FMS.Controllers.Master
         {
             Guid LabourDetailId = Guid.Parse(Id);
             var result = await _masterSvcs.DeleteLabourDetail(LabourDetailId);
-            return new JsonResult(result);
-        }
-        #endregion
-        #region Labour Rate
-        [HttpGet]
-        public async Task<IActionResult> GetAllLabourRates()
-        {
-            var result = await _masterSvcs.GetAllLabourRates();
-            return new JsonResult(result);
-        }
-        [HttpGet]
-        public async Task<IActionResult> GetAllFinishedGood()
-        {
-            Guid ProductType = MappingProductType.FinishedGood;
-            var result = await _adminSvcs.GetProductByTypeId(ProductType);
-            return new JsonResult(result);
-        }
-        [HttpPost, Authorize(Policy = "Create")]
-        public async Task<IActionResult> CreateLabourRate([FromBody] LabourRateModel data)
-        {
-            if (ModelState.IsValid)
-            {
-                var result = await _masterSvcs.CreateLabourRate(data);
-                return new JsonResult(result);
-            }
-            else
-            {
-                return BadRequest();
-            }
-        }
-        [HttpPost, Authorize(Policy = "Edit")]
-        public async Task<IActionResult> UpdateLabourRate([FromBody] LabourRateModel data)
-        {
-            if (ModelState.IsValid)
-            {
-                var result = await _masterSvcs.UpdateLabourRate(data);
-                return new JsonResult(result);
-            }
-            else
-            {
-                return BadRequest();
-            }
-        }
-        [HttpPost, Authorize(Policy = "Delete")]
-        public async Task<IActionResult> DeleteLabourRate([FromQuery] string Id)
-        {
-            Guid LabourRateId = Guid.Parse(Id);
-            var result = await _masterSvcs.DeleteLabourRate(LabourRateId);
             return new JsonResult(result);
         }
         #endregion

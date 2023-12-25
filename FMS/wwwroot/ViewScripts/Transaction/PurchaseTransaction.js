@@ -37,7 +37,6 @@ $(function () {
         lengthMenu: [5, 10, 25, 50], // Set the available page lengths
         pageLength: 10,// Set the default page length to 5
     });
-    var GstTable = $('#tblGstdifference');
     transactionDate.val(todayDate);
     orderDate.val(todayDate);
     invoiceDate.val(todayDate);
@@ -85,12 +84,10 @@ $(function () {
     receivingPerson.on('blur', function () {
         $(this).css('border-color', ''); // Reset background color on blur
     });
-
     var chkPage = false;
     $('a[href="#CreatePurchase"]').on('click', function () {
         chkPage = false;
     });
-
     $(document).on('keydown', function (e) {
         if (e.key === 'Insert' || e.keyCode === 45) {
             if (!chkPage) {
@@ -105,7 +102,6 @@ $(function () {
     $('#addPurchaseRowBtn').on('blur', function () {
         $(this).css('background-color', '');
     });
-
     $('#btnSave').on('keydown', function (e) {
         if (e.key === 'Enter' || e.keyCode === 13) {
             $('#btnSave').click();
@@ -242,11 +238,9 @@ $(function () {
         $(this).css('border-color', ''); // Reset background color on blur
     });
 
-
     $('a[href="#CreatePurchaseReturn"]').on('click', function () {
         chkPage = true;
     });
-
     $(document).on('keydown', function (e) {
         if (e.key === 'Insert' || e.keyCode === 45) {
             if (chkPage) {
@@ -258,11 +252,9 @@ $(function () {
     $('#addPurchaseReturnRowBtn').on('focus', function () {
         $(this).css('background-color', 'black');
     });
-
     $('#addPurchaseReturnRowBtn').on('blur', function () {
         $(this).css('background-color', '');
     });
-
     $('#Pr_btnSave').on('keydown', function (e) {
         if (e.key === 'Enter' || e.keyCode === 13) {
             $('#btnSave').click();
@@ -274,7 +266,6 @@ $(function () {
     $('#Pr_btnSave').on('blur', function () {
         $(this).css('background-color', '');
     });
-
     $('#Pr_btnUpdate').on('keydown', function (e) {
         if (e.key === 'Enter' || e.keyCode === 13) {
             $('#Pr_btnUpdate').click();
@@ -373,8 +364,17 @@ $(function () {
         var uniqueId = 'ddlitem' + new Date().getTime();
         var html = '<tr>';
         html += '<td hidden><input type="hidden" class="form-control" value="0"></td>';
-        html += '<td><div class="form-group"><select class="form-control form-control-sm select2bs4 Rawmaterial" style="width: 100%;" id="' + uniqueId + '"></select></div></td>';
-        html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
+        html += '<td>' +
+            '<div class="form-group">' +
+            '    <select class="form-control form-control-sm select2bs4 Rawmaterial" style="width: 100%;" id="' + uniqueId + '"></select>' +
+            '</div>' +
+            '</td>';
+        html += '<td style="width:8%"><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
+        html += '<td style="width:12%">' +
+            '<div class="form-group">' +
+            '<select class="form-control form-control select2bs4" style="width:100%"></select>' +
+            '</div>' +
+            '</td>';
         html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
         html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
         html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
@@ -428,12 +428,38 @@ $(function () {
                         for (var i = 0; i < 7; i++) {
                             Textbox.eq(i).val('0');
                         }
-                        Textbox.eq(4).val(result.product.GST);
                         Textbox.eq(1).val(result.product.Price);
+                        Textbox.eq(4).val(result.product.GST);
                     }
                 },
                 error: function (errormessage) {
                     console.log(errormessage);
+                }
+            });
+            $.ajax({
+                url: '/Transaction/GetProductAlternateUnit?ProductId=' + selectedProductId,
+                type: "GET",
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    var selectBox = selectElement.closest('tr').find('select').eq(1);
+                    if (result.ResponseCode == 302) {
+                        selectBox.empty();
+                        var defaultOption = $('<option></option>').val('').text('--Select Option--');
+                        selectBox.append(defaultOption);
+                        $.each(result.AlternateUnits, function (key, item) {
+                            var option = $('<option></option>').val(item.AlternateUnitId).text(item.AlternateUnitName);
+                            selectBox.append(option);
+                        });
+                    }
+                    else {
+                        selectBox.empty();
+                        var defaultOption = $('<option></option>').val('').text('--Select Option--');
+                        selectBox.append(defaultOption);
+                    }
+                },
+                error: function (errormessage) {
+                    console.log(errormessage)
                 }
             });
         }
@@ -584,7 +610,6 @@ $(function () {
                         gst.val('0');
                         grandTotal.val('0');
                         GetLastPurchaseTransaction();
-                        //GstTable.clear().draw();
                     }
                     else {
                         toastr.error(Response.ErrorMsg);
@@ -688,12 +713,14 @@ $(function () {
         $('#btnUpdate').show();
     });
     function GetPurchaseById(Id) {
+
         $.ajax({
             url: '/Transaction/GetPurchaseById?Id=' + Id + '',
             type: "GET",
             contentType: "application/json;charset=utf-8",
             dataType: "json",
             success: function (result) {
+               
                 purchaseOrderId.val(result.purchaseOrder.PurchaseOrderId)
                 const ModifytransactionDate = result.purchaseOrder.TransactionDate;
                 if (ModifytransactionDate) {
@@ -713,7 +740,7 @@ $(function () {
                     contentType: "application/json;charset=utf-8",
                     dataType: "json",
                     success: function (result1) {
-                        console.log(result1);
+                      
                         if (result1.ResponseCode == 302) {
                             ddlSupplyer.empty();
                             var defaultOption = $('<option></option>').val('').text('--Select Option--');
@@ -740,7 +767,6 @@ $(function () {
                 transpoterName.val(result.purchaseOrder.TranspoterName);
                 receivingPerson.val(result.purchaseOrder.ReceivingPerson);
                 vehicleNo.val(result.purchaseOrder.VehicleNo);
-
                 const ModifyinvoiceDate = result.purchaseOrder.InvoiceDate;
                 if (ModifyinvoiceDate) {
                     const dateObject = new Date(ModifyinvoiceDate);
@@ -768,13 +794,21 @@ $(function () {
                 discount.val(result.purchaseOrder.Discount);
                 grandTotal.val(result.purchaseOrder.GrandTotal);
                 gst.val(result.purchaseOrder.Gst);
-                //Fill Table Data
-                PurchaseTable.clear().draw();
+                PurchaseTable.clear().draw();//Fill Table Data
                 $.each(result.purchaseOrder.PurchaseTransactions, function (key, item) {
                     var html = '<tr>';
                     html += '<td  hidden><input type="hidden" class="form-control"  value=' + item.PurchaseId + '></td>';
-                    html += '<td><div class="form-group"><select class="form-control form-control-sm select2bs4 Rawmaterial" style="width: 100%;" id="ddn_' + item.PurchaseId + '"> </select></div></td>';
+                    html += '<td>' +
+                        '<div class="form-group">' +
+                        '    <select class="form-control form-control-sm select2bs4 Rawmaterial" style="width: 100%;" id="ddnProduct_' + item.PurchaseId + '"></select>' +
+                        '</div>' +
+                        '</td>';
                     html += '<td><div class="form-group"><input type="text" class="form-control" id="" value=' + item.Quantity + '></div></td>';
+                    html += '<td style="width:12%">' +
+                        '<div class="form-group">' +
+                        '<select class="form-control form-control select2bs4" style="width:100%" id="ddnUnit_' + item.PurchaseId + '"></select>' +
+                        '</div>' +
+                        '</td>';
                     html += '<td><div class="form-group"><input type="text" class="form-control" id=""  value=' + item.Rate + '></div></td>';
                     html += '<td><div class="form-group"><input type="text" class="form-control" id=""  value=' + item.Discount + '></div></td>';
                     html += '<td><div class="form-group"><input type="text" class="form-control" id=""  value=' + item.DiscountAmount + '></div></td>';
@@ -783,11 +817,12 @@ $(function () {
                     html += '<td><div class="form-group"><input type="text" class="form-control" id=""  value=' + item.Amount + '></div></td>';
                     html += '<td><button class="btn btn-primary btn-link deleteBtn" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button></td>';
                     html += '</tr>';
-                    var newRow = PurchaseTable.row.add($(html)).draw(false).node();
-                    var selectElement = $('#ddn_' + item.PurchaseId);
-                    selectElement.empty();
-                    var defaultOption = $('<option></option>').val('').text('--Select Option--');
-                    selectElement.append(defaultOption);
+
+                   PurchaseTable.row.add($(html)).draw(false).node();
+                    var selectProductElement = $('#ddnProduct_' + item.PurchaseId);
+                    selectProductElement.empty();
+                    var defaultProductOption = $('<option></option>').val('').text('--Select Option--');
+                    selectProductElement.append(defaultProductOption);
                     $.ajax({
                         url: "/Transaction/GetProductRawMaterial",
                         type: "GET",
@@ -796,11 +831,35 @@ $(function () {
                         success: function (result) {
                             if (result.ResponseCode == 302) {
                                 $.each(result.products, function (key, item1) {
-                                    var option = $('<option></option>').val(item1.ProductId).text(item1.ProductName);
+                                    var productoption = $('<option></option>').val(item1.ProductId).text(item1.ProductName);
                                     if (item.Fk_ProductId === item1.ProductId) {
-                                        option.attr('selected', 'selected');
+                                        productoption.attr('selected', 'selected');
                                     }
-                                    selectElement.append(option);
+                                    selectProductElement.append(productoption);
+                                });
+                            }
+                        },
+                        error: function (errormessage) {
+                            console.log(errormessage)
+                        }
+                    });
+                    var selectUnitElement = $('#ddnUnit_' + item.PurchaseId);
+                    selectUnitElement.empty();
+                    var defaultUnitOption = $('<option></option>').val('').text('--Select Option--');
+                    selectUnitElement.append(defaultUnitOption);
+                    $.ajax({
+                        url: '/Transaction/GetProductAlternateUnit?ProductId=' + item.Fk_ProductId,
+                        type: "GET",
+                        contentType: "application/json;charset=utf-8",
+                        dataType: "json",
+                        success: function (result) {
+                            if (result.ResponseCode == 302) {
+                                $.each(result.AlternateUnits, function (key, item1) {
+                                    var unitoption = $('<option></option>').val(item1.AlternateUnitId).text(item1.AlternateUnitName);
+                                    if (item.Fk_AlternateUnitId === item1.AlternateUnitId) {
+                                        unitoption.attr('selected', 'selected');
+                                    }
+                                    selectUnitElement.append(unitoption);
                                 });
                             }
                         },
@@ -814,8 +873,8 @@ $(function () {
                 });
                 const gstDifferences = {};
                 $('#tblPurchase tbody tr').each(function () {
-                    const gstRate = parseFloat($(this).find('input:eq(5)').val()); // Assuming GST rate is in the 6th input field (0-based index).
-                    const amount = parseFloat($(this).find('input:eq(7)').val());   // Assuming the amount is in the 8th input field (0-based index).
+                    const gstRate = parseFloat($(this).find('input:eq(5)').val()); 
+                    const amount = parseFloat($(this).find('input:eq(7)').val()); 
 
                     if (!isNaN(gstRate) && !isNaN(amount)) {
                         if (gstRate in gstDifferences) {

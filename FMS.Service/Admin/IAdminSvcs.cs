@@ -64,6 +64,7 @@ namespace FMS.Service.Admin
         #endregion
         #region Alternate Unit
         Task<AlternateUnitViewModel> GetAlternateUnits();
+        Task<AlternateUnitViewModel> GetAlternateUnitByProductId(Guid ProductId);
         Task<Base> CreateAlternateUnit(AlternateUnitModel data);
         Task<Base> UpdateAlternateUnit(AlternateUnitModel data);
         Task<Base> DeleteAlternateUnit(Guid Id);
@@ -76,6 +77,13 @@ namespace FMS.Service.Admin
         Task<Base> CreateProductConfig(ProductConfigDataRequest requestData);
         Task<Base> UpdateProductConfig(ProductionModel data);
         Task<Base> DeleteProductConfig(Guid Id);
+        #endregion
+        #region Labour Rate Configuration
+        Task<LabourRateViewModel> GetAllLabourRates();
+        Task<LabourRateViewModel> GetLabourRateByProductId(Guid ProductId);
+        Task<Base> CreateLabourRate(LabourRateModel data);
+        Task<Base> UpdateLabourRate(LabourRateModel data);
+        Task<Base> DeleteLabourRate(Guid Id);
         #endregion
         #region Account Config
         #region LedgerGroup
