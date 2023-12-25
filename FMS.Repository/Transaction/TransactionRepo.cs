@@ -887,7 +887,7 @@ namespace FMS.Repository.Transaction
                         }
                         #endregion
                         #region Journal
-                        var JournalVoucherNo = await _appDbContext.Journals.Where(s => s.Fk_BranchId == BranchId).Select(s => new { s.VouvherNo }).OrderByDescending(s => s.VouvherNo).SingleOrDefaultAsync();
+                        var JournalVoucherNo = await _appDbContext.Journals.Where(s => s.Fk_BranchId == BranchId).Select(s => new { s.VouvherNo }).OrderByDescending(s => s.VouvherNo).FirstOrDefaultAsync();
                         string VoucherNo = "";
                         if (JournalVoucherNo != null)
                         {

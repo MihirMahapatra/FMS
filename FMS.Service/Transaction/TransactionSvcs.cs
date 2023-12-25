@@ -1189,7 +1189,7 @@ namespace FMS.Service.Transaction
         }
         public async Task<SalesReturnOrderViewModel> GetSalesReturns()
         {
-            SalesReturnOrderViewModel Obj = new SalesReturnOrderViewModel();
+            SalesReturnOrderViewModel Obj = new ();
             var Result = await _transactionRepo.GetSalesReturns();
             if (Result.IsSuccess)
             {
