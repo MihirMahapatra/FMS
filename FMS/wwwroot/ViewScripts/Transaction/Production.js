@@ -100,9 +100,9 @@ $(function () {
             }
         });
     }
-    $(document).on('click', '.addBtn', function () {
+    $('.addBtn').on('click', addBtn);
+    function addBtn() {
         var uniqueId = 'ddlitem' + new Date().getTime();
-
         var html = '<tr>';
         html += '<td><div class="form-group"><select required class="form-control form-control-sm select2bs4 finishedGood finishedGood_' + uniqueId + '" style="width: 100%;" id="' + uniqueId + '"></select></div></td>';
         html += '<td> <div class="form-group"><select required class=" form-control select2bs4 labour_' + uniqueId + ' labour" style="width: 100%;"></select></div></td>';
@@ -162,7 +162,7 @@ $(function () {
         $('#tblProuctionEntry tbody').find('.select2bs4').select2({
             theme: 'bootstrap4'
         });
-    });
+    }
     $(document).on('click', '.deleteBtn', function () {
         $(this).closest('tr').remove();
     });
@@ -217,7 +217,8 @@ $(function () {
             });
         }
     });
-    $(document).on('change', '.labour', function () {
+    $('.labour').on('change', GetLabourDetail);
+    function GetLabourDetail() {
         var selectElement = $(this);
         var selectedLabourId = selectElement.val();
         if (selectedLabourId) {
@@ -238,7 +239,7 @@ $(function () {
                 }
             });
         }
-    });
+    }
     $('#tblProuctionEntry tbody').on('change', 'input[type="text"]', function () {
         var row = $(this).closest('tr');
         var quantity = parseFloat(row.find('input:eq(1)').val());
@@ -246,7 +247,8 @@ $(function () {
         var amount = quantity * rate;
         row.find('input:eq(3)').val(amount.toFixed(2));
     });
-    $('#btnSave').on('click', function () {
+    $('#btnSave').on('click', CreateProductionEntry);
+    function CreateProductionEntry() {
         if (!ProductionDate.val()) {
             toastr.error('Production Date  Is Required.');
             return;
@@ -292,8 +294,8 @@ $(function () {
                 }
             });
         }
-        
-    });
+
+    }
 
     //----------------------------------------Production List-----------------------------------------//
   //Edit
@@ -521,7 +523,8 @@ $(function () {
         $('input[name="mdlAmount"]').val(amount)
     });
     //Update
-    $('#modal-edit-production-entry').on('click', '.btnUpdate', (event) => {
+    $('.btnUpdate').on('click', UpdateProductionEntry);
+    function UpdateProductionEntry() {
         const data = {
             ProductionEntryId: $('input[name="mdlProductionEntryId"]').val(),
             ProductionNo: $('input[name="mdlProductionNo"]').val(),
@@ -555,7 +558,7 @@ $(function () {
                 console.log(error);
             }
         });
-    });
+    }
     //Delete Operation
     $(document).on('click', '.btn-productionentry-delete', (event) => {
         const value = $(event.currentTarget).data('id');
