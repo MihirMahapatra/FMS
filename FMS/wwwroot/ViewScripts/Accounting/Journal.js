@@ -50,7 +50,8 @@ $(function () {
             }
         });
     }
-    $('#addJournalRowBtn').on('click', function () {
+    $('#addJournalRowBtn').on('click', addJournalRowBtn);
+    function addJournalRowBtn() {
         var uniqueId = 'ddlitem' + new Date().getTime();
         $.ajax({
             url: "/Accounting/GetLedgers",
@@ -107,7 +108,7 @@ $(function () {
                 console.log(errormessage)
             }
         });
-    });
+    }
     $(document).on('change', '.mySelection', function () {
         var $select = $(this);
         var $tr = $select.closest('tr');
@@ -115,9 +116,11 @@ $(function () {
         if (Option === 'DR') {
             $tr.find('input[name="DrBalance"]').prop('disabled', false);
             $tr.find('input[name="CrBalance"]').prop('disabled', true);
+            $tr.find('input[name="CrBalance"]').val('0');
         } else if (Option === 'CR') {
             $tr.find('input[name="DrBalance"]').prop('disabled', true);
             $tr.find('input[name="CrBalance"]').prop('disabled', false);
+            $tr.find('input[name="DrBalance"]').va('0');
         } else {
             $tr.find('input[name="DrBalance"]').prop('disabled', false);
             $tr.find('input[name="CrBalance"]').prop('disabled', false);
@@ -270,7 +273,8 @@ $(function () {
     $(document).on('click', '.journalRemoveBtn', function () {
         $(this).closest('.tr').remove();
     });
-    $('#btnSave').on('click', function () {
+    $('#btnSave').on('click', CreateJournal);
+    function CreateJournal() {
         if (!VoucherDate.val()) {
             toastr.error('VoucherDate Is Required.');
             return;
@@ -336,7 +340,7 @@ $(function () {
                 }
             });
         }
-    });
+    }
     //_______________________________________________Journal List ________________________________________________________________________//
     $('a[href="#JournalList"]').on('click', function () {
         LoadJournals();

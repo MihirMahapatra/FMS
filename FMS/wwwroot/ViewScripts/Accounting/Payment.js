@@ -86,7 +86,8 @@ $(function () {
             GetPaymentVoucherNo();
         }
     });
-    $('#addPaymentRowBtn').on('click', function () {
+    $('#addPaymentRowBtn').on('click', addPaymentRowBtn);
+    function addPaymentRowBtn() {
         var uniqueId = 'ddlitem' + new Date().getTime();
         $.ajax({
             url: "/Accounting/GetLedgers",
@@ -127,7 +128,7 @@ $(function () {
                 console.log(errormessage)
             }
         });
-    });
+    }
     var selectedOption = "";
     $(document).on('change', '.ledgerType', function () {
         selectedOption = $(this).val();
@@ -275,7 +276,8 @@ $(function () {
     $(document).on('click', '.deleteBtn', function () {
         $(this).closest('.form-group.row').remove();
     });
-    $('#btnSave').on('click', function () {
+    $('#btnSave').on('click', CreatePayment);
+    function CreatePayment() {
         if (CashBank.val() === "Bank") {
             if (!Bank.val() || Bank.val() === '--Select Option--') {
                 toastr.error('Bank  Is Required.');
@@ -356,7 +358,7 @@ $(function () {
             });
         }
 
-    });
+    }
 
     //_______________________________________________Payment List________________________________________________________________________//
 
