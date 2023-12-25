@@ -166,7 +166,7 @@ $(function () {
     const Sr_ddlPayment = $('select[name="Sr_ddlPayment"]');
     const Sr_CustomerName = $('input[name="Sr_CustomerName"]');
     const Sr_ddlCustomer = $('select[name="Sr_ddlCustomerId"]');
-    const SaleReturnOrderId = $('input[name="hdnSaleReturnOrderId"]');
+    const Sr_OrderId = $('input[name="hdnSaleReturnOrderId"]');
     const Sr_transactionDate = $('input[name="Sr_TransactionDate"]');
     Sr_transactionDate.val(todayDate);
     const Sr_transactionNo = $('input[name="Sr_TransactionNo"]');
@@ -440,7 +440,8 @@ $(function () {
     $(document).on('click', '.deleteBtn', function () {
         $(this).closest('tr').remove();
     });
-    $(document).on('change', '.FinishedGood', function () {
+    $('.FinishedGood').on('change', GetProductGstWithRate);
+    function GetProductGstWithRate()  {
         var selectElement = $(this);
         var selectedProductId = selectElement.val();
         if (selectedProductId) {
@@ -466,7 +467,7 @@ $(function () {
                 }
             });
         }
-    });
+    }
     $('#tblSales tbody').on('change', 'input[type="text"]', function () {
         var row = $(this).closest('tr');
         var quantity = parseFloat(row.find('input:eq(1)').val());
@@ -526,7 +527,8 @@ $(function () {
         }
         // end //
     });
-    $('#btnSave').on('click', function () {
+    $('#btnSave').on('click', CreateSale);
+    function CreateSale() {
         if (!transactionDate.val()) {
             toastr.error('TransactionDate Is Required.');
             return;
@@ -619,7 +621,7 @@ $(function () {
                     if (Response.ResponseCode == 201) {
                         toastr.success(Response.SuccessMsg);
                         SalesTable.clear().draw();
-                        GstTable.clear().draw();
+                      
                         transactionDate.val('');
                         CustomerName.val('');
                         orderNo.val('');
@@ -632,6 +634,7 @@ $(function () {
                         gst.val('0');
                         grandTotal.val('0');
                         GetLastSalesTransaction();
+                        GstTable.clear().draw();
                         $.ajax({
                             type: "POST",
                             url: '/Print/SalesPrintData',
@@ -639,7 +642,6 @@ $(function () {
                             data: JSON.stringify(requestData),
                             contentType: "application/json;charset=utf-8",
                             success: function (Response) {
-                                //window.location.href = Response.redirectTo;
                                 window.open(Response.redirectTo, '_blank');
                             },
                         });
@@ -653,7 +655,7 @@ $(function () {
                 }
             });
         }
-    });
+    }
     //-----------------------------------------------------Sales List Scren --------------------------------------------------//
     $('a[href="#SaleList"]').on('click', function () {
         GetSalesList();
@@ -936,7 +938,8 @@ $(function () {
             }
         });
     }
-    $(document).on('click', '#btnUpdate', function () {
+    $('#btnUpdate').on('click', UpdateSales);
+    function UpdateSales() {
         if (!transactionDate.val()) {
             toastr.error('TransactionDate Is Required.');
             transactionDate.focus();
@@ -1013,7 +1016,6 @@ $(function () {
                     if (Response.ResponseCode == 200) {
                         toastr.success(Response.SuccessMsg);
                         SalesTable.clear().draw();
-                        GstTable.clear().draw();
                         SalesOrderId.val('');
                         CustomerName.val('');
                         transactionNo.val('');
@@ -1028,6 +1030,7 @@ $(function () {
                         gst.val('0');
                         grandTotal.val('0');
                         GetLastSalesTransaction();
+                        GstTable.clear().draw();
                     }
                     else {
                         toastr.error(Response.ErrorMsg);
@@ -1039,7 +1042,7 @@ $(function () {
             });
         }
 
-    });
+    }
     $(document).on('click', '.btn-sales-delete', (event) => {
         const value = $(event.currentTarget).data('id');
         DeleteSalesRecord(value);
@@ -1139,7 +1142,8 @@ $(function () {
             }
         });
     }
-    $('#addSalesReturnRowBtn').click(function () {
+    $('#addSalesReturnRowBtn').on('click', SalesReturnRowBtn);
+    function SalesReturnRowBtn() {
         var uniqueId = 'ddlitem' + new Date().getTime();
         var html = '<tr>';
         html += '<td hidden><input type="hidden" class="form-control" value="0"></td>';
@@ -1178,7 +1182,7 @@ $(function () {
         $('#tblSalesReturn tbody').find('.select2bs4').select2({
             theme: 'bootstrap4'
         });
-    });
+    }
     $(document).on('click', '.deleteBtnReturn', function () {
         $(this).closest('tr').remove();
     });
@@ -1192,7 +1196,8 @@ $(function () {
             $('.Sr_hdntxt').show();
         }
     });
-    $(document).on('change', '.GoodsFinishedReturn', function () {
+    $('.GoodsFinishedReturn').on('change', GetProductGstWithRate);
+    function GetProductGstWithRate() {
         var selectElement = $(this);
         var selectedProductId = selectElement.val();
         if (selectedProductId) {
@@ -1214,7 +1219,7 @@ $(function () {
                 }
             });
         }
-    });
+    }
     $('#tblSalesReturn tbody').on('change', 'input[type="text"]', function () {
         var row = $(this).closest('tr');
         var quantity = parseFloat(row.find('input:eq(1)').val());
@@ -1275,7 +1280,8 @@ $(function () {
         }
         // end //
     });
-    $('#Sr_btnSave').on('click', function () {
+    $('#Sr_btnSave').on('click', CreateSalesReturn);
+    function CreateSalesReturn() {
         if (!Sr_transactionDate.val()) {
             toastr.error('TransactionDate Is Required.');
             Sr_transactionDate.focus();
@@ -1376,7 +1382,7 @@ $(function () {
                 }
             });
         }
-    });
+    }
     //_________________________________________Sales Return  List Screen ____________________________//
     $('a[href="#SalesReturnList"]').on('click', function () {
         GetSalesReturnList();
@@ -1400,7 +1406,6 @@ $(function () {
                 html += '<th>Trxn No</th>'
                 html += '<th>Trxn Dt.</th>'
                 html += '<th>Party</th>'
-                html += '<th>Invoice No</th>'
                 html += '<th>Order No</th>'
                 html += '<th>Grand Total</th>'
                 html += '<th>Action</th>'
@@ -1419,8 +1424,6 @@ $(function () {
                         else {
                             html += '<td>' - '</td>';
                         }
-
-                        html += '<td>' + item.InvoiceNo + '</td>';
                         html += '<td>' + item.OrderNo + '</td>';
                         html += '<td>' + item.GrandTotal + '</td>';
                         html += '<td style="background-color:#ffe6e6;">';
@@ -1475,10 +1478,11 @@ $(function () {
             contentType: "application/json;charset=utf-8",
             dataType: "json",
             success: function (result) {
-                Sr_SalesOrderId.val(result.SalesReturnOrder.SalesReturnOrderId)
-                const ModifytransactionDate = result.SalesReturnOrder.TransactionDate;
-                if (ModifytransactionDate) {
-                    const dateObject = new Date(ModifytransactionDate);
+                console.log(result);
+                Sr_OrderId.val(result.SalesReturnOrder.SalesReturnOrderId)
+                const ModifytransactionDates = result.SalesReturnOrder.TransactionDate;
+                if (ModifytransactionDates) {
+                    const dateObject = new Date(ModifytransactionDates);
                     if (!isNaN(dateObject)) {
                         const day = String(dateObject.getDate()).padStart(2, '0');
                         const month = String(dateObject.getMonth() + 1).padStart(2, '0');
@@ -1488,35 +1492,42 @@ $(function () {
                     }
                 }
                 Sr_transactionNo.val(result.SalesReturnOrder.TransactionNo)
-                $.ajax({
-                    url: "/Transaction/GetSundryDebtors",
-                    type: "GET",
-                    contentType: "application/json;charset=utf-8",
-                    dataType: "json",
-                    success: function (result1) {
-                        if (result.ResponseCode == 302) {
-                            Sr_ddlCustomer.empty();
-                            var defaultOption = $('<option></option>').val('').text('--Select Option--');
-                            Sr_ddlCustomer.append(defaultOption);
-                            $.each(result1.SubLedgers, function (key, item1) {
-                                console.log(result1.SubLedgers)
-                                var option = $('<option></option>').val(item1.SubLedgerId).text(item1.SubLedgerName);
-                                if (item1.SubLedgerId === result.SalesReturnOrder.Fk_SubLedgerId) {
-                                    option.attr('selected', 'selected');
-                                }
-                                Sr_ddlCustomer.append(option);
-                            });
+                if (result.SalesReturnOrder.TransactionType === 'cash') {
+                    $('.Sr_hdnddn').hide();
+                    $('.Sr_hdntxt').show();
+                    CustomerName.val(result.salesOrder.CustomerName);
+                } else {
+                    $('.Sr_hdnddn').show();
+                    $('.Sr_hdntxt').hide();
+                    $.ajax({
+                        url: "/Transaction/GetSundryDebtors",
+                        type: "GET",
+                        contentType: "application/json;charset=utf-8",
+                        dataType: "json",
+                        success: function (result1) {
+                            if (result.ResponseCode == 302) {
+                                Sr_ddlCustomer.empty();
+                                var defaultOption = $('<option></option>').val('').text('--Select Option--');
+                                Sr_ddlCustomer.append(defaultOption);
+                                $.each(result1.SubLedgers, function (key, item1) {
+                                    var option = $('<option></option>').val(item1.SubLedgerId).text(item1.SubLedgerName);
+                                    if (item1.SubLedgerId === result.SalesReturnOrder.Fk_SubLedgerId) {
+                                        option.attr('selected', 'selected');
+                                    }
+                                    Sr_ddlCustomer.append(option);
+                                });
+                            }
+                            else {
+                                Sr_ddlCustomer.empty();
+                                var defaultOption = $('<option></option>').val('').text('--Select Option--');
+                                Sr_ddlCustomer.append(defaultOption);
+                            }
+                        },
+                        error: function (errormessage) {
+                            console.log(errormessage)
                         }
-                        else {
-                            Sr_ddlCustomer.empty();
-                            var defaultOption = $('<option></option>').val('').text('--Select Option--');
-                            Sr_ddlCustomer.append(defaultOption);
-                        }
-                    },
-                    error: function (errormessage) {
-                        console.log(errormessage)
-                    }
-                });
+                    });
+                }
                 $.ajax({
                     url: "/Transaction/GetSalesType",
                     type: "GET",
@@ -1536,22 +1547,9 @@ $(function () {
                         console.log(errormessage)
                     }
                 });
-                Sr_invoiceNo.val(result.SalesReturnOrder.InvoiceNo);
                 Sr_transpoterName.val(result.SalesReturnOrder.TranspoterName);
                 Sr_receivingPerson.val(result.SalesReturnOrder.ReceivingPerson);
                 Sr_vehicleNo.val(result.SalesReturnOrder.VehicleNo);
-
-                const ModifyinvoiceDate = result.SalesReturnOrder.InvoiceDate;
-                if (ModifyinvoiceDate) {
-                    const dateObject = new Date(ModifyinvoiceDate);
-                    if (!isNaN(dateObject)) {
-                        const day = String(dateObject.getDate()).padStart(2, '0');
-                        const month = String(dateObject.getMonth() + 1).padStart(2, '0');
-                        const year = dateObject.getFullYear();
-                        const formattedDate = `${day}/${month}/${year}`;
-                        Sr_invoiceDate.val(formattedDate);
-                    }
-                }
                 Sr_orderNo.val(result.SalesReturnOrder.OrderNo);
                 ModifyorderDate = result.SalesReturnOrder.OrderDate;
                 if (ModifyorderDate) {
@@ -1569,7 +1567,6 @@ $(function () {
                 Sr_gst.val(result.SalesReturnOrder.Discount)
                 Sr_grandTotal.val(result.SalesReturnOrder.GrandTotal);
                 Sr_gst.val(result.SalesReturnOrder.Gst);
-                //Fill Table Data
                 SalesReturnTable.clear().draw();
                 $.each(result.SalesReturnOrder.SalesReturnTransactions, function (key, item) {
                     var html = '<tr>';
@@ -1582,6 +1579,7 @@ $(function () {
                     html += '<td><div class="form-group"><input type="text" class="form-control" id=""  value=' + item.Gst + '></div></td>';
                     html += '<td><div class="form-group"><input type="text" class="form-control" id=""  value=' + item.GstAmount + '></div></td>';
                     html += '<td><div class="form-group"><input type="text" class="form-control" id=""  value=' + item.Amount + '></div></td>';
+                    html += '<td><button class="btn btn-primary btn-link deleteBtnrt" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button></td>';
                     html += '</tr>';
                     var newRow = SalesReturnTable.row.add($(html)).draw(false).node();
                     var selectElement = $('#ddn_' + item.SalesReturnId);
@@ -1609,15 +1607,13 @@ $(function () {
                         }
                     });
                 })
-
-                $('#tblSales tbody').find('.select2bs4').select2({
+                $('#tblSalesReturn tbody').find('.select2bs4').select2({
                     theme: 'bootstrap4'
                 });
-                // gst differance part //
                 const gstDifferences = {};
-                $('#tblSales tbody tr').each(function () {
-                    const gstRate = parseFloat($(this).find('input:eq(5)').val()); // Assuming GST rate is in the 6th input field (0-based index).
-                    const amount = parseFloat($(this).find('input:eq(7)').val());   // Assuming the amount is in the 8th input field (0-based index).
+                $('#tblSalesReturn tbody tr').each(function () {
+                    const gstRate = parseFloat($(this).find('input:eq(5)').val());
+                    const amount = parseFloat($(this).find('input:eq(7)').val());
                     if (!isNaN(gstRate) && !isNaN(amount)) {
                         if (gstRate in gstDifferences) {
                             gstDifferences[gstRate] += amount;
@@ -1627,7 +1623,7 @@ $(function () {
                     }
                 });
                 const gstDifferenceBody = $('#tblGstdifferencert tbody');
-                gstDifferenceBody.empty(); // Clear the table before adding the rows.
+                gstDifferenceBody.empty();
                 for (const rate in gstDifferences) {
                     const row = $('<tr><td>GST ' + rate + ' % Amount: ' + gstDifferences[rate].toFixed(2) + '</td></tr>');
                     gstDifferenceBody.append(row);
@@ -1643,17 +1639,24 @@ $(function () {
             }
         });
     }
-    $(document).on('click', '#Sr_btnUpdate', function () {
+    $('#Sr_btnUpdate').on('click', Sr_UpdateSales);
+    function Sr_UpdateSales() {
         if (!Sr_transactionDate.val()) {
             toastr.error('TransactionDate Is Required.');
             Sr_transactionDate.focus();
             return;
         }
-        else if ((!Sr_ddlCustomer.val() || Sr_ddlCustomer.val() === '--Select Option--') || (!Sr_CustomerName.val())) {
+        if (Sr_ddlPayment.val() == 'cash' && (!Sr_CustomerName.val())) {
             toastr.error('Customer Name Is Required.');
             Sr_CustomerName.focus();
             return;
-        } else if (!Sr_orderNo.val()) {
+        }
+        else if (Sr_ddlPayment.val() == 'credit' && !Sr_ddlCustomer.val() || Sr_ddlCustomer.val() === '--Select Option--') {
+            toastr.error('Customer Name Is Required.');
+            CustomerName.focus();
+            return;
+        }
+        else if (!Sr_orderNo.val()) {
             toastr.error('orderNo Is Required.');
             Sr_orderNo.focus();
             return;
@@ -1661,9 +1664,9 @@ $(function () {
             toastr.error('orderDate Is Required.');
             Sr_orderDate.focus();
             return;
-        } else if (!vehicleNo.val()) {
+        } else if (!Sr_vehicleNo.val()) {
             toastr.error('VehicleNo Is Required.');
-            vehicleNo.focus();
+            Sr_vehicleNo.focus();
             return;
         }
         else if (!Sr_transpoterName.val()) {
@@ -1688,10 +1691,11 @@ $(function () {
                 rowData.push(cellData);
             });
             var requestData = {
-                SalesOrderId: Sr_SalesOrderId.val(),
+                SalesOrderId: Sr_OrderId.val(),
                 TransactionType: Sr_ddlPayment.val(),
                 TransactionDate: Sr_transactionDate.val(),
                 TransactionNo: Sr_transactionNo.val(),
+                CustomerName: Sr_CustomerName.val(),
                 Fk_SubLedgerId: Sr_ddlCustomer.val(),
                 OrderNo: Sr_orderNo.val(),
                 OrderDate: Sr_orderDate.val(),
@@ -1714,7 +1718,7 @@ $(function () {
                     if (Response.ResponseCode == 200) {
                         toastr.success(Response.SuccessMsg);
                         SalesReturnTable.clear().draw();
-                        Sr_SalesOrderId.val('');
+                        Sr_OrderId.val('');
                         Sr_transactionNo.val('');
                         Sr_transactionDate.val('');
                         Sr_invoiceNo.val('');
@@ -1735,7 +1739,7 @@ $(function () {
                 }
             });
         }
-    });
+    }
     $(document).on('click', '.btn-salesReturn-delete', (event) => {
         const value = $(event.currentTarget).data('id');
         DeleteSalesReturnRecord(value);
@@ -1765,7 +1769,7 @@ $(function () {
                         else {
                             toastr.error(result.ErrorMsg);
                         }
-                        
+
                     },
                     error: function (error) {
                         console.log(error);

@@ -360,7 +360,8 @@ $(function () {
             }
         });
     }
-    $('#addPurchaseRowBtn').on('click', function () {
+    $('#addPurchaseRowBtn').on('click', PurchaseRowBtn);
+    function PurchaseRowBtn() {
         var uniqueId = 'ddlitem' + new Date().getTime();
         var html = '<tr>';
         html += '<td hidden><input type="hidden" class="form-control" value="0"></td>';
@@ -409,11 +410,12 @@ $(function () {
         $('#tblPurchase tbody').find('.select2bs4').select2({
             theme: 'bootstrap4'
         });
-    });
+    }
     $(document).on('click', '.deleteBtn', function () {
         $(this).closest('tr').remove();
     });
-    $(document).on('change', '.Rawmaterial', function () {
+    $('.Rawmaterial').on('change', GetProductGstWithRate);
+    function GetProductGstWithRate() {
         var selectElement = $(this);
         var selectedProductId = selectElement.val();
         if (selectedProductId) {
@@ -463,7 +465,7 @@ $(function () {
                 }
             });
         }
-    });
+    }
     $('#tblPurchase tbody').on('change', 'input[type="text"]', function () {
         var row = $(this).closest('tr');
         var quantity = parseFloat(row.find('input:eq(1)').val());
@@ -519,7 +521,8 @@ $(function () {
             gstDifferenceBody.append(row);
         }
     });
-    $('#btnSave').on('click', function () {
+    $('#btnSave').on('click', CreatePurchase);
+    function CreatePurchase() {
         if (!transactionDate.val()) {
             toastr.error('TransactionDate Is Required.');
             return;
@@ -620,7 +623,7 @@ $(function () {
                 }
             });
         }
-    });
+    }
     //-----------------------------------------------------Purchase List Scren --------------------------------------------------//
     //Update Operation
     $('a[href="#PurchaseList"]').on('click', function () {
@@ -900,7 +903,8 @@ $(function () {
             }
         });
     }
-    $(document).on('click', '#btnUpdate', function () {
+    $('#btnUpdate').on('click', UpdatePurchase);
+    function UpdatePurchase() {
         if (!transactionDate.val()) {
             toastr.error('TransactionDate Is Required.');
             return;
@@ -1004,7 +1008,7 @@ $(function () {
             });
         }
 
-    });
+    }
     //Delete Operation
     $(document).on('click', '.btn-purchase-delete', (event) => {
         const value = $(event.currentTarget).data('id');
@@ -1089,7 +1093,8 @@ $(function () {
             }
         });
     }
-    $('#addPurchaseReturnRowBtn').on('click', function () {
+    $('#addPurchaseReturnRowBtn').on('click', PurchaseReturnRowBtn);
+    function PurchaseReturnRowBtn() {
         var uniqueId = 'ddlitem' + new Date().getTime();
         var html = '<tr>';
         html += '<td hidden><input type="hidden" class="form-control" value="0"></td>';
@@ -1128,7 +1133,7 @@ $(function () {
         $('#tblPurchaseReturn tbody').find('.select2bs4').select2({
             theme: 'bootstrap4'
         });
-    });
+    }
     $(document).on('click', '.deleteBtnReturn', function () {
         $(this).closest('tr').remove();
     });
@@ -1194,7 +1199,8 @@ $(function () {
             gstDifferenceBody.append(row);
         }
     });
-    $('#Pr_btnSave').on('click', function () {
+    $('#Pr_btnSave').on('click', CreatetPurchaseReturn);
+    function CreatetPurchaseReturn() {
         if (!Pr_transactionDate.val()) {
             toastr.error('TransactionDate Is Required.');
             return;
@@ -1301,7 +1307,7 @@ $(function () {
             }
 
         }
-    });
+    }
     //-----------------------------------------------------Purchase Return List Scren --------------------------------------------------//
     $('a[href="#PurchaseReturnList"]').on('click', function () {
         GetPurchaseReturns();
@@ -1546,7 +1552,8 @@ $(function () {
             }
         });
     }
-    $(document).on('click', '#Pr_btnUpdate', function () {
+    $('#Pr_btnUpdate').on('click', UpdatetPurchaseReturn);
+    function UpdatetPurchaseReturn() {
         if (!Pr_transactionDate.val()) {
             toastr.error('TransactionDate Is Required.');
             return;
@@ -1648,7 +1655,7 @@ $(function () {
                 }
             });
         }
-    });
+    }
     $(document).on('click', '.btn-purchase-return-delete', (event) => {
         const value = $(event.currentTarget).data('id');
         DeletePurchaseReturnRecord(value);
