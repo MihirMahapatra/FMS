@@ -24,6 +24,7 @@ public partial class AppDbContext : IdentityDbContext<AppUser>
     public  DbSet<Group> Groups { get; set; }
     public  DbSet<SubGroup> SubGroups { get; set; }
     public  DbSet<Unit> Units { get; set; }
+    public DbSet<AlternateUnit> AlternateUnits { get; set; }
     public  DbSet<ProductType> ProductTypes { get; set; }
     public  DbSet<Product> Products { get; set; }
     public  DbSet<Production> Productions { get; set; }
@@ -75,6 +76,7 @@ public partial class AppDbContext : IdentityDbContext<AppUser>
         new GroupConfig().Configure(modelBuilder.Entity<Group>());
         new SubGroupConfig().Configure(modelBuilder.Entity<SubGroup>());
         new UnitConfig().Configure(modelBuilder.Entity<Unit>());
+        new AlternateUnitConfig().Configure(modelBuilder.Entity<AlternateUnit>());
         new ProductTypeConfig().Configure(modelBuilder.Entity<ProductType>());
         new ProductConfig().Configure(modelBuilder.Entity<Product>());
         new ProductionEntryConfig().Configure(modelBuilder.Entity<ProductionEntry>());

@@ -1,0 +1,91 @@
+﻿@{
+    Layout = "_Layout";
+    ViewData["Title"] = "AlternateUnit";
+}
+
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1></h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                    </ol>
+                </div>
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="card card-primary card-outline">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-edit"></i>
+                        Alternate Unit Setup
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="card card-primary card-outline" style="background:#C7C9DC" >
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <select class="form-control select2bs4" style="width: 100%;" name="ProductId">
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" id=""  value="1" disabled tabindex="2" name="AlternateQty">
+                                            <div class="input-group-append">
+                                                <input type="text" class="form-control" id="" name="AlternateUnit" placeholder="Alternate Unit" tabindex="3">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <input type="hidden" class="form-control" id="HdnUnitId">
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" name="UnitQty">
+                                            <div class="input-group-append">
+                                                <span class="input-group-text" id="Unit">N/A</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label></label>
+                                        <button type="button" tabindex="4" class="btn btn-block btn-outline-primary btn-alternateunit-create" style="float:right"><b>Submit</b></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="loader" style="display:none;"></div>
+                    <div class="card card-primary card-outline" style="background:#C7C9DC">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="tbAlternateUnit">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+@section additionalScripts {
+<script src="~/scripts/FormScript.js"></script>
+<script src="~/viewscripts/admin/alternateunit.js"></script>
+}

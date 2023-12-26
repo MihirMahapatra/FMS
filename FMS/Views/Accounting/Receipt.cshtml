@@ -142,7 +142,7 @@
     <!-- /.content -->
 </div>
 
-@await Html.PartialAsync("_FooterScript")
+@section additionalScripts {
 <script src="~/scripts/FormScript.js"></script>
 <script src="~/viewscripts/accounting/recipt.js"></script>
 <script>
@@ -153,3 +153,4 @@
         format: 'DD/MM/YYYY'
     });
 </script>
+}

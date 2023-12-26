@@ -101,12 +101,6 @@ namespace FMS.Api.Email.EmailService
         {
             try
             {
-                var smtpClient = new SmtpClient(_smtpConfig.Host)
-                {
-                    Port = _smtpConfig.Port,
-                    Credentials = new NetworkCredential(_smtpConfig.UserName, _smtpConfig.Password),
-                    EnableSsl = _smtpConfig.EnableSSL,
-                };
                 using (var message = new MailMessage())
                 {
                     message.From = new MailAddress(_smtpConfig.SenderAddress, _smtpConfig.SenderDisplayName);
@@ -114,6 +108,12 @@ namespace FMS.Api.Email.EmailService
                     message.Subject = subject;
                     message.Body = body;
                     message.IsBodyHtml = _smtpConfig.IsBodyHTML;
+                    var smtpClient = new SmtpClient(_smtpConfig.Host)
+                    {
+                        Port = _smtpConfig.Port,
+                        Credentials = new NetworkCredential(_smtpConfig.UserName, _smtpConfig.Password),
+                        EnableSsl = _smtpConfig.EnableSSL,
+                    };
                     await smtpClient.SendMailAsync(message);
                 }
             }

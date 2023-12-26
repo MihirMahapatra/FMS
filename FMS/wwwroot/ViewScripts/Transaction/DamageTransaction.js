@@ -87,9 +87,7 @@ $(function () {
     $('#btnUpdate').on('blur', function () {
         $(this).css('background-color', '');
     });
-    
-
-    //-----------------------------------------------------Inward Supply Scren --------------------------------------------------//
+    //----------------------------------------------------- Damage Scren --------------------------------------------------//
     GetAllProductTypes();
     function GetAllProductTypes() {
         $.ajax({
@@ -161,7 +159,8 @@ $(function () {
             }
         });
     }
-    $('#addDamageRowBtn').on('click', function () {
+    $('#addDamageRowBtn').on('click', addDamageRowBtn);
+    function addDamageRowBtn() {
         var uniqueId = 'ddlitem' + new Date().getTime();
         var selectedOptionText = $("select[name='ddlProductTypeId'] option:selected").text();
         var html = '';
@@ -236,7 +235,7 @@ $(function () {
         $('#tblDamage tbody').find('.select2bs4').select2({
             theme: 'bootstrap4'
         });
-    });
+    }
     $(document).on('click', '.deleteBtn', function () {
         $(this).closest('tr').remove();
     });
@@ -255,20 +254,21 @@ $(function () {
         });
         $('input[name="GrandTotal"]').val(totalAmount.toFixed(2));
     });
-    $('#btnSave').on('click', function () {
-         if (!transactionDate.val()) {
-             toastr.error('TransactionDate Is Required.');
-             transactionDate.focus();
+    $('#btnSave').on('click', CreateDamage);
+    function CreateDamage() {
+        if (!transactionDate.val()) {
+            toastr.error('TransactionDate Is Required.');
+            transactionDate.focus();
             return;
         }
         else if (!ddlProductType.val() || ddlProductType.val() === '--Select Option--') {
-             toastr.error('Product Type Is Required.');
-             ddlProductType.focus();
+            toastr.error('Product Type Is Required.');
+            ddlProductType.focus();
             return;
         }
-         else if (!reason.val()) {
-             toastr.error('Reason Is Required.');
-             reason.focus();
+        else if (!reason.val()) {
+            toastr.error('Reason Is Required.');
+            reason.focus();
             return;
         }
         else {
@@ -318,8 +318,8 @@ $(function () {
                 }
             });
         }
-    });
-    //-----------------------------------------------------InwardSupply List Scren --------------------------------------------------//
+    }
+    //-----------------------------------------------------Damage List Scren --------------------------------------------------//
     $('a[href="#DamageList"]').on('click', function () {
         GetDamages();
     });
@@ -665,5 +665,4 @@ $(function () {
             }
         });
     }
-
 });

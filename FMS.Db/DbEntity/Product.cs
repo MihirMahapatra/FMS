@@ -16,6 +16,7 @@ namespace FMS.Db.DbEntity
         public Group Group { get; set; }
         public SubGroup SubGroup { get; set; }
         public Unit Unit { get; set; }
+        public ICollection<AlternateUnit> AlternateUnits { get; set; }
         public ICollection<LabourRate> LabourRates { get; set; }
         public ICollection<Stock> Stocks { get; set; }
         [InverseProperty("FinishedGood")]

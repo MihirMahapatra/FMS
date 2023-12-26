@@ -10,7 +10,6 @@
         public ICollection<FinancialYear> FinancialYears { get; set; }
         public ICollection<UserBranch> UserBranch { get; set; }
         public ICollection<Labour> Labours { get; set; }
-        public ICollection<LabourRate> LabourRates { get; set; }
         public ICollection<Stock> Stocks { get; set; }
         public ICollection<LedgerSubGroup> SubGroups { get; set; }
         public ICollection<LedgerSubGroupDev> SubGroupDevs { get; set; }

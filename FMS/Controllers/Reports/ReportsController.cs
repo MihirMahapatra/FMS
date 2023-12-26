@@ -1,4 +1,5 @@
 ﻿using FMS.Model.CommonModel;
+using FMS.Service.Admin;
 using FMS.Service.Master;
 using FMS.Service.Reports;
 using Microsoft.AspNetCore.Authorization;
@@ -11,12 +12,12 @@ namespace FMS.Controllers.Reports
     {
         private readonly IHttpContextAccessor _HttpContextAccessor;
         private readonly IReportSvcs _reportSvcs;
-        private readonly IMasterSvcs _masterSvcs;
-        public ReportsController(IHttpContextAccessor HttpContextAccessor, IReportSvcs reportSvcs, IMasterSvcs masterSvcs)
+        private readonly IAdminSvcs _adminSvcs;
+        public ReportsController(IHttpContextAccessor HttpContextAccessor, IReportSvcs reportSvcs, IAdminSvcs adminSvcs)
         {
             _HttpContextAccessor = HttpContextAccessor;
             _reportSvcs = reportSvcs;
-            _masterSvcs = masterSvcs;
+            _adminSvcs = adminSvcs;
         }
         #region Stock Report
         [HttpGet]
@@ -26,12 +27,12 @@ namespace FMS.Controllers.Reports
             string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
             ViewBag.BranchName = branchName;
             ViewBag.FinancialYear = FinancialYear;
-            return View();
+            return PartialView();
         }
         [HttpGet]
         public async Task<IActionResult> GetProductByTypeId([FromQuery] Guid ProductTypeId)
         {
-            var result = await _masterSvcs.GetProductByTypeId(ProductTypeId);
+            var result = await _adminSvcs.GetProductByTypeId(ProductTypeId);
             return new JsonResult(result);
         }
         [HttpPost]
@@ -59,11 +60,7 @@ namespace FMS.Controllers.Reports
         [HttpGet]
         public IActionResult LabourReport()
         {
-            string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
-            string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
-            ViewBag.BranchName = branchName;
-            ViewBag.FinancialYear = FinancialYear;
-            return View();
+            return PartialView();
         }
         [HttpPost]
         public async Task<IActionResult> GetSummerizedLabourReport([FromBody] LabourReportDataRequest requestData)
@@ -90,11 +87,7 @@ namespace FMS.Controllers.Reports
         [HttpGet]
         public IActionResult CustomerReport()
         {
-            string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
-            string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
-            ViewBag.BranchName = branchName;
-            ViewBag.FinancialYear = FinancialYear;
-            return View();
+            return PartialView();
         }
         [HttpPost]
         public async Task<IActionResult> GetSummerizedCustomerReport([FromBody] PartyReportDataRequest requestData)
@@ -121,11 +114,7 @@ namespace FMS.Controllers.Reports
         [HttpGet]
         public IActionResult SupplyerReport()
         {
-            string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
-            string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
-            ViewBag.BranchName = branchName;
-            ViewBag.FinancialYear = FinancialYear;
-            return View();
+            return PartialView();
         }
         [HttpPost]
         public async Task<IActionResult> GetSummerizedSupplyerReport([FromBody] PartyReportDataRequest requestData)
@@ -152,11 +141,7 @@ namespace FMS.Controllers.Reports
         [HttpGet]
         public IActionResult DaySheet()
         {
-            string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
-            string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
-            ViewBag.BranchName = branchName;
-            ViewBag.FinancialYear = FinancialYear;
-            return View();
+            return PartialView();
         }
         [HttpGet]
         public async Task<IActionResult> GetDaySheet([FromQuery] string Date)
@@ -169,11 +154,7 @@ namespace FMS.Controllers.Reports
         [HttpGet]
         public IActionResult CashBook()
         {
-            string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
-            string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
-            ViewBag.BranchName = branchName;
-            ViewBag.FinancialYear = FinancialYear;
-            return View();
+            return PartialView();
         }
         [HttpPost]
         public async Task<IActionResult> CashBookReport([FromBody] CashBookDataRequest requestData)
@@ -190,11 +171,7 @@ namespace FMS.Controllers.Reports
         [HttpGet]
         public IActionResult BankBook()
         {
-            string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
-            string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
-            ViewBag.BranchName = branchName;
-            ViewBag.FinancialYear = FinancialYear;
-            return View();
+            return PartialView();
         }
         [HttpPost]
         public async Task<IActionResult> BankBookReport([FromBody] BankBookDataRequest requestData)

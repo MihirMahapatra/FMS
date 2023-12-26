@@ -1,6 +1,7 @@
 ﻿using FMS.Model;
 using FMS.Model.CommonModel;
 using FMS.Model.ViewModel;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace FMS.Service.Transaction
 {
@@ -32,6 +33,13 @@ namespace FMS.Service.Transaction
         Task<Base> CreateProductionEntry(ProductionEntryRequest data);
         Task<Base> UpdateProductionEntry(ProductionEntryModel data);
         Task<Base> DeleteProductionEntry(Guid Id);
+        #endregion
+        #region Service Entry
+        Task<Base> GetLastServiceNo();
+        Task<ProductionEntryViewModel> GetServiceEntry();
+        Task<Base> CreateServiceEntry(ProductionEntryRequest data);
+        Task<Base> UpdateServiceEntry(ProductionEntryModel data);
+        Task<Base> DeleteServiceEntry(Guid Id);
         #endregion
         #region Sales Transaction
         Task<SubLedgerViewModel> GetSundryDebtors(Guid PartyTypeId);

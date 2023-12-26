@@ -23,6 +23,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Serialization;
 using NLog;
 using NLog.Web;
@@ -32,7 +33,11 @@ try
 {
     var builder = WebApplication.CreateBuilder(args);
     //***************************************************Add Connection to Db**************************************//
-    builder.Services.AddDbContext<AppDbContext>(option => option.UseSqlServer(builder.Configuration.GetConnectionString("DBCS")));
+    builder.Services.AddDbContext<AppDbContext>(option =>
+    option.UseSqlServer(builder.Configuration.GetConnectionString("DBCS"))
+    .EnableSensitiveDataLogging()
+    .UseLoggerFactory(LoggerFactory.Create(builder => builder.AddConsole())) 
+    );
     //****************************************************Email setup************************************************//
     builder.Services.Configure<SMTPConfigModel>(builder.Configuration.GetSection("SMTPConfig"));
     //*************************************************Dependancy Injection***************************************// 
@@ -57,7 +62,7 @@ try
     builder.Services.AddSingleton(mapper);
     //*******************************************************Session********************************************//
     builder.Services.AddDistributedMemoryCache();
-    builder.Services.AddSession(option => option.IdleTimeout = TimeSpan.FromMinutes(60));
+    builder.Services.AddSession(option => option.IdleTimeout = TimeSpan.FromDays(1));
     builder.Services.AddHttpContextAccessor();
     builder.Services.AddSingleton(option => option.GetService<IHttpContextAccessor>().HttpContext.Session);
     //*******************************************************Identity*********************************************//
@@ -75,10 +80,10 @@ try
         //*email conformation*//
         //options.SignIn.RequireConfirmedEmail = true;
     }).AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
-    //**************************************************set token expiry *******************************************//
+    //**************************************************set token expiry*******************************************//
     builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
     {
-        options.TokenLifespan = TimeSpan.FromMinutes(60);
+        options.TokenLifespan = TimeSpan.FromDays(1);
     });
     //****************************************************Api service***********************************************//
     builder.Services.AddHttpClient();
@@ -123,7 +128,11 @@ try
     //*******************************************************Nlog Configuration***************************************************************//
     builder.Logging.ClearProviders();
     builder.Host.UseNLog();
-    builder.Services.AddLogging();
+    builder.Services.AddLogging(options =>
+    {
+        options.AddConsole();
+        options.AddDebug();
+    });
     var app = builder.Build();
 
     // Configure the HTTP request pipeline.

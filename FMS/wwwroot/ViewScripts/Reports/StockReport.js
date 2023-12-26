@@ -22,7 +22,7 @@
     fromDateDetailed.val(todayDate);
     const toDateDetailed = $('input[name="DetaledToDate"]');
     toDateDetailed.val(todayDate);
-    const ddlZeroValuedDetailed = $('select[name="ddlDetailedZerovalued"]'); 
+    const ddlZeroValuedDetailed = $('select[name="ddlDetailedZerovalued"]');
     //-----------------------------------stock Report Summerized---------------------------------------//
     GetAllProductTypes();
     function GetAllProductTypes() {
@@ -104,7 +104,7 @@
                         $.each(result.StockReports, function (key, item) {
                             html += '<tr>';
                             html += '<td>' + item.ProductName + '</td>';
-                            html += '<td>' + item.OpeningQty + '</td>';
+                            html += '<td>' + (item.OpeningQty + item.StockQty) + '</td>';
                             html += '<td>' + item.PurchaseQty + '</td>';
                             html += '<td>' + item.PurchaseReturnQty + '</td>';
                             html += '<td>' + item.ProductionQty + '</td>';
@@ -114,7 +114,7 @@
                             html += '<td>' + item.DamageQty + '</td>';
                             html += '<td>' + item.OutwardQty + '</td>';
                             html += '<td>' + item.InwardQty + '</td>';
-                            var closing = item.OpeningQty + item.PurchaseQty + item.ProductionQty + item.SalesReturnQty + item.InwardQty - item.PurchaseReturnQty - item.SalesQty - item.DamageQty - item.OutwardQty - item.ProductionEntryQty;
+                            var closing = item.StockQty + item.OpeningQty + item.PurchaseQty + item.ProductionQty + item.SalesReturnQty + item.InwardQty - item.PurchaseReturnQty - item.SalesQty - item.DamageQty - item.OutwardQty - item.ProductionEntryQty;
                             html += '<td>' + closing + '</td>';
                             html += '</tr >';
                         });
@@ -144,7 +144,7 @@
                 }
             });
         }
-       
+
     })
     //-----------------------------------stock Report Detailed-------------------------------------------//
     GetAllProductTypesForDetailed()
@@ -251,147 +251,144 @@
                     html += '</thead>'
                     html += '<tbody>';
                     if (result.ResponseCode == 302) {
+                        let item = result.product
                         var Stock = 0;
-                        $.each(result.products, function (key, item) {
-                            console.log(result.products)
-                            html += '<tr>';
-                            html += '<td></td>';
-                            html += '<td></td>';
-                            html += '<td></td>';
-                            html += '<td></td>';
-                            html += '<td></td>';
-                            html += '<td></td>';
-                            html += '<td>' + item.OpeningQty + '</td>';
-                            html += '</tr >';
-                            Stock = item.OpeningQty;
-                            if (item.ProductionEntries !== null) {
-                                $.each(item.ProductionEntries, function (key, Production) {
-                                    html += '<tr>';
-                                    html += '<td>' + Production.ProductionDate + '</td>';
-                                    html += '<td>' + item.ProductName + '</td>';
-                                    html += '<td>' + Production.ProductionNo + '</td>';
-                                    html += '<td>Production</td>';
-                                    html += '<td>' + Production.Quantity + '</td>';
-                                    html += '<td></td>';
-                                    Stock += Production.Quantity
-                                    html += '<td>' + Stock + '</td>';
-                                    html += '</tr >';
-                                });
-                            }
-                            if (item.ProductionEntryTransactions != null) {
-                                $.each(item.ProductionEntryTransactions, function (key, Pet) {
-                                    html += '<tr>';
-                                    html += '<td>' + Pet.TransactionDate + '</td>';
-                                    html += '<td>' + item.ProductName + '</td>';
-                                    html += '<td>' + Pet.TransactionNo + '</td>';
-                                    html += '<td>Raw Material Used For Production</td>';
-                                    html += '<td></td>';
-                                    html += '<td>' + Pet.Quantity + '</td>';
-                                    Stock -= Pet.Quantity
-                                    html += '<td>' + Stock + '</td>';
-                                    html += '</tr >';
-                                });
-                            }
-                            if (item.DamageTransactions != null) {
-                                $.each(item.DamageTransactions, function (key, Damage) {
-                                    html += '<tr>';
-                                    html += '<td>' + Damage.TransactionDate + '</td>';
-                                    html += '<td>' + item.ProductName + '</td>';
-                                    html += '<td>' + Damage.TransactionNo + '</td>';
-                                    html += '<td>Damage</td>';
-                                    html += '<td></td>';
-                                    html += '<td>' + Damage.Quantity + '</td>';
-                                    Stock -= Damage.Quantity
-                                    html += '<td>' + Stock + '</td>';
-                                    html += '</tr >';
-                                });
-                            }
-                            if (item.SalesTransactions != null) {
-                                $.each(item.SalesTransactions, function (key, Sales) {
-                                    html += '<tr>';
-                                    html += '<td>' + Sales.TransactionDate + '</td>';
-                                    html += '<td>' + item.ProductName + '</td>';
-                                    html += '<td>' + Sales.TransactionNo + '</td>';
-                                    html += '<td>Sales</td>';
-                                    html += '<td></td>';
-                                    html += '<td>' + Sales.Quantity + '</td>';
-                                    Stock -= Sales.Quantity
-                                    html += '<td>' + Stock + '</td>';
-                                    html += '</tr >';
-                                });
-                            }
-                            if (item.SalesReturnTransactions != null) {
-                                $.each(item.SalesReturnTransactions, function (key, SalesReturn) {
-                                    html += '<tr>';
-                                    html += '<td>' + SalesReturn.TransactionDate + '</td>';
-                                    html += '<td>' + item.ProductName + '</td>';
-                                    html += '<td>' + SalesReturn.TransactionNo + '</td>';
-                                    html += '<td>Sales Return</td>';
-                                    html += '<td>' + SalesReturn.Quantity + '</td>';
-                                    html += '<td></td>';
-                                    Stock += SalesReturn.Quantity
-                                    html += '<td>' + Stock + '</td>';
-                                    html += '</tr >';
-                                });
-                            }
-                            if (item.PurchaseTransactions != null) {
-                                $.each(item.PurchaseTransactions, function (key, Purchase) {
-                                    html += '<tr>';
-                                    html += '<td>' + Purchase.TransactionDate + '</td>';
-                                    html += '<td>' + item.ProductName + '</td>';
-                                    html += '<td>' + Purchase.TransactionNo + '</td>';
-                                    html += '<td>Purchase</td>';
-                                    html += '<td>' + Purchase.Quantity + '</td>';
-                                    html += '<td></td>';
-                                    Stock += Purchase.Quantity
-                                    html += '<td>' + Stock + '</td>';
-                                    html += '</tr >';
-                                });
-                            }
-                            if (item.PurchaseReturnTransactions != null) {
-                                $.each(item.PurchaseReturnTransactions, function (key, PurchaseReturn) {
-                                    html += '<tr>';
-                                    html += '<td>' + PurchaseReturn.TransactionDate + '</td>';
-                                    html += '<td>' + item.ProductName + '</td>';
-                                    html += '<td>' + PurchaseReturn.TransactionNo + '</td>';
-                                    html += '<td>Purchase Return</td>';
-                                    html += '<td></td>';
-                                    html += '<td>' + PurchaseReturn.Quantity + '</td>';
-                                    Stock -= PurchaseReturn.Quantity
-                                    html += '<td>' + Stock + '</td>';
-                                    html += '</tr >';
-                                });
-                            }
-                            if (item.InwardSupplyTransactions != null) {
-                                $.each(item.InwardSupplyTransactions, function (key, Inward) {
-                                    html += '<tr>';
-                                    html += '<td>' + Inward.TransactionDate + '</td>';
-                                    html += '<td>' + item.ProductName + '</td>';
-                                    html += '<td>' + Inward.TransactionNo + '</td>';
-                                    html += '<td>Inward Supply</td>';
-                                    html += '<td>' + Inward.Quantity + '</td>';
-                                    html += '<td></td>';
-                                    Stock += Inward.Quantity
-                                    html += '<td>' + Stock + '</td>';
-                                    html += '</tr >';
-                                });
-                            }
-                            if (item.OutwardSupplyTransactions != null) {
-                                $.each(item.OutwardSupplyTransactions, function (key, Outward) {
-                                    html += '<tr>';
-                                    html += '<td>' + Outward.TransactionDate + '</td>';
-                                    html += '<td>' + item.ProductName + '</td>';
-                                    html += '<td>' + Outward.TransactionNo + '</td>';
-                                    html += '<td>Outward Supply</td>';
-                                    html += '<td></td>';
-                                    html += '<td>' + Outward.Quantity + '</td>';
-                                    Stock -= Outward.Quantity
-                                    html += '<td>' + Stock + '</td>';
-                                    html += '</tr >';
-                                });
-                            }
-
-                        });
+                        html += '<tr>';
+                        html += '<td></td>';
+                        html += '<td></td>';
+                        html += '<td></td>';
+                        html += '<td></td>';
+                        html += '<td></td>';
+                        html += '<td></td>';
+                        html += '<td>' + (item.OpeningQty + item.OpeningStock) + '</td>';
+                        html += '</tr >';
+                        Stock = item.OpeningQty + item.OpeningStock;
+                        if (item.ProductionEntries !== null) {
+                            $.each(item.ProductionEntries, function (key, Production) {
+                                html += '<tr>';
+                                html += '<td>' + Production.ProductionDate + '</td>';
+                                html += '<td>' + item.ProductName + '</td>';
+                                html += '<td>' + Production.ProductionNo + '</td>';
+                                html += '<td>Production</td>';
+                                html += '<td>' + Production.Quantity + '</td>';
+                                html += '<td></td>';
+                                Stock += Production.Quantity
+                                html += '<td>' + Stock + '</td>';
+                                html += '</tr >';
+                            });
+                        }
+                        if (item.ProductionEntryTransactions != null) {
+                            $.each(item.ProductionEntryTransactions, function (key, Pet) {
+                                html += '<tr>';
+                                html += '<td>' + Pet.TransactionDate + '</td>';
+                                html += '<td>' + item.ProductName + '</td>';
+                                html += '<td>' + Pet.TransactionNo + '</td>';
+                                html += '<td>Raw Material Used For Production</td>';
+                                html += '<td></td>';
+                                html += '<td>' + Pet.Quantity + '</td>';
+                                Stock -= Pet.Quantity
+                                html += '<td>' + Stock + '</td>';
+                                html += '</tr >';
+                            });
+                        }
+                        if (item.DamageTransactions != null) {
+                            $.each(item.DamageTransactions, function (key, Damage) {
+                                html += '<tr>';
+                                html += '<td>' + Damage.TransactionDate + '</td>';
+                                html += '<td>' + item.ProductName + '</td>';
+                                html += '<td>' + Damage.TransactionNo + '</td>';
+                                html += '<td>Damage</td>';
+                                html += '<td></td>';
+                                html += '<td>' + Damage.Quantity + '</td>';
+                                Stock -= Damage.Quantity
+                                html += '<td>' + Stock + '</td>';
+                                html += '</tr >';
+                            });
+                        }
+                        if (item.SalesTransactions != null) {
+                            $.each(item.SalesTransactions, function (key, Sales) {
+                                html += '<tr>';
+                                html += '<td>' + Sales.TransactionDate + '</td>';
+                                html += '<td>' + item.ProductName + '</td>';
+                                html += '<td>' + Sales.TransactionNo + '</td>';
+                                html += '<td>Sales</td>';
+                                html += '<td></td>';
+                                html += '<td>' + Sales.Quantity + '</td>';
+                                Stock -= Sales.Quantity
+                                html += '<td>' + Stock + '</td>';
+                                html += '</tr >';
+                            });
+                        }
+                        if (item.SalesReturnTransactions != null) {
+                            $.each(item.SalesReturnTransactions, function (key, SalesReturn) {
+                                html += '<tr>';
+                                html += '<td>' + SalesReturn.TransactionDate + '</td>';
+                                html += '<td>' + item.ProductName + '</td>';
+                                html += '<td>' + SalesReturn.TransactionNo + '</td>';
+                                html += '<td>Sales Return</td>';
+                                html += '<td>' + SalesReturn.Quantity + '</td>';
+                                html += '<td></td>';
+                                Stock += SalesReturn.Quantity
+                                html += '<td>' + Stock + '</td>';
+                                html += '</tr >';
+                            });
+                        }
+                        if (item.PurchaseTransactions != null) {
+                            $.each(item.PurchaseTransactions, function (key, Purchase) {
+                                html += '<tr>';
+                                html += '<td>' + Purchase.TransactionDate + '</td>';
+                                html += '<td>' + item.ProductName + '</td>';
+                                html += '<td>' + Purchase.TransactionNo + '</td>';
+                                html += '<td>Purchase</td>';
+                                html += '<td>' + Purchase.Quantity + '</td>';
+                                html += '<td></td>';
+                                Stock += Purchase.Quantity
+                                html += '<td>' + Stock + '</td>';
+                                html += '</tr >';
+                            });
+                        }
+                        if (item.PurchaseReturnTransactions != null) {
+                            $.each(item.PurchaseReturnTransactions, function (key, PurchaseReturn) {
+                                html += '<tr>';
+                                html += '<td>' + PurchaseReturn.TransactionDate + '</td>';
+                                html += '<td>' + item.ProductName + '</td>';
+                                html += '<td>' + PurchaseReturn.TransactionNo + '</td>';
+                                html += '<td>Purchase Return</td>';
+                                html += '<td></td>';
+                                html += '<td>' + PurchaseReturn.Quantity + '</td>';
+                                Stock -= PurchaseReturn.Quantity
+                                html += '<td>' + Stock + '</td>';
+                                html += '</tr >';
+                            });
+                        }
+                        if (item.InwardSupplyTransactions != null) {
+                            $.each(item.InwardSupplyTransactions, function (key, Inward) {
+                                html += '<tr>';
+                                html += '<td>' + Inward.TransactionDate + '</td>';
+                                html += '<td>' + item.ProductName + '</td>';
+                                html += '<td>' + Inward.TransactionNo + '</td>';
+                                html += '<td>Inward Supply</td>';
+                                html += '<td>' + Inward.Quantity + '</td>';
+                                html += '<td></td>';
+                                Stock += Inward.Quantity
+                                html += '<td>' + Stock + '</td>';
+                                html += '</tr >';
+                            });
+                        }
+                        if (item.OutwardSupplyTransactions != null) {
+                            $.each(item.OutwardSupplyTransactions, function (key, Outward) {
+                                html += '<tr>';
+                                html += '<td>' + Outward.TransactionDate + '</td>';
+                                html += '<td>' + item.ProductName + '</td>';
+                                html += '<td>' + Outward.TransactionNo + '</td>';
+                                html += '<td>Outward Supply</td>';
+                                html += '<td></td>';
+                                html += '<td>' + Outward.Quantity + '</td>';
+                                Stock -= Outward.Quantity
+                                html += '<td>' + Stock + '</td>';
+                                html += '</tr >';
+                            });
+                        }
                     }
                     else {
                         html += '<tr>';
@@ -418,6 +415,6 @@
                 }
             });
         }
-       
+
     })
 });
