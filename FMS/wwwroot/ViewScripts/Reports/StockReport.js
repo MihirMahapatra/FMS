@@ -52,8 +52,10 @@
             }
         });
     }
+    var PrintData = {}
     $('#btnViewSummerized').on('click', function () {
         $('#loader').show();
+
         $('.SummerizedStockReportTable').empty();
         if (!ddlProductType.val() || ddlProductType.val() === '--Select Option--') {
             toastr.error('ProductType  Is Required.');
@@ -101,6 +103,7 @@
                     html += '</thead>'
                     html += '<tbody>';
                     if (result.ResponseCode == 302) {
+                        $('#BtnPrintSummarized').show();
                         $.each(result.StockReports, function (key, item) {
                             html += '<tr>';
                             html += '<td>' + item.ProductName + '</td>';
@@ -118,6 +121,11 @@
                             html += '<td>' + closing + '</td>';
                             html += '</tr >';
                         });
+                         PrintData = {
+                            FromDate: fromDate.val(),
+                            ToDate: toDate.val(),
+                            StockReport: result.StockReports
+                        };
                     }
                     else {
                         html += '<tr>';
@@ -130,7 +138,7 @@
                     if (!$.fn.DataTable.isDataTable('.SummerizedStockReportTable')) {
                         var table = $('.SummerizedStockReportTable').DataTable({
                             "responsive": true, "lengthChange": false, "autoWidth": false,
-                            "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+                            "buttons": ["copy", "csv", "excel", "pdf", "colvis"]
                         }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
                     }
                 },
@@ -146,6 +154,18 @@
         }
 
     })
+    $('#BtnPrintSummarized').on('click', function () {
+        $.ajax({
+            type: "POST",
+            url: '/Print/StockSumrizedPrintData',
+            dataType: 'json',
+            data: JSON.stringify(PrintData),
+            contentType: "application/json;charset=utf-8",
+            success: function (Response) {
+                window.open(Response.redirectTo, '_blank');
+            },
+        });
+    });
     //-----------------------------------stock Report Detailed-------------------------------------------//
     GetAllProductTypesForDetailed()
     function GetAllProductTypesForDetailed() {
@@ -203,6 +223,7 @@
             }
         });
     }
+    var PrintDataDetailed = {}
     $('#btnViewDetailed').on('click', function () {
         $('#loader').show();
         $('.DetailedStockReportTable').empty();
@@ -251,6 +272,16 @@
                     html += '</thead>'
                     html += '<tbody>';
                     if (result.ResponseCode == 302) {
+
+                        $('#BtnPrintDetailed').show();
+                        PrintDataDetailed = {
+                            FromDate: fromDateDetailed.val(),
+                            ToDate: toDateDetailed.val(),
+                            Products: result.products,
+                            ProductName: result.products[0].ProductName
+                        }
+
+
                         let item = result.product
                         var Stock = 0;
                         html += '<tr>';
@@ -388,6 +419,7 @@
                                 html += '<td>' + Stock + '</td>';
                                 html += '</tr >';
                             });
+
                         }
                     }
                     else {
@@ -414,7 +446,21 @@
                     );
                 }
             });
+
         }
 
     })
+    $('#BtnPrintDetailed').on('click', function () {
+        console.log(PrintDataDetailed);
+        $.ajax({
+            type: "POST",
+            url: '/Print/StockDetailedPrintData',
+            dataType: 'json',
+            data: JSON.stringify(PrintDataDetailed),
+            contentType: "application/json;charset=utf-8",
+            success: function (Response) {
+                window.open(Response.redirectTo, '_blank');
+            },
+        });
+    });
 });

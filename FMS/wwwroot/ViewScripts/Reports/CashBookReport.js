@@ -97,6 +97,19 @@
                             html += '<td>' + item.DrCr + '</td>'; 
                             html += '</tr >';
                         });
+                        $.each(result.CashBook.Journals, function (key, item) {
+                            html += '<tr>';
+                            html += '<td>' + formatDate(item.VoucherDate) + '</td>';
+                            html += '<td>' + item.narration + '</td>';
+                            html += '<td>' + "Journal" + '</td>';
+                            html += '<td>' + item.VouvherNo + '</td>';
+                            html += '<td>' + "0.00" + '</td>';
+                            html += '<td>' + item.Amount + '</td>';
+                            totalAmount -= parseFloat(item.Amount);
+                            html += '<td>' + totalAmount.toFixed(2) + '</td>';
+                            html += '<td>' + item.DrCr + '</td>';
+                            html += '</tr >';
+                        });
                     }
                     else {
                         html += '<tr>';
@@ -106,18 +119,47 @@
                     html += ' </tbody>';
                     html += '</table >';
                     $('.tblSummerizedLabourList').html(html);
+                    function customizePDF(doc) {
+                        // Your company name and address
+                        var companyName = 'Teja';
+                        var companyAddress = 'Odisha, Cuttack';
+
+                        // Add company details to the beginning of the PDF
+                        doc.content.unshift(
+                            {
+                                text: 'Company: ' + companyName + '\nAddress: ' + companyAddress,
+                                margin: [0, 0, 0, 12], // Top margin adjustment for company details
+                                alignment: 'left'
+                            }
+                        );
+                    }
+
                     if (!$.fn.DataTable.isDataTable('.SummerizedLabourReportTable')) {
                         var table = $('.SummerizedLabourReportTable').DataTable({
-                            "responsive": true, "lengthChange": false, "autoWidth": false,
-                            "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-                        }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+                            responsive: true,
+                            lengthChange: false,
+                            autoWidth: false,
+                            buttons: [
+                                {
+                                    extend: 'pdfHtml5',
+                                    text: 'PDF', // Button text
+                                    customize: function (doc) {
+                                        customizePDF(doc);
+                                    }
+                                },
+                                'copy', 'csv', 'excel', 'print', 'colvis'
+                            ]
+                        });
+
+                        // Append buttons container to the desired location
+                        table.buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
                     }
                     PrintData = {
-                        
                         OpeningBal: parseFloat((Math.abs(result.CashBook.OpeningBal))),
                         ClosingBal: parseFloat((Math.abs(result.CashBook.ClosingBal))),
                         Receipts: result.CashBook.Receipts,
                         Payments: result.CashBook.Payments,
+                        Journals: result.CashBook.Journals,
                         FromDate: fromDate.val(),
                         Todate: toDate.val()
                     }; 

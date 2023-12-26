@@ -6,10 +6,12 @@ using System.Threading.Tasks;
 
 namespace FMS.Model.CommonModel
 {
-    public class BankBookDataRequest
+    public class CustomerSummarizedModel
     {
         public string FromDate { get; set; }
         public string ToDate { get; set; }
-        public Guid BankId { get; set; }
+        public string PartyName { get; set; }
+        public List<PartyReportModel> PartyReports { get; set; }
+        public List<PartyModel> Party { get; set; }
     }
 }

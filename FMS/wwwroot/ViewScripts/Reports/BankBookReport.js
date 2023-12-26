@@ -65,18 +65,18 @@
                     html += '<table class="table table-bordered table-hover text-center mt-2 BankBookReportTable" style="width:100%">';
                     html += '<thead>'
                     html += '<tr>'
-                    html += '<th>Date</th>'
-                    html += '<th>Particulurs</th>'
-                    html += '<th>Voucher Type</th>'
-                    html += '<th>Voucher Number</th>'
+                    html += '<th>Trxn No</th>'
+                    html += '<th>Trxn Date</th>'
+                    html += '<th>Narration</th>'
                     html += '<th>Debit</th>'
                     html += '<th>Credit</th>'
-                    html += '<th>Balance</th>'
+                    html += '<th> Running Balance</th>'
                     html += '<th>Type</th>'
                     html += '</tr>'
                     html += '</thead>'
                     html += '<tbody>';
                     if (result.ResponseCode == 302) {
+                        $(".hddiv").show();
                         ClosingBal.val(Math.abs(result.BankBook.ClosingBal));
                         var totalAmount = 0;
                         function formatDate(dateString) {
@@ -88,12 +88,11 @@
                         }
                         $.each(result.BankBook.Payments, function (key, item) {
                             html += '<tr>';
-                            html += '<td>' + formatDate(item.VoucherDate) + '</td>';
-                            html += '<td>' + item.ToAcc + '</td>';
-                            html += '<td>' + "Payment" + '</td>';
                             html += '<td>' + item.VouvherNo + '</td>';
+                            html += '<td>' + formatDate(item.VoucherDate) + '</td>';
+                            html += '<td>' + item.narration + '</td>';
                             html += '<td>' + item.Amount + '</td>';
-                            html += '<td>' + "0.00" + '</td>';
+                            html += '<td>' + - + '</td>';
                             totalAmount += parseFloat(item.Amount);
                             html += '<td>' + totalAmount.toFixed(2) + '</td>';
                             html += '<td>' + item.DrCr + '</td>';
@@ -101,12 +100,11 @@
                         });
                         $.each(result.BankBook.Receipts, function (key, item) {
                             html += '<tr>';
-                            html += '<td>' + formatDate(item.VoucherDate) + '</td>';
-                            html += '<td>' + item.FromAcc + '</td>';
-                            html += '<td>' + "Receipts" + '</td>';
                             html += '<td>' + item.VouvherNo + '</td>';
-                            html += '<td>' + "0.00" + '</td>';
+                            html += '<td>' + formatDate(item.VoucherDate) + '</td>';
+                            html += '<td>' + item.narration + '</td>';
                             html += '<td>' + item.Amount + '</td>';
+                            html += '<td>' + - + '</td>';
                             totalAmount -= parseFloat(item.Amount);
                             html += '<td>' + totalAmount.toFixed(2) + '</td>';
                             html += '<td>' + item.DrCr + '</td>';
@@ -128,7 +126,6 @@
                         }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
                     }
                     PrintData = {
-
                         OpeningBal: parseFloat((Math.abs(result.BankBook.OpeningBal))),
                         ClosingBal: parseFloat((Math.abs(result.BankBook.ClosingBal))),
                         Receipts: result.BankBook.Receipts,

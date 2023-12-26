@@ -27,6 +27,7 @@ $(function () {
             '<div style="font-size: 10px; text-align: right;">Printed on: ' + new Date().toLocaleString() + '</div>';
         return headerFooter;
     }
+    var PrintDataSummarized = {};
     $('#btnViewSummerized').on('click', function () {
         $('#loader').show();
         $('.SummerizedLabourReportTable').empty();
@@ -66,6 +67,7 @@ $(function () {
                     html += '</thead>'
                     html += '<tbody>';
                     if (result.ResponseCode == 302) {
+                        $('#BtnPrintSummarized').show();
                         $.each(result.LaborReports, function (key, item) {
                             html += '<tr>';
                             html += '<td>' + item.LabourName + '</td>';
@@ -78,6 +80,12 @@ $(function () {
                             html += '<td>' + Balance + '</td>';
                             html += '</tr >';
                         });
+                        PrintDataSummarized = {
+                            FromDate: fromDate.val(),
+                            ToDate: toDate.val(),
+                            LaborReports: result.LaborReports
+
+                        }
                     }
                     else {
                         html += '<tr>';
@@ -128,6 +136,7 @@ $(function () {
             }
         });
     }
+    var PrintData = {};
     $('#btnViewDetailed').on('click', function () {
         $('#loader').show();
         $('.DetailedLabourReportTable').empty();
@@ -147,6 +156,7 @@ $(function () {
                 ToDate: toDateDetailed.val(),
                 LabourId: ddlLabour.val()
             };
+            var LabourName = "";
             $.ajax({
                 url: "/Reports/GetDetailedLabourReport",
                 type: "POST",
@@ -155,7 +165,6 @@ $(function () {
                 data: JSON.stringify(requestData),
                 success: function (result) {
                     $('#loader').hide();
-                    console.log(result);
                     var html = '';
                     html += '<table class="table table-bordered table-hover text-center mt-2 DetailedLabourReportTable" style="width:100%">';
                     html += '<thead>'
@@ -173,7 +182,8 @@ $(function () {
                     html += '</thead>'
                     html += '<tbody>';
                     if (result.ResponseCode == 302) {
-
+                        $('#BtnPrint').show();
+                        LabourName = result.Labours[0].LabourName
                         $.each(result.Labours, function (key, item) {
                             var Balance = item.OpeningBalance;
                             html += '<tr>';
@@ -201,6 +211,7 @@ $(function () {
                                     Balance += Production.Amount
                                     html += '<td>' + Balance + '</td>';
                                     html += '</tr >';
+                                    
                                 });
                             }
                             if (item.Payment !== null) {
@@ -218,7 +229,6 @@ $(function () {
                                     html += '<td>' + Balance + '</td>';
                                     html += '</tr >';
                                 });
-
                             }
                             if (item.DamageOrders !== null) {
                                 $.each(item.DamageOrders, function (key, Damage) {
@@ -237,6 +247,13 @@ $(function () {
                                 });
                             }
                         });
+                        PrintData = {
+                            LaborReports: result.Labours,
+                            FromDate: fromDateDetailed.val(),
+                            LabourName: LabourName,
+                            ToDate: toDateDetailed.val(),
+                            OpeningBal: result.Labours[0].OpeningBalance
+                        };
                     }
                     else {
                         html += '<tr>';
@@ -296,5 +313,34 @@ $(function () {
                 }
             });
         }
+    });
+   
+    $('#BtnPrint').on('click', function () {
+        console.log(PrintData);
+        $.ajax({
+            type: "POST",
+            url: '/Print/LabourDetailedPrintData',
+            dataType: 'json',
+            data: JSON.stringify(PrintData),
+            contentType: "application/json;charset=utf-8",
+            success: function (Response) {
+                window.open(Response.redirectTo, '_blank');
+               
+            },
+        });
+    });
+    $('#BtnPrintSummarized').on('click', function () {
+        console.log(PrintDataSummarized);
+        $.ajax({
+            type: "POST",
+            url: '/Print/LabourSummarizedPrintData',
+            dataType: 'json',
+            data: JSON.stringify(PrintDataSummarized),
+            contentType: "application/json;charset=utf-8",
+            success: function (Response) {
+                window.open(Response.redirectTo, '_blank');
+
+            },
+        });
     });
 });

@@ -238,7 +238,8 @@ $(function () {
                             CreditSales: result.DaySheet.CreditSales, 
                             CashSales: result.DaySheet.CashSales, 
                             Receipts: result.DaySheet.Receipts, 
-                            Payments: result.DaySheet.Payments 
+                            Payments: result.DaySheet.Payments,
+                            Day: txtDate.val()
                     }; 
                 },
                 error: function (errormessage) {
