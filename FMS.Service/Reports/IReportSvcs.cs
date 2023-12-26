@@ -31,5 +31,14 @@ namespace FMS.Service.Reports
         #region BankBook
         public Task<BankBookViewModal> BankBookReport(BankBookDataRequest requestData);
         #endregion
+        #region LedgerBook
+        public Task<LedgerBookViewModal> LagderBookReport(LedgerbookDataRequest requestData);
+        #endregion
+        #region TrialBalances
+        public Task<LedgerTrialBalanceViewModel> TrialBalanceReport(LedgerbookDataRequest requestData);
+        #endregion
+        #region TrialBalances
+        public Task<JournalViewModel> JournalBookReport(LedgerbookDataRequest requestData);
+        #endregion
     }
 }

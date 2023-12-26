@@ -207,5 +207,68 @@ namespace FMS.Controllers.Reports
             return BadRequest(ModelState);
         }
         #endregion
+        #region LedgerBook
+        [HttpGet]
+        public IActionResult LadgerBook()
+        {
+            string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
+            string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
+            ViewBag.BranchName = branchName;
+            ViewBag.FinancialYear = FinancialYear;
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> LedgerBookReport([FromBody] LedgerbookDataRequest requestData)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _reportSvcs.LagderBookReport(requestData);
+                return new JsonResult(result);
+            }
+            return BadRequest(ModelState);
+        }
+        #endregion
+        #region TrialBalance
+        [HttpGet]
+        public IActionResult TrialBalance()
+        {
+            string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
+            string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
+            ViewBag.BranchName = branchName;
+            ViewBag.FinancialYear = FinancialYear;
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> TrialBalanceReport([FromBody] LedgerbookDataRequest requestData)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _reportSvcs.TrialBalanceReport(requestData);
+                return new JsonResult(result);
+            }
+            return BadRequest(ModelState);
+        }
+        #endregion
+        #region JournalBook
+        [HttpGet]
+        public IActionResult JournalBook()
+        {
+            string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
+            string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
+            ViewBag.BranchName = branchName;
+            ViewBag.FinancialYear = FinancialYear;
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> JournalBookReport([FromBody] LedgerbookDataRequest requestData)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _reportSvcs.JournalBookReport(requestData);
+                return new JsonResult(result);
+            }
+            return BadRequest(ModelState);
+        }
+        #endregion
     }
 }
