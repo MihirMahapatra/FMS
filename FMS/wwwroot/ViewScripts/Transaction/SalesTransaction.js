@@ -1587,7 +1587,16 @@ $(function () {
                     var html = '<tr>';
                     html += '<td  hidden><input type="hidden" class="form-control"  value=' + item.SalesReturnId + '></td>';
                     html += '<td><div class="form-group"><select class="form-control form-control-sm select2bs4" style="width: 100%;" id="ddn_' + item.SalesReturnId + '"> </select></div></td>';
-                    html += '<td><div class="form-group"><input type="text" class="form-control" id="" value=' + item.Quantity + '></div></td>';
+                    html += '<td>' +
+                        '<div class="form-group">' +
+                        '<div class="input-group">' +
+                        '<input type="text" class="form-control" value=' + item.Quantity + '>' +
+                        ' <div class="input-group-append">' +
+                        ' <span class="input-group-text" id="Unitrtn">'+ item.Product.Unit.UnitName +'</span>' +
+                        '</div>' +
+                        '</div>' +
+                        '</div>' +
+                        '</td>';
                     html += '<td><div class="form-group"><input type="text" class="form-control" id=""  value=' + item.Rate + '></div></td>';
                     html += '<td><div class="form-group"><input type="text" class="form-control" id=""  value=' + item.Discount + '></div></td>';
                     html += '<td><div class="form-group"><input type="text" class="form-control" id=""  value=' + item.DiscountAmount + '></div></td>';

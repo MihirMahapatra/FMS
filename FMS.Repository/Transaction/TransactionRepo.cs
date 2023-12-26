@@ -1874,7 +1874,7 @@ namespace FMS.Repository.Transaction
             {
                 Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
                 Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
-                var Query = await _appDbContext.ProductionEntries.Where(s => s.Fk_FinancialYearId == FinancialYear && s.FK_BranchId == BranchId).Select(s => new ProductionEntryModel
+                var Query = await _appDbContext.ProductionEntries.Where(s => s.Fk_FinancialYearId == FinancialYear && s.FK_BranchId == BranchId && s.LabourType.ToLower() == "service").Select(s => new ProductionEntryModel
                 {
                     ProductionEntryId = s.ProductionEntryId,
                     ProductionNo = s.ProductionNo,

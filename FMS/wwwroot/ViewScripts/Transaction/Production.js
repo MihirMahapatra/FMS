@@ -1,15 +1,14 @@
 $(function () {
+    $("#TransactionLink").addClass("active");
+    $("#ProductionLink").addClass("active");
+    $("#ProductionLink i.far.fa-circle").removeClass("far fa-circle").addClass("far fa-dot-circle");
+    //----------------------------------------varible declaration-----------------------------------------//
     //default date
     const today = new Date();
     const year = today.getFullYear();
     const month = String(today.getMonth() + 1).padStart(2, '0');
     const day = String(today.getDate()).padStart(2, '0');
     const todayDate = `${day}/${month}/${year}`;
-
-    $("#TransactionLink").addClass("active");
-    $("#ProductionLink").addClass("active");
-    $("#ProductionLink i.far.fa-circle").removeClass("far fa-circle").addClass("far fa-dot-circle");
-    //----------------------------------------varible declaration-----------------------------------------//
     var RawMaterialDetailTable = $('#tblRawMaterialDetails').DataTable({
         "paging": true,
         "lengthChange": false,
@@ -124,7 +123,6 @@ $(function () {
         html += '</td>';
         html += '</tr>';
         var newRow = ProuctionEntryTable.row.add($(html)).draw(false).node();
-
         $.ajax({
             url: "/Transaction/GetProductFinishedGood",
             type: "GET",
@@ -298,8 +296,11 @@ $('#btnSave').on('click', function () {
             success: function (Response) {
                 if (Response.ResponseCode == 201) {
                     toastr.success(Response.SuccessMsg);
-                    ProductionDate.val('');
-                    ProuctionEntryTable.clear().draw();
+                    ProductionDate.val(todayDate);
+                    ProuctionEntryTable.row('tbody tr:not(:first-child)').remove().draw();
+                    $('.qty').val('');
+                    $('.rate').val('');
+                    $('.amount').val('');
                 }
                 else {
                     toastr.error(Response.ErrorMsg);
