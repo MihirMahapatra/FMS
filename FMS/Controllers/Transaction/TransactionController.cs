@@ -256,6 +256,12 @@ namespace FMS.Controllers.Transaction
             return new JsonResult(result);
         }
         [HttpGet]
+        public async Task<IActionResult> GetServiceEntry()
+        {
+            var result = await _transactionSvcs.GetServiceEntry();
+            return new JsonResult(result);
+        }
+        [HttpGet]
         public async Task<IActionResult> GetServiceGoods()
         {
             Guid ProductType = MappingProductType.ServiceGoods;

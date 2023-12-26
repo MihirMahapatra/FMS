@@ -701,7 +701,7 @@ namespace FMS.Service.Transaction
         #region Service
         public async Task<Base> GetLastServiceNo()
         {
-            var Result = await _transactionRepo.GetLastProductionNo();
+            var Result = await _transactionRepo.GetLastServiceNo();
             return new Base()
             {
                 ResponseStatus = Result.Response,
@@ -713,7 +713,7 @@ namespace FMS.Service.Transaction
         public async Task<ProductionEntryViewModel> GetServiceEntry()
         {
             ProductionEntryViewModel Obj;
-            var Result = await _transactionRepo.GetProductionEntry();
+            var Result = await _transactionRepo.GetServiceEntry();
             if (Result.IsSuccess)
             {
                 if (Result.Response == "success")
@@ -795,7 +795,7 @@ namespace FMS.Service.Transaction
         }
         public async Task<Base> UpdateServiceEntry(ProductionEntryModel data)
         {
-            var Result = await _transactionRepo.UpdateProductionEntry(data);
+            var Result = await _transactionRepo.UpdateServiceEntry(data);
             Base Obj;
             if (Result.IsSuccess)
             {
