@@ -32,5 +32,17 @@ namespace FMS.Repository.Reports
         Task<Result<BankBookModal>> BankBookReport(BankBookDataRequest requestData);
 
         #endregion
+        #region LadgerBook
+        Task<Result<LedgerBookModel>> LedgerBookReport(LedgerbookDataRequest requestData);
+
+        #endregion
+        #region Trial balance
+        Task<Result<LedgerTrialBalanceModel>> TrialbalanceReport(LedgerbookDataRequest requestData);
+
+        #endregion
+        #region JournalBook
+        Task<Result<GroupedJournalModel>> JournalBookreport(LedgerbookDataRequest requestData);
+
+        #endregion
     }
 }
