@@ -22,5 +22,6 @@ namespace FMS.Model.CommonModel
         public string BalanceType { get; set; }
         public List<ReceiptModel> Receipts { get; set; }
         public List<PaymentModel> Payments { get; set; }
+        public List<JournalModel> Journals { get; set; }
     }
 }

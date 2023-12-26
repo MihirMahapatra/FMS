@@ -20,6 +20,7 @@ $(function () {
     const toDateDetailed = $('input[name="ToDateDetailed"]');
     toDateDetailed.val(todayDate);
     //--------------------------------Customer Report Summerized------------------------------------------------//
+    var PrintData = {}
     $('#btnViewSummerized').on('click', function () {
         $('#loader').show();
         $('.SummerizedReportTable').empty();
@@ -58,6 +59,7 @@ $(function () {
                     html += '</thead>'
                     html += '<tbody>';
                     if (result.ResponseCode == 302) {
+                        $('#BtnPrintSummarized').show();
                         $.each(result.PartyReports, function (key, item) {
                             html += '<tr>';
                             html += '<td>' + item.PartyName + '</td>';
@@ -70,6 +72,11 @@ $(function () {
                             html += '<td>' + item.BalanceType + '</td>';
                             html += '<tr>';
                         })
+                        PrintData = {
+                            FromDate: fromDateSummerized.val(),
+                            ToDate: toDateSummerized.val(),
+                            PartyReports: result.PartyReports
+                        }
                     }
                     else {
                         html += '<tr>';
@@ -97,6 +104,19 @@ $(function () {
             });
         }
     })
+    $('#BtnPrintSummarized').on('click', function () {
+        console.log(PrintData);
+        $.ajax({
+            type: "POST",
+            url: '/Print/CustomerSummarizedPrintData',
+            dataType: 'json',
+            data: JSON.stringify(PrintData),
+            contentType: "application/json;charset=utf-8",
+            success: function (Response) {
+                window.open(Response.redirectTo, '_blank');
+            },
+        });
+    });
     //--------------------------------Customer Report Detailed------------------------------------------------//
     GetSundryDebtors();
     function GetSundryDebtors() {
@@ -126,6 +146,7 @@ $(function () {
             }
         });
     }
+    var PrintDataDetailed = {};
     $('#btnViewDetailed').on('click', function () {
         $('#loader').show();
         $('.DetailedReportTable').empty();
@@ -169,6 +190,7 @@ $(function () {
                     html += '</thead>'
                     html += '<tbody>';
                     if (result.ResponseCode == 302) {
+                        $('#BtnPrintDetailed').show();
                         var Balance = result.Party.OpeningBal;
                         html += '<tr>';
                         html += '<td></td>';
@@ -231,6 +253,12 @@ $(function () {
                             }
                             html += '</tr >';
                         });
+                        PrintDataDetailed = {
+                            FromDate: fromDateDetailed.val(),
+                            ToDate: toDateDetailed.val(),
+                            Party: [result.Party],
+                            PartyName: result.Party.PartyName
+                        }
                     }
                     else {
                         html += '<tr>';
@@ -258,4 +286,17 @@ $(function () {
             });
         }
     })
+    $('#BtnPrintDetailed').on('click', function () {
+        console.log(PrintDataDetailed);
+        $.ajax({
+            type: "POST",
+            url: '/Print/CustomerDetailedPrintData',
+            dataType: 'json',
+            data: JSON.stringify(PrintDataDetailed),
+            contentType: "application/json;charset=utf-8",
+            success: function (Response) {
+                window.open(Response.redirectTo, '_blank');
+            },
+        });
+    });
 })

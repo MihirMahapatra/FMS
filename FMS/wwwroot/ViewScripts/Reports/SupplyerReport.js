@@ -20,6 +20,7 @@ $(function () {
     const toDateDetailed = $('input[name="ToDateDetailed"]');
     toDateDetailed.val(todayDate);
     //--------------------------------Customer Report Summerized------------------------------------------------//
+    var PrintData = {}
     $('#btnViewSummerized').on('click', function () {
         $('#loader').show();
         $('.SummerizedReportTable').empty();
@@ -58,6 +59,7 @@ $(function () {
                     html += '</thead>'
                     html += '<tbody>';
                     if (result.ResponseCode == 302) {
+                        $('#BtnPrintSummarized').show();
                         $.each(result.PartyReports, function (key, item) {
                             html += '<tr>';
                             html += '<td>' + item.PartyName + '</td>';
@@ -69,6 +71,12 @@ $(function () {
                             html += '<td>' + Math.abs(balance) + '</td>';
                             html += '<td>' + item.BalanceType + '</td>';
                         })
+
+                        PrintData = {
+                            FromDate : fromDateSummerized.val(),
+                            ToDate : toDateSummerized.val(),
+                            PartyReports: result.PartyReports
+                        }
                     }
                     else {
                         html += '<tr>';
@@ -98,6 +106,19 @@ $(function () {
         }
       
     })
+    $('#BtnPrintSummarized').on('click', function () {
+        console.log(PrintData);
+        $.ajax({
+            type: "POST",
+            url: '/Print/SupplyerSummarizedPrintData',
+            dataType: 'json',
+            data: JSON.stringify(PrintData),
+            contentType: "application/json;charset=utf-8",
+            success: function (Response) {
+                window.open(Response.redirectTo, '_blank');
+            },
+        });
+    });
     //--------------------------------Customer Report Detailed------------------------------------------------//
     GetSundryCreditors();
     function GetSundryCreditors() {
@@ -127,6 +148,8 @@ $(function () {
             }
         });
     }
+
+    var Printdatadetails = {}; 
     $('#btnViewDetailed').on('click', function () {
         $('#loader').show();
         $('.DetailedReportTable').empty();
@@ -170,6 +193,7 @@ $(function () {
                     html += '</thead>'
                     html += '<tbody>';
                     if (result.ResponseCode == 302) {
+                        $('#BtnPrintDetailed').show();
                         var Balance = 0;
                         if (result.Party.OpeningBalType === 'Dr') {
                             Balance = result.Party.OpeningBal;
@@ -221,6 +245,12 @@ $(function () {
                                 html += '</tr >';
                             });
                         }
+                        Printdatadetails = {
+                            FromDate: fromDateDetailed.val(),
+                            ToDate: toDateDetailed.val(),
+                            Party: [result.Party],
+                            PartyName: result.Party.PartyName
+                        }
                     }
                     else {
                         html += '<tr>';
@@ -249,4 +279,18 @@ $(function () {
         }
        
     })
+
+    $('#BtnPrintDetailed').on('click', function () {
+        console.log(Printdatadetails);
+        $.ajax({
+            type: "POST",
+            url: '/Print/SupplyerDetailsPrintData',
+            dataType: 'json',
+            data: JSON.stringify(Printdatadetails),
+            contentType: "application/json;charset=utf-8",
+            success: function (Response) {
+                window.open(Response.redirectTo, '_blank');
+            },
+        });
+    });
 })

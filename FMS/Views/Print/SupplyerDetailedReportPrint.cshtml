@@ -1,16 +1,20 @@
 ﻿@using FMS.Model.CommonModel
-@model CashBookPrintModel
+@model CustomerReportDataModel
 <!DOCTYPE html>
 <html>
 <head>
     <style>
         .small-text {
-            font-size: 0.7em!important;
+            font-size: 0.7em !important;
+            /* Adjust the font size as needed */
         }
-        .small-row  td {
-            font-size: 0.7em!important;
+
+        .small-row td {
+            font-size: 0.9em !important;
             padding: 0.1em !important;
+            /* Adjust the font size as needed */
         }
+
         .small-row tr {
             height: 0.4em !important; /* Adjust the row height */
         }
@@ -22,30 +26,31 @@
         body{
             color:black!important;
         }
+
     </style>
     <meta name="viewport" content="width=device-width" />
-    <title>Cash Book Print</title>
+    <title>Supplayer Details Print</title>
     <link rel="stylesheet" href="~/invoice/assets/css/app.min.css">
     <link rel="stylesheet" href="~/invoice/assets/css/style.css">
 </head>
-<body class="hospital-template" style="font-family: Times,  Times New Roman, Georgia, serif;">
+<body class="hospital-template" style="font-family: Times,  Times New Roman, Georgia, serif;margin-left:30px;">
     <div class="invoice-container-wrap">
         <div class="invoice-container">
             <main>
                 <div class="th-invoice invoice_style8" data-bg-src="~/invoice/assets/img/template/hospital_bg.png">
                     <div class="download-inner" id="download_section">
                         <header class="th-header header-layout5">
-                            <div class="row justify-content-between" style="margin-bottom:-20px; margin-top:-20px;" >
+                            <div class="row justify-content-between" style="margin-bottom:-20px; margin-top:-20px;">
                                 <div class="col-auto">
-                                    <div class="header-logo ">
+                                    <div class="header-logo">
                                         <a href="index.html">
                                             <img src="~/assets/images/logo/logo.png" alt="logo" style="width:30%; margin-left:25px;" />
                                         </a>
-                                        <p style="font-family: Times,  Times New Roman, Georgia, serif;margin-left:30px;">@Model.Cmopany.Name</p>
+                                        <p style="font-family: Times,  Times New Roman, Georgia, serif; color:black; margin-left:30px;"> @Model.Cmopany.Name</p>
                                     </div>
                                 </div>
                                 <div class="col-auto">
-                                    <h6 style="padding-top:10px; text-decoration:underline;font-family: cursive;text-align:right;padding-right:66px;">Cash Book</h6>
+                                    <h6 style="padding-top:20px; text-decoration:underline;font-family: cursive;padding-right:20px;">Supplier Report (Detail)</h6>
                                 </div>
                             </div>
                         </header>
@@ -62,25 +67,26 @@
                             <div class="col-auto" style="padding-right:20px!important;">
                                 GSTIN :  @Model.Cmopany.GSTIN<br />
                                 Report Date :  @DateTime.Now.ToString("dd/MM/yyyy") <br />
-                                From Date :  @Model.cashbook.FromDate<br />
-                                To Date :  @Model.cashbook.Todate<br />
+                                From Date :  @Model.Customers.FromDate<br />
+                                To Date :  @Model.Customers.ToDate<br/>
+                                <b style="display:none">Opening Bal: @Model.Customers.Party[0].OpeningBal</b>
                             </div>
                         </div>
-                        <table class="invoice-table justify-content-between" id="CashPayments">
-                            <thead style="text-align:center!important">
-                                <tr class="small-row" style="text-align:center!important">
-                                    <th style="width:15%!important;">Date</th>
-                                    <th style="width:25%!important;">Name</th>
-                                    <th style="width:10%!important;">VchType</th>
-                                    <th style="width:10%!important;">VchNo</th>
-                                    <th style="width:10%!important;">Dr</th>
-                                    <th style="width:10%!important;">Cr</th>
-                                    <th style="width:15%!important;">Bal.</th>
-                                    <th style="width:5%!important;text-align:center!important;">Type</th>
+                        <table class="invoice-table">
+                            <thead>
+                                <tr class="small-row">
+                                    <th style="width:15%;">Date</th>
+                                    <th style="width:20%;">TrnxNo</th>
+                                    <th style="width:20%;">Particulars</th>
+                                    <th style="width:20%;">Billing Amt</th>
+                                    <th style="width:10%;">Paid Amt</th>
+                                    <th style="width:10%;">Balance</th>
+                                    <th style="width:5%;text-align:center;">Type</th>
+
                                 </tr>
                             </thead>
                             <tbody>
-                                @if (Model.cashbook != null)
+                                @if (Model.Customers != null)
                                 {
                                     <tr class="small-row">
                                         <td>-</td>
@@ -88,71 +94,72 @@
                                         <td>Opening Bal</td>
                                         <td>-</td>
                                         <td>-</td>
-                                        <td></td>
-                                        <td>@Model.cashbook.OpeningBal</td>
-                                        @if (@Model.cashbook.OpeningBal > 0)
+                                        <td>@Model.Customers.Party[0].OpeningBal</td>
+                                        @if (@Model.Customers.Party[0].OpeningBal > 0)
                                         {
-                                            <td style="text-align:center">DR</td>
+
+                                            <td style="text-align:center">Cr</td>
                                         }
                                         else
                                         {
-                                            <td style="text-align:center">CR</td>
+
+                                            <td style="text-align:center">Dr</td>
                                         }
                                     </tr>
-                                    decimal TotalAmount = 0;
-                                    @foreach (var item in Model.cashbook.Receipts)
+                                    @foreach (var report in Model.Customers.Party)
                                     {
-                                        TotalAmount += item.Amount;
-                                        <tr class="small-row">
-                                            <td>@item.VoucherDate.ToString("dd/MM/yyyy")</td>
-                                            <td>@item.FromAcc</td>
-                                            <td>Receipts</td>
-                                            <td>@item.VouvherNo</td>
-                                            <td>0.00</td>
-                                            <td>@item.Amount</td>
-                                            <td>@Math.Abs(TotalAmount).ToString("0.00")</td>
-                                            <td style="text-align:center!important;">@item.DrCr</td>
+                                        decimal Balance = @Model.Customers.Party[0].OpeningBal;
 
-                                        </tr>
+                                        if (report.PurchaseOrders != null)
+                                        {
+                                            foreach (var item in report.PurchaseOrders)
+                                            {
+
+                                                Balance += @item.GrandTotal;
+                                                <tr class="small-row">
+                                                    <td>@item.TransactionDate.ToString("dd/MM/yyyy")</td>
+                                                    <td>@item.TransactionNo</td>
+                                                    <td>Credit Purchase</td>
+                                                    <td>@item.GrandTotal</td>
+                                                    <td>-</td>
+                                                    <td>@Balance</td>
+                                                    @if (@Balance > 0) {
+                                                   
+                                                          <td style="text-align:center">Cr</td>
+                                                    }
+                                                    else {
+                                                         
+                                                         <td style="text-align:center">Dr</td>
+                                                    }
+                                                </tr>
+                                            }
+                                        }
+                                        if (report.payments != null)
+                                        {
+                                            foreach (var item in report.payments)
+                                            {
+
+                                                Balance -= item.Amount;
+                                                <tr class="small-row">
+                                                    <td>@item.VoucherDate.ToString("dd/MM/yyyy")</td>
+                                                    <td>@item.VouvherNo</td>
+                                                    <td>@item.narration</td>
+                                                    <td>-</td>
+                                                    <td>@item.Amount</td>
+                                                    <td>@Math.Abs(@Balance).ToString("0.00")</td>
+                                                    @if (@Balance > 0)
+                                                    {
+                                                        <td style="text-align:center">Cr</td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td style="text-align:center">Dr</td>
+                                                    }
+                                                </tr>
+                                            }
+                                        }
                                     }
-                                    @foreach (var item in Model.cashbook.Payments)
-                                    {
-                                        TotalAmount -= item.Amount;
-                                        <tr class="small-row">
-                                            <td>@item.VoucherDate.ToString("dd/MM/yyyy")</td>
-                                            <td>@item.ToAcc</td>
-                                            <td>Payments</td>
-                                            <td>@item.VouvherNo</td>
-                                            <td>@item.Amount</td>
-                                            <td>0.00</td>
-                                            <td>@Math.Abs(TotalAmount).ToString("0.00")</td>
-                                            <td style="text-align:center!important;">@item.DrCr</td>
-                                        </tr>
-                                    }
-                                    @foreach (var item in Model.cashbook.Journals)
-                                    {
-                                        TotalAmount -= item.Amount;
-                                        <tr class="small-row">
-                                            <td>@item.VoucherDate.ToString("dd/MM/yyyy")</td>
-                                            <td>@item.narration</td>
-                                            <td>Journals</td>
-                                            <td>@item.VouvherNo</td>
-                                            <td>@item.Amount</td>
-                                            <td>0.00</td>
-                                            <td>@Math.Abs(TotalAmount).ToString("0.00")</td>
-                                            <td style="text-align:center!important;">@item.DrCr</td>
-                                        </tr>
-                                    }
-                                    <tr class="small-row"> 
-                                        <td>-</td>
-                                        <td>-</td>
-                                        <td>ClosingBal</td>
-                                        <td>-</td>
-                                        <td>-</td>
-                                        <td>-</td>
-                                        <th>@Model.cashbook.ClosingBal</th>
-                                        <td style="text-align:center!important;">-</td>   
-                                    </tr>
+                                 
                                 }
                                 else
                                 {
@@ -162,8 +169,21 @@
                                 }
                             </tbody>
                         </table>
+                        <div class="row justify-content-between">
+                            <div class="col-auto">
+                                <div class="invoice-left">
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <table class="total-table3">
+                                    <tr>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
                         <p class="invoice-note mt-3">
-                            <b>-- End Report --</b>
+                            <b>NOTE: </b>This is computer generated receipt and does not
+                            require physical signature.
                         </p>
                     </div>
                     <div class="invoice-buttons">

@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace FMS.Model.CommonModel
 {
-    public class BankBookDataRequest
+    public class LabourDetailedReportModal
     {
-        public string FromDate { get; set; }
-        public string ToDate { get; set; }
-        public Guid BankId { get; set; }
+        public CompanyDetailsModel Cmopany { get; set; }
+        public LabourDetailsModal LabourDetails { get; set; }
     }
 }

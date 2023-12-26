@@ -133,7 +133,7 @@ namespace FMS.Repository.Accounting
                                     Fk_FinancialYearId = FinancialYear,
                                     Narration = requestData.Narration,
                                     DrCr = item.BalanceType,
-                                    Amount = item.CrBalance != null ? Convert.ToDecimal(item.CrBalance) : Convert.ToDecimal(item.DrBalance)
+                                    Amount = item.CrBalance != "" ? Convert.ToDecimal(item.CrBalance) : Convert.ToDecimal(item.DrBalance)
                                 };
                                 await _appDbContext.Journals.AddAsync(newJournal);
                                 await _appDbContext.SaveChangesAsync();

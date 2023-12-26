@@ -8,5 +8,9 @@
         public decimal BillingAmt { get;set; }
         public decimal PaymentAmt { get;set; }
         public decimal DamageAmt { get; set; }
+        public List<ProductionEntryModel> ProductionEntries { get; set; }
+        public List<DamageOrderModel> DamageOrders { get; set; }
+        public List<PaymentModel> Payment { get; set; }
+        
     }
 }

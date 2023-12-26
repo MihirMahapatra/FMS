@@ -14,6 +14,7 @@
         public decimal ProductionQty { get; set; }
         public decimal StockQty { get; set; }
         public  decimal OpeningQty { get; set; }
+        
 
     }
 }
