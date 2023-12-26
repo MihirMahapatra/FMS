@@ -141,7 +141,8 @@ $(function () {
             }
         });
     }
-    $('#addOutwardSupplyRowBtn').on('click', function () {
+    $('#addOutwardSupplyRowBtn').on('click', addOutwardSupplyRowBtn);
+    function addOutwardSupplyRowBtn() {
         var uniqueId = 'ddlitem' + new Date().getTime();
         var selectedOptionText = $("select[name='ddlProductTypeId'] option:selected").text();
         var html = '';
@@ -216,7 +217,7 @@ $(function () {
         $('#tblOutwardSupply tbody').find('.select2bs4').select2({
             theme: 'bootstrap4'
         });
-    });
+    }
     $(document).on('click', '.deleteBtn', function () {
         $(this).closest('tr').remove();
     });
@@ -235,7 +236,8 @@ $(function () {
         });
         $('input[name="GrandTotal"]').val(totalAmount.toFixed(2));
     });
-    $('#btnSave').on('click', function () {
+    $('#btnSave').on('click', CreateOutwardSupply);
+    function CreateOutwardSupply() {
         if (!transactionDate.val()) {
             toastr.error('TransactionDate Is Required.');
             transactionDate.focus();
@@ -296,8 +298,8 @@ $(function () {
                 }
             });
         }
-       
-    });
+
+    }
     //-----------------------------------------------------OutwardSupply List Scren --------------------------------------------------//
     //Update Operation
     $('a[href="#OutwardSupplyList"]').on('click', function () {
@@ -379,7 +381,6 @@ $(function () {
             }
         });
     }
-
     $(document).on('click', '.btn-outwardsupply-edit', (event) => {
         const value = $(event.currentTarget).data('id');
         GetOutwardSupplyById(value);
@@ -539,7 +540,8 @@ $(function () {
             }
         });
     }
-    $(document).on('click', '#btnUpdate', function () {
+    $('#btnUpdate').on('click', UpdateOutwardSupply);
+    function UpdateOutwardSupply() {
 
         if (!transactionDate.val()) {
             toastr.error('TransactionDate Is Required.');
@@ -600,7 +602,7 @@ $(function () {
                 }
             });
         }
-    });
+    }
     //Delete Operation
     $(document).on('click', '.btn-outwardsupply-delete', (event) => {
         const value = $(event.currentTarget).data('id');

@@ -3,7 +3,7 @@ $(function () {
     function GetSubLedgers() {
         $('.SubLedgerTable').empty();
         $.ajax({
-            url: "/Admin/GetSubLedgers",
+            url: "/Master/GetSubLedgers",
             type: "GET",
             contentType: "application/json;charset=utf-8",
             dataType: "json",
@@ -83,14 +83,12 @@ $(function () {
         var $tr = $('#btnSubLedgerEdit_' + Id + '').closest('tr');
         var ledgerName = $tr.find('td:eq(1)').text().trim();
         var SubledgerName = $tr.find('td:eq(2)').text().trim();
-
-
         //fill Modal data
         $('input[name="mdlSubLedgerId"]').val(Id);
         $('input[name="mdlSubLedgerName"]').val(SubledgerName);
 
         $.ajax({
-            url: "/Admin/GetLedgers",
+            url: "/Master/GetLedgers",
             type: "GET",
             contentType: "application/json;charset=utf-8",
             dataType: "json",
@@ -123,7 +121,7 @@ $(function () {
         }
         $.ajax({
             type: "POST",
-            url: '/Admin/UpdateSubLedger',
+            url: '/Master/UpdateSubLedger',
             dataType: 'json',
             data: JSON.stringify(data),
             contentType: "application/json;charset=utf-8",
@@ -158,7 +156,7 @@ $(function () {
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: '/Admin/DeleteSubLedger?id=' + Id + '',
+                    url: '/Master/DeleteSubLedger?id=' + Id + '',
                     type: "POST",
                     contentType: "application/json;charset=utf-8",
                     dataType: "json",

@@ -8,8 +8,10 @@ namespace FMS.Repository.Admin
 {
     public interface IAdminRepo
     {
-        #region Token
+        #region Generate SignUp Token
         Task<Result<bool>> CreateToken(string token);
+        #endregion
+        #region Company Details
         Task<Result<bool>> CreateCompany(CompanyDetailsModel data);
         Task<Result<CompanyDetailsModel>> GetCompany();
         #endregion
@@ -29,6 +31,46 @@ namespace FMS.Repository.Admin
         Task<Result<bool>> UpdateBranchAlloction(UserBranchModel model);
         Task<Result<bool>> DeleteBranchAlloction(Guid Id, IDbContextTransaction transaction);
         #endregion
+        #region Product Setup
+        #region Product Type
+        Task<Result<ProductTypeModel>> GetProductTypes();
+        #endregion
+        #region Group
+        Task<Result<GroupModel>> GetAllGroups();
+        Task<Result<GroupModel>> GetAllGroups(Guid ProdutTypeId);
+        Task<Result<bool>> CreateGroup(GroupModel data);
+        Task<Result<bool>> UpdateGroup(GroupModel data);
+        Task<Result<bool>> DeleteGroup(Guid Id, IDbContextTransaction transaction, bool IsCallBack);
+        #endregion
+        #region SubGroup
+        Task<Result<SubGroupModel>> GetSubGroups(Guid GroupId);
+        Task<Result<bool>> CreateSubGroup(SubGroupModel data);
+        Task<Result<bool>> UpdateSubGroup(SubGroupModel data);
+        Task<Result<bool>> DeleteSubGroup(Guid Id, IDbContextTransaction transaction, bool IsCallBack);
+        #endregion
+        #region Unit
+        Task<Result<UnitModel>> GetAllUnits();
+        Task<Result<bool>> CreateUnit(UnitModel data);
+        Task<Result<bool>> UpdateUnit(UnitModel data);
+        Task<Result<bool>> DeleteUnit(Guid Id, IDbContextTransaction transaction, bool IsCallBack);
+        #endregion
+        #region Product
+        Task<Result<ProductModel>> GetAllProducts();
+        public Task<Result<ProductModel>> GetProductById(Guid ProductId);
+        public Task<Result<ProductModel>> GetProductByTypeId(Guid ProductTypeId);
+        public Task<Result<ProductModel>> GetProductGstWithRate(Guid id);
+        Task<Result<bool>> CreateProduct(ProductModel data);
+        Task<Result<bool>> UpdateProduct(ProductModel data);
+        Task<Result<bool>> DeleteProduct(Guid Id, IDbContextTransaction transaction, bool IsCallBack);
+        #endregion
+        #endregion
+        #region Alternate Units
+        Task<Result<AlternateUnitModel>> GetAlternateUnits();
+        Task<Result<AlternateUnitModel>> GetAlternateUnitByProductId(Guid ProductId);
+        Task<Result<bool>> CreateAlternateUnit(AlternateUnitModel data);
+        Task<Result<bool>> UpdateAlternateUnit(AlternateUnitModel data);
+        Task<Result<bool>> DeleteAlternateUnit(Guid Id);
+        #endregion
         #region Product Configuration
         Task<Result<ProductModel>> GetAllRawMaterial(Guid ProductTypeId);
         Task<Result<ProductModel>> GetAllFinishedGood(Guid ProductTypeId);
@@ -38,6 +80,13 @@ namespace FMS.Repository.Admin
         Task<Result<bool>> CreateProductConfig(ProductConfigDataRequest requestData);
         Task<Result<bool>> UpdateProductConfig(ProductionModel data);
         Task<Result<bool>> DeleteProductConfig(Guid Id, IDbContextTransaction transaction);
+        #endregion
+        #region Labour Rate Configration
+        Task<Result<LabourRateModel>> GetAllLabourRates();
+        Task<Result<LabourRateModel>> GetLabourRateByProductId(Guid ProductId);
+        Task<Result<bool>> CreateLabourRate(LabourRateModel data);
+        Task<Result<bool>> UpdateLabourRate(LabourRateModel data);
+        Task<Result<bool>> DeleteLabourRate(Guid Id, IDbContextTransaction transaction, bool IsCallBack);
         #endregion
         #region Account Configuration
         #region LedgerGroup

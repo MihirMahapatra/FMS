@@ -95,16 +95,17 @@
         </div>
     </section>
 </div>
-@await Html.PartialAsync("_FooterScript")
-@if (TempData["SuccessMsg"] != null)
-{
-    <script>
-        toastr.success('@TempData["SuccessMsg"]');
-    </script>
-}
-@if (TempData["ErrorMsg"] != null)
-{
-    <script>
-        toastr.error('@TempData["ErrorMsg"]');
-    </script>
+@section additionalScripts {
+    @if (TempData["SuccessMsg"] != null)
+    {
+        <script>
+            toastr.success('@TempData["SuccessMsg"]');
+        </script>
+    }
+    @if (TempData["ErrorMsg"] != null)
+    {
+        <script>
+            toastr.error('@TempData["ErrorMsg"]');
+        </script>
+    }
 }

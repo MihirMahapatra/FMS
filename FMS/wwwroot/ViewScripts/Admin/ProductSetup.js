@@ -1,9 +1,9 @@
-$(function () {
-    $("#MasterLink").addClass("active");
-    $("#ProductMasterLink").addClass("active");
-    $("#ProductMasterLink i.far.fa-circle").removeClass("far fa-circle").addClass("far fa-dot-circle");
+﻿$(function () {
+    $("#AdminLink").addClass("active");
+    $("#ProductSetupLink").addClass("active");
+    $("#ProductSetupLink i.far.fa-circle").removeClass("far fa-circle").addClass("far fa-dot-circle");
     /***************************************Variable Declaration***********************************************************/
-    //products
+    /*---products---*/
     const groupId = $('select[name="ProductGroupId"]');
     const subGroupId = $('select[name="ProductSubGroupId"]');
     const productTypeId = $('select[name="ProductTypeId"]');
@@ -13,19 +13,17 @@ $(function () {
             $('select[name="ProductGroupId"]').focus();
         }
     });
-
     $('select[name="ProductGroupId"]').on('keydown', function (e) {
         if (e.keyCode === 9 && !e.shiftKey) {
             e.preventDefault();
             $('input[name="ProductName"]').focus();
         }
     });
-
     const unitId = $('select[name="ProductUnitId"]');
     const ProductName = $('input[name = "ProductName"]')
     const Price = $('input[name = "Price"]')
     const GST = $('input[name = "GST"]')
-    //mdlproduct
+    /*---mdlproduct---*/
     const mdlProductId = $('input[name="mdlProductId"]');
     const mdlProductName = $('input[name="mdlProductName"]');
     const mdlProductType = $('select[name="mdlProductType"]');
@@ -34,20 +32,7 @@ $(function () {
     const mdlSubGroup = $('select[name="mdlSubGroup"]');
     const mdlPrice = $('input[name="mdlPrice"]');
     const mdlGst = $('input[name="mdlGst"]');
-    //mdl stoctedit
-    const mdlStockId = $('input[name="mdlStockId"]');
-    const mdlOpeningQty = $('input[name="mdlOpeningQty"]');
-    const mdlOpeningRate = $('input[name="mdlOpeningRate"]');
-    const mdlAvilableQty = $('input[name="mdlAvilableQty"]');
-    const mdlMinQty = $('input[name="mdlMinQty"]');
-    const mdlMaxQty = $('input[name="mdlMaxQty"]');
-    //stock
-    const openingQty = $('input[name = "OpeningQty"]')
-    const openingRate = $('input[name = "OpeningRate"]')
-    const minQty = $('input[name = "MinQty"]');
-    const maxQty = $('input[name = "MaxQty"]')
-    const productId = $('select[name="ProductId"]');
-    //-----------------------------------Contorl Foucous Of Element    ProductMaster ProductDetail----------------------------//
+    /***********************************************************Contorl Foucous Of Element***********************************************************/
     productTypeId.focus();
     ProductName.on('focus', function () {
         $(this).css('border-color', 'red');
@@ -78,56 +63,7 @@ $(function () {
     $('.btn-product-create').on('blur', function () {
         $(this).css('background-color', '');
     });
-     //-----------------------------------Contorl Foucous Of Element   ProductMaster StockDetail----------------------------//
-    productId.focus();
-    openingQty.on('focus', function () {
-        $(this).css('border-color', 'red');
-    });
-    openingQty.on('blur', function () {
-        $(this).css('border-color', ''); // Reset background color on blur
-    });
-    openingRate.on('focus', function () {
-        $(this).css('border-color', 'red');
-    });
-    openingRate.on('blur', function () {
-        $(this).css('border-color', ''); // Reset background color on blur
-    });
-    minQty.on('focus', function () {
-        $(this).css('border-color', 'red');
-    });
-    minQty.on('blur', function () {
-        $(this).css('border-color', ''); // Reset background color on blur
-    });
-    maxQty.on('focus', function () {
-        $(this).css('border-color', 'red');
-    });
-    maxQty.on('blur', function () {
-        $(this).css('border-color', ''); // Reset background color on blur
-    });
-    $('.btn-stock-create').on('keydown', function (e) {
-        if (e.key === 'Enter' || e.keyCode === 13) {
-            $('.btn-stock-create').click();
-        }
-    });
-    $('.btn-stock-create').on('focus', function () {
-        $(this).css('background-color', 'black');
-    });
-    $('.btn-stock-create').on('blur', function () {
-        $(this).css('background-color', '');
-    });
     /***************************************Validation Section***********************************************************/
-    openingQty.on("input", function () {
-        var inputValue = $(this).val().replace(/[^0-9.]/g, '');
-        $(this).val(inputValue);
-    });
-    minQty.on("input", function () {
-        var inputValue = $(this).val().replace(/[^0-9.]/g, '');
-        $(this).val(inputValue);
-    });
-    maxQty.on("input", function () {
-        var inputValue = $(this).val().replace(/[^0-9.]/g, '');
-        $(this).val(inputValue);
-    });
     Price.on("input", function () {
         var inputValue = $(this).val().replace(/[^0-9.]/g, '');
         $(this).val(inputValue);
@@ -137,28 +73,19 @@ $(function () {
         inputValue = inputValue.toUpperCase();
         $(this).val(inputValue);
     });
-    openingRate.on("input", function () {
-        var inputValue = $(this).val().replace(/[^0-9.]/g, '');
-        $(this).val(inputValue);
-    });
     GST.on("input", function () {
         var inputValue = $(this).val().replace(/\D/g, '');
         $(this).val(inputValue);
-    });
-    //------------------------------------------------jqueryTabEnter -----------------------------------//
-  
-   
-    /*--------------------------------------Unit-------------------------------------------------*/
-    //---------get Records----------//
+    }); 
+    /***************************************  Unit ***********************************************************/
     loadUnits();
     function loadUnits() {
 
         unitId.empty();
         var defaultOption = $('<option></option>').val('').text('--Select Option--');
         unitId.append(defaultOption);
-
         $.ajax({
-            url: "/Master/GetAllUnits",
+            url: "/Admin/GetAllUnits",
             type: "GET",
             contentType: "application/json;charset=utf-8",
             dataType: "json",
@@ -176,11 +103,11 @@ $(function () {
         });
     }
     $('#btnUnitAdd').on('click', function () {
-
         $('#modal-add-unit').modal('show');
     });
-    $('#modal-add-unit').on('click', '.unitAdd', (event) => {
 
+    $('.unitAdd').on('click', UnitAdd);
+    function UnitAdd() {
         if (!$('input[name="mdlUnitAdd"]').val()) {
             toastr.error('Plz Insert Unit Name');
             return;
@@ -191,7 +118,7 @@ $(function () {
             }
             $.ajax({
                 type: "POST",
-                url: '/Master/CreateUnit',
+                url: '/Admin/CreateUnit',
                 dataType: 'json',
                 data: JSON.stringify(data),
                 contentType: "application/json;charset=utf-8",
@@ -211,8 +138,9 @@ $(function () {
                 }
             });
         }
-    });
-    $('#btnUnitEdit').on('click', function () {
+    }
+    $('#btnUnitEdit').on('click', UnitEdit);
+    function UnitEdit() {
         if (!unitId.val() || unitId.val() === '--Select Option--') {
             toastr.error('Plz Select a Unit Name To Edit');
             return;
@@ -223,17 +151,18 @@ $(function () {
             var text = selectedOption.text();
             var value = selectedOption.val();
             $("input[name='mdlUnitId']").val(value);
-            $("input[name='mdlUnitEdit']").val(text);
+            $("input[name='mdlUnitName']").val(text);
         }
-    });
-    $('#modal-edit-unit').on('click', '.unitEdit', (event) => {
+    }
+    $('.mdlUnitUpdate').on('click', UnitUpdate);
+    function UnitUpdate() {
         const data = {
             UnitId: $('input[name="mdlUnitId"]').val(),
-            UnitName: $('input[name="mdlUnitEdit"]').val(),
+            UnitName: $('input[name="mdlUnitName"]').val(),
         }
         $.ajax({
             type: "POST",
-            url: '/Master/UpdateUnit',
+            url: '/Admin/UpdateUnit',
             dataType: 'json',
             data: JSON.stringify(data),
             contentType: "application/json;charset=utf-8",
@@ -242,7 +171,7 @@ $(function () {
                 if (Response.ResponseCode == 200) {
                     toastr.success(Response.SuccessMsg);
                     $('input[name="mdlUnitId"]').val('');
-                    $('input[name="mdlUnitEdit"]').val('');
+                    $('input[name="mdlUnitName"]').val('');
                 }
                 else {
                     toastr.error(Response.ErrorMsg);
@@ -253,8 +182,9 @@ $(function () {
                 console.log(error);
             }
         });
-    });
-    $('#btnUnitDelete').on('click', function () {
+    }
+    $('#btnUnitDelete').on('click', UnitDelete);
+    function UnitDelete() {
 
         if (!unitId.val() || unitId.val() === '--Select Option--') {
             toastr.error('Plz Select a Unit Name To Delete');
@@ -274,7 +204,7 @@ $(function () {
                 if (result.isConfirmed) {
 
                     $.ajax({
-                        url: '/Master/DeleteUnit?id=' + Id + '',
+                        url: '/Admin/DeleteUnit?id=' + Id + '',
                         type: "POST",
                         contentType: "application/json;charset=utf-8",
                         dataType: "json",
@@ -295,16 +225,27 @@ $(function () {
             });
         }
 
-    })
-    /*--------------------------------------Group------------------------------------------------*/
-    loadGroups();
-    function loadGroups() {
+    }
+    /*************************************** Group ***********************************************************/
+    productTypeId.on('change', function () {
+        enablGroup();
+    });
+    function enablGroup() {
+        var productTypIdSelected = productTypeId.val();
+        if (productTypIdSelected) {
+            groupId.prop("disabled", false);
+            loadGroups(productTypIdSelected);
+        } else {
+            groupId.prop("disabled", true);
+        }
+    }
+    function loadGroups(productTypIdSelected) {
         groupId.empty();
         var defaultOption = $('<option></option>').val('').text('--Select Option--');
         groupId.append(defaultOption);
 
         $.ajax({
-            url: "/Master/GetAllGroups",
+            url: '/Admin/GetAllGroups?ProdutTypeId=' + productTypIdSelected + '',
             type: "GET",
             contentType: "application/json;charset=utf-8",
             dataType: "json",
@@ -324,7 +265,8 @@ $(function () {
     $('#btnGrupAdd').on('click', function () {
         $('#modal-add-group').modal('show');
     });
-    $('#modal-add-group').on('click', '.groupAdd', (event) => {
+    $('.groupAdd').on('click', GroupAdd);
+    function GroupAdd () {
         if (!$('input[name="mdlGroupAdd"]').val()) {
             toastr.error('Plz Insert Group Name');
             return;
@@ -332,10 +274,11 @@ $(function () {
         else {
             const data = {
                 GroupName: $('input[name="mdlGroupAdd"]').val(),
+                Fk_ProductTypeId: productTypeId.val()
             }
             $.ajax({
                 type: "POST",
-                url: '/Master/CreateGroup',
+                url: '/Admin/CreateGroup',
                 dataType: 'json',
                 data: JSON.stringify(data),
                 contentType: "application/json;charset=utf-8",
@@ -346,17 +289,19 @@ $(function () {
                         $('input[name="mdlGroupAdd"]').val('');
                     }
                     else {
+                        $('#modal-add-group').modal('hide');
                         toastr.error(Response.ErrorMsg);
                     }
-                    loadGroups();
+                    loadGroups(data.Fk_ProductTypeId);
                 },
                 error: function (error) {
                     console.log(error);
                 }
             });
         }
-    });
-    $('#btnGrupEdit').on('click', function () {
+    }
+    $('#btnGrupEdit').on('click', GrupEdit);
+    function GrupEdit() {
         if (!groupId.val() || groupId.val() === '--Select Option--') {
             toastr.error('Plz Select a Group Name To Edit');
             return;
@@ -369,15 +314,17 @@ $(function () {
             $("input[name='mdlGroupId']").val(value);
             $("input[name='mdlGroupEdit']").val(text);
         }
-    });
-    $('#modal-edit-group').on('click', '.groupEdit', (event) => {
+    }
+    $('.groupUpdate').on('click', GroupUpdate);
+    function GroupUpdate() {
         const data = {
             GroupId: $('input[name="mdlGroupId"]').val(),
             GroupName: $('input[name="mdlGroupEdit"]').val(),
+            Fk_ProductTypeId: productTypeId.val()
         }
         $.ajax({
             type: "POST",
-            url: '/Master/UpdateGroup',
+            url: '/Admin/UpdateGroup',
             dataType: 'json',
             data: JSON.stringify(data),
             contentType: "application/json;charset=utf-8",
@@ -391,14 +338,15 @@ $(function () {
                 else {
                     toastr.error(Response.ErrorMsg);
                 }
-                loadGroups();
+                loadGroups(data.Fk_ProductTypeId);
             },
             error: function (error) {
                 console.log(error);
             }
         });
-    });
-    $('#btnGrupDelete').on('click', function () {
+    }
+    $('#btnGrupDelete').on('click', GrupDelete)
+    function GrupDelete() {
         if (!groupId.val() || groupId.val() === '--Select Option--') {
             toastr.error('Plz Select a Group Name To Delete');
             return;
@@ -417,7 +365,7 @@ $(function () {
                 if (result.isConfirmed) {
 
                     $.ajax({
-                        url: '/Master/DeleteGroup?id=' + Id + '',
+                        url: '/Admin/DeleteGroup?id=' + Id + '',
                         type: "POST",
                         contentType: "application/json;charset=utf-8",
                         dataType: "json",
@@ -428,7 +376,7 @@ $(function () {
                             else {
                                 toastr.error(result.ErrorMsg);
                             }
-                            loadGroups();
+                            loadGroups(productTypeId.val());
                         },
                         error: function (error) {
                             console.log(error);
@@ -437,9 +385,8 @@ $(function () {
                 }
             });
         }
-
-    })
-    /*--------------------------------------SubGroup------------------------------------------------*/
+    }
+    /*************************************** SubGroup ***********************************************************/
     groupId.on('change', function () {
         enableSubGroup();
     });
@@ -457,7 +404,7 @@ $(function () {
         var defaultOption = $('<option></option>').val('').text('--Select Option--');
         subGroupId.append(defaultOption);
         $.ajax({
-            url: '/Master/GetSubGroups?GroupId=' + GroupId + '',
+            url: '/Admin/GetSubGroups?GroupId=' + GroupId + '',
             type: "GET",
             contentType: "application/json;charset=utf-8",
             dataType: "json",
@@ -477,7 +424,8 @@ $(function () {
     $('#btnSubGroupAdd').on('click', function () {
         $('#modal-add-subGroup').modal('show');
     });
-    $('#modal-add-subGroup').on('click', '.subGroupAdd', (event) => {
+    $('.subGroupAdd').on('click', SubGroupAdd);
+    function SubGroupAdd() {
         if (!$('input[name="mdlSubGroupAdd"]').val()) {
             toastr.error('Plz Insert SubGroup Name');
             return;
@@ -489,7 +437,7 @@ $(function () {
             }
             $.ajax({
                 type: "POST",
-                url: '/Master/CreateSubGroup',
+                url: '/Admin/CreateSubGroup',
                 dataType: 'json',
                 data: JSON.stringify(data),
                 contentType: "application/json;charset=utf-8",
@@ -509,8 +457,9 @@ $(function () {
                 }
             });
         }
-    });
-    $('#btnSubGroupEdit').on('click', function () {
+    }
+    $('#btnSubGroupEdit').on('click', SubGroupEdit);
+    function SubGroupEdit () {
         if (!subGroupId.val() || subGroupId.val() === '--Select Option--') {
             toastr.error('Plz Select a SubGroup Name To Edit');
             return;
@@ -523,8 +472,9 @@ $(function () {
             $("input[name='mdlSubGroupId']").val(value);
             $("input[name='mdlSubGroupEdit']").val(text);
         }
-    });
-    $('#modal-edit-subGroup').on('click', '.subGroupEdit', (event) => {
+    }
+    $('.subGroupUpdate').on('click', UpdateSubGroup);
+    function UpdateSubGroup () {
         const data = {
             SubGroupId: $('input[name="mdlSubGroupId"]').val(),
             SubGroupName: $('input[name="mdlSubGroupEdit"]').val(),
@@ -532,7 +482,7 @@ $(function () {
         }
         $.ajax({
             type: "POST",
-            url: '/Master/UpdateSubGroup',
+            url: '/Admin/UpdateSubGroup',
             dataType: 'json',
             data: JSON.stringify(data),
             contentType: "application/json;charset=utf-8",
@@ -552,8 +502,9 @@ $(function () {
                 console.log(error);
             }
         });
-    });
-    $('#btnSubGroupDelete').on('click', function () {
+    }
+    $('#btnSubGroupDelete').on('click', SubGroupDelete);
+    function SubGroupDelete () {
         if (!subGroupId.val() || subGroupId.val() === '--Select Option--') {
             toastr.error('Plz Select a SubGroup Name To Delete');
             return;
@@ -572,7 +523,7 @@ $(function () {
                 if (result.isConfirmed) {
 
                     $.ajax({
-                        url: '/Master/DeleteSubGroup?id=' + Id + '',
+                        url: '/Admin/DeleteSubGroup?id=' + Id + '',
                         type: "POST",
                         contentType: "application/json;charset=utf-8",
                         dataType: "json",
@@ -594,15 +545,15 @@ $(function () {
             });
         }
 
-    })
-    /*--------------------------------------Product Types------------------------------------------------*/
+    }
+    /***************************************Product Types***********************************************************/
     loadProductTypes();
     function loadProductTypes() {
         productTypeId.empty();
         var defaultOption = $('<option></option>').val('').text('--Select Option--');
         productTypeId.append(defaultOption);
         $.ajax({
-            url: "/Master/GetAllProductTypes",
+            url: "/Admin/GetAllProductTypes",
             type: "GET",
             contentType: "application/json;charset=utf-8",
             dataType: "json",
@@ -619,14 +570,13 @@ $(function () {
             }
         });
     }
-    /*------------------------------------------------ Product--------------------------------------------*/
-    //---------get Records----------//
+   /***************************************Product***********************************************************/
     LoadProducts();
     function LoadProducts() {
         $('#loader').show();
         $('.ProductTable').empty();
         $.ajax({
-            url: "/Master/GetAllProducts",
+            url: "/Admin/GetAllProducts",
             type: "GET",
             contentType: "application/json;charset=utf-8",
             dataType: "json",
@@ -723,7 +673,7 @@ $(function () {
             toastr.error('Unit Name Is Required.');
             unitId.focus();
             return;
-        }     
+        }
         else if (!Price.val()) {
             toastr.error('Price Is Required.');
             Price.focus();
@@ -746,7 +696,7 @@ $(function () {
 
             $.ajax({
                 type: "POST",
-                url: '/Master/CreateProduct',
+                url: '/Admin/CreateProduct',
                 dataType: 'json',
                 data: JSON.stringify(data),
                 contentType: "application/json;charset=utf-8",
@@ -786,9 +736,8 @@ $(function () {
         $('input[name="mdlProductName"]').val(ProductName);
         $('input[name="mdlPrice"]').val(Price);
         $('input[name="mdlGst"]').val(Gst);
-
         $.ajax({
-            url: "/Master/GetAllUnits",
+            url: "/Admin/GetAllUnits",
             type: "GET",
             contentType: "application/json;charset=utf-8",
             dataType: "json",
@@ -812,9 +761,9 @@ $(function () {
             error: function (errormessage) {
                 console.log(errormessage)
             }
-        });
+        });  
         $.ajax({
-            url: "/Master/GetAllProductTypes",
+            url: "/Admin/GetAllProductTypes",
             type: "GET",
             contentType: "application/json;charset=utf-8",
             dataType: "json",
@@ -826,37 +775,41 @@ $(function () {
                         var option = $('<option></option>').val(item.ProductTypeId).text(item.Product_Type);
                         if (item.Product_Type === ProductType) {
                             option.attr('selected', 'selected'); // Set selected attribute
+                            getGroups(item.ProductTypeId, Group, SubGroup)
                         }
                         selectElement.append(option);
                     });
-
                 }
             },
             error: function (errormessage) {
                 console.log(errormessage)
             }
         });
+    } 
+    $('select[name="mdlProductType"]').on('change', function () {
+        const ProductTypeId = $('select[name="mdlProductType"]').val();
+        getGroups(ProductTypeId);
+    });
+    function getGroups(ProductTypeId, groupName, SubGroupName) {
+        var defaultOption = $('<option></option>').val('').text('--Select Option--');
+        var selectGroupElement = $('select[name="mdlGroup"]');
+        selectGroupElement.empty();
+        selectGroupElement.append(defaultOption);
         $.ajax({
-            url: "/Master/GetAllGroups",
+            url: '/Admin/GetAllGroups?ProdutTypeId=' + ProductTypeId + '',
             type: "GET",
             contentType: "application/json;charset=utf-8",
             dataType: "json",
             success: function (result) {
-                var selectElement = $('select[name="mdlGroup"]');
                 if (result.ResponseCode == 302) {
-                    selectElement.empty();
                     $.each(result.Groups, function (key, item) {
                         var option = $('<option></option>').val(item.GroupId).text(item.GroupName);
-                        if (item.GroupName === Group) {
+                        if (item.GroupName === groupName) {
                             option.attr('selected', 'selected');
-                            getSubGroup(item.GroupId, SubGroup)
+                            getSubGroup(item.GroupId, SubGroupName)
                         }
-                        selectElement.append(option);
+                        selectGroupElement.append(option);
                     });
-                }
-                else {
-                    var defaultOption = $('<option></option>').val('').text('--Select Option--');
-                    selectElement.append(defaultOption);
                 }
             },
             error: function (errormessage) {
@@ -864,13 +817,17 @@ $(function () {
             }
         });
     }
+    $('select[name="mdlGroup"]').on('change', function () {
+        const GroupId = $('select[name="mdlGroup"]').val();
+        getSubGroup(GroupId);
+    });
     function getSubGroup(GroupId, SubGroupName) {
         var defaultOption = $('<option></option>').val('').text('--Select Option--');
         var selectSubGroupElement = $('select[name="mdlSubGroup"]');
         selectSubGroupElement.empty();
         selectSubGroupElement.append(defaultOption);
         $.ajax({
-            url: '/Master/GetSubGroups?Groupid=' + GroupId + '',
+            url: '/Admin/GetSubGroups?Groupid=' + GroupId + '',
             type: "GET",
             contentType: "application/json;charset=utf-8",
             dataType: "json",
@@ -890,13 +847,9 @@ $(function () {
             }
         });
     }
-    $('select[name="mdlGroup"]').on('change', function () {
-        const GroupId = $('select[name="mdlGroup"]').val();
-        getSubGroup(GroupId);
-    });
-    $('#modal-edit-Product').on('click', '.product', (event) => {
-
-        if (!mdlProductId.val()){
+    $('.btn-product-update').on('click', UpdateProduct);
+    function UpdateProduct () {
+        if (!mdlProductId.val()) {
             $('input[name="mdlProductId"]').css('border-color', 'red');
             return;
         } else if (!mdlProductName.val()) {
@@ -911,10 +864,7 @@ $(function () {
         } else if (!mdlGroup.val() || mdlGroup.val() === '--Select Option--') {
             $('input[name="mdlGroup"]').css('border-color', 'red');
             return;
-        } else if (!mdlSubGroup.val() || mdlSubGroup.val() === '--Select Option--') {
-            $('input[name="mdlSubGroup"]').css('border-color', 'red');
-            return;
-        } else if (!mdlPrice.val()) {
+        }  else if (!mdlPrice.val()) {
             $('input[name="mdlPrice"]').css('border-color', 'red');
             return;
         } else if (!mdlGst.val()) {
@@ -934,7 +884,7 @@ $(function () {
             }
             $.ajax({
                 type: "POST",
-                url: '/Master/UpdateProduct',
+                url: '/Admin/UpdateProduct',
                 dataType: 'json',
                 data: JSON.stringify(data),
                 contentType: "application/json;charset=utf-8",
@@ -953,9 +903,7 @@ $(function () {
                 }
             });
         }
-
-
-    });
+    }
     $(document).on('click', '.btn-product-delete', (event) => {
         const value = $(event.currentTarget).data('id');
         DeleteProduct(value);
@@ -972,7 +920,7 @@ $(function () {
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: '/Master/DeleteProduct?id=' + Id + '',
+                    url: '/Admin/DeleteProduct?id=' + Id + '',
                     type: "POST",
                     contentType: "application/json;charset=utf-8",
                     dataType: "json",
@@ -992,324 +940,4 @@ $(function () {
             }
         });
     }
-    /*--------------------------------------------------------------- Stock Details--------------------------------------------*/
-    //---------get Records----------//
-    $('a[href="#StockDetail"]').on('click', function () {
-        LoadProductForStock();
-        LoadStocks();
-    });
-    function LoadProductForStock() {
-        productId.empty();
-        var defaultOption = $('<option></option>').val('').text('--Select Option--');
-        productId.append(defaultOption);
-        $.ajax({
-            url: "/Master/GetProductsWhichNotInStock",
-            type: "GET",
-            contentType: "application/json;charset=utf-8",
-            dataType: "json",
-            success: function (result) {
-                $.each(result.products, function (key, item) {
-                    var option = $('<option></option>').val(item.ProductId).text(item.ProductName);
-                    productId.append(option);
-                });
-            },
-            error: function (errormessage) {
-                console.log(errormessage)
-            }
-        });
-    }
-    function LoadStocks() {
-        $('#loader').show();
-        $('.tblStock').empty();
-       
-        $.ajax({
-            url: "/Master/GetStocks",
-            type: "GET",
-            contentType: "application/json;charset=utf-8",
-            dataType: "json",
-            success: function (result) {
-                $('#loader').hide();
-                var html = '';
-                html += '<table class="table table-bordered table-hover text-center mt-1 StockTable" style="width:100%">';
-                html += '<thead>'
-                html += '<tr>'
-                html += '<th hidden>Stock Id</th>'
-                html += '<th>Product Name</th>'
-                html += '<th>Opening Qty</th>'
-                html += '<th>Rate</th>'
-                html += '<th>Amount</th>'
-                html += '<th>Avilable Qty</th>'
-                html += '<th>Min Qty</th>'
-                html += '<th>Max Qty</th>'
-                html += '<th>Action</th>'
-                html += '</tr>'
-                html += '</thead>'
-                html += '<tbody>';
-                if (result.Stocks !== null) {
-                    $.each(result.Stocks, function (key, item) {
-                        html += '<tr>';
-                        html += '<td hidden>' + item.StockId + '</td>';
-                        html += '<td>' + item.Product.ProductName + '</td>';
-                        html += '<td>' + item.OpeningStock + '</td>';
-                        html += '<td>' + item.Rate + '</td>';
-                        html += '<td>' + item.Amount + '</td>';
-                        if (item.AvilableStock < item.MinQty) {
-                            html += '<td class="bg-danger text-white">' + item.AvilableStock + '</td>';
-                        }
-                        else {
-                            html += '<td>' + item.AvilableStock + '</td>';
-                        }
-                        html += '<td>' + item.MinQty + '</td>';
-                        html += '<td>' + item.MaxQty + '</td>';
-                        html += '<td style="background-color:#ffe6e6;">';
-                        html += '<button class="btn btn-primary btn-link btn-sm btn-stock-edit"   id="btnStockEdit_' + item.StockId + '" data-id="' + item.StockId + '" data-toggle="modal" data-target="#modal-edit-Stock" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-edit"></i></button>';
-                        html += ' <button class="btn btn-primary btn-link btn-sm btn-stock-delete" id="btnStockDelete_' + item.StockId + '"   data-id="' + item.StockId + '" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button>';
-                        html += '</td>';
-                        html += '</tr >';
-                    });
-                }
-                else {
-                    html += '<tr>';
-                    html += '<td colspan="7">No record</td>';
-                    html += '</tr>';
-                }
-
-                html += ' </tbody>';
-                html += '</table >';
-                $('.tblStock').html(html);
-                if (!$.fn.DataTable.isDataTable('.StockTable')) {
-                    $('.StockTable').DataTable({
-                        "paging": true,
-                        "lengthChange": false,
-                        "searching": true,
-                        "ordering": true,
-                        "info": true,
-                        "autoWidth": false,
-                        "responsive": true,
-                        "dom": '<"row"<"col-md-2"f><"col-md-2"l>>rtip'
-                    });
-                }
-            },
-            error: function (errormessage) {
-                $('#loader').hide();
-                Swal.fire(
-                    'Error!',
-                    'An error occurred',
-                    'error'
-                );
-            }
-        });
-    }
-    //----------Insert Records----------//
-    $(document).on('click', '.btn-stock-create', CreateStock);
-    function CreateStock() {
-        if (!productId.val() || productId.val() === '--Select Option--') {
-            toastr.error('Product Name Is Required.');
-            productId.focus();
-            return;
-        }
-        else if (!openingQty.val()) {
-            toastr.error('Opening Quantity Is Required.');
-            openingQty.focus();
-            return;
-        } else if (!openingRate.val()) {
-            toastr.error('Opening Rate Is Required.');
-            openingRate.focus();
-            return;
-        }
-        else if (!minQty.val()) {
-            toastr.error('Min Quantity Is Required.');
-            minQty.focus();
-            return;
-        }
-        else if (!maxQty.val()) {
-            toastr.error('Max Quantity Is Required.');
-            maxQty.focus();
-            return;
-        }
-        else {
-            const data = {
-                Fk_ProductId: productId.val(),
-                OpeningStock: openingQty.val(),
-                Rate: openingRate.val(),
-                MinQty: minQty.val(),
-                MaxQty: maxQty.val()
-            };
-            $.ajax({
-                type: "POST",
-                url: '/Master/CreateStock',
-                dataType: 'json',
-                data: JSON.stringify(data),
-                contentType: "application/json;charset=utf-8",
-                success: function (Response) {
-                    if (Response.ResponseCode == 201) {
-                        toastr.success(Response.SuccessMsg);
-                        LoadStocks()
-                        LoadProductForStock();
-                        openingQty.val('');
-                        openingRate.val('');
-                        minQty.val('');
-                        maxQty.val('');
-                        GST.val('');
-                    }
-                    else {
-                        toastr.error(Response.ErrorMsg);
-                    }
-
-                },
-                error: function (error) {
-                    console.log(error);
-                }
-            });
-        }
-
-    }
-    //-------Update Records---------//
-    $(document).on('click', '.btn-stock-edit', (event) => {
-        const value = $(event.currentTarget).data('id');
-        EditStock(value);
-    });
-    function EditStock(Id) {
-        var $tr = $('#btnStockEdit_' + Id + '').closest('tr');
-        var productName = $tr.find('td:eq(1)').text().trim();
-        var openingQty = $tr.find('td:eq(2)').text().trim();
-        var openingRate = $tr.find('td:eq(3)').text().trim();
-        var avilableQty = $tr.find('td:eq(5)').text().trim();
-        var minimumQty = $tr.find('td:eq(6)').text().trim();
-        var maximumQty = $tr.find('td:eq(7)').text().trim();
-
-        //fill Modal data
-        $('input[name="mdlStockId"]').val(Id);
-        $('input[name="mdlOpeningQty"]').val(openingQty);
-        $('input[name="mdlOpeningRate"]').val(openingRate);
-        $('input[name="mdlAvilableQty"]').val(avilableQty);
-        $('input[name="mdlMinQty"]').val(minimumQty);
-        $('input[name="mdlMaxQty"]').val(maximumQty);
-
-        $.ajax({
-            url: "/Master/GetAllProducts",
-            type: "GET",
-            contentType: "application/json;charset=utf-8",
-            dataType: "json",
-            success: function (result) {
-                var selectElement = $('select[name="mdlProductId"]');
-                if (result.ResponseCode == 302) {
-                    selectElement.empty();
-                    $.each(result.products, function (key, item) {
-                        var option = $('<option></option>').val(item.ProductId).text(item.ProductName);
-                        if (item.ProductName === productName) {
-                            option.attr('selected', 'selected'); // Set selected attribute
-                        }
-                        selectElement.append(option);
-                    });
-
-                }
-            },
-            error: function (errormessage) {
-                console.log(errormessage)
-            }
-        });
-    }
-    $('#modal-edit-Stock').on('click', '.stock', (event) => {
-        if (!mdlStockId.val()) {
-            $('input[name="mdlStockId"]').css('border-color', 'red');
-            return;
-        } else if (!mdlOpeningQty.val()) {
-            $('input[name="mdlOpeningQty"]').css('border-color', 'red');
-            return;
-        } else if (!mdlOpeningRate.val()) {
-            $('input[name="mdlOpeningRate"]').css('border-color', 'red');
-            return;
-        } else if (!mdlAvilableQty.val()) {
-            $('input[name="mdlAvilableQty"]').css('border-color', 'red');
-            return;
-        } else if (!mdlMinQty.val()) {
-            $('input[name="mdlMinQty"]').css('border-color', 'red');
-            return;
-        } else if (!mdlMaxQty.val()) {
-            $('input[name="mdlMaxQty"]').css('border-color', 'red');
-            return;
-        } else {
-            const data = {
-                StockId: $('input[name="mdlStockId"]').val(),
-                Fk_ProductId: $('select[name="mdlProductId"]').val(),
-                OpeningStock: $('input[name="mdlOpeningQty"]').val(),
-                Rate: $('input[name="mdlOpeningRate"]').val(),
-                AvilableStock: $('input[name="mdlAvilableQty"]').val(),
-                MinQty: $('input[name="mdlMinQty"]').val(),
-                MaxQty: $('input[name="mdlMaxQty"]').val(),
-            }
-            $.ajax({
-                type: "POST",
-                url: '/Master/UpdateStock',
-                dataType: 'json',
-                data: JSON.stringify(data),
-                contentType: "application/json;charset=utf-8",
-                success: function (Response) {
-                    $('#modal-edit-Stock').modal('hide');
-
-                    if (Response.ResponseCode == 200) {
-                        toastr.success(Response.SuccessMsg);
-                    }
-                    else {
-                        toastr.error(Response.ErrorMsg);
-                    }
-                    LoadStocks();
-                },
-                error: function (error) {
-                    console.log(error);
-                }
-            });
-        }
-       
-    });
-
-    //-----------Delete Records-------//
-    $(document).on('click', '.btn-stock-delete', (event) => {
-        const value = $(event.currentTarget).data('id');
-        DeleteStock(value);
-    });
-    function DeleteStock(Id) {
-        Swal.fire({
-            title: 'Are you sure?',
-            text: "You won't be able to revert this!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, delete it!'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax({
-                    url: '/Master/DeleteStock?id=' + Id + '',
-                    type: "POST",
-                    contentType: "application/json;charset=utf-8",
-                    dataType: "json",
-                    success: function (result) {
-                        if (result.ResponseCode == 200) {
-                            toastr.success(result.SuccessMsg);
-                        }
-                        else {
-                            toastr.error(result.ErrorMsg);
-                        }
-                        LoadStocks();
-                    },
-                    error: function (error) {
-                        console.log(error);
-                    }
-                });
-            }
-        });
-    }
 })
-
-
-
-
-
-
-
-
-
-
-

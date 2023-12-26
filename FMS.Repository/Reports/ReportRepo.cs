@@ -10,7 +10,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Globalization;
 using System.Text;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace FMS.Repository.Reports
 {
@@ -43,56 +42,61 @@ namespace FMS.Repository.Reports
                     {
                         Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
                         Guid FinancialYearId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
-                        Models = await _appDbContext.Products.Where(s => s.Fk_ProductTypeId == requestData.ProductTypeId).Select(s => new StockReportModel
-                        {
-                            ProductName = s.ProductName,
-                            DamageQty = s.DamageTransactions != null ? s.DamageTransactions.Where(d => d.Fk_FinancialYearId == FinancialYearId && d.Fk_BranchId == BranchId && d.TransactionDate >= convertedFromDate && d.TransactionDate <= convertedToDate).Select(i => i.Quantity).Sum() : 0,
-                            OutwardQty = s.OutwardSupplyTransactions != null ? s.OutwardSupplyTransactions.Where(d => d.Fk_FinancialYearId == FinancialYearId && d.Fk_BranchId == BranchId && d.TransactionDate >= convertedFromDate && d.TransactionDate <= convertedToDate).Select(i => i.Quantity).Sum() : 0,
-                            InwardQty = s.InwardSupplyTransactions != null ? s.InwardSupplyTransactions.Where(d => d.Fk_FinancialYearId == FinancialYearId && d.Fk_BranchId == BranchId && d.TransactionDate >= convertedFromDate && d.TransactionDate <= convertedToDate).Select(i => i.Quantity).Sum() : 0,
-                            SalesQty = s.SalesTransactions != null ? s.SalesTransactions.Where(d => d.Fk_FinancialYearId == FinancialYearId && d.Fk_BranchId == BranchId && d.TransactionDate >= convertedFromDate && d.TransactionDate <= convertedToDate).Select(i => i.Quantity).Sum() : 0,
-                            SalesReturnQty = s.SalesReturnTransactions != null ? s.SalesReturnTransactions.Where(d => d.Fk_FinancialYearId == FinancialYearId && d.Fk_BranchId == BranchId && d.TransactionDate >= convertedFromDate && d.TransactionDate <= convertedToDate).Select(i => i.Quantity).Sum() : 0,
-                            PurchaseQty = s.PurchaseTransactions != null ? s.PurchaseTransactions.Where(d => d.Fk_FinancialYearId == FinancialYearId && d.Fk_BranchId == BranchId && d.TransactionDate >= convertedFromDate && d.TransactionDate <= convertedToDate).Select(i => i.Quantity).Sum() : 0,
-                            PurchaseReturnQty = s.PurchaseReturnTransactions != null ? s.PurchaseReturnTransactions.Where(d => d.Fk_FinancialYearId == FinancialYearId && d.Fk_BranchId == BranchId && d.TransactionDate >= convertedFromDate && d.TransactionDate <= convertedToDate).Select(i => i.Quantity).Sum() : 0,
-                            ProductionEntryQty = s.ProductionEntryTransactions != null ? s.ProductionEntryTransactions.Where(d => d.Fk_FinancialYearId == FinancialYearId && d.Fk_BranchId == BranchId && d.TransactionDate >= convertedFromDate && d.TransactionDate <= convertedToDate).Select(i => i.Quantity).Sum() : 0,
-                            ProductionQty = s.ProductionEntries != null ? s.ProductionEntries.Where(d => d.Fk_FinancialYearId == FinancialYearId && d.FK_BranchId == BranchId && d.ProductionDate >= convertedFromDate && d.ProductionDate <= convertedToDate).Select(i => i.Quantity).Sum() : 0,
-                            OpeningQty =
-                         (s.PurchaseTransactions != null ? s.PurchaseTransactions.Where(p => p.Fk_FinancialYearId == FinancialYearId && p.Fk_BranchId == BranchId && p.TransactionDate < convertedFromDate).Sum(p => p.Quantity) : 0)
-                       + (s.ProductionEntries != null ? s.ProductionEntries.Where(pe => pe.Fk_FinancialYearId == FinancialYearId && pe.FK_BranchId == BranchId && pe.ProductionDate < convertedFromDate).Sum(pe => pe.Quantity) : 0)
-                       + (s.SalesReturnTransactions != null ? s.SalesReturnTransactions.Where(d => d.Fk_FinancialYearId == FinancialYearId && d.Fk_BranchId == BranchId && d.TransactionDate < convertedFromDate).Select(i => i.Quantity).Sum() : 0)
-                       + (s.InwardSupplyTransactions != null ? s.InwardSupplyTransactions.Where(d => d.Fk_FinancialYearId == FinancialYearId && d.Fk_BranchId == BranchId && d.TransactionDate < convertedFromDate).Select(i => i.Quantity).Sum() : 0)
-                       - (s.PurchaseReturnTransactions != null ? s.PurchaseReturnTransactions.Where(d => d.Fk_FinancialYearId == FinancialYearId && d.Fk_BranchId == BranchId && d.TransactionDate < convertedFromDate).Select(i => i.Quantity).Sum() : 0)
-                       - (s.SalesTransactions != null ? s.SalesTransactions.Where(d => d.Fk_FinancialYearId == FinancialYearId && d.Fk_BranchId == BranchId && d.TransactionDate < convertedFromDate).Select(i => i.Quantity).Sum() : 0)
-                       - (s.DamageTransactions != null ? s.DamageTransactions.Where(d => d.Fk_FinancialYearId == FinancialYearId && d.Fk_BranchId == BranchId && d.TransactionDate < convertedFromDate).Select(i => i.Quantity).Sum() : 0)
-                       - (s.OutwardSupplyTransactions != null ? s.OutwardSupplyTransactions.Where(d => d.Fk_FinancialYearId == FinancialYearId && d.Fk_BranchId == BranchId && d.TransactionDate < convertedFromDate).Select(i => i.Quantity).Sum() : 0)
-                       - (s.ProductionEntryTransactions != null ? s.ProductionEntryTransactions.Where(d => d.Fk_FinancialYearId == FinancialYearId && d.Fk_BranchId == BranchId && d.TransactionDate < convertedFromDate).Select(i => i.Quantity).Sum() : 0)
-                        }).ToListAsync();
+                        Models = await _appDbContext.Products
+                           .Include(p => p.DamageTransactions.Where(d => d.Fk_FinancialYearId == FinancialYearId && d.Fk_BranchId == BranchId  && d.TransactionDate <= convertedToDate))
+                           .Include(p => p.OutwardSupplyTransactions.Where(d => d.Fk_FinancialYearId == FinancialYearId && d.Fk_BranchId == BranchId && d.TransactionDate <= convertedToDate))
+                           .Include(p => p.InwardSupplyTransactions.Where(d => d.Fk_FinancialYearId == FinancialYearId && d.Fk_BranchId == BranchId && d.TransactionDate <= convertedToDate))
+                           .Include(p => p.SalesTransactions.Where(d => d.Fk_FinancialYearId == FinancialYearId && d.Fk_BranchId == BranchId && d.TransactionDate <= convertedToDate))
+                           .Include(p => p.SalesReturnTransactions.Where(d => d.Fk_FinancialYearId == FinancialYearId && d.Fk_BranchId == BranchId  && d.TransactionDate <= convertedToDate))
+                           .Include(p => p.PurchaseTransactions.Where(d => d.Fk_FinancialYearId == FinancialYearId && d.Fk_BranchId == BranchId  && d.TransactionDate <= convertedToDate))
+                           .Include(p => p.PurchaseReturnTransactions.Where(d => d.Fk_FinancialYearId == FinancialYearId && d.Fk_BranchId == BranchId  && d.TransactionDate <= convertedToDate))
+                           .Include(p => p.ProductionEntryTransactions.Where(d => d.Fk_FinancialYearId == FinancialYearId && d.Fk_BranchId == BranchId  && d.TransactionDate <= convertedToDate))
+                           .Include(p => p.ProductionEntries.Where(d => d.Fk_FinancialYearId == FinancialYearId && d.FK_BranchId == BranchId  && d.ProductionDate <= convertedToDate))
+                           .Where(s => s.Fk_ProductTypeId == requestData.ProductTypeId)
+                           .Select(s => new StockReportModel
+                           {
+                               ProductName = s.ProductName,
+                               StockQty = s.Stocks.Where(x => x.Fk_ProductId == s.ProductId && x.Fk_BranchId == BranchId && x.Fk_FinancialYear == FinancialYearId).Select(i => i.OpeningStock).SingleOrDefault(),
+                               DamageQty = s.DamageTransactions.Where(d => d.TransactionDate >= convertedFromDate).Select(i => i.Quantity).Sum(),
+                               OutwardQty = s.OutwardSupplyTransactions.Where(d => d.TransactionDate >= convertedFromDate).Select(i => i.Quantity).Sum(),
+                               InwardQty = s.InwardSupplyTransactions.Where(d => d.TransactionDate >= convertedFromDate).Select(i => i.Quantity).Sum(),
+                               SalesQty = s.SalesTransactions.Where(d => d.TransactionDate >= convertedFromDate).Select(i => i.Quantity).Sum(),
+                               SalesReturnQty = s.SalesReturnTransactions.Select(i => i.Quantity).Sum(),
+                               PurchaseQty = s.PurchaseTransactions.Where(d => d.TransactionDate >= convertedFromDate).Select(i => i.Quantity).Sum(),
+                               PurchaseReturnQty = s.PurchaseReturnTransactions.Where(d => d.TransactionDate >= convertedFromDate).Select(i => i.Quantity).Sum(),
+                               ProductionEntryQty = s.ProductionEntryTransactions.Where(d => d.TransactionDate >= convertedFromDate).Select(i => i.Quantity).Sum(),
+                               ProductionQty = s.ProductionEntries.Where(d => d.ProductionDate >= convertedFromDate).Select(i => i.Quantity).Sum(),
+                               OpeningQty = (s.PurchaseTransactions.Where(d => d.TransactionDate <= convertedFromDate).Sum(p => p.Quantity) + s.ProductionEntries.Where(d => d.ProductionDate <= convertedFromDate).Sum(pe => pe.Quantity) + s.SalesReturnTransactions.Where(d => d.TransactionDate <= convertedFromDate).Sum(i => i.Quantity) + s.InwardSupplyTransactions.Where(d => d.TransactionDate <= convertedFromDate).Sum(i => i.Quantity)) - (s.PurchaseReturnTransactions.Where(d => d.TransactionDate <= convertedFromDate).Sum(i => i.Quantity) + s.SalesTransactions.Where(d => d.TransactionDate <= convertedFromDate).Sum(i => i.Quantity) + s.DamageTransactions.Where(d => d.TransactionDate <= convertedFromDate).Sum(i => i.Quantity) + s.OutwardSupplyTransactions.Where(d => d.TransactionDate <= convertedFromDate).Sum(i => i.Quantity) + s.ProductionEntryTransactions.Where(d => d.TransactionDate <= convertedFromDate).Sum(i => i.Quantity))
+                           }).ToListAsync();
                     }
                     else
                     {
                         var ListFinancialYearId = await _appDbContext.FinancialYears.Where(x => x.Financial_Year == _HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId")).Select(x => x.FinancialYearId).ToListAsync();
-                        Models = await _appDbContext.Products.Where(s => s.Fk_ProductTypeId == requestData.ProductTypeId).Select(s => new StockReportModel
-                        {
-                            ProductName = s.ProductName,
-                            DamageQty = s.DamageTransactions.Where(d => ListFinancialYearId.Contains(d.Fk_FinancialYearId) && d.TransactionDate >= convertedFromDate && d.TransactionDate <= convertedToDate).Select(i => i.Quantity).Sum(),
-                            OutwardQty = s.OutwardSupplyTransactions.Where(d => ListFinancialYearId.Contains(d.Fk_FinancialYearId) && d.TransactionDate >= convertedFromDate && d.TransactionDate <= convertedToDate).Select(i => i.Quantity).Sum(),
-                            InwardQty = s.InwardSupplyTransactions.Where(d => ListFinancialYearId.Contains(d.Fk_FinancialYearId) && d.TransactionDate >= convertedFromDate && d.TransactionDate <= convertedToDate).Select(i => i.Quantity).Sum(),
-                            SalesQty = s.SalesTransactions.Where(d => ListFinancialYearId.Contains(d.Fk_FinancialYearId) && d.TransactionDate >= convertedFromDate && d.TransactionDate <= convertedToDate).Select(i => i.Quantity).Sum(),
-                            SalesReturnQty = s.SalesReturnTransactions.Where(d => ListFinancialYearId.Contains(d.Fk_FinancialYearId) && d.TransactionDate >= convertedFromDate && d.TransactionDate <= convertedToDate).Select(i => i.Quantity).Sum(),
-                            PurchaseQty = s.PurchaseTransactions.Where(d => ListFinancialYearId.Contains(d.Fk_FinancialYearId) && d.TransactionDate >= convertedFromDate && d.TransactionDate <= convertedToDate).Select(i => i.Quantity).Sum(),
-                            PurchaseReturnQty = s.PurchaseReturnTransactions.Where(d => ListFinancialYearId.Contains(d.Fk_FinancialYearId) && d.TransactionDate >= convertedFromDate && d.TransactionDate <= convertedToDate).Select(i => i.Quantity).Sum(),
-                            ProductionEntryQty = s.ProductionEntryTransactions.Where(d => ListFinancialYearId.Contains(d.Fk_FinancialYearId) && d.TransactionDate >= convertedFromDate && d.TransactionDate <= convertedToDate).Select(i => i.Quantity).Sum(),
-                            ProductionQty = s.ProductionEntries.Where(d => ListFinancialYearId.Contains(d.Fk_FinancialYearId) && d.ProductionDate >= convertedFromDate && d.ProductionDate <= convertedToDate).Select(i => i.Quantity).Sum(),
-                            OpeningQty =
-                         s.PurchaseTransactions.Where(p => ListFinancialYearId.Contains(p.Fk_FinancialYearId) && p.TransactionDate < convertedFromDate).Select(p => p.Quantity).Sum()
-                      + s.ProductionEntries.Where(pe => ListFinancialYearId.Contains(pe.Fk_FinancialYearId) && pe.ProductionDate < convertedFromDate).Select(pe => pe.Quantity).Sum()
-                      + s.SalesReturnTransactions.Where(d => ListFinancialYearId.Contains(d.Fk_FinancialYearId) && d.TransactionDate < convertedFromDate).Select(i => i.Quantity).Sum()
-                      + s.InwardSupplyTransactions.Where(d => ListFinancialYearId.Contains(d.Fk_FinancialYearId) && d.TransactionDate < convertedFromDate).Select(i => i.Quantity).Sum()
-                      - s.PurchaseReturnTransactions.Where(d => ListFinancialYearId.Contains(d.Fk_FinancialYearId) && d.TransactionDate < convertedFromDate).Select(i => i.Quantity).Sum()
-                      - s.SalesTransactions.Where(d => ListFinancialYearId.Contains(d.Fk_FinancialYearId) && d.TransactionDate < convertedFromDate).Select(i => i.Quantity).Sum()
-                      - s.DamageTransactions.Where(d => ListFinancialYearId.Contains(d.Fk_FinancialYearId) && d.TransactionDate < convertedFromDate).Select(i => i.Quantity).Sum()
-                      - s.OutwardSupplyTransactions.Where(d => ListFinancialYearId.Contains(d.Fk_FinancialYearId) && d.TransactionDate < convertedFromDate).Select(i => i.Quantity).Sum()
-                      - s.ProductionEntryTransactions.Where(d => ListFinancialYearId.Contains(d.Fk_FinancialYearId) && d.TransactionDate < convertedFromDate).Select(i => i.Quantity).Sum()
-                        }).ToListAsync();
+                        Models = await _appDbContext.Products
+                            .Include(p => p.DamageTransactions.Where(d => ListFinancialYearId.Contains(d.Fk_FinancialYearId) && d.TransactionDate >= convertedFromDate && d.TransactionDate <= convertedToDate))
+                            .Include(p => p.OutwardSupplyTransactions.Where(d => ListFinancialYearId.Contains(d.Fk_FinancialYearId) && d.TransactionDate >= convertedFromDate && d.TransactionDate <= convertedToDate))
+                            .Include(p => p.InwardSupplyTransactions.Where(d => ListFinancialYearId.Contains(d.Fk_FinancialYearId) && d.TransactionDate >= convertedFromDate && d.TransactionDate <= convertedToDate))
+                            .Include(p => p.SalesTransactions.Where(d => ListFinancialYearId.Contains(d.Fk_FinancialYearId) && d.TransactionDate >= convertedFromDate && d.TransactionDate <= convertedToDate))
+                            .Include(p => p.SalesReturnTransactions.Where(d => ListFinancialYearId.Contains(d.Fk_FinancialYearId) && d.TransactionDate >= convertedFromDate && d.TransactionDate <= convertedToDate))
+                            .Include(p => p.PurchaseTransactions.Where(d => ListFinancialYearId.Contains(d.Fk_FinancialYearId) && d.TransactionDate >= convertedFromDate && d.TransactionDate <= convertedToDate))
+                            .Include(p => p.PurchaseReturnTransactions.Where(d => ListFinancialYearId.Contains(d.Fk_FinancialYearId) && d.TransactionDate >= convertedFromDate && d.TransactionDate <= convertedToDate))
+                            .Include(p => p.ProductionEntryTransactions.Where(d => ListFinancialYearId.Contains(d.Fk_FinancialYearId) && d.TransactionDate >= convertedFromDate && d.TransactionDate <= convertedToDate))
+                            .Include(p => p.ProductionEntries.Where(d => ListFinancialYearId.Contains(d.Fk_FinancialYearId) && d.ProductionDate >= convertedFromDate && d.ProductionDate <= convertedToDate))
+                            .Where(s => s.Fk_ProductTypeId == requestData.ProductTypeId)
+                            .Select(s => new StockReportModel
+                            {
+                                ProductName = s.ProductName,
+                                DamageQty = s.DamageTransactions.Select(i => i.Quantity).Sum(),
+                                OutwardQty = s.OutwardSupplyTransactions.Select(i => i.Quantity).Sum(),
+                                InwardQty = s.InwardSupplyTransactions.Select(i => i.Quantity).Sum(),
+                                SalesQty = s.SalesTransactions.Select(i => i.Quantity).Sum(),
+                                SalesReturnQty = s.SalesReturnTransactions.Select(i => i.Quantity).Sum(),
+                                PurchaseQty = s.PurchaseTransactions.Select(i => i.Quantity).Sum(),
+                                PurchaseReturnQty = s.PurchaseReturnTransactions.Select(i => i.Quantity).Sum(),
+                                ProductionEntryQty = s.ProductionEntryTransactions.Select(i => i.Quantity).Sum(),
+                                ProductionQty = s.ProductionEntries.Select(i => i.Quantity).Sum(),
+                                OpeningQty = (s.PurchaseTransactions.Sum(p => p.Quantity) + s.ProductionEntries.Sum(pe => pe.Quantity) + s.SalesReturnTransactions.Sum(i => i.Quantity) + s.InwardSupplyTransactions.Sum(i => i.Quantity)) - (s.PurchaseReturnTransactions.Sum(i => i.Quantity) + s.SalesTransactions.Sum(i => i.Quantity) + s.DamageTransactions.Sum(i => i.Quantity) + s.OutwardSupplyTransactions.Sum(i => i.Quantity) + s.ProductionEntryTransactions.Sum(i => i.Quantity))
+                            }).ToListAsync();
                     }
                     if (Models.Count > 0)
                     {
@@ -122,89 +126,86 @@ namespace FMS.Repository.Reports
             try
             {
                 _Result.IsSuccess = false;
-                List<ProductModel> Models = new();
+                ProductModel obj = new();
                 if (DateTime.TryParseExact(requestData.FromDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedFromDate) && DateTime.TryParseExact(requestData.ToDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedToDate))
                 {
-                    var Query = _appDbContext.Products.Include(p => p.DamageTransactions)
-                        .Include(p => p.OutwardSupplyTransactions)
-                        .Include(p => p.InwardSupplyTransactions)
-                        .Include(p => p.SalesTransactions)
-                        .Include(p => p.SalesReturnTransactions)
-                        .Include(p => p.PurchaseTransactions)
-                        .Include(p => p.PurchaseReturnTransactions)
-                        .Include(p => p.ProductionEntryTransactions)
-                        .Include(p => p.ProductionEntries);
-
                     if (_HttpContextAccessor.HttpContext.Session.GetString("BranchId") != "All")
                     {
                         Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
                         Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
-                        Models = await Query.Where(p => p.Fk_ProductTypeId == requestData.ProductTypeId && p.ProductId == requestData.ProductId).Select(s => new ProductModel
-                        {
 
-                            ProductName = s.ProductName,
-                            DamageTransactions = s.DamageTransactions != null ? s.DamageTransactions.Where(d => d.Fk_FinancialYearId == FinancialYear && d.TransactionDate >= convertedFromDate && d.TransactionDate <= convertedToDate).Select(d => new DamageTransactionModel { TransactionDate = d.TransactionDate, TransactionNo = d.TransactionNo, Quantity = d.Quantity }).ToList() : null,
-                            OutwardSupplyTransactions = s.OutwardSupplyTransactions != null ? s.OutwardSupplyTransactions.Where(o => o.Fk_FinancialYearId == FinancialYear && o.Fk_BranchId == BranchId && o.TransactionDate >= convertedFromDate && o.TransactionDate <= convertedToDate).Select(o => new OutwardSupplyTransactionModel { TransactionDate = o.TransactionDate, TransactionNo = o.TransactionNo, Quantity = o.Quantity }).ToList() : null,
-                            InwardSupplyTransactions = s.InwardSupplyTransactions != null ? s.InwardSupplyTransactions.Where(i => i.Fk_FinancialYearId == FinancialYear && i.Fk_BranchId == BranchId && i.TransactionDate >= convertedFromDate && i.TransactionDate <= convertedToDate).Select(i => new InwardSupplyTransactionModel { TransactionDate = i.TransactionDate, TransactionNo = i.TransactionNo, Quantity = i.Quantity }).ToList() : null,
-                            SalesTransactions = s.SalesTransactions != null ? s.SalesTransactions.Where(s => s.Fk_FinancialYearId == FinancialYear && s.Fk_BranchId == BranchId && s.TransactionDate >= convertedFromDate && s.TransactionDate <= convertedToDate).Select(s => new SalesTransactionModel { TransactionDate = s.TransactionDate, TransactionNo = s.TransactionNo, Quantity = s.Quantity }).ToList() : null,
-                            SalesReturnTransactions = s.SalesReturnTransactions != null ? s.SalesReturnTransactions.Where(sr => sr.Fk_FinancialYearId == FinancialYear && sr.Fk_BranchId == BranchId && sr.TransactionDate >= convertedFromDate && sr.TransactionDate <= convertedToDate).Select(sr => new SalesReturnTransactionModel { TransactionDate = sr.TransactionDate, TransactionNo = sr.TransactionNo, Quantity = sr.Quantity }).ToList() : null,
-                            PurchaseTransactions = s.PurchaseTransactions != null ? s.PurchaseTransactions.Where(p => p.Fk_FinancialYearId == FinancialYear && p.Fk_BranchId == BranchId && p.TransactionDate >= convertedFromDate && p.TransactionDate <= convertedToDate).Select(p => new PurchaseTransactionModel { TransactionDate = p.TransactionDate, TransactionNo = p.TransactionNo, Quantity = p.Quantity }).ToList() : null,
-                            PurchaseReturnTransactions = s.PurchaseReturnTransactions != null ? s.PurchaseReturnTransactions.Where(pr => pr.Fk_FinancialYearId == FinancialYear && pr.Fk_BranchId == BranchId && pr.TransactionDate >= convertedFromDate && pr.TransactionDate <= convertedToDate).Select(pr => new PurchaseReturnTransactionModel { TransactionDate = pr.TransactionDate, TransactionNo = pr.TransactionNo, Quantity = pr.Quantity }).ToList() : null,
-                            ProductionEntryTransactions = s.ProductionEntryTransactions != null ? s.ProductionEntryTransactions.Where(pet => pet.Fk_FinancialYearId == FinancialYear && pet.Fk_BranchId == BranchId && pet.TransactionDate >= convertedFromDate && pet.TransactionDate <= convertedToDate).Select(pet => new ProductionEntryTransactionModel { TransactionDate = pet.TransactionDate, TransactionNo = pet.TransactionNo, Quantity = pet.Quantity }).ToList() : null,
-                            ProductionEntries = s.ProductionEntries != null ? s.ProductionEntries.Where(pe => pe.Fk_FinancialYearId == FinancialYear && pe.FK_BranchId == BranchId && pe.ProductionDate >= convertedFromDate && pe.ProductionDate <= convertedToDate).Select(pe => new ProductionEntryModel { ProductionDate = pe.ProductionDate, ProductionNo = pe.ProductionNo, Quantity = pe.Quantity }).ToList() : null,
-                            OpeningQty =
-                         (s.PurchaseTransactions != null ? s.PurchaseTransactions.Where(p => p.Fk_FinancialYearId == FinancialYear && p.Fk_BranchId == BranchId && p.TransactionDate < convertedFromDate).Sum(p => p.Quantity) : 0)
-                       + (s.ProductionEntries != null ? s.ProductionEntries.Where(pe => pe.Fk_FinancialYearId == FinancialYear && pe.FK_BranchId == BranchId && pe.ProductionDate < convertedFromDate).Sum(pe => pe.Quantity) : 0)
-                       + (s.SalesReturnTransactions != null ? s.SalesReturnTransactions.Where(d => d.Fk_FinancialYearId == FinancialYear && d.Fk_BranchId == BranchId && d.TransactionDate < convertedFromDate).Select(i => i.Quantity).Sum() : 0)
-                       + (s.InwardSupplyTransactions != null ? s.InwardSupplyTransactions.Where(d => d.Fk_FinancialYearId == FinancialYear && d.Fk_BranchId == BranchId && d.TransactionDate < convertedFromDate).Select(i => i.Quantity).Sum() : 0)
-                       - (s.PurchaseReturnTransactions != null ? s.PurchaseReturnTransactions.Where(d => d.Fk_FinancialYearId == FinancialYear && d.Fk_BranchId == BranchId && d.TransactionDate < convertedFromDate).Select(i => i.Quantity).Sum() : 0)
-                       - (s.SalesTransactions != null ? s.SalesTransactions.Where(d => d.Fk_FinancialYearId == FinancialYear && d.Fk_BranchId == BranchId && d.TransactionDate < convertedFromDate).Select(i => i.Quantity).Sum() : 0)
-                       - (s.DamageTransactions != null ? s.DamageTransactions.Where(d => d.Fk_FinancialYearId == FinancialYear && d.Fk_BranchId == BranchId && d.TransactionDate < convertedFromDate).Select(i => i.Quantity).Sum() : 0)
-                       - (s.OutwardSupplyTransactions != null ? s.OutwardSupplyTransactions.Where(d => d.Fk_FinancialYearId == FinancialYear && d.Fk_BranchId == BranchId && d.TransactionDate < convertedFromDate).Select(i => i.Quantity).Sum() : 0)
-                       - (s.ProductionEntryTransactions != null ? s.ProductionEntryTransactions.Where(d => d.Fk_FinancialYearId == FinancialYear && d.Fk_BranchId == BranchId && d.TransactionDate < convertedFromDate).Select(i => i.Quantity).Sum() : 0)
-                        }).ToListAsync();
+                        var Query = _appDbContext.Products
+                        .Include(p => p.DamageTransactions.Where(d => d.Fk_FinancialYearId == FinancialYear && d.TransactionDate >= convertedFromDate && d.TransactionDate <= convertedToDate))
+                        .Include(p => p.OutwardSupplyTransactions.Where(o => o.Fk_FinancialYearId == FinancialYear && o.Fk_BranchId == BranchId && o.TransactionDate >= convertedFromDate && o.TransactionDate <= convertedToDate))
+                        .Include(p => p.InwardSupplyTransactions.Where(i => i.Fk_FinancialYearId == FinancialYear && i.Fk_BranchId == BranchId && i.TransactionDate >= convertedFromDate && i.TransactionDate <= convertedToDate))
+                        .Include(p => p.SalesTransactions.Where(s => s.Fk_FinancialYearId == FinancialYear && s.Fk_BranchId == BranchId && s.TransactionDate >= convertedFromDate && s.TransactionDate <= convertedToDate))
+                        .Include(p => p.SalesReturnTransactions.Where(sr => sr.Fk_FinancialYearId == FinancialYear && sr.Fk_BranchId == BranchId && sr.TransactionDate >= convertedFromDate && sr.TransactionDate <= convertedToDate))
+                        .Include(p => p.PurchaseTransactions.Where(p => p.Fk_FinancialYearId == FinancialYear && p.Fk_BranchId == BranchId && p.TransactionDate >= convertedFromDate && p.TransactionDate <= convertedToDate))
+                        .Include(p => p.PurchaseReturnTransactions.Where(pr => pr.Fk_FinancialYearId == FinancialYear && pr.Fk_BranchId == BranchId && pr.TransactionDate >= convertedFromDate && pr.TransactionDate <= convertedToDate))
+                        .Include(p => p.ProductionEntryTransactions.Where(pet => pet.Fk_FinancialYearId == FinancialYear && pet.Fk_BranchId == BranchId && pet.TransactionDate >= convertedFromDate && pet.TransactionDate <= convertedToDate))
+                        .Include(p => p.ProductionEntries.Where(pe => pe.Fk_FinancialYearId == FinancialYear && pe.FK_BranchId == BranchId && pe.ProductionDate >= convertedFromDate && pe.ProductionDate <= convertedToDate))
+                        .Where(p => p.Fk_ProductTypeId == requestData.ProductTypeId && p.ProductId == requestData.ProductId)
+                         .Select(s => new ProductModel
+                         {
+                             ProductName = s.ProductName,
+                             OpeningStock = s.Stocks.Where(x => x.Fk_ProductId == s.ProductId && x.Fk_BranchId==BranchId && x.Fk_FinancialYear==FinancialYear).Select(i => i.OpeningStock).SingleOrDefault(),
+                             DamageTransactions = s.DamageTransactions.Select(d => new DamageTransactionModel { TransactionDate = d.TransactionDate, TransactionNo = d.TransactionNo, Quantity = d.Quantity }).ToList(),
+                             OutwardSupplyTransactions = s.OutwardSupplyTransactions.Select(o => new OutwardSupplyTransactionModel { TransactionDate = o.TransactionDate, TransactionNo = o.TransactionNo, Quantity = o.Quantity }).ToList(),
+                             InwardSupplyTransactions = s.InwardSupplyTransactions.Select(i => new InwardSupplyTransactionModel { TransactionDate = i.TransactionDate, TransactionNo = i.TransactionNo, Quantity = i.Quantity }).ToList(),
+                             SalesTransactions = s.SalesTransactions.Select(s => new SalesTransactionModel { TransactionDate = s.TransactionDate, TransactionNo = s.TransactionNo, Quantity = s.Quantity }).ToList(),
+                             SalesReturnTransactions = s.SalesReturnTransactions.Select(sr => new SalesReturnTransactionModel { TransactionDate = sr.TransactionDate, TransactionNo = sr.TransactionNo, Quantity = sr.Quantity }).ToList(),
+                             PurchaseTransactions = s.PurchaseTransactions.Select(p => new PurchaseTransactionModel { TransactionDate = p.TransactionDate, TransactionNo = p.TransactionNo, Quantity = p.Quantity }).ToList(),
+                             PurchaseReturnTransactions = s.PurchaseReturnTransactions.Select(pr => new PurchaseReturnTransactionModel { TransactionDate = pr.TransactionDate, TransactionNo = pr.TransactionNo, Quantity = pr.Quantity }).ToList(),
+                             ProductionEntryTransactions = s.ProductionEntryTransactions.Select(pet => new ProductionEntryTransactionModel { TransactionDate = pet.TransactionDate, TransactionNo = pet.TransactionNo, Quantity = pet.Quantity }).ToList(),
+                             ProductionEntries = s.ProductionEntries.Select(pe => new ProductionEntryModel { ProductionDate = pe.ProductionDate, ProductionNo = pe.ProductionNo, Quantity = pe.Quantity }).ToList(),
+                             OpeningQty = (s.PurchaseTransactions.Sum(p => p.Quantity) + s.ProductionEntries.Sum(pe => pe.Quantity) + s.SalesReturnTransactions.Sum(i => i.Quantity) + s.InwardSupplyTransactions.Sum(i => i.Quantity)) - (s.PurchaseReturnTransactions.Sum(i => i.Quantity) + s.SalesTransactions.Sum(i => i.Quantity) + s.DamageTransactions.Sum(i => i.Quantity) + s.OutwardSupplyTransactions.Sum(i => i.Quantity) + s.ProductionEntryTransactions.Sum(i => i.Quantity))
+                         }).SingleOrDefaultAsync();
+                        if (Query != null)
+                        {
+                            _Result.SingleObjData = Query.Result;
+                            _Result.IsSuccess = true;
+                            _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
+                        }
+
                     }
                     else
                     {
                         var ListFinancialYearId = await _appDbContext.FinancialYears.Where(x => x.Financial_Year == _HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId")).Select(x => x.FinancialYearId).ToListAsync();
-                        Models = await Query.Where(p => p.Fk_ProductTypeId == requestData.ProductTypeId && p.ProductId == requestData.ProductId).Select(s => new ProductModel
+                        var Query = _appDbContext.Products
+                       .Include(p => p.DamageTransactions.Where(d => ListFinancialYearId.Contains(d.Fk_FinancialYearId) && d.TransactionDate >= convertedFromDate && d.TransactionDate <= convertedToDate))
+                       .Include(p => p.OutwardSupplyTransactions.Where(o => ListFinancialYearId.Contains(o.Fk_FinancialYearId) && o.TransactionDate >= convertedFromDate && o.TransactionDate <= convertedToDate))
+                       .Include(p => p.InwardSupplyTransactions.Where(i => ListFinancialYearId.Contains(i.Fk_FinancialYearId) && i.TransactionDate >= convertedFromDate && i.TransactionDate <= convertedToDate))
+                       .Include(p => p.SalesTransactions.Where(s => ListFinancialYearId.Contains(s.Fk_FinancialYearId) && s.TransactionDate >= convertedFromDate && s.TransactionDate <= convertedToDate))
+                       .Include(p => p.SalesReturnTransactions.Where(sr => ListFinancialYearId.Contains(sr.Fk_FinancialYearId) && sr.TransactionDate >= convertedFromDate && sr.TransactionDate <= convertedToDate))
+                       .Include(p => p.PurchaseTransactions.Where(p => ListFinancialYearId.Contains(p.Fk_FinancialYearId) && p.TransactionDate >= convertedFromDate && p.TransactionDate <= convertedToDate))
+                       .Include(p => p.PurchaseReturnTransactions.Where(pr => ListFinancialYearId.Contains(pr.Fk_FinancialYearId) && pr.TransactionDate >= convertedFromDate && pr.TransactionDate <= convertedToDate))
+                       .Include(p => p.ProductionEntryTransactions.Where(pet => ListFinancialYearId.Contains(pet.Fk_FinancialYearId) && pet.TransactionDate >= convertedFromDate && pet.TransactionDate <= convertedToDate))
+                       .Include(p => p.ProductionEntries.Where(pe => ListFinancialYearId.Contains(pe.Fk_FinancialYearId) && pe.ProductionDate >= convertedFromDate && pe.ProductionDate <= convertedToDate))
+                       .Where(p => p.Fk_ProductTypeId == requestData.ProductTypeId && p.ProductId == requestData.ProductId)
+                        .Select(s => new ProductModel
                         {
                             ProductName = s.ProductName,
 
-                            DamageTransactions = s.DamageTransactions.Where(d => ListFinancialYearId.Contains(d.Fk_FinancialYearId) && d.TransactionDate >= convertedFromDate && d.TransactionDate <= convertedToDate).Select(d => new DamageTransactionModel { TransactionDate = d.TransactionDate, TransactionNo = d.TransactionNo, Quantity = d.Quantity }).ToList(),
-                            OutwardSupplyTransactions = s.OutwardSupplyTransactions.Where(o => ListFinancialYearId.Contains(o.Fk_FinancialYearId) && o.TransactionDate >= convertedFromDate && o.TransactionDate <= convertedToDate).Select(o => new OutwardSupplyTransactionModel { TransactionDate = o.TransactionDate, TransactionNo = o.TransactionNo, Quantity = o.Quantity }).ToList(),
-                            InwardSupplyTransactions = s.InwardSupplyTransactions.Where(i => ListFinancialYearId.Contains(i.Fk_FinancialYearId) && i.TransactionDate >= convertedFromDate && i.TransactionDate <= convertedToDate).Select(i => new InwardSupplyTransactionModel { TransactionDate = i.TransactionDate, TransactionNo = i.TransactionNo, Quantity = i.Quantity }).ToList(),
-                            SalesTransactions = s.SalesTransactions.Where(s => ListFinancialYearId.Contains(s.Fk_FinancialYearId) && s.TransactionDate >= convertedFromDate && s.TransactionDate <= convertedToDate).Select(s => new SalesTransactionModel { TransactionDate = s.TransactionDate, TransactionNo = s.TransactionNo, Quantity = s.Quantity }).ToList(),
-                            SalesReturnTransactions = s.SalesReturnTransactions.Where(sr => ListFinancialYearId.Contains(sr.Fk_FinancialYearId) && sr.TransactionDate >= convertedFromDate && sr.TransactionDate <= convertedToDate).Select(sr => new SalesReturnTransactionModel { TransactionDate = sr.TransactionDate, TransactionNo = sr.TransactionNo, Quantity = sr.Quantity }).ToList(),
-                            PurchaseTransactions = s.PurchaseTransactions.Where(p => ListFinancialYearId.Contains(p.Fk_FinancialYearId) && p.TransactionDate >= convertedFromDate && p.TransactionDate <= convertedToDate).Select(p => new PurchaseTransactionModel { TransactionDate = p.TransactionDate, TransactionNo = p.TransactionNo, Quantity = p.Quantity }).ToList(),
-                            PurchaseReturnTransactions = s.PurchaseReturnTransactions.Where(pr => ListFinancialYearId.Contains(pr.Fk_FinancialYearId) && pr.TransactionDate >= convertedFromDate && pr.TransactionDate <= convertedToDate).Select(pr => new PurchaseReturnTransactionModel { TransactionDate = pr.TransactionDate, TransactionNo = pr.TransactionNo, Quantity = pr.Quantity }).ToList(),
-                            ProductionEntryTransactions = s.ProductionEntryTransactions.Where(pet => ListFinancialYearId.Contains(pet.Fk_FinancialYearId) && pet.TransactionDate >= convertedFromDate && pet.TransactionDate <= convertedToDate).Select(pet => new ProductionEntryTransactionModel { TransactionDate = pet.TransactionDate, TransactionNo = pet.TransactionNo, Quantity = pet.Quantity }).ToList(),
-                            ProductionEntries = s.ProductionEntries.Where(pe => ListFinancialYearId.Contains(pe.Fk_FinancialYearId) && pe.ProductionDate >= convertedFromDate && pe.ProductionDate <= convertedToDate).Select(pe => new ProductionEntryModel { ProductionDate = pe.ProductionDate, ProductionNo = pe.ProductionNo, Quantity = pe.Quantity }).ToList(),
-                            OpeningQty =
-                                s.PurchaseTransactions.Where(p => ListFinancialYearId.Contains(p.Fk_FinancialYearId) && p.TransactionDate < convertedFromDate).Sum(p => p.Quantity)
-                             + s.ProductionEntries.Where(pe => ListFinancialYearId.Contains(pe.Fk_FinancialYearId) && pe.ProductionDate < convertedFromDate).Sum(pe => pe.Quantity)
-                             + s.SalesReturnTransactions.Where(d => ListFinancialYearId.Contains(d.Fk_FinancialYearId) && d.TransactionDate < convertedFromDate).Select(i => i.Quantity).Sum()
-                             + s.InwardSupplyTransactions.Where(d => ListFinancialYearId.Contains(d.Fk_FinancialYearId) && d.TransactionDate < convertedFromDate).Select(i => i.Quantity).Sum()
-                             - s.PurchaseReturnTransactions.Where(d => ListFinancialYearId.Contains(d.Fk_FinancialYearId) && d.TransactionDate < convertedFromDate).Select(i => i.Quantity).Sum()
-                             - s.SalesTransactions.Where(d => ListFinancialYearId.Contains(d.Fk_FinancialYearId) && d.TransactionDate < convertedFromDate).Select(i => i.Quantity).Sum()
-                             - s.DamageTransactions.Where(d => ListFinancialYearId.Contains(d.Fk_FinancialYearId) && d.TransactionDate < convertedFromDate).Select(i => i.Quantity).Sum()
-                             - s.OutwardSupplyTransactions.Where(d => ListFinancialYearId.Contains(d.Fk_FinancialYearId) && d.TransactionDate < convertedFromDate).Select(i => i.Quantity).Sum()
-                             - s.ProductionEntryTransactions.Where(d => ListFinancialYearId.Contains(d.Fk_FinancialYearId) && d.TransactionDate < convertedFromDate).Select(i => i.Quantity).Sum()
-                        }).ToListAsync();
-                    }
-                    if (Models.Count > 0)
-                    {
-                        if (requestData.ZeroValued == "No")
+                            DamageTransactions = s.DamageTransactions.Select(d => new DamageTransactionModel { TransactionDate = d.TransactionDate, TransactionNo = d.TransactionNo, Quantity = d.Quantity }).ToList(),
+                            OutwardSupplyTransactions = s.OutwardSupplyTransactions.Select(o => new OutwardSupplyTransactionModel { TransactionDate = o.TransactionDate, TransactionNo = o.TransactionNo, Quantity = o.Quantity }).ToList(),
+                            InwardSupplyTransactions = s.InwardSupplyTransactions.Select(i => new InwardSupplyTransactionModel { TransactionDate = i.TransactionDate, TransactionNo = i.TransactionNo, Quantity = i.Quantity }).ToList(),
+                            SalesTransactions = s.SalesTransactions.Select(s => new SalesTransactionModel { TransactionDate = s.TransactionDate, TransactionNo = s.TransactionNo, Quantity = s.Quantity }).ToList(),
+                            SalesReturnTransactions = s.SalesReturnTransactions.Select(sr => new SalesReturnTransactionModel { TransactionDate = sr.TransactionDate, TransactionNo = sr.TransactionNo, Quantity = sr.Quantity }).ToList(),
+                            PurchaseTransactions = s.PurchaseTransactions.Select(p => new PurchaseTransactionModel { TransactionDate = p.TransactionDate, TransactionNo = p.TransactionNo, Quantity = p.Quantity }).ToList(),
+                            PurchaseReturnTransactions = s.PurchaseReturnTransactions.Select(pr => new PurchaseReturnTransactionModel { TransactionDate = pr.TransactionDate, TransactionNo = pr.TransactionNo, Quantity = pr.Quantity }).ToList(),
+                            ProductionEntryTransactions = s.ProductionEntryTransactions.Select(pet => new ProductionEntryTransactionModel { TransactionDate = pet.TransactionDate, TransactionNo = pet.TransactionNo, Quantity = pet.Quantity }).ToList(),
+                            ProductionEntries = s.ProductionEntries.Select(pe => new ProductionEntryModel { ProductionDate = pe.ProductionDate, ProductionNo = pe.ProductionNo, Quantity = pe.Quantity }).ToList(),
+                            OpeningQty = (s.PurchaseTransactions.Sum(p => p.Quantity) + s.ProductionEntries.Sum(pe => pe.Quantity) + s.SalesReturnTransactions.Sum(i => i.Quantity) + s.InwardSupplyTransactions.Sum(i => i.Quantity)) - (s.PurchaseReturnTransactions.Sum(i => i.Quantity) + s.SalesTransactions.Sum(i => i.Quantity) + s.DamageTransactions.Sum(i => i.Quantity) + s.OutwardSupplyTransactions.Sum(i => i.Quantity) + s.ProductionEntryTransactions.Sum(i => i.Quantity))
+                        }).SingleOrDefaultAsync();
+                        if (Query != null)
+
                         {
-                            _Result.CollectionObjData = Models.Where(s => s.DamageTransactions.Count > 0 || s.OutwardSupplyTransactions.Count > 0 || s.InwardSupplyTransactions.Count > 0 || s.SalesTransactions.Count > 0 || s.SalesReturnTransactions.Count > 0 || s.PurchaseTransactions.Count > 0 || s.PurchaseReturnTransactions.Count > 0 || s.ProductionEntries.Count > 0).ToList();
+                            _Result.SingleObjData = Query.Result;
+                            _Result.IsSuccess = true;
+                            _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
                         }
-                        else
-                        {
-                            _Result.CollectionObjData = Models;
-                        }
-                        _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
                     }
-                    _Result.IsSuccess = true;
+
                 }
             }
             catch (Exception _Exception)
@@ -298,8 +299,9 @@ namespace FMS.Repository.Reports
                         Guid FinancialYearId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
                         Models = await _appDbContext.Labours.Where(s => s.LabourId == requestData.LabourId).Select(s => new LabourModel
                         {
-                            LabourName = s.LabourName,
-                            ProductionEntries = s.ProductionEntries.Where(d => d.Fk_FinancialYearId == FinancialYearId && d.FK_BranchId == BranchId && d.ProductionDate >= convertedFromDate && d.ProductionDate < convertedToDate).Select(d => new ProductionEntryModel { ProductionDate = d.ProductionDate, ProductionNo = d.ProductionNo, Quantity = d.Quantity, Rate = d.Rate, Amount = d.Amount, Product = new ProductModel { ProductName = d.Product.ProductName } }).ToList(),
+
+                            ProductionEntries = s.ProductionEntries.Where(d => d.Fk_FinancialYearId == FinancialYearId && d.FK_BranchId == BranchId && d.ProductionDate >= convertedFromDate && d.ProductionDate <= convertedToDate).Select(d => new ProductionEntryModel { ProductionDate = d.ProductionDate, ProductionNo = d.ProductionNo, Quantity = d.Quantity, Rate = d.Rate, Amount = d.Amount, Product = new ProductModel { ProductName = d.Product.ProductName } }).ToList(),
+
                             Payment = _appDbContext.Payments.Where(l => l.Fk_SubLedgerId == s.Fk_SubLedgerId && l.Fk_FinancialYearId == FinancialYearId && l.Fk_BranchId == BranchId && l.VoucherDate >= convertedFromDate && l.VoucherDate <= convertedToDate).Select(t => new PaymentModel { VoucherDate = t.VoucherDate, VouvherNo = t.VouvherNo, Amount = t.Amount }).ToList(),
                             DamageOrders = s.DamageOrders.Where(l => l.Fk_LabourId == s.LabourId && l.Fk_FinancialYearId == FinancialYearId && l.Fk_BranchId == BranchId && l.TransactionDate >= convertedFromDate && l.TransactionDate <= convertedToDate).Select(d => new DamageOrderModel { TransactionDate = d.TransactionDate, TransactionNo = d.TransactionNo, TotalAmount = d.TotalAmount }).ToList(),
                             OpeningBalance =
@@ -777,6 +779,7 @@ namespace FMS.Repository.Reports
                             ToAcc = _appDbContext.Parties.Where(p => p.Fk_SubledgerId == s.Fk_SubLedgerId).Select(p => p.PartyName).SingleOrDefault(),
                             Amount = s.Amount
                         }).ToListAsync();
+
                         var Journals = await _appDbContext.Journals.Where(s => s.VoucherDate >= convertedFromDate && s.VoucherDate <= convertedToDate && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYearId && s.Fk_LedgerId == MappingLedgers.CashAccount).Select(s => new JournalModel
                         {
                             VouvherNo = s.VouvherNo,
@@ -786,7 +789,8 @@ namespace FMS.Repository.Reports
                             Amount = s.Amount
                         }).ToListAsync();
                         decimal OpeningBal = await _appDbContext.Receipts.Where(x => x.VoucherDate < convertedFromDate && x.Fk_BranchId == BranchId && x.Fk_FinancialYearId == FinancialYearId && x.CashBank == "Cash").SumAsync(x => x.Amount) - await _appDbContext.Payments.Where(x => x.VoucherDate < convertedToDate && x.Fk_BranchId == BranchId && x.Fk_FinancialYearId == FinancialYearId && x.CashBank == "Cash").SumAsync(x => x.Amount);
-                        decimal ClosingBal = OpeningBal + (await _appDbContext.Receipts.Where(x => x.VoucherDate >= convertedFromDate && x.VoucherDate <= convertedToDate && x.CashBank == "Cash" && x.Fk_BranchId == BranchId && x.Fk_FinancialYearId == FinancialYearId).SumAsync(x => x.Amount) - await _appDbContext.Payments.Where(x => x.VoucherDate >= convertedFromDate && x.VoucherDate <= convertedToDate && x.CashBank == "Cash" && x.Fk_BranchId == BranchId && x.Fk_FinancialYearId == FinancialYearId).SumAsync(x => x.Amount));
+                        decimal ClosingBal = OpeningBal + (await _appDbContext.Receipts.Where(x => x.VoucherDate >= convertedFromDate && x.VoucherDate <= convertedToDate && x.CashBank == "Cash" && x.Fk_BranchId == BranchId && x.Fk_FinancialYearId == FinancialYearId).SumAsync(x => x.Amount) - await _appDbContext.Payments.Where(x => x.VoucherDate >= convertedFromDate && x.VoucherDate <= convertedToDate && x.CashBank == "Cash" && x.Fk_BranchId == BranchId && x.Fk_FinancialYearId == FinancialYearId).SumAsync(x => x.Amount);
+
                         var Data = new CashBookModal
                         {
                             OpeningBal = OpeningBal,
@@ -825,6 +829,8 @@ namespace FMS.Repository.Reports
                     if (_HttpContextAccessor.HttpContext.Session.GetString("BranchId") != "All")
                     {
 
+                        Guid Fk_BankID = Guid.Parse(requestData.BankId);
+
                         Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
                         Guid FinancialYearId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
                         var Receipts = await _appDbContext.Receipts.Where(s => s.VoucherDate >= convertedFromDate && s.VoucherDate <= convertedToDate && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYearId && s.Fk_LedgerId == requestData.BankId).Select(s => new ReceiptModel
@@ -844,6 +850,7 @@ namespace FMS.Repository.Reports
                             ToAcc = _appDbContext.Parties.Where(p => p.Fk_SubledgerId == s.Fk_SubLedgerId).Select(p => p.PartyName).SingleOrDefault(),
                             Amount = s.Amount
                         }).ToListAsync();
+
                         var Journals = await _appDbContext.Journals.Where(s => s.VoucherDate >= convertedFromDate && s.VoucherDate <= convertedToDate && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYearId && s.Fk_LedgerId == requestData.BankId).Select(s => new PaymentModel
                         {
                             VouvherNo = s.VouvherNo,
@@ -854,6 +861,7 @@ namespace FMS.Repository.Reports
                         string BankName = _appDbContext.Ledgers.Where(l => l.LedgerId == requestData.BankId).Select(l => l.LedgerName).SingleOrDefault();
                         decimal OpeningBal = await _appDbContext.Receipts.Where(x => x.VoucherDate < convertedToDate && x.Fk_BranchId == BranchId && x.Fk_FinancialYearId == FinancialYearId && x.CashBank == "Bank").SumAsync(x => x.Amount) - await _appDbContext.Payments.Where(x => x.VoucherDate < convertedToDate && x.Fk_BranchId == BranchId && x.Fk_FinancialYearId == FinancialYearId && x.CashBank == "Bank").SumAsync(x => x.Amount);
                         decimal ClosingBal = OpeningBal + (await _appDbContext.Receipts.Where(x => x.VoucherDate >= convertedFromDate && x.VoucherDate <= convertedToDate && x.CashBank == "Bank" && x.Fk_BranchId == BranchId && x.Fk_FinancialYearId == FinancialYearId).SumAsync(x => x.Amount) - await _appDbContext.Payments.Where(x => x.VoucherDate >= convertedFromDate && x.VoucherDate <= convertedToDate && x.CashBank == "Bank" && x.Fk_BranchId == BranchId && x.Fk_FinancialYearId == FinancialYearId).SumAsync(x => x.Amount));
+
                         var Data = new BankBookModal
                         {
                             OpeningBal = OpeningBal,
@@ -881,6 +889,7 @@ namespace FMS.Repository.Reports
             return _Result;
         }
         #endregion
+
         #region LadgerBook
         public async Task<Result<LedgerBookModel>> LedgerBookReport(LedgerbookDataRequest requestData)
         {
@@ -1067,6 +1076,8 @@ namespace FMS.Repository.Reports
             return _Result;
         }
         #endregion
+
+
     }
 }
 

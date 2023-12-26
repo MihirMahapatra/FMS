@@ -167,7 +167,7 @@
         </div>
     </section>
 </div>
-@await Html.PartialAsync("_FooterScript")
+@section additionalScripts {
 <script src="~/scripts/FormScript.js"></script>
 <script src="~/scripts/datepicker.js"></script>
 <script src="~/viewscripts/reports/customerreport.js"></script>
@@ -185,3 +185,4 @@
         format: 'DD/MM/YYYY'
     });
 </script>
+}

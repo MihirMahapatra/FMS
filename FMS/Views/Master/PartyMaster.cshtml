@@ -281,7 +281,7 @@
             </div>
             <div class="modal-footer justify-content-between">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary StateEdit">Save changes</button>
+                <button type="button" class="btn btn-primary StateUpdate">Save changes</button>
             </div>
         </div>
         <!-- /.modal-content -->
@@ -344,7 +344,7 @@
             </div>
             <div class="modal-footer justify-content-between">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary CityEdit">Save changes</button>
+                <button type="button" class="btn btn-primary CityUpdate">Save changes</button>
             </div>
 
         </div>
@@ -353,11 +353,12 @@
     <!-- /.modal-dialog -->
 </div>
 <!--.end Modal City-->
-@await Html.PartialAsync("_FooterScript")
-<script src="~/scripts/FormScript.js"></script>
-<script src="~/viewscripts/master/party/partymaster.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        window.stepper = new Stepper(document.querySelector('.bs-stepper'))
-    })
-</script>
+@section additionalScripts {
+    <script src="~/scripts/FormScript.js"></script>
+    <script src="~/viewscripts/master/party/partymaster.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            window.stepper = new Stepper(document.querySelector('.bs-stepper'))
+        })
+    </script>
+}

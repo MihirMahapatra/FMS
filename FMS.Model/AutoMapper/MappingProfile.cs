@@ -19,6 +19,8 @@ namespace FMS.Model.AutoMapper
             CreateMap<SubGroupModel, SubGroup>();
             CreateMap<Unit, UnitModel>();
             CreateMap<UnitModel, Unit>();
+            CreateMap<AlternateUnit, AlternateUnitModel>();
+            CreateMap<AlternateUnitModel, AlternateUnit>();
             CreateMap<Product, ProductModel>();
             CreateMap<ProductModel, Product>();
             CreateMap<LabourType, LabourTypeModel>();

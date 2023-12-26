@@ -28,7 +28,7 @@ namespace FMS.Repository.Admin
         private readonly IEmailService _emailService;
         private readonly IMapper _mapper;
         #endregion
-        #region Constructor
+
         public AdminRepo(ILogger<AdminRepo> logger, IHttpContextAccessor httpContextAccessor, AppDbContext appDbContext, RoleManager<IdentityRole> roleManager, UserManager<AppUser> userManager, IEmailService emailService, IMapper mapper)
         {
             _logger = logger;
@@ -40,9 +40,7 @@ namespace FMS.Repository.Admin
             _emailService = emailService;
             _mapper = mapper;
         }
-
-        #endregion
-        #region Token Repo
+        #region Generate SignUp Token
         public async Task<Result<bool>> CreateToken(string token)
         {
             Result<bool> _Result = new();
@@ -63,70 +61,6 @@ namespace FMS.Repository.Admin
                     {
                         _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Created);
                     }
-                }
-                _Result.IsSuccess = true;
-            }
-            catch (Exception _Exception)
-            {
-                _Result.Exception = _Exception;
-            }
-            return _Result;
-        }
-        #endregion
-        #region Company Info
-        public async Task<Result<bool>> CreateCompany(CompanyDetailsModel data)
-        {
-            Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
-            Result<bool> _Result = new();
-            try
-            {
-                _Result.IsSuccess = false;
-                var newCompanyDetails = new CompanyDetails
-                {
-                    State = data.State,
-                    Name = data.Name,
-                    Adress = data.Adress,
-                    GSTIN = data.GSTIN,
-                    Email = data.Email,
-                    Phone = data.Phone,
-                    logo = data.logo,
-                    Fk_BranchId = BranchId
-                };
-                await _appDbContext.CompanyDetails.AddAsync(newCompanyDetails);
-                int count = await _appDbContext.SaveChangesAsync();
-                _Result.Response = (count > 0) ? ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Created) : ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Error);
-
-                _Result.IsSuccess = true;
-            }
-            catch (Exception _Exception)
-            {
-                _Result.Exception = _Exception;
-                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/CreateCreateCompany : {_Exception.Message}");
-            }
-            return _Result;
-        }
-        public async Task<Result<CompanyDetailsModel>> GetCompany()
-        {
-            Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
-            string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
-            Result<CompanyDetailsModel> _Result = new();
-            try
-            {
-                var Query = await _appDbContext.CompanyDetails.Where(s => s.Fk_BranchId == BranchId).Select(s => new CompanyDetailsModel
-                {
-                    Name = s.Name,
-                    GSTIN = s.GSTIN,
-                    Adress = s.Adress,
-                    Email = s.Email,
-                    Phone = s.Phone,
-                    State = s.State,
-                    logo = s.logo,
-                    BranchName = branchName
-                }).SingleOrDefaultAsync();
-                if (Query != null)
-                {
-                    _Result.SingleObjData = Query;
-                    _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
                 }
                 _Result.IsSuccess = true;
             }
@@ -376,6 +310,70 @@ namespace FMS.Repository.Admin
             return _Result;
         }
         #endregion
+        #region Company Info
+        public async Task<Result<bool>> CreateCompany(CompanyDetailsModel data)
+        {
+            Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
+            Result<bool> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                var newCompanyDetails = new CompanyDetails
+                {
+                    State = data.State,
+                    Name = data.Name,
+                    Adress = data.Adress,
+                    GSTIN = data.GSTIN,
+                    Email = data.Email,
+                    Phone = data.Phone,
+                    logo = data.logo,
+                    Fk_BranchId = BranchId
+                };
+                await _appDbContext.CompanyDetails.AddAsync(newCompanyDetails);
+                int count = await _appDbContext.SaveChangesAsync();
+                _Result.Response = (count > 0) ? ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Created) : ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Error);
+
+                _Result.IsSuccess = true;
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/CreateCreateCompany : {_Exception.Message}");
+            }
+            return _Result;
+        }
+        public async Task<Result<CompanyDetailsModel>> GetCompany()
+        {
+            Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
+            string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
+            Result<CompanyDetailsModel> _Result = new();
+            try
+            {
+                var Query = await _appDbContext.CompanyDetails.Where(s => s.Fk_BranchId == BranchId).Select(s => new CompanyDetailsModel
+                {
+                    Name = s.Name,
+                    GSTIN = s.GSTIN,
+                    Adress = s.Adress,
+                    Email = s.Email,
+                    Phone = s.Phone,
+                    State = s.State,
+                    logo = s.logo,
+                    BranchName = branchName
+                }).SingleOrDefaultAsync();
+                if (Query != null)
+                {
+                    _Result.SingleObjData = Query;
+                    _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
+                }
+                _Result.IsSuccess = true;
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+            }
+            return _Result;
+        }
+        #endregion
         #region Allocate Branch
         public async Task<Result<BranchAllocationModel>> GetAllUserAndBranch()
         {
@@ -520,6 +518,714 @@ namespace FMS.Repository.Admin
             {
                 _Result.Exception = _Exception;
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"AdminRepo/DeleteBranchAlloction : {_Exception.Message}");
+            }
+            return _Result;
+        }
+        #endregion
+        #region Product Setup
+        #region Product Type
+        public async Task<Result<ProductTypeModel>> GetProductTypes()
+        {
+            Result<ProductTypeModel> _Result = new();
+            try
+            {
+                var Query = await _appDbContext.ProductTypes.Select(s => new ProductTypeModel { ProductTypeId = s.ProductTypeId, Product_Type = s.Product_Type }).ToListAsync();
+                if (Query.Count > 0)
+                {
+                    var ItemTypeList = Query;
+                    _Result.CollectionObjData = ItemTypeList;
+                    _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
+                }
+                _Result.IsSuccess = true;
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/GetAllItemTypes : {_Exception.Message}");
+            }
+            return _Result;
+        }
+        #endregion
+        #region Group
+        public async Task<Result<GroupModel>> GetAllGroups()
+        {
+            Result<GroupModel> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                var Query = await _appDbContext.Groups.Select(s =>
+                    new GroupModel
+                    {
+                        GroupId = s.GroupId,
+                        GroupName = s.GroupName,
+                    }).ToListAsync();
+                if (Query.Count > 0)
+                {
+                    var GroupList = Query;
+                    _Result.CollectionObjData = GroupList;
+                    _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
+                }
+                _Result.IsSuccess = true;
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/GetAllGroups : {_Exception.Message}");
+            }
+            return _Result;
+        }
+        public async Task<Result<GroupModel>> GetAllGroups(Guid ProdutTypeId)
+        {
+            Result<GroupModel> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                var Query = await _appDbContext.Groups.Where(p => p.Fk_ProductTypeId == ProdutTypeId).Select(s =>
+                    new GroupModel
+                    {
+                        GroupId = s.GroupId,
+                        GroupName = s.GroupName,
+                    }).ToListAsync();
+                if (Query.Count > 0)
+                {
+                    var GroupList = Query;
+                    _Result.CollectionObjData = GroupList;
+                    _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
+                }
+                _Result.IsSuccess = true;
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/GetAllGroups : {_Exception.Message}");
+            }
+            return _Result;
+        }
+        public async Task<Result<bool>> CreateGroup(GroupModel data)
+        {
+            Result<bool> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                var Query = await _appDbContext.Groups.Where(s => s.GroupName == data.GroupName).FirstOrDefaultAsync();
+                if (Query == null)
+                {
+                    var newGroup = _mapper.Map<Group>(data);
+                    await _appDbContext.Groups.AddAsync(newGroup);
+                    int count = await _appDbContext.SaveChangesAsync();
+                    _Result.Response = (count > 0) ? ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Created) : ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Error);
+                }
+                _Result.IsSuccess = true;
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/CreateGroup : {_Exception.Message}");
+            }
+            return _Result;
+        }
+        public async Task<Result<bool>> UpdateGroup(GroupModel data)
+        {
+            Result<bool> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                var Query = await _appDbContext.Groups.Where(s => s.GroupId == data.GroupId).FirstOrDefaultAsync();
+                if (Query != null)
+                {
+                    _mapper.Map(data, Query);
+                    int count = await _appDbContext.SaveChangesAsync();
+                    _Result.Response = (count > 0) ? ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Modified) : ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Error);
+                }
+                _Result.IsSuccess = true;
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/UpdateGroup : {_Exception.Message}");
+            }
+            return _Result;
+        }
+        public async Task<Result<bool>> DeleteGroup(Guid Id, IDbContextTransaction transaction, bool IsCallBack)
+        {
+            Result<bool> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
+                Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
+                using var localTransaction = transaction ?? await _appDbContext.Database.BeginTransactionAsync();
+                try
+                {
+                    if (Id != Guid.Empty)
+                    {
+                        var Query = await _appDbContext.Groups.FirstOrDefaultAsync(x => x.GroupId == Id);
+                        if (Query != null)
+                        {
+                            _appDbContext.Groups.Remove(Query);
+                            int count = await _appDbContext.SaveChangesAsync();
+                            _Result.Response = (count > 0) ? ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Deleted) : ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Error);
+                        }
+                        _Result.IsSuccess = true;
+                        if (IsCallBack == false) localTransaction.Commit();
+                    }
+                }
+                catch
+                {
+                    localTransaction.Rollback();
+                    throw;
+                }
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/DeleteGroup : {_Exception.Message}");
+            }
+            return _Result;
+        }
+        #endregion
+        #region SubGroup
+        public async Task<Result<SubGroupModel>> GetSubGroups(Guid GroupId)
+        {
+            Result<SubGroupModel> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                var Query = await _appDbContext.SubGroups.Where(s => s.Fk_GroupId == GroupId).
+                                   Select(s => new SubGroupModel
+                                   {
+                                       SubGroupId = s.SubGroupId,
+                                       SubGroupName = s.SubGroupName
+                                   }).ToListAsync();
+                if (Query.Count > 0)
+                {
+                    _Result.CollectionObjData = Query;
+                    _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
+                }
+                _Result.IsSuccess = true;
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/GetSubGroups : {_Exception.Message}");
+            }
+            return _Result;
+        }
+        public async Task<Result<bool>> CreateSubGroup(SubGroupModel data)
+        {
+            Result<bool> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                var Query = await _appDbContext.SubGroups.FirstOrDefaultAsync(s => s.Fk_GroupId == data.Fk_GroupId && s.SubGroupName == data.SubGroupName);
+                if (Query == null)
+                {
+                    var newSubGroup = _mapper.Map<SubGroup>(data);
+                    await _appDbContext.SubGroups.AddAsync(newSubGroup);
+                    int count = await _appDbContext.SaveChangesAsync();
+                    _Result.Response = (count > 0) ? ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Created) : ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Error);
+                }
+                _Result.IsSuccess = true;
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/CreateSubGroup : {_Exception.Message}");
+            }
+            return _Result;
+        }
+        public async Task<Result<bool>> UpdateSubGroup(SubGroupModel data)
+        {
+            Result<bool> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                var Query = await _appDbContext.SubGroups.FirstOrDefaultAsync(s => s.SubGroupId == data.SubGroupId);
+                if (Query != null)
+                {
+                    _mapper.Map(data, Query);
+                    int count = await _appDbContext.SaveChangesAsync();
+                    _Result.Response = (count > 0) ? ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Modified) : ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Error);
+                }
+                _Result.IsSuccess = true;
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/UpdateSubGroup : {_Exception.Message}");
+            }
+            return _Result;
+        }
+        public async Task<Result<bool>> DeleteSubGroup(Guid Id, IDbContextTransaction transaction, bool IsCallBack)
+        {
+            Result<bool> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
+                Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
+                using var localTransaction = transaction ?? await _appDbContext.Database.BeginTransactionAsync();
+                try
+                {
+                    if (Id != Guid.Empty)
+                    {
+                        var Query = await _appDbContext.SubGroups.FirstOrDefaultAsync(x => x.SubGroupId == Id);
+                        if (Query != null)
+                        {
+                            _appDbContext.SubGroups.Remove(Query);
+                            int count = await _appDbContext.SaveChangesAsync();
+                            _Result.Response = (count > 0) ? ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Deleted) : ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Error);
+                        }
+                        _Result.IsSuccess = true;
+                        if (IsCallBack == false) localTransaction.Commit();
+                    }
+                }
+                catch
+                {
+                    localTransaction.Rollback();
+                    throw;
+                }
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/DeleteSubGroup : {_Exception.Message}");
+            }
+            return _Result;
+        }
+        #endregion
+        #region Unit
+        public async Task<Result<UnitModel>> GetAllUnits()
+        {
+            Result<UnitModel> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                var Query = await _appDbContext.Units.Select(s => new UnitModel
+                {
+                    UnitId = s.UnitId,
+                    UnitName = s.UnitName
+                }).ToListAsync();
+                if (Query.Count > 0)
+                {
+                    var UnitList = Query;
+                    _Result.CollectionObjData = UnitList;
+                    _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
+                }
+                _Result.IsSuccess = true;
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/GetAllUnits : {_Exception.Message}");
+            }
+            return _Result;
+        }
+        public async Task<Result<bool>> CreateUnit(UnitModel data)
+        {
+            Result<bool> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                var Query = await _appDbContext.Units.Where(s => s.UnitName == data.UnitName).FirstOrDefaultAsync();
+                if (Query == null)
+                {
+                    var newUnit = _mapper.Map<Unit>(data);
+                    await _appDbContext.Units.AddAsync(newUnit);
+                    int count = await _appDbContext.SaveChangesAsync();
+                    _Result.Response = (count > 0) ? ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Created) : ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Error);
+                }
+                _Result.IsSuccess = true;
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/CreateUnit : {_Exception.Message}");
+            }
+            return _Result;
+        }
+        public async Task<Result<bool>> UpdateUnit(UnitModel data)
+        {
+            Result<bool> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                var Query = await _appDbContext.Units.Where(s => s.UnitId == data.UnitId).FirstOrDefaultAsync();
+                if (Query != null)
+                {
+                    _mapper.Map(data, Query);
+                    int count = await _appDbContext.SaveChangesAsync();
+                    _Result.Response = (count > 0) ? ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Modified) : ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Error);
+                }
+                _Result.IsSuccess = true;
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/UpdateUnit : {_Exception.Message}");
+            }
+            return _Result;
+        }
+        public async Task<Result<bool>> DeleteUnit(Guid Id, IDbContextTransaction transaction, bool IsCallBack)
+        {
+            Result<bool> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
+                Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
+                using var localTransaction = transaction ?? await _appDbContext.Database.BeginTransactionAsync();
+                try
+                {
+                    if (Id != Guid.Empty)
+                    {
+                        var Query = await _appDbContext.Units.FirstOrDefaultAsync(x => x.UnitId == Id);
+                        if (Query != null)
+                        {
+                            _appDbContext.Units.Remove(Query);
+                            int count = await _appDbContext.SaveChangesAsync();
+                            _Result.Response = (count > 0) ? ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Deleted) : ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Error);
+                        }
+                        _Result.IsSuccess = true;
+                        if (IsCallBack == false) localTransaction.Commit();
+                    }
+                }
+                catch
+                {
+                    localTransaction.Rollback();
+                    throw;
+                }
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/DeleteUnit : {_Exception.Message}");
+            }
+            return _Result;
+        }
+        #endregion
+        #region Product
+        public async Task<Result<ProductModel>> GetAllProducts()
+        {
+            Result<ProductModel> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                var Query = await _appDbContext.Products.Select(s =>
+                                   new ProductModel()
+                                   {
+                                       ProductId = s.ProductId,
+                                       ProductName = s.ProductName,
+                                       Price = s.Price,
+                                       GST = s.GST,
+                                       Group = s.Group != null ? new GroupModel { GroupName = s.Group.GroupName } : null,
+                                       SubGroup = s.SubGroup != null ? new SubGroupModel { SubGroupName = s.SubGroup.SubGroupName } : null,
+                                       Unit = s.Unit != null ? new UnitModel { UnitName = s.Unit.UnitName } : null,
+                                       ProductType = s.ProductType != null ? new ProductTypeModel { Product_Type = s.ProductType.Product_Type } : null,
+                                   }).ToListAsync();
+                if (Query.Count > 0)
+                {
+                    var ProductList = Query;
+                    _Result.CollectionObjData = ProductList;
+                    _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
+                }
+                _Result.IsSuccess = true;
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/GetAllProducts : {_Exception.Message}");
+            }
+            return _Result;
+        }
+        public async Task<Result<ProductModel>> GetProductById(Guid ProductId)
+        {
+            Result<ProductModel> _Result = new();
+            try
+            {
+                var Query = await _appDbContext.Products.Where(s => s.ProductId == ProductId).Select(s => new ProductModel
+                {
+                    ProductId = s.ProductId,
+                    ProductName = s.ProductName,
+                    Unit = s.Unit != null ? new UnitModel() { UnitName = s.Unit.UnitName, UnitId = s.Unit.UnitId } : null,
+                }).SingleOrDefaultAsync();
+                if (Query != null)
+                {
+                    _Result.SingleObjData = Query;
+                    _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
+                }
+                _Result.IsSuccess = true;
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/GetProductByTypeId : {_Exception.Message}");
+            }
+            return _Result;
+        }
+        public async Task<Result<ProductModel>> GetProductByTypeId(Guid ProductTypeId)
+        {
+            Result<ProductModel> _Result = new();
+            try
+            {
+                var Query = await _appDbContext.Products.Where(s => s.Fk_ProductTypeId == ProductTypeId).Select(s => new ProductModel { ProductId = s.ProductId, ProductName = s.ProductName }).ToListAsync();
+                if (Query.Count > 0)
+                {
+                    var ItemTypeList = Query;
+                    _Result.CollectionObjData = ItemTypeList;
+                    _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
+                }
+                _Result.IsSuccess = true;
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/GetProductByTypeId : {_Exception.Message}");
+            }
+            return _Result;
+        }
+        public async Task<Result<ProductModel>> GetProductGstWithRate(Guid id)
+        {
+            Result<ProductModel> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                var product = await _appDbContext.Products.Where(s => s.ProductId == id)
+                    .Select(s => new ProductModel
+                    {
+                        Price = s.Price,
+                        GST = s.GST,
+                        ProductName = s.ProductName,
+                        Unit = s.Unit != null ? new UnitModel() { UnitName = s.Unit.UnitName } : null
+                    }).SingleOrDefaultAsync();
+
+                if (product != null)
+                {
+                    _Result.SingleObjData = product;
+                    _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
+                }
+
+                _Result.IsSuccess = true;
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Exception", $"GetProductDetailsSelected : {_Exception.Message}");
+            }
+            return _Result;
+        }
+        public async Task<Result<bool>> CreateProduct(ProductModel data)
+        {
+            Result<bool> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                var Query = await _appDbContext.Products.Where(s => s.Fk_GroupId == data.Fk_GroupId && s.Fk_ProductTypeId == data.Fk_ProductTypeId && s.ProductName == data.ProductName).FirstOrDefaultAsync();
+                if (Query == null)
+                {
+                    var newProduct = _mapper.Map<Product>(data);
+                    await _appDbContext.Products.AddAsync(newProduct);
+                    int count = await _appDbContext.SaveChangesAsync();
+                    _Result.Response = (count > 0) ? ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Created) : ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Error);
+                }
+                _Result.IsSuccess = true;
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/CreateProduct : {_Exception.Message}");
+            }
+            return _Result;
+        }
+        public async Task<Result<bool>> UpdateProduct(ProductModel data)
+        {
+            Result<bool> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                var Query = await _appDbContext.Products.Where(s => s.ProductId == data.ProductId).FirstOrDefaultAsync();
+                if (Query != null)
+                {
+                    _mapper.Map(data, Query);
+                    int count = await _appDbContext.SaveChangesAsync();
+                    _Result.Response = (count > 0) ? ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Modified) : ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Error);
+                }
+                _Result.IsSuccess = true;
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/UpdateProduct : {_Exception.Message}");
+            }
+            return _Result;
+        }
+        public async Task<Result<bool>> DeleteProduct(Guid Id, IDbContextTransaction transaction, bool IsCallBack)
+        {
+            Result<bool> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
+                Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
+                using var localTransaction = transaction ?? await _appDbContext.Database.BeginTransactionAsync();
+                try
+                {
+                    var Query = await _appDbContext.Products.FirstOrDefaultAsync(x => x.ProductId == Id);
+                    if (Query != null)
+                    {
+                        _appDbContext.Products.Remove(Query);
+                        int count = await _appDbContext.SaveChangesAsync();
+                        _Result.Response = (count > 0) ? ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Deleted) : ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Error);
+                    }
+                    _Result.IsSuccess = true;
+                    if (IsCallBack == false) localTransaction.Commit();
+                }
+                catch
+                {
+                    localTransaction.Rollback();
+                    throw;
+                }
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/DeleteProduct : {_Exception.Message}");
+            }
+
+            return _Result;
+        }
+        #endregion
+        #endregion
+        #region Alternate Unit
+        public async Task<Result<AlternateUnitModel>> GetAlternateUnits()
+        {
+            Result<AlternateUnitModel> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                var Query = await _appDbContext.AlternateUnits.Select(s => new AlternateUnitModel
+                {
+                    AlternateUnitId = s.AlternateUnitId,
+                    Unit = s.Unit != null ? new UnitModel() { UnitName = s.Unit.UnitName } : null,
+                    UnitQuantity = s.UnitQuantity,
+                    Product = s.Product != null ? new ProductModel() { ProductName = s.Product.ProductName } : null,
+                    AlternateQuantity = s.AlternateQuantity,
+                    AlternateUnitName = s.AlternateUnitName,
+                }).ToListAsync();
+                if (Query.Count > 0)
+                {
+                    _Result.CollectionObjData = Query;
+                    _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
+                }
+                _Result.IsSuccess = true;
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/GetAllUnits : {_Exception.Message}");
+            }
+            return _Result;
+        }
+        public async Task<Result<AlternateUnitModel>> GetAlternateUnitByProductId(Guid ProductId)
+        {
+            Result<AlternateUnitModel> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                var Query = await _appDbContext.AlternateUnits.Where(s => s.FK_ProductId == ProductId).Select(s => new AlternateUnitModel
+                {
+                    AlternateUnitId = s.AlternateUnitId,
+                    AlternateUnitName = s.AlternateUnitName,
+                }).ToListAsync();
+                if (Query.Count > 0)
+                {
+                    _Result.CollectionObjData = Query;
+                    _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
+                }
+                _Result.IsSuccess = true;
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/GetAllUnits : {_Exception.Message}");
+            }
+            return _Result;
+        }
+        public async Task<Result<bool>> CreateAlternateUnit(AlternateUnitModel data)
+        {
+            Result<bool> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                var newAlternateUnit = _mapper.Map<AlternateUnit>(data);
+                await _appDbContext.AlternateUnits.AddAsync(newAlternateUnit);
+                int count = await _appDbContext.SaveChangesAsync();
+                _Result.Response = (count > 0) ? ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Created) : ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Error);
+                _Result.IsSuccess = true;
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/CreateUnit : {_Exception.Message}");
+            }
+            return _Result;
+        }
+        public async Task<Result<bool>> UpdateAlternateUnit(AlternateUnitModel data)
+        {
+            Result<bool> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                var Query = await _appDbContext.AlternateUnits.Where(s => s.AlternateUnitId == data.AlternateUnitId).FirstOrDefaultAsync();
+                if (Query != null)
+                {
+                    _mapper.Map(data, Query);
+                    int count = await _appDbContext.SaveChangesAsync();
+                    _Result.Response = (count > 0) ? ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Modified) : ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Error);
+                }
+                _Result.IsSuccess = true;
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/UpdateUnit : {_Exception.Message}");
+            }
+            return _Result;
+        }
+        public async Task<Result<bool>> DeleteAlternateUnit(Guid Id)
+        {
+            Result<bool> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
+                Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
+                using var localTransaction = await _appDbContext.Database.BeginTransactionAsync();
+                try
+                {
+                    if (Id != Guid.Empty)
+                    {
+                        var Query = await _appDbContext.AlternateUnits.FirstOrDefaultAsync(x => x.AlternateUnitId == Id);
+                        if (Query != null)
+                        {
+                            _appDbContext.AlternateUnits.Remove(Query);
+                            int count = await _appDbContext.SaveChangesAsync();
+                            _Result.Response = (count > 0) ? ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Deleted) : ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Error);
+                        }
+                        _Result.IsSuccess = true;
+                        localTransaction.Commit();
+                    }
+                }
+                catch
+                {
+                    localTransaction.Rollback();
+                    throw;
+                }
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/DeleteUnit : {_Exception.Message}");
             }
             return _Result;
         }
@@ -720,6 +1426,155 @@ namespace FMS.Repository.Admin
             return _Result;
         }
         #endregion
+        #region Labour Rate Configuration
+        public async Task<Result<LabourRateModel>> GetAllLabourRates()
+        {
+            Result<LabourRateModel> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                var Query = await _appDbContext.LabourRates
+                                   .Select(lr => new LabourRateModel
+                                   {
+                                       LabourRateId = lr.LabourRateId,
+                                       Date = lr.Date,
+                                       ProductType = lr.ProductType != null ? new ProductTypeModel { Product_Type = lr.ProductType.Product_Type } : null,
+                                       Product = lr.Product != null ? new ProductModel { ProductName = lr.Product.ProductName } : null,
+                                       Rate = lr.Rate
+                                   }).ToListAsync();
+                if (Query.Count > 0)
+                {
+                    _Result.CollectionObjData = Query;
+                    _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
+                }
+                _Result.IsSuccess = true;
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/GetAllLabourRates : {_Exception.Message}");
+            }
+            return _Result;
+        }
+        public async Task<Result<LabourRateModel>> GetLabourRateByProductId(Guid ProductId)
+        {
+            Result<LabourRateModel> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                var lastProduction = await _appDbContext.LabourRates.Where(s => s.Fk_ProductId == ProductId).OrderByDescending(s => s.Date).
+                    Select(s => new LabourRateModel
+                    {
+                        Rate = s.Rate,
+                        Product = new ProductModel
+                        {
+                            Unit = new UnitModel { UnitName = s.Product.Unit.UnitName }
+                        }
+                    }).FirstOrDefaultAsync();
+                if (lastProduction != null)
+                {
+                    _Result.SingleObjData = lastProduction;
+                    _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
+                }
+                _Result.IsSuccess = true;
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/GetLabourRateByProductId : {_Exception.Message}");
+            }
+            return _Result;
+        }
+        public async Task<Result<bool>> CreateLabourRate(LabourRateModel data)
+        {
+            Result<bool> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                if (DateTime.TryParseExact(data.FormtedDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedDate))
+                {
+                    var newLabourRate = new LabourRate
+                    {
+                        Date = convertedDate,
+                        Fk_ProductTypeId = data.Fk_ProductTypeId,
+                        Fk_ProductId = data.Fk_ProductId,
+                        Rate = data.Rate
+                    };
+                    await _appDbContext.LabourRates.AddAsync(newLabourRate);
+                    int count = await _appDbContext.SaveChangesAsync();
+                    _Result.Response = (count > 0) ? ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Created) : ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Error);
+                }
+                _Result.IsSuccess = true;
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/CreateLabourRate : {_Exception.Message}");
+            }
+            return _Result;
+        }
+        public async Task<Result<bool>> UpdateLabourRate(LabourRateModel data)
+        {
+            Result<bool> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                var Query = await _appDbContext.LabourRates.Where(s => s.LabourRateId == data.LabourRateId).FirstOrDefaultAsync();
+                if (Query != null)
+                {
+                    if (DateTime.TryParseExact(data.FormtedDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedDate))
+                    {
+                        data.Date = convertedDate;
+                        _mapper.Map(data, Query);
+                        int count = await _appDbContext.SaveChangesAsync();
+                        _Result.Response = (count > 0) ? ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Modified) : ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Error);
+                    }
+                }
+                _Result.IsSuccess = true;
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/UpdateLabourRate : {_Exception.Message}");
+            }
+            return _Result;
+        }
+        public async Task<Result<bool>> DeleteLabourRate(Guid Id, IDbContextTransaction transaction, bool IsCallBack)
+        {
+            Result<bool> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                using var localTransaction = transaction ?? await _appDbContext.Database.BeginTransactionAsync();
+                try
+                {
+                    if (Id != Guid.Empty)
+                    {
+                        var Query = await _appDbContext.LabourRates.FirstOrDefaultAsync(x => x.LabourRateId == Id);
+                        if (Query != null)
+                        {
+                            _appDbContext.LabourRates.Remove(Query);
+                            int count = await _appDbContext.SaveChangesAsync();
+                            _Result.Response = (count > 0) ? ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Deleted) : ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Error);
+                        }
+                        _Result.IsSuccess = true;
+                        if (IsCallBack == false) localTransaction.Commit();
+                    }
+                }
+                catch
+                {
+                    localTransaction.Rollback();
+                    throw;
+                }
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/DeleteLabourRate : {_Exception.Message}");
+            }
+            return _Result;
+        }
+        #endregion
         #region Ledger Group & Ledger
         #region LedgerGroup
         public async Task<Result<LedgerGroupModel>> GetLedgerGroups()
@@ -861,7 +1716,7 @@ namespace FMS.Repository.Admin
                         localTransaction.Commit();
                     }
                 }
-                catch 
+                catch
                 {
                     localTransaction.Rollback();
                     throw;
@@ -872,7 +1727,7 @@ namespace FMS.Repository.Admin
                 _Result.Exception = _Exception;
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"AdminRepo/DeleteLedgerSubGroup : {_Exception.Message}");
             }
-            
+
             return _Result;
         }
         #endregion
@@ -1039,6 +1894,7 @@ namespace FMS.Repository.Admin
                 var ledger = await _appDbContext.Ledgers.Where(s => s.LedgerId == data.LedgerId).FirstOrDefaultAsync();
                 if (ledger != null)
                 {
+                    // ledger.HasSubLedger = data.HasSubLedger;
                     _mapper.Map(data, ledger);
                     int count = await _appDbContext.SaveChangesAsync();
                     _Result.Response = (count > 0) ? ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Modified) : ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Error);
@@ -1104,7 +1960,7 @@ namespace FMS.Repository.Admin
             return _Result;
         }
 
-       
+
 
 
         #endregion

@@ -1,7 +1,7 @@
 $(function () {
     $("#AdminLink").addClass("active");
-    $("#ProductConfigLink").addClass("active");
-    $("#ProductConfigLink i.far.fa-circle").removeClass("far fa-circle").addClass("far fa-dot-circle");
+    $("#ProductionConfigLink").addClass("active");
+    $("#ProductionConfigLink i.far.fa-circle").removeClass("far fa-circle").addClass("far fa-dot-circle");
     var ProductConfigTable = $('#tblProuctConfig').DataTable({
         "paging": true,
         "lengthChange": false,
@@ -144,7 +144,7 @@ $(function () {
         };
         $.ajax({
             type: "POST",
-            url: '/Admin/CreateProductConfig',
+            url: '/Admin/CreateProductionConfig',
             dataType: 'json',
             data: JSON.stringify(requestData),
             contentType: "application/json;charset=utf-8",
@@ -235,15 +235,14 @@ $(function () {
     }
     $(document).on('click', '.btn-production-config-edit', (event) => {
         const value = $(event.currentTarget).data('id');
-        EditProductConfig(value);
+        EditProductionConfig(value);
     });
-    function EditProductConfig(Id) {
+    function EditProductionConfig(Id) {
         var $tr = $('#btnProductionConfigEdit_' + Id + '').closest('tr');
         var finishedGood = $tr.find('td:eq(1)').text().trim();
         var RawMaterial = $tr.find('td:eq(2)').text().trim();
         var quantity = $tr.find('td:eq(3)').text().trim();
         var unit = $tr.find('td:eq(4)').text().trim();
-
         $tr.find('td:eq(3)').html('<div class="form-group"><input type="text" class="form-control" value="' + quantity + '"></div>');
         var html = '';
         $.ajax({
@@ -309,9 +308,9 @@ $(function () {
     }
     $(document).on('click', '.btn-production-config-delete', (event) => {
         const value = $(event.currentTarget).data('id');
-        DeleteProductConfig(value);
+        DeleteProductionConfig(value);
     });
-    function DeleteProductConfig(id) {
+    function DeleteProductionConfig(id) {
         Swal.fire({
             title: 'Are you sure?',
             text: "You won't be able to revert this!",
@@ -322,9 +321,8 @@ $(function () {
             confirmButtonText: 'Yes, delete it!'
         }).then((result) => {
             if (result.isConfirmed) {
-                //Make an AJAX call to the server-side delete action method
                 $.ajax({
-                    url: '/Admin/DeleteProductConfig?id=' + id + '',
+                    url: '/Admin/DeleteProductionConfig?id=' + id + '',
                     type: "POST",
                     contentType: "application/json;charset=utf-8",
                     dataType: "json",
@@ -347,9 +345,9 @@ $(function () {
     }
     $(document).on('click', '.btn-production-config-update', (event) => {
         const value = $(event.currentTarget).data('id');
-        UpdateProductConfig(value);
+        UpdateProductionConfig(value);
     });
-    function UpdateProductConfig(Id) {
+    function UpdateProductionConfig(Id) {
         var $tr = $('#btnProductionConfigUpdate_' + Id + '').closest('tr');
         const data = {
             ProductionId: Id,
@@ -359,7 +357,7 @@ $(function () {
         }
         $.ajax({
             type: "POST",
-            url: '/Admin/UpdateProductConfig',
+            url: '/Admin/UpdateProductionConfig',
             dataType: 'json',
             data: JSON.stringify(data),
             contentType: "application/json;charset=utf-8",
@@ -379,9 +377,9 @@ $(function () {
     }
     $(document).on('click', '.btn-production-config-cancel', (event) => {
         const value = $(event.currentTarget).data('id');
-        CancelProductConfig(value);
+        CancelProductionConfig(value);
     });
-    function CancelProductConfig(Id){
+    function CancelProductionConfig(Id){
         var $tr = $('#btnProductionConfigCancel_' + Id + '').closest('tr');
         var RawMaterial = $tr.find('Select').eq(0).find('option:selected').text();
         var FinishedGood = $tr.find('Select').eq(1).find('option:selected').text();

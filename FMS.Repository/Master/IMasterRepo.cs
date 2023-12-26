@@ -7,67 +7,47 @@ namespace FMS.Repository.Master
 {
     public interface IMasterRepo
     {
-        #region Product Master
-        #region Product Type
-        Task<Result<ProductTypeModel>> GetProductTypes();
-        #endregion
-        #region Group
-        Task<Result<GroupModel>> GetAllGroups();
-        Task<Result<bool>> CreateGroup(GroupModel data);
-        Task<Result<bool>> UpdateGroup(GroupModel data);
-        Task<Result<bool>> DeleteGroup(Guid Id, IDbContextTransaction transaction, bool IsCallBack);
-        #endregion
-        #region SubGroup
-        Task<Result<SubGroupModel>> GetSubGroups(Guid GroupId);
-        Task<Result<bool>> CreateSubGroup(SubGroupModel data);
-        Task<Result<bool>> UpdateSubGroup(SubGroupModel data);
-        Task<Result<bool>> DeleteSubGroup(Guid Id, IDbContextTransaction transaction, bool IsCallBack); 
-        #endregion
-        #region Unit
-        Task<Result<UnitModel>> GetAllUnits();
-        Task<Result<bool>> CreateUnit(UnitModel data);
-        Task<Result<bool>> UpdateUnit(UnitModel data);
-        Task<Result<bool>> DeleteUnit(Guid Id, IDbContextTransaction transaction, bool IsCallBack);
-        #endregion
-        #region Product
-        Task<Result<ProductModel>> GetAllProducts();
-        public Task<Result<ProductModel>> GetProductByTypeId(Guid ProductTypeId);
-        public Task<Result<ProductModel>> GetProductGstWithRate(Guid id);
-        Task<Result<bool>> CreateProduct(ProductModel data);
-        Task<Result<bool>> UpdateProduct(ProductModel data);
-        Task<Result<bool>> DeleteProduct(Guid Id, IDbContextTransaction transaction, bool IsCallBack);
-        #endregion
-        #region Stock
+        #region Stock Master
+      
         Task<Result<StockModel>> GetStocks();
-        Task<Result<ProductModel>> GetProductsWhichNotInStock();
+        Task<Result<ProductModel>> GetProductsWhichNotInStock(Guid GroupId, Guid SubGroupId);
         Task<Result<bool>> CreateStock(StockModel data);
         Task<Result<bool>> UpdateStock(StockModel data);
         Task<Result<bool>> DeleteStock(Guid Id, IDbContextTransaction transaction, bool IsCallBack);
         #endregion
-        #endregion
         #region labour Master
         #region Labour Type
         Task<Result<LabourTypeModel>> GetAllLabourTypes();
-        Task<Result<bool>> CreateLabourType(LabourTypeModel data);
-        Task<Result<bool>> UpdateLabourType(LabourTypeModel data);
-        Task<Result<bool>> DeleteLabourType(Guid Id, IDbContextTransaction transaction, bool IsCallBack);
         #endregion
         #region Labour Details
         Task<Result<LabourModel>> GetAllLabourDetails();
         Task<Result<LabourModel>> GetLabourDetailById(Guid LabourId);
+        Task<Result<LabourModel>> GetLaboursByLabourTypeId(Guid LabourTypeId);
         Task<Result<bool>> CreateLabourDetail(LabourModel data);
         Task<Result<bool>> UpdateLabourDetail(LabourModel data);
         Task<Result<bool>> DeleteLabourDetail(Guid Id, IDbContextTransaction transaction, bool IsCallBack);
         #endregion
-        #region Labour Rate Master
-        Task<Result<LabourRateModel>> GetAllLabourRates();
-        Task<Result<int>> GetLabourRateByProductId(Guid ProductId);
-        Task<Result<bool>> CreateLabourRate(LabourRateModel data);
-        Task<Result<bool>> UpdateLabourRate(LabourRateModel data);
-        Task<Result<bool>> DeleteLabourRate(Guid Id, IDbContextTransaction transaction, bool IsCallBack);
+        #endregion
+        #region Party Master
+        #region Party
+        Task<Result<PartyModel>> GetParties();
+        Task<Result<bool>> CreateParty(PartyModel data);
+        Task<Result<bool>> UpdateParty(PartyModel data);
+        Task<Result<bool>> DeleteParty(Guid Id, IDbContextTransaction transaction, bool IsCallBack);
+        #endregion
+        #region State
+        Task<Result<StateModel>> GetStates();
+        Task<Result<bool>> CreateState(StateModel data);
+        Task<Result<bool>> UpdateState(StateModel data);
+        Task<Result<bool>> DeleteState(Guid Id, IDbContextTransaction transaction, bool IsCallBack);
+        #endregion
+        #region City
+        Task<Result<CityModel>> GetCities(Guid Id);
+        Task<Result<bool>> CreateCity(CityModel data);
+        Task<Result<bool>> UpdateCity(CityModel data);
+        Task<Result<bool>> DeleteCity(Guid Id, IDbContextTransaction transaction, bool IsCallBack);
         #endregion
         #endregion
-        
         #region Account Master
         #region LedgerBalance
         Task<Result<LedgerBalanceModel>> GetLedgerBalances();
@@ -89,25 +69,6 @@ namespace FMS.Repository.Master
         Task<Result<bool>> DeleteSubLedgerBalance(Guid Id, IDbContextTransaction transaction, bool IsCallBack);
         #endregion
         #endregion
-        #region Party Master
-        #region Party
-        Task<Result<PartyModel>> GetParties();
-        Task<Result<bool>> CreateParty(PartyModel data);
-        Task<Result<bool>> UpdateParty(PartyModel data);
-        Task<Result<bool>> DeleteParty(Guid Id, IDbContextTransaction transaction, bool IsCallBack);
-        #endregion
-        #region State
-        Task<Result<StateModel>> GetStates( );
-        Task<Result<bool>> CreateState(StateModel data);
-        Task<Result<bool>> UpdateState(StateModel data );
-        Task<Result<bool>> DeleteState(Guid Id, IDbContextTransaction transaction, bool IsCallBack);
-        #endregion
-        #region City
-        Task<Result<CityModel>> GetCities(Guid Id);
-        Task<Result<bool>> CreateCity(CityModel data);
-        Task<Result<bool>> UpdateCity(CityModel data);
-        Task<Result<bool>> DeleteCity(Guid Id, IDbContextTransaction transaction, bool IsCallBack);
-        #endregion
-        #endregion
+        
     }
 }

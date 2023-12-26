@@ -156,7 +156,7 @@
             </div>
             <div class="modal-footer justify-content-between">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary ledgerSubGroupEdit">Save changes</button>
+                <button type="button" class="btn btn-primary ledgerSubGroupUpdate">Save changes</button>
             </div>
 
         </div>
@@ -165,6 +165,7 @@
     <!-- /.modal-dialog -->
 </div>
 <!--.end Modal Update SUbGroup-->
-@await Html.PartialAsync("_FooterScript")
+@section additionalScripts {
 <script src="~/scripts/FormScript.js"></script>
 <script src="~/viewscripts/admin/accountconfig/master.js"></script>
+}

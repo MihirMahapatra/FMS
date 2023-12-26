@@ -140,7 +140,8 @@ $(function () {
             }
         });
     }
-    $('#addInwardSupplyRowBtn').on('click', function () {
+    $('#addInwardSupplyRowBtn').on('click', addInwardSupplyRowBtn);
+    function addInwardSupplyRowBtn() {
         var uniqueId = 'ddlitem' + new Date().getTime();
         var selectedOptionText = $("select[name='ddlProductTypeId'] option:selected").text();
         var html = '';
@@ -215,7 +216,7 @@ $(function () {
         $('#tblInwardSupply tbody').find('.select2bs4').select2({
             theme: 'bootstrap4'
         });
-    });
+    }
     $(document).on('click', '.deleteBtn', function () {
         $(this).closest('tr').remove();
     });
@@ -234,7 +235,8 @@ $(function () {
         });
         $('input[name="GrandTotal"]').val(totalAmount.toFixed(2));
     });
-    $('#btnSave').on('click', function () {
+    $('#btnSave').on('click', CreateInwardSupply);
+    function CreateInwardSupply() {
         if (!transactionDate.val()) {
             toastr.error('TransactionDate Is Required.');
             transactionDate.focus();
@@ -295,9 +297,8 @@ $(function () {
                 }
             });
         }
-       
-    });
 
+    }
     //-----------------------------------------------------InwardSupply List Scren --------------------------------------------------//
     //Update Operation
     $('a[href="#InwardSupplyList"]').on('click', function () {
@@ -379,7 +380,6 @@ $(function () {
             }
         });
     }
-
     $(document).on('click', '.btn-inwardsupply-edit', (event) => {
         const value = $(event.currentTarget).data('id');
         GetInwardSupplyById(value);
@@ -539,7 +539,6 @@ $(function () {
             }
         });
     }
-
     $(document).on('click', '#btnUpdate', function () {
         if (!transactionDate.val()) {
             toastr.error('TransactionDate Is Required.');

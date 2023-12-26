@@ -14,794 +14,8 @@ namespace FMS.Service.Master
         {
             _masterRepo = masterRepo;
         }
-        #region Product Master
-        #region Product Type
-        public async Task<ProductTypeViewModel> GetProductTypes()
-        {
-            ProductTypeViewModel Obj;
-            var Result = await _masterRepo.GetProductTypes();
-            if (Result.IsSuccess)
-            {
-                if (Result.Response == "success")
-                {
-                    Obj = new()
-                    {
-                        ResponseStatus = Result.Response,
-                        ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
-                        ProductTypes = Result.CollectionObjData,
-                    };
-                }
-                else
-                {
-                    Obj = new()
-                    {
-                        ResponseStatus = Result.Response,
-                        ResponseCode = Convert.ToInt32(ResponseCode.Status.NotFound),
-                        Message = "No Record Found"
-                    };
-                }
-            }
-            else
-            {
-                Obj = new()
-                {
-                    ResponseStatus = Result.Response,
-                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                    Exception = Result.Exception,
-                    Message = "Some Eroor Occoured"
-                };
-            }
-            return Obj;
-        }
-        #endregion
-        #region Group
-        public async Task<GroupViewModel> GetAllGroups()
-        {
-            GroupViewModel Obj;
-            var Result = await _masterRepo.GetAllGroups();
-            if (Result.IsSuccess)
-            {
-                if (Result.Response == "success")
-                {
-                    Obj = new()
-                    {
-                        ResponseStatus = Result.Response,
-                        ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
-                        Groups = Result.CollectionObjData,
-                    };
-                }
-                else
-                {
-                    Obj = new()
-                    {
-                        ResponseStatus = Result.Response,
-                        ResponseCode = Convert.ToInt32(ResponseCode.Status.NotFound),
-                        Message = "No Record Found"
-                    };
-                }
-            }
-            else
-            {
-                Obj = new()
-                {
-                    ResponseStatus = Result.Response,
-                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                    Exception = Result.Exception,
-                    Message = "Some Eroor Occoured"
-                };
-            }
-            return Obj;
-        }
-        public async Task<Base> CreateGroup(GroupModel data)
-        {
-            Base Obj;
-            var Result = await _masterRepo.CreateGroup(data);
-            if (Result.IsSuccess)
-            {
-                if (Result.Response == "created")
-                {
-                    Obj = new()
-                    {
-                        ResponseStatus = Result.Response,
-                        ResponseCode = Convert.ToInt32(ResponseCode.Status.Created),
-                        SuccessMsg = "Data Saved SuccessFully"
-                    };
-                }
-                else
-                {
-                    Obj = new()
-                    {
-                        ResponseStatus = Result.Response,
-                        ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                        ErrorMsg = "Data Already Existe"
-                    };
-                }
-            }
-            else if (Result.WarningMessage != null)
-            {
-                Obj = new()
-                {
-                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                    Exception = Result.Exception,
-                    ErrorMsg = Result.WarningMessage,
-                };
-            }
-            else
-            {
-                Obj = new()
-                {
-                    ResponseStatus = Result.Response,
-                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                    Exception = Result.Exception,
-                    ErrorMsg = "Some Error Occourd Try To Contact Your App Devloper"
-                };
-            }
-            return Obj;
-        }
-        public async Task<Base> UpdateGroup(GroupModel data)
-        {
-            var Result = await _masterRepo.UpdateGroup(data);
-            Base Obj;
-            if (Result.IsSuccess)
-            {
-                if (Result.Response == "modified")
-                {
-                    Obj = new()
-                    {
-                        ResponseStatus = Result.Response,
-                        ResponseCode = Convert.ToInt32(ResponseCode.Status.OK),
-                        SuccessMsg = "Data Updated SuccessFully"
-                    };
-                }
-                else
-                {
-                    Obj = new()
-                    {
-                        ResponseStatus = Result.Response,
-                        ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                        ErrorMsg = "Failed To Update Data"
-                    };
-                }
-            }
-            else if (Result.WarningMessage != null)
-            {
-                Obj = new()
-                {
-                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                    Exception = Result.Exception,
-                    ErrorMsg = Result.WarningMessage,
-                };
-            }
-            else
-            {
-                Obj = new()
-                {
-                    ResponseStatus = Result.Response,
-                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                    Exception = Result.Exception,
-                    ErrorMsg = "Some Error Occourd Try To Contact Your App Devloper"
-                };
-            }
-            return Obj;
-        }
-        public async Task<Base> DeleteGroup(Guid Id)
-        {
-            var Result = await _masterRepo.DeleteGroup(Id, null, false);
-            Base Obj;
-            if (Result.IsSuccess)
-            {
-                if (Result.Response == "deleted")
-                {
-                    Obj = new()
-                    {
-                        ResponseStatus = Result.Response,
-                        ResponseCode = Convert.ToInt32(ResponseCode.Status.OK),
-                        SuccessMsg = "Data Deleted Successfully"
-                    };
-                }
-                else
-                {
-                    Obj = new()
-                    {
-                        ResponseStatus = Result.Response,
-                        ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                        ErrorMsg = "Failed To Delete Data"
-                    };
-                }
-            }
-            else
-            {
-                Obj = new()
-                {
-                    ResponseStatus = Result.Response,
-                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                    Exception = Result.Exception,
-                    ErrorMsg = "Some Error Occourd Try To Contact Your App Devloper"
-                };
-            }
-            return Obj;
-        }
-        #endregion
-        #region SubGroup
-        public async Task<SubGroupViewModel> GetSubGroups(Guid GroupId)
-        {
-            SubGroupViewModel Obj;
-            var Result = await _masterRepo.GetSubGroups(GroupId);
-            if (Result.IsSuccess)
-            {
-                if (Result.Response == "success")
-                {
-                    Obj = new()
-                    {
-                        ResponseStatus = Result.Response,
-                        ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
-                        SubGroups = Result.CollectionObjData,
-                    };
-                }
-                else
-                {
-                    Obj = new()
-                    {
-                        ResponseStatus = Result.Response,
-                        ResponseCode = Convert.ToInt32(ResponseCode.Status.NotFound),
-                        Message = "No Record Found"
-                    };
-                }
-            }
-            else
-            {
-                Obj = new()
-                {
-                    ResponseStatus = Result.Response,
-                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                    Exception = Result.Exception,
-                    Message = "Some Eroor Occoured"
-                };
-            }
-            return Obj;
-        }
-        public async Task<Base> CreateSubGroup(SubGroupModel data)
-        {
-            Base Obj;
-            var Result = await _masterRepo.CreateSubGroup(data);
-            if (Result.IsSuccess)
-            {
-                if (Result.Response == "created")
-                {
-                    Obj = new()
-                    {
-                        ResponseStatus = Result.Response,
-                        ResponseCode = Convert.ToInt32(ResponseCode.Status.Created),
-                        SuccessMsg = "Data Saved SuccessFully"
-                    };
-                }
-                else
-                {
-                    Obj = new()
-                    {
-                        ResponseStatus = Result.Response,
-                        ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                        ErrorMsg = "Data Already Exist"
-                    };
-                }
-            }
-            else if (Result.WarningMessage != null)
-            {
-                Obj = new()
-                {
-                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                    Exception = Result.Exception,
-                    ErrorMsg = Result.WarningMessage,
-                };
-            }
-            else
-            {
-                Obj = new()
-                {
-                    ResponseStatus = Result.Response,
-                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                    Exception = Result.Exception,
-                    ErrorMsg = "Some Error Occourd Try To Contact Your App Devloper"
-                };
-            }
-            return Obj;
-        }
-        public async Task<Base> UpdateSubGroup(SubGroupModel data)
-        {
-            var Result = await _masterRepo.UpdateSubGroup(data);
-            Base Obj;
-            if (Result.IsSuccess)
-            {
-                if (Result.Response == "modified")
-                {
-                    Obj = new()
-                    {
-                        ResponseStatus = Result.Response,
-                        ResponseCode = Convert.ToInt32(ResponseCode.Status.OK),
-                        SuccessMsg = "Data Updated SuccessFully"
-                    };
-                }
-                else
-                {
-                    Obj = new()
-                    {
-                        ResponseStatus = Result.Response,
-                        ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                        ErrorMsg = "Failed To Update Data"
-                    };
-                }
-            }
-            else if (Result.WarningMessage != null)
-            {
-                Obj = new()
-                {
-                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                    Exception = Result.Exception,
-                    ErrorMsg = Result.WarningMessage,
-                };
-            }
-            else
-            {
-                Obj = new()
-                {
-                    ResponseStatus = Result.Response,
-                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                    Exception = Result.Exception,
-                    ErrorMsg = "Some Error Occourd Try To Contact Your App Devloper"
-                };
-            }
-            return Obj;
-        }
-        public async Task<Base> DeleteSubGroup(Guid Id)
-        {
-            var Result = await _masterRepo.DeleteSubGroup(Id, null, false);
-            Base Obj;
-            if (Result.IsSuccess)
-            {
-                if (Result.Response == "deleted")
-                {
-                    Obj = new()
-                    {
-                        ResponseStatus = Result.Response,
-                        ResponseCode = Convert.ToInt32(ResponseCode.Status.OK),
-                        SuccessMsg = "Data Deleted Successfully"
-                    };
-                }
-                else
-                {
-                    Obj = new()
-                    {
-                        ResponseStatus = Result.Response,
-                        ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                        ErrorMsg = "Failed To Delete Data"
-                    };
-                }
-            }
-            else
-            {
-                Obj = new()
-                {
-                    ResponseStatus = Result.Response,
-                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                    Exception = Result.Exception,
-                    ErrorMsg = "Some Error Occourd Try To Contact Your App Devloper"
-                };
-            }
-            return Obj;
-        }
-        #endregion
-        #region Unit
-        public async Task<UnitViewModel> GetAllUnits()
-        {
-            UnitViewModel Obj;
-            var Result = await _masterRepo.GetAllUnits();
-            if (Result.IsSuccess)
-            {
-                if (Result.Response == "success")
-                {
-                    Obj = new()
-                    {
-                        ResponseStatus = Result.Response,
-                        ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
-                        Units = Result.CollectionObjData,
-                    };
-                }
-                else
-                {
-                    Obj = new()
-                    {
-                        ResponseStatus = Result.Response,
-                        ResponseCode = Convert.ToInt32(ResponseCode.Status.NotFound),
-                        Message = "No Record Found"
-                    };
-                }
-            }
-            else
-            {
-                Obj = new()
-                {
-                    ResponseStatus = Result.Response,
-                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                    Exception = Result.Exception,
-                    Message = "Some Eroor Occoured"
-                };
-            }
-            return Obj;
-        }
-        public async Task<Base> CreateUnit(UnitModel data)
-        {
-            Base Obj;
-            var Result = await _masterRepo.CreateUnit(data);
-            if (Result.IsSuccess)
-            {
-                if (Result.Response == "created")
-                {
-                    Obj = new()
-                    {
-                        ResponseStatus = Result.Response,
-                        ResponseCode = Convert.ToInt32(ResponseCode.Status.Created),
-                        SuccessMsg = "Data Saved SuccessFully"
-                    };
-                }
-                else
-                {
-                    Obj = new()
-                    {
-                        ResponseStatus = Result.Response,
-                        ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                        ErrorMsg = "Data Already Exist"
-                    };
-                }
-            }
-            else if (Result.WarningMessage != null)
-            {
-                Obj = new()
-                {
-                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                    Exception = Result.Exception,
-                    ErrorMsg = Result.WarningMessage,
-                };
-            }
-            else
-            {
-                Obj = new()
-                {
-                    ResponseStatus = Result.Response,
-                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                    Exception = Result.Exception,
-                    ErrorMsg = "Some Error Occourd Try To Contact Your App Devloper"
-                };
-            }
-            return Obj;
-        }
-        public async Task<Base> UpdateUnit(UnitModel data)
-        {
-            var Result = await _masterRepo.UpdateUnit(data);
-            Base Obj;
-            if (Result.IsSuccess)
-            {
-                if (Result.Response == "modified")
-                {
-                    Obj = new()
-                    {
-                        ResponseStatus = Result.Response,
-                        ResponseCode = Convert.ToInt32(ResponseCode.Status.OK),
-                        SuccessMsg = "Data Updated SuccessFully"
-                    };
-                }
-                else
-                {
-                    Obj = new()
-                    {
-                        ResponseStatus = Result.Response,
-                        ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                        ErrorMsg = "Failed To Update Data"
-                    };
-                }
-            }
-            else if (Result.WarningMessage != null)
-            {
-                Obj = new()
-                {
-                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                    Exception = Result.Exception,
-                    ErrorMsg = Result.WarningMessage,
-                };
-            }
-            else
-            {
-                Obj = new()
-                {
-                    ResponseStatus = Result.Response,
-                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                    Exception = Result.Exception,
-                    ErrorMsg = "Some Error Occourd Try To Contact Your App Devloper"
-                };
-            }
-            return Obj;
-        }
-        public async Task<Base> DeleteUnit(Guid Id)
-        {
-            var Result = await _masterRepo.DeleteUnit(Id, null, false);
-            Base Obj;
-            if (Result.IsSuccess)
-            {
-                if (Result.Response == "deleted")
-                {
-                    Obj = new()
-                    {
-                        ResponseStatus = Result.Response,
-                        ResponseCode = Convert.ToInt32(ResponseCode.Status.OK),
-                        SuccessMsg = "Data Deleted Successfully"
-                    };
-                }
-                else
-                {
-                    Obj = new()
-                    {
-                        ResponseStatus = Result.Response,
-                        ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                        ErrorMsg = "Failed To Delete Data\r\n"
-                    };
-                }
-            }
-            else
-            {
-                Obj = new()
-                {
-                    ResponseStatus = Result.Response,
-                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                    Exception = Result.Exception,
-                    ErrorMsg = "Some Error Occourd Try To Contact Your App Devloper"
-                };
-            }
-            return Obj;
-        }
-        #endregion
-        #region Product
-        public async Task<ProductViewModel> GetAllProducts()
-        {
-            ProductViewModel Obj;
-            var Result = await _masterRepo.GetAllProducts();
-            if (Result.IsSuccess)
-            {
-                if (Result.Response == "success")
-                {
-                    Obj = new()
-                    {
-                        ResponseStatus = Result.Response,
-                        ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
-                        products = Result.CollectionObjData,
-                    };
-                }
-                else
-                {
-                    Obj = new()
-                    {
-                        ResponseStatus = Result.Response,
-                        ResponseCode = Convert.ToInt32(ResponseCode.Status.NotFound),
-                        Message = "No Record Found"
-                    };
-                }
-            }
-            else
-            {
-                Obj = new()
-                {
-                    ResponseStatus = Result.Response,
-                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                    Exception = Result.Exception,
-                    Message = "Some Eroor Occoured"
-                };
-            }
-            return Obj;
-        }
-        public async Task<ProductViewModel> GetProductByTypeId(Guid ProductTypeId)
-        {
-            ProductViewModel Obj;
-            var Result = await _masterRepo.GetProductByTypeId(ProductTypeId);
-            if (Result.IsSuccess)
-            {
-                if (Result.Response == "success")
-                {
-                    Obj = new()
-                    {
-                        ResponseStatus = Result.Response,
-                        ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
-                        products = Result.CollectionObjData,
-                    };
-                }
-                else
-                {
-                    Obj = new()
-                    {
-                        ResponseStatus = Result.Response,
-                        ResponseCode = Convert.ToInt32(ResponseCode.Status.NotFound),
-                        Message = "No Record Found"
-                    };
-                }
-            }
-            else
-            {
-                Obj = new()
-                {
-                    ResponseStatus = Result.Response,
-                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                    Exception = Result.Exception,
-                    ErrorMsg = Result.Exception.InnerException.Message
-                };
-            }
-            return Obj;
-        }
-        public async Task<ProductViewModel> GetProductGstWithRate(Guid id)
-        {
-            ProductViewModel Obj;
-            var Result = await _masterRepo.GetProductGstWithRate(id);
-            if (Result.IsSuccess)
-            {
-                if (Result.Response == "success")
-                {
-                    Obj = new()
-                    {
-                        ResponseStatus = Result.Response,
-                        ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
-                        product = Result.SingleObjData,
-                    };
-                }
-                else
-                {
-                    Obj = new()
-                    {
-                        ResponseStatus = Result.Response,
-                        ResponseCode = Convert.ToInt32(ResponseCode.Status.NotFound),
-                        Message = "No Record Found"
-                    };
-                }
-            }
-            else
-            {
-                Obj = new()
-                {
-                    ResponseStatus = Result.Response,
-                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                    Exception = Result.Exception,
-                    Message = "Some Eroor Occoured"
-                };
-            }
-            return Obj;
-        }
-        public async Task<Base> CreateProduct(ProductModel data)
-        {
-            Base Obj;
-            var Result = await _masterRepo.CreateProduct(data);
-            if (Result.IsSuccess)
-            {
-                if (Result.Response == "created")
-                {
-                    Obj = new()
-                    {
-                        ResponseStatus = Result.Response,
-                        ResponseCode = Convert.ToInt32(ResponseCode.Status.Created),
-                        SuccessMsg = "Data Saved SuccessFully"
-                    };
-                }
-                else
-                {
-                    Obj = new()
-                    {
-                        ResponseStatus = Result.Response,
-                        ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                        ErrorMsg = "Data Already Exist"
-                    };
-                }
-            }
-            else if (Result.WarningMessage != null)
-            {
-                Obj = new()
-                {
-                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                    Exception = Result.Exception,
-                    ErrorMsg = Result.WarningMessage,
-                };
-            }
-            else
-            {
-                Obj = new()
-                {
-                    ResponseStatus = Result.Response,
-                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                    Exception = Result.Exception,
-                    ErrorMsg = "Some Error Occourd Try To Contact Your App Devloper"
-                };
-            }
-            return Obj;
-        }
-        public async Task<Base> UpdateProduct(ProductModel data)
-        {
-            var Result = await _masterRepo.UpdateProduct(data);
-            Base Obj;
-            if (Result.IsSuccess)
-            {
-                if (Result.Response == "modified")
-                {
-                    Obj = new()
-                    {
-                        ResponseStatus = Result.Response,
-                        ResponseCode = Convert.ToInt32(ResponseCode.Status.OK),
-                        SuccessMsg = "Data Updated SuccessFully"
-                    };
-                }
-                else
-                {
-                    Obj = new()
-                    {
-                        ResponseStatus = Result.Response,
-                        ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                        ErrorMsg = "Failed To Update Data"
-                    };
-                }
-            }
-            else if (Result.WarningMessage != null)
-            {
-                Obj = new()
-                {
-                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                    Exception = Result.Exception,
-                    ErrorMsg = Result.WarningMessage,
-                };
-            }
-            else
-            {
-                Obj = new()
-                {
-                    ResponseStatus = Result.Response,
-                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                    Exception = Result.Exception,
-                    ErrorMsg = "Some Error Occourd Try To Contact Your App Devloper"
-                };
-            }
-            return Obj;
-        }
-        public async Task<Base> DeleteProduct(Guid Id)
-        {
-            var Result = await _masterRepo.DeleteProduct(Id, null, false);
-            Base Obj;
-            if (Result.IsSuccess)
-            {
-                if (Result.Response == "deleted")
-                {
-                    Obj = new()
-                    {
-                        ResponseStatus = Result.Response,
-                        ResponseCode = Convert.ToInt32(ResponseCode.Status.OK),
-                        SuccessMsg = "Data Deleted Successfully"
-                    };
-                }
-                else
-                {
-                    Obj = new()
-                    {
-                        ResponseStatus = Result.Response,
-                        ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                        ErrorMsg = "Failed To Delete Data"
-                    };
-                }
-            }
-            else
-            {
-                Obj = new()
-                {
-                    ResponseStatus = Result.Response,
-                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                    Exception = Result.Exception,
-                    ErrorMsg = "Some Error Occourd Try To Contact Your App Devloper"
-                };
-            }
-
-            return Obj;
-        }
-        #endregion
-        #region  Stock
+        #region Stock Master
+   
         public async Task<StockViewModel> GetStocks()
         {
             StockViewModel Obj;
@@ -839,10 +53,10 @@ namespace FMS.Service.Master
             }
             return Obj;
         }
-        public async Task<ProductViewModel> GetProductsWhichNotInStock()
+        public async Task<ProductViewModel> GetProductsWhichNotInStock(Guid GroupId, Guid SubGroupId)
         {
             ProductViewModel Obj;
-            var Result = await _masterRepo.GetProductsWhichNotInStock();
+            var Result = await _masterRepo.GetProductsWhichNotInStock(GroupId, SubGroupId);
             if (Result.IsSuccess)
             {
                 if (Result.Response == "success")
@@ -1005,7 +219,7 @@ namespace FMS.Service.Master
             }
             return Obj;
         }
-        #endregion
+    
         #endregion
         #region labour Master
         #region Labour Type
@@ -1042,135 +256,6 @@ namespace FMS.Service.Master
                     ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
                     Exception = Result.Exception,
                     Message = "Some Eroor Occoured"
-                };
-            }
-            return Obj;
-        }
-        public async Task<Base> CreateLabourType(LabourTypeModel data)
-        {
-            Base Obj;
-            var Result = await _masterRepo.CreateLabourType(data);
-            if (Result.IsSuccess)
-            {
-                if (Result.Response == "created")
-                {
-                    Obj = new()
-                    {
-                        ResponseStatus = Result.Response,
-                        ResponseCode = Convert.ToInt32(ResponseCode.Status.Created),
-                        SuccessMsg = "Data Saved SuccessFully"
-                    };
-                }
-                else
-                {
-                    Obj = new()
-                    {
-                        ResponseStatus = Result.Response,
-                        ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                        ErrorMsg = "Data Already Exist"
-                    };
-                }
-            }
-            else if (Result.WarningMessage != null)
-            {
-                Obj = new()
-                {
-                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                    Exception = Result.Exception,
-                    ErrorMsg = Result.WarningMessage,
-                };
-            }
-            else
-            {
-                Obj = new()
-                {
-                    ResponseStatus = Result.Response,
-                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                    Exception = Result.Exception,
-                    ErrorMsg = "Some Error Occourd Try To Contact Your App Devloper"
-                };
-            }
-            return Obj;
-        }
-        public async Task<Base> UpdateLabourType(LabourTypeModel data)
-        {
-            var Result = await _masterRepo.UpdateLabourType(data);
-            Base Obj;
-            if (Result.IsSuccess)
-            {
-                if (Result.Response == "modified")
-                {
-                    Obj = new()
-                    {
-                        ResponseStatus = Result.Response,
-                        ResponseCode = Convert.ToInt32(ResponseCode.Status.OK),
-                        SuccessMsg = "Data Updated SuccessFully"
-                    };
-                }
-                else
-                {
-                    Obj = new()
-                    {
-                        ResponseStatus = Result.Response,
-                        ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                        ErrorMsg = "Failed To Update Data\r\n"
-                    };
-                }
-            }
-            else if (Result.WarningMessage != null)
-            {
-                Obj = new()
-                {
-                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                    Exception = Result.Exception,
-                    ErrorMsg = Result.WarningMessage,
-                };
-            }
-            else
-            {
-                Obj = new()
-                {
-                    ResponseStatus = Result.Response,
-                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                    Exception = Result.Exception,
-                    ErrorMsg = "Some Error Occourd Try To Contact Your App Devloper"
-                };
-            }
-            return Obj;
-        }
-        public async Task<Base> DeleteLabourType(Guid Id)
-        {
-            var Result = await _masterRepo.DeleteLabourType(Id, null, false);
-            Base Obj;
-            if (Result.IsSuccess)
-            {
-                if (Result.Response == "deleted")
-                {
-                    Obj = new()
-                    {
-                        ResponseStatus = Result.Response,
-                        ResponseCode = Convert.ToInt32(ResponseCode.Status.OK),
-                        SuccessMsg = "Data Deleted Successfully"
-                    };
-                }
-                else
-                {
-                    Obj = new()
-                    {
-                        ResponseStatus = Result.Response,
-                        ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                        ErrorMsg = "Failed To Delete Data"
-                    };
-                }
-            }
-            else
-            {
-                Obj = new()
-                {
-                    ResponseStatus = Result.Response,
-                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                    Exception = Result.Exception,
-                    ErrorMsg = "Some Error Occourd Try To Contact Your App Devloper"
                 };
             }
             return Obj;
@@ -1227,6 +312,43 @@ namespace FMS.Service.Master
                         ResponseStatus = Result.Response,
                         ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
                         Labour = Result.SingleObjData,
+                    };
+                }
+                else
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.NotFound),
+                        Message = "No Record Found"
+                    };
+                }
+            }
+            else
+            {
+                Obj = new()
+                {
+                    ResponseStatus = Result.Response,
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    Message = "Some Eroor Occoured"
+                };
+            }
+            return Obj;
+        }
+        public async Task<LabourViewModel> GetLaboursByLabourTypeId(Guid LabourTypeId)
+        {
+            LabourViewModel Obj;
+            var Result = await _masterRepo.GetLaboursByLabourTypeId(LabourTypeId);
+            if (Result.IsSuccess)
+            {
+                if (Result.Response == "success")
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
+                        Labours = Result.CollectionObjData,
                     };
                 }
                 else
@@ -1381,11 +503,13 @@ namespace FMS.Service.Master
             return Obj;
         }
         #endregion
-        #region Labour Rate Master
-        public async Task<LabourRateViewModel> GetAllLabourRates()
+        #endregion
+        #region Party Master
+        #region Party
+        public async Task<PartyViewModel> GetParties()
         {
-            LabourRateViewModel Obj;
-            var Result = await _masterRepo.GetAllLabourRates();
+            PartyViewModel Obj;
+            var Result = await _masterRepo.GetParties();
             if (Result.IsSuccess)
             {
                 if (Result.Response == "success")
@@ -1394,7 +518,7 @@ namespace FMS.Service.Master
                     {
                         ResponseStatus = Result.Response,
                         ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
-                        LabourRates = Result.CollectionObjData,
+                        Parties = Result.CollectionObjData,
                     };
                 }
                 else
@@ -1419,20 +543,10 @@ namespace FMS.Service.Master
             }
             return Obj;
         }
-        public async Task<Base> GetLabourRateByProductId(Guid ProductId)
-        {
-            var Result = await _masterRepo.GetLabourRateByProductId(ProductId);
-            return new Base()
-            {
-                ResponseStatus = Result.Response,
-                ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
-                Data = Result.SingleObjData.ToString(),
-            };
-        }
-        public async Task<Base> CreateLabourRate(LabourRateModel data)
+        public async Task<Base> CreateParty(PartyModel listData)
         {
             Base Obj;
-            var Result = await _masterRepo.CreateLabourRate(data);
+            var Result = await _masterRepo.CreateParty(listData);
             if (Result.IsSuccess)
             {
                 if (Result.Response == "created")
@@ -1475,9 +589,9 @@ namespace FMS.Service.Master
             }
             return Obj;
         }
-        public async Task<Base> UpdateLabourRate(LabourRateModel data)
+        public async Task<Base> UpdateParty(PartyModel data)
         {
-            var Result = await _masterRepo.UpdateLabourRate(data);
+            var Result = await _masterRepo.UpdateParty(data);
             Base Obj;
             if (Result.IsSuccess)
             {
@@ -1521,9 +635,346 @@ namespace FMS.Service.Master
             }
             return Obj;
         }
-        public async Task<Base> DeleteLabourRate(Guid Id)
+        public async Task<Base> DeleteParty(Guid Id)
         {
-            var Result = await _masterRepo.DeleteLabourRate(Id, null, false);
+            var Result = await _masterRepo.DeleteParty(Id, null, false);
+            Base Obj;
+            if (Result.IsSuccess)
+            {
+                if (Result.Response == "deleted")
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.OK),
+                        SuccessMsg = "Data Deleted Successfully"
+                    };
+                }
+                else
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                        ErrorMsg = "Failed To Delete Data"
+                    };
+                }
+            }
+            else
+            {
+                Obj = new()
+                {
+                    ResponseStatus = Result.Response,
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    ErrorMsg = "Some Error Occourd Try To Contact Your App Devloper"
+                };
+            }
+            return Obj;
+        }
+        #endregion
+        #region State
+        public async Task<StateViewModel> GetStates()
+        {
+            StateViewModel Obj;
+            var Result = await _masterRepo.GetStates();
+
+            if (Result.IsSuccess)
+            {
+                if (Result.Response == "success")
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
+                        States = Result.CollectionObjData,
+                    };
+                }
+                else
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.NotFound),
+                        Message = "No Record Found"
+                    };
+                }
+            }
+            else
+            {
+                Obj = new()
+                {
+                    ResponseStatus = Result.Response,
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    Message = "Some Eroor Occoured"
+                };
+            }
+            return Obj;
+        }
+        public async Task<Base> CreateState(StateModel data)
+        {
+            Base Obj;
+            var Result = await _masterRepo.CreateState(data);
+            if (Result.IsSuccess)
+            {
+                if (Result.Response == "created")
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.Created),
+                        SuccessMsg = "Data Saved SuccessFully"
+                    };
+                }
+                else
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                        ErrorMsg = "Data Already Exist"
+                    };
+                }
+            }
+            else if (Result.WarningMessage != null)
+            {
+                Obj = new()
+                {
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    ErrorMsg = Result.WarningMessage,
+                };
+            }
+            else
+            {
+                Obj = new()
+                {
+                    ResponseStatus = Result.Response,
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    ErrorMsg = "Some Error Occourd Try To Contact Your App Devloper"
+                };
+            }
+            return Obj;
+        }
+        public async Task<Base> UpdateState(StateModel data)
+        {
+            var Result = await _masterRepo.UpdateState(data);
+            Base Obj;
+            if (Result.IsSuccess)
+            {
+                if (Result.Response == "modified")
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.OK),
+                        SuccessMsg = "Data Updated SuccessFully"
+                    };
+                }
+                else
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                        ErrorMsg = "Failed To Update Data"
+                    };
+                }
+            }
+            else if (Result.WarningMessage != null)
+            {
+                Obj = new()
+                {
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    ErrorMsg = Result.WarningMessage,
+                };
+            }
+            else
+            {
+                Obj = new()
+                {
+                    ResponseStatus = Result.Response,
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    ErrorMsg = "Some Error Occourd Try To Contact Your App Devloper"
+                };
+            }
+            return Obj;
+        }
+        public async Task<Base> DeleteState(Guid Id)
+        {
+            var Result = await _masterRepo.DeleteState(Id, null, false);
+            Base Obj;
+            if (Result.IsSuccess)
+            {
+                if (Result.Response == "deleted")
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.OK),
+                        SuccessMsg = "Data Deleted Successfully"
+                    };
+                }
+                else
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                        ErrorMsg = "Failed To Delete Data"
+                    };
+                }
+            }
+            else
+            {
+                Obj = new()
+                {
+                    ResponseStatus = Result.Response,
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    ErrorMsg = "Some Error Occourd Try To Contact Your App Devloper"
+                };
+            }
+            return Obj;
+        }
+        #endregion
+        #region City
+        public async Task<CityViewModel> GetCities(Guid Id)
+        {
+            CityViewModel Obj;
+            var Result = await _masterRepo.GetCities(Id);
+            if (Result.IsSuccess)
+            {
+                if (Result.Response == "success")
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
+                        Cities = Result.CollectionObjData,
+                    };
+                }
+                else
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.NotFound),
+                        Message = "No Record Found"
+                    };
+                }
+            }
+            else
+            {
+                Obj = new()
+                {
+                    ResponseStatus = Result.Response,
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    Message = "Some Eroor Occoured"
+                };
+            }
+            return Obj;
+        }
+        public async Task<Base> CreateCity(CityModel data)
+        {
+            Base Obj;
+            var Result = await _masterRepo.CreateCity(data);
+            if (Result.IsSuccess)
+            {
+                if (Result.Response == "created")
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.Created),
+                        SuccessMsg = "Data Saved SuccessFully"
+                    };
+                }
+                else
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                        ErrorMsg = "\r\nData Already Exist"
+                    };
+                }
+            }
+            else if (Result.WarningMessage != null)
+            {
+                Obj = new()
+                {
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    ErrorMsg = Result.WarningMessage,
+                };
+            }
+            else
+            {
+                Obj = new()
+                {
+                    ResponseStatus = Result.Response,
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    ErrorMsg = "Some Error Occourd Try To Contact Your App Devloper"
+                };
+            }
+            return Obj;
+        }
+        public async Task<Base> UpdateCity(CityModel data)
+        {
+            var Result = await _masterRepo.UpdateCity(data);
+            Base Obj;
+            if (Result.IsSuccess)
+            {
+                if (Result.Response == "modified")
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.OK),
+                        SuccessMsg = "Data Updated SuccessFully"
+                    };
+                }
+                else
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                        ErrorMsg = "Failed To Update Data"
+                    };
+                }
+            }
+            else if (Result.WarningMessage != null)
+            {
+                Obj = new()
+                {
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    ErrorMsg = Result.WarningMessage,
+                };
+            }
+            else
+            {
+                Obj = new()
+                {
+                    ResponseStatus = Result.Response,
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    ErrorMsg = "Some Error Occourd Try To Contact Your App Devloper"
+                };
+            }
+            return Obj;
+        }
+        public async Task<Base> DeleteCity(Guid Id)
+        {
+            var Result = await _masterRepo.DeleteCity(Id, null, false);
             Base Obj;
             if (Result.IsSuccess)
             {
@@ -2093,513 +1544,6 @@ namespace FMS.Service.Master
             return Obj;
         }
         #endregion
-        #endregion
-        #region Party Master
-        #region Party
-        public async Task<PartyViewModel> GetParties()
-        {
-            PartyViewModel Obj;
-            var Result = await _masterRepo.GetParties();
-            if (Result.IsSuccess)
-            {
-                if (Result.Response == "success")
-                {
-                    Obj = new()
-                    {
-                        ResponseStatus = Result.Response,
-                        ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
-                        Parties = Result.CollectionObjData,
-                    };
-                }
-                else
-                {
-                    Obj = new()
-                    {
-                        ResponseStatus = Result.Response,
-                        ResponseCode = Convert.ToInt32(ResponseCode.Status.NotFound),
-                        Message = "No Record Found"
-                    };
-                }
-            }
-            else
-            {
-                Obj = new()
-                {
-                    ResponseStatus = Result.Response,
-                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                    Exception = Result.Exception,
-                    Message = "Some Eroor Occoured"
-                };
-            }
-            return Obj;
-        }
-        public async Task<Base> CreateParty(PartyModel listData)
-        {
-            Base Obj;
-            var Result = await _masterRepo.CreateParty(listData);
-            if (Result.IsSuccess)
-            {
-                if (Result.Response == "created")
-                {
-                    Obj = new()
-                    {
-                        ResponseStatus = Result.Response,
-                        ResponseCode = Convert.ToInt32(ResponseCode.Status.Created),
-                        SuccessMsg = "Data Saved SuccessFully"
-                    };
-                }
-                else
-                {
-                    Obj = new()
-                    {
-                        ResponseStatus = Result.Response,
-                        ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                        ErrorMsg = "Data Already Exist"
-                    };
-                }
-            }
-            else if (Result.WarningMessage != null)
-            {
-                Obj = new()
-                {
-                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                    Exception = Result.Exception,
-                    ErrorMsg = Result.WarningMessage,
-                };
-            }
-            else
-            {
-                Obj = new()
-                {
-                    ResponseStatus = Result.Response,
-                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                    Exception = Result.Exception,
-                    ErrorMsg = "Some Error Occourd Try To Contact Your App Devloper"
-                };
-            }
-            return Obj;
-        }
-        public async Task<Base> UpdateParty(PartyModel data)
-        {
-            var Result = await _masterRepo.UpdateParty(data);
-            Base Obj;
-            if (Result.IsSuccess)
-            {
-                if (Result.Response == "modified")
-                {
-                    Obj = new()
-                    {
-                        ResponseStatus = Result.Response,
-                        ResponseCode = Convert.ToInt32(ResponseCode.Status.OK),
-                        SuccessMsg = "Data Updated SuccessFully"
-                    };
-                }
-                else
-                {
-                    Obj = new()
-                    {
-                        ResponseStatus = Result.Response,
-                        ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                        ErrorMsg = "Failed To Update Data"
-                    };
-                }
-            }
-            else if (Result.WarningMessage != null)
-            {
-                Obj = new()
-                {
-                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                    Exception = Result.Exception,
-                    ErrorMsg = Result.WarningMessage,
-                };
-            }
-            else
-            {
-                Obj = new()
-                {
-                    ResponseStatus = Result.Response,
-                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                    Exception = Result.Exception,
-                    ErrorMsg = "Some Error Occourd Try To Contact Your App Devloper"
-                };
-            }
-            return Obj;
-        }
-        public async Task<Base> DeleteParty(Guid Id)
-        {
-            var Result = await _masterRepo.DeleteParty(Id, null, false);
-            Base Obj;
-            if (Result.IsSuccess)
-            {
-                if (Result.Response == "deleted")
-                {
-                    Obj = new()
-                    {
-                        ResponseStatus = Result.Response,
-                        ResponseCode = Convert.ToInt32(ResponseCode.Status.OK),
-                        SuccessMsg = "Data Deleted Successfully"
-                    };
-                }
-                else
-                {
-                    Obj = new()
-                    {
-                        ResponseStatus = Result.Response,
-                        ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                        ErrorMsg = "Failed To Delete Data"
-                    };
-                }
-            }
-            else
-            {
-                Obj = new()
-                {
-                    ResponseStatus = Result.Response,
-                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                    Exception = Result.Exception,
-                    ErrorMsg = "Some Error Occourd Try To Contact Your App Devloper"
-                };
-            }
-            return Obj;
-        }
-        #endregion
-        #region State
-        public async Task<StateViewModel> GetStates()
-        {
-            StateViewModel Obj;
-            var Result = await _masterRepo.GetStates();
-
-            if (Result.IsSuccess)
-            {
-                if (Result.Response == "success")
-                {
-                    Obj = new()
-                    {
-                        ResponseStatus = Result.Response,
-                        ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
-                        States = Result.CollectionObjData,
-                    };
-                }
-                else
-                {
-                    Obj = new()
-                    {
-                        ResponseStatus = Result.Response,
-                        ResponseCode = Convert.ToInt32(ResponseCode.Status.NotFound),
-                        Message = "No Record Found"
-                    };
-                }
-            }
-            else
-            {
-                Obj = new()
-                {
-                    ResponseStatus = Result.Response,
-                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                    Exception = Result.Exception,
-                    Message = "Some Eroor Occoured"
-                };
-            }
-            return Obj;
-        }
-        public async Task<Base> CreateState(StateModel data)
-        {
-            Base Obj;
-            var Result = await _masterRepo.CreateState(data);
-            if (Result.IsSuccess)
-            {
-                if (Result.Response == "created")
-                {
-                    Obj = new()
-                    {
-                        ResponseStatus = Result.Response,
-                        ResponseCode = Convert.ToInt32(ResponseCode.Status.Created),
-                        SuccessMsg = "Data Saved SuccessFully"
-                    };
-                }
-                else
-                {
-                    Obj = new()
-                    {
-                        ResponseStatus = Result.Response,
-                        ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                        ErrorMsg = "Data Already Exist"
-                    };
-                }
-            }
-            else if (Result.WarningMessage != null)
-            {
-                Obj = new()
-                {
-                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                    Exception = Result.Exception,
-                    ErrorMsg = Result.WarningMessage,
-                };
-            }
-            else
-            {
-                Obj = new()
-                {
-                    ResponseStatus = Result.Response,
-                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                    Exception = Result.Exception,
-                    ErrorMsg = "Some Error Occourd Try To Contact Your App Devloper"
-                };
-            }
-            return Obj;
-        }
-        public async Task<Base> UpdateState(StateModel data)
-        {
-            var Result = await _masterRepo.UpdateState(data);
-            Base Obj;
-            if (Result.IsSuccess)
-            {
-                if (Result.Response == "modified")
-                {
-                    Obj = new()
-                    {
-                        ResponseStatus = Result.Response,
-                        ResponseCode = Convert.ToInt32(ResponseCode.Status.OK),
-                        SuccessMsg = "Data Updated SuccessFully"
-                    };
-                }
-                else
-                {
-                    Obj = new()
-                    {
-                        ResponseStatus = Result.Response,
-                        ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                        ErrorMsg = "Failed To Update Data"
-                    };
-                }
-            }
-            else if (Result.WarningMessage != null)
-            {
-                Obj = new()
-                {
-                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                    Exception = Result.Exception,
-                    ErrorMsg = Result.WarningMessage,
-                };
-            }
-            else
-            {
-                Obj = new()
-                {
-                    ResponseStatus = Result.Response,
-                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                    Exception = Result.Exception,
-                    ErrorMsg = "Some Error Occourd Try To Contact Your App Devloper"
-                };
-            }
-            return Obj;
-        }
-        public async Task<Base> DeleteState(Guid Id)
-        {
-            var Result = await _masterRepo.DeleteState(Id, null, false);
-            Base Obj;
-            if (Result.IsSuccess)
-            {
-                if (Result.Response == "deleted")
-                {
-                    Obj = new()
-                    {
-                        ResponseStatus = Result.Response,
-                        ResponseCode = Convert.ToInt32(ResponseCode.Status.OK),
-                        SuccessMsg = "Data Deleted Successfully"
-                    };
-                }
-                else
-                {
-                    Obj = new()
-                    {
-                        ResponseStatus = Result.Response,
-                        ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                        ErrorMsg = "Failed To Delete Data"
-                    };
-                }
-            }
-            else
-            {
-                Obj = new()
-                {
-                    ResponseStatus = Result.Response,
-                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                    Exception = Result.Exception,
-                    ErrorMsg = "Some Error Occourd Try To Contact Your App Devloper"
-                };
-            }
-            return Obj;
-        }
-        #endregion
-        #region City
-        public async Task<CityViewModel> GetCities(Guid Id)
-        {
-            CityViewModel Obj;
-            var Result = await _masterRepo.GetCities(Id);
-            if (Result.IsSuccess)
-            {
-                if (Result.Response == "success")
-                {
-                    Obj = new()
-                    {
-                        ResponseStatus = Result.Response,
-                        ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
-                        Cities = Result.CollectionObjData,
-                    };
-                }
-                else
-                {
-                    Obj = new()
-                    {
-                        ResponseStatus = Result.Response,
-                        ResponseCode = Convert.ToInt32(ResponseCode.Status.NotFound),
-                        Message = "No Record Found"
-                    };
-                }
-            }
-            else
-            {
-                Obj = new()
-                {
-                    ResponseStatus = Result.Response,
-                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                    Exception = Result.Exception,
-                    Message = "Some Eroor Occoured"
-                };
-            }
-            return Obj;
-        }
-        public async Task<Base> CreateCity(CityModel data)
-        {
-            Base Obj;
-            var Result = await _masterRepo.CreateCity(data);
-            if (Result.IsSuccess)
-            {
-                if (Result.Response == "created")
-                {
-                    Obj = new()
-                    {
-                        ResponseStatus = Result.Response,
-                        ResponseCode = Convert.ToInt32(ResponseCode.Status.Created),
-                        SuccessMsg = "Data Saved SuccessFully"
-                    };
-                }
-                else
-                {
-                    Obj = new()
-                    {
-                        ResponseStatus = Result.Response,
-                        ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                        ErrorMsg = "\r\nData Already Exist"
-                    };
-                }
-            }
-            else if (Result.WarningMessage != null)
-            {
-                Obj = new()
-                {
-                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                    Exception = Result.Exception,
-                    ErrorMsg = Result.WarningMessage,
-                };
-            }
-            else
-            {
-                Obj = new()
-                {
-                    ResponseStatus = Result.Response,
-                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                    Exception = Result.Exception,
-                    ErrorMsg = "Some Error Occourd Try To Contact Your App Devloper"
-                };
-            }
-            return Obj;
-        }
-        public async Task<Base> UpdateCity(CityModel data)
-        {
-            var Result = await _masterRepo.UpdateCity(data);
-            Base Obj;
-            if (Result.IsSuccess)
-            {
-                if (Result.Response == "modified")
-                {
-                    Obj = new()
-                    {
-                        ResponseStatus = Result.Response,
-                        ResponseCode = Convert.ToInt32(ResponseCode.Status.OK),
-                        SuccessMsg = "Data Updated SuccessFully"
-                    };
-                }
-                else
-                {
-                    Obj = new()
-                    {
-                        ResponseStatus = Result.Response,
-                        ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                        ErrorMsg = "Failed To Update Data"
-                    };
-                }
-            }
-            else if (Result.WarningMessage != null)
-            {
-                Obj = new()
-                {
-                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                    Exception = Result.Exception,
-                    ErrorMsg = Result.WarningMessage,
-                };
-            }
-            else
-            {
-                Obj = new()
-                {
-                    ResponseStatus = Result.Response,
-                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                    Exception = Result.Exception,
-                    ErrorMsg = "Some Error Occourd Try To Contact Your App Devloper"
-                };
-            }
-            return Obj;
-        }
-        public async Task<Base> DeleteCity(Guid Id)
-        {
-            var Result = await _masterRepo.DeleteCity(Id, null, false);
-            Base Obj;
-            if (Result.IsSuccess)
-            {
-                if (Result.Response == "deleted")
-                {
-                    Obj = new()
-                    {
-                        ResponseStatus = Result.Response,
-                        ResponseCode = Convert.ToInt32(ResponseCode.Status.OK),
-                        SuccessMsg = "Data Deleted Successfully"
-                    };
-                }
-                else
-                {
-                    Obj = new()
-                    {
-                        ResponseStatus = Result.Response,
-                        ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                        ErrorMsg = "Failed To Delete Data"
-                    };
-                }
-            }
-            else
-            {
-                Obj = new()
-                {
-                    ResponseStatus = Result.Response,
-                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
-                    Exception = Result.Exception,
-                    ErrorMsg = "Some Error Occourd Try To Contact Your App Devloper"
-                };
-            }
-            return Obj;
-        }
-        #endregion
-        #endregion
+        #endregion       
     }
 }

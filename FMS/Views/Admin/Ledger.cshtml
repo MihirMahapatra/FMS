@@ -97,6 +97,7 @@
     <!-- /.modal-dialog -->
 </div>
 <!--.END MODAL-->
-@await Html.PartialAsync("_FooterScript")
+@section additionalScripts {
 <script src="~/scripts/formscript.js"></script>
 <script src="~/viewscripts/admin/accountconfig/ledger.js"></script>
+}
