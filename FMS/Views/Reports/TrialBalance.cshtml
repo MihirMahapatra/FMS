@@ -1,0 +1,91 @@
+﻿
+@{
+    ViewData["Title"] = "TrialBalance";
+    Layout = "_Layout";
+}
+
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Trial Balance Book</h3>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body">
+                    <div class="tab-content pt-3" id="custom-content-below-tabContent">
+                        <div class="tab-pane fade show active" id="SummerizedReport" role="tabpanel" aria-labelledby="tab-SummerizedReport">
+                            <div class="card card-primary card-outline">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label>From Date</label>
+                                                <div class="input-group  date" id="FromDate" data-target-input="nearest">
+                                                    <input type="text" class="form-control datetimepicker-input" data-target="#FromDate" name="FromDate" />
+                                                    <div class="input-group-append" data-target="#FromDate" data-toggle="datetimepicker">
+                                                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label>To Date</label>
+                                                <div class="input-group  date" id="ToDate" data-target-input="nearest">
+                                                    <input type="text" class="form-control datetimepicker-input" data-target="#ToDate" name="ToDate" />
+                                                    <div class="input-group-append" data-target="#ToDate" data-toggle="datetimepicker">
+                                                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <button type="button" id="btnView" class="btn btn-primary" style="float:left; margin-top:32px">View</button>
+
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div id="loader" style="display:none;"></div>
+                                            <div class="LadgerBookTransationsDetails" id="example1_wrapper">
+                                            </div>
+
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="row">
+                                                <div class="col-md-9"></div>
+                                                <div class="col-md-3">
+                                                    <div class="form-group hddiv" style="display:none">
+                                                        <label>Closing  Bal</label>
+                                                        <input type="text" class="form-control" id="" name="ClosingBal" disabled>
+                                                        <button type="button" id="btnPrint" class="btn btn-primary" style="float:left; margin-top:32px">Print</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.card-body -->
+            </div>
+        </div>
+    </section>
+</div>
+
+@await Html.PartialAsync("_FooterScript")
+<script src="~/scripts/FormScript.js"></script>
+<script src="~/scripts/datepicker.js"></script>
+<script src="~/viewscripts/reports/trialbalancereport.js"></script>
+<script>
+    $('#FromDate').datetimepicker({
+        format: 'DD/MM/YYYY'
+    });
+    $('#ToDate').datetimepicker({
+        format: 'DD/MM/YYYY'
+    });
+</script>
+
