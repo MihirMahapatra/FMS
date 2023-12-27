@@ -2,6 +2,7 @@
 using FMS.Service.Admin;
 using FMS.Service.Master;
 using FMS.Service.Reports;
+using FMS.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,11 +14,13 @@ namespace FMS.Controllers.Reports
         private readonly IHttpContextAccessor _HttpContextAccessor;
         private readonly IReportSvcs _reportSvcs;
         private readonly IAdminSvcs _adminSvcs;
-        public ReportsController(IHttpContextAccessor HttpContextAccessor, IReportSvcs reportSvcs, IAdminSvcs adminSvcs)
+        private readonly IMasterSvcs _masterSvcs;
+        public ReportsController(IHttpContextAccessor HttpContextAccessor, IReportSvcs reportSvcs, IAdminSvcs adminSvcs, IMasterSvcs masterSvcs)
         {
             _HttpContextAccessor = HttpContextAccessor;
             _reportSvcs = reportSvcs;
             _adminSvcs = adminSvcs;
+            _masterSvcs = masterSvcs;
         }
         #region Stock Report
         [HttpGet]
@@ -28,6 +31,17 @@ namespace FMS.Controllers.Reports
             ViewBag.BranchName = branchName;
             ViewBag.FinancialYear = FinancialYear;
             return PartialView();
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetAllProductTypes([FromQuery] Guid ProductTypeId)
+        {
+            var result = await _adminSvcs.GetProductTypes();
+            var elementToRemove = result.ProductTypes.FirstOrDefault(x => x.ProductTypeId == MappingProductType.ServiceGoods);
+            if (elementToRemove != null)
+            {
+                result.ProductTypes.Remove(elementToRemove);
+            }
+            return new JsonResult(result);
         }
         [HttpGet]
         public async Task<IActionResult> GetProductByTypeId([FromQuery] Guid ProductTypeId)
@@ -61,6 +75,18 @@ namespace FMS.Controllers.Reports
         public IActionResult LabourReport()
         {
             return PartialView();
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetLabourTypes()
+        {
+            var LabourTypes = await _masterSvcs.GetAllLabourTypes();
+            return new JsonResult(LabourTypes);
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetLaboursByLabourTypeId(Guid LabourTypeId)
+        {
+            var LabourTypes = await _masterSvcs.GetLaboursByLabourTypeId(LabourTypeId);
+            return new JsonResult(LabourTypes);
         }
         [HttpPost]
         public async Task<IActionResult> GetSummerizedLabourReport([FromBody] LabourReportDataRequest requestData)

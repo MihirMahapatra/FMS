@@ -19,6 +19,10 @@ $(function () {
     const toDateDetailed = $('input[name="ToDateDetailed"]');
     toDateDetailed.val(todayDate);
     const ddlLabour = $('select[name="ddlLabour"]');
+    const ddlSummerizedLabourTypes = $('select[name="ddlSummerizedLabourTypes"]');
+    const ddlDetailedLabourTypes = $('select[name="ddlDetailedLabourTypes"]');
+    var PrintDataSummarized = {};
+    var PrintData = {};
     //-----------------------------------------------------Stock Report Scren --------------------------------------------------//
     function getPrintHeaderFooter() {
         var headerFooter =
@@ -27,11 +31,42 @@ $(function () {
             '<div style="font-size: 10px; text-align: right;">Printed on: ' + new Date().toLocaleString() + '</div>';
         return headerFooter;
     }
-    var PrintDataSummarized = {};
+    GetLabourTypes();
+    function GetLabourTypes() {
+        $.ajax({
+            url: "/Reports/GetLabourTypes",
+            type: "GET",
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            success: function (result) {
+                if (result.ResponseCode == 302) {
+                    ddlSummerizedLabourTypes.empty();
+                    ddlDetailedLabourTypes.empty();
+                    var defaultSummerizedOption = $('<option></option>').val('').text('--Select Option--');
+                    var defaultDetailedOption = $('<option></option>').val('').text('--Select Option--');
+                    ddlSummerizedLabourTypes.append(defaultSummerizedOption);
+                    ddlDetailedLabourTypes.append(defaultDetailedOption);
+                    $.each(result.LabourTypes, function (key, item) {
+                        var optionSummerized = $('<option></option>').val(item.LabourTypeId).text(item.Labour_Type);
+                        var optionDetailed = $('<option></option>').val(item.LabourTypeId).text(item.Labour_Type);
+                        ddlSummerizedLabourTypes.append(optionSummerized);
+                        ddlDetailedLabourTypes.append(optionDetailed);
+                    });
+                }
+            },
+            error: function (errormessage) {
+                console.log(errormessage)
+            }
+        });
+    }
     $('#btnViewSummerized').on('click', function () {
         $('#loader').show();
         $('.SummerizedLabourReportTable').empty();
-
+        if (!ddlSummerizedLabourTypes.val() || ddlSummerizedLabourTypes.val() === '--Select Option--') {
+            toastr.error('Labour Type Is Required.');
+            productTypeId.focus();
+            return;
+        }
         if (!fromDate.val()) {
             toastr.error('FromDate Is Required.');
             return;
@@ -43,6 +78,7 @@ $(function () {
             var requestData = {
                 FromDate: fromDate.val(),
                 ToDate: toDate.val(),
+                LabourTypeId: ddlSummerizedLabourTypes.val()
             };
             $.ajax({
                 url: "/Reports/GetSummerizedLabourReport",
@@ -113,10 +149,33 @@ $(function () {
             });
         }
     })
-    GetLabours()
-    function GetLabours() {
+    $('#BtnPrintSummarized').on('click', function () {
+        console.log(PrintDataSummarized);
         $.ajax({
-            url: "/Master/GetAllLabourDetails",
+            type: "POST",
+            url: '/Print/LabourSummarizedPrintData',
+            dataType: 'json',
+            data: JSON.stringify(PrintDataSummarized),
+            contentType: "application/json;charset=utf-8",
+            success: function (Response) {
+                window.open(Response.redirectTo, '_blank');
+
+            },
+        });
+    });
+    ddlDetailedLabourTypes.on('change', function () {
+        var LabourTypIdSelected = ddlDetailedLabourTypes.val();
+        if (LabourTypIdSelected) {
+            GetLaboursByLabourTypeId(LabourTypIdSelected);
+            ddlLabour.prop("disabled", false);
+        }
+        else {
+            ddlLabour.prop("disabled", true);
+        }
+    });
+    function GetLaboursByLabourTypeId(Id) {
+        $.ajax({
+            url: '/Reports/GetLaboursByLabourTypeId?LabourTypeId= ' + Id + '',
             type: "GET",
             contentType: "application/json;charset=utf-8",
             dataType: "json",
@@ -136,7 +195,6 @@ $(function () {
             }
         });
     }
-    var PrintData = {};
     $('#btnViewDetailed').on('click', function () {
         $('#loader').show();
         $('.DetailedLabourReportTable').empty();
@@ -146,6 +204,9 @@ $(function () {
         } else if (!toDateDetailed.val()) {
             toastr.error('ToDate Is Required.');
             return;
+        } else if (!ddlDetailedLabourTypes.val() || ddlDetailedLabourTypes.val() === '--Select Option--') {
+            toastr.error('Labour Type Is Required.');
+            return;
         } else if (!ddlLabour.val() || ddlLabour.val() === '--Select Option--') {
             toastr.error('Labour Name Is Required.');
             return;
@@ -154,7 +215,8 @@ $(function () {
             var requestData = {
                 FromDate: fromDateDetailed.val(),
                 ToDate: toDateDetailed.val(),
-                LabourId: ddlLabour.val()
+                LabourId: ddlLabour.val(),
+                LabourTypeId: ddlDetailedLabourTypes.val()
             };
             var LabourName = "";
             $.ajax({
@@ -211,7 +273,7 @@ $(function () {
                                     Balance += Production.Amount
                                     html += '<td>' + Balance + '</td>';
                                     html += '</tr >';
-                                    
+
                                 });
                             }
                             if (item.Payment !== null) {
@@ -314,7 +376,6 @@ $(function () {
             });
         }
     });
-   
     $('#BtnPrint').on('click', function () {
         console.log(PrintData);
         $.ajax({
@@ -325,22 +386,9 @@ $(function () {
             contentType: "application/json;charset=utf-8",
             success: function (Response) {
                 window.open(Response.redirectTo, '_blank');
-               
-            },
-        });
-    });
-    $('#BtnPrintSummarized').on('click', function () {
-        console.log(PrintDataSummarized);
-        $.ajax({
-            type: "POST",
-            url: '/Print/LabourSummarizedPrintData',
-            dataType: 'json',
-            data: JSON.stringify(PrintDataSummarized),
-            contentType: "application/json;charset=utf-8",
-            success: function (Response) {
-                window.open(Response.redirectTo, '_blank');
 
             },
         });
     });
+
 });

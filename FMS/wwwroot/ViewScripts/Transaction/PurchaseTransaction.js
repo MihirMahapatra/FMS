@@ -124,7 +124,6 @@ $(function () {
     $('#btnUpdate').on('blur', function () {
         $(this).css('background-color', '');
     });
-
     //-------------------------------------Purchase Validation--------------------------------//
     transpoterName.on('keydown', function (event) {
         const keyCode = event.keyCode || event.which;
@@ -163,7 +162,6 @@ $(function () {
         inputValue = inputValue.toUpperCase();
         $(this).val(inputValue);
     });
-
     //------------------------------------purchase return-----------------------------------//
     const purchaseReturnOrderId = $('input[name="hdnPurchaseReturnOrderId"]');
     const Pr_transactionDate = $('input[name="Pr_TransactionDate"]');
@@ -1486,6 +1484,11 @@ $(function () {
                     html += '<td  hidden><input type="hidden" class="form-control"  value=' + item.PurchaseReturnId + '></td>';
                     html += '<td><div class="form-group"><select class="form-control form-control-sm select2bs4 Rawmaterial" style="width: 100%;" id="ddn_' + item.PurchaseReturnId + '"> </select></div></td>';
                     html += '<td><div class="form-group"><input type="text" class="form-control" id="" value=' + item.Quantity + '></div></td>';
+                    html += '<td style="width:12%">' +
+                        '<div class="form-group">' +
+                        '<select class="form-control form-control select2bs4" style="width:100%" id="ddnUnit_' + item.PurchaseReturnId + '"></select>' +
+                        '</div>' +
+                        '</td>';
                     html += '<td><div class="form-group"><input type="text" class="form-control" id=""  value=' + item.Rate + '></div></td>';
                     html += '<td><div class="form-group"><input type="text" class="form-control" id=""  value=' + item.Discount + '></div></td>';
                     html += '<td><div class="form-group"><input type="text" class="form-control" id=""  value=' + item.DiscountAmount + '></div></td>';
@@ -1494,11 +1497,11 @@ $(function () {
                     html += '<td><div class="form-group"><input type="text" class="form-control" id=""  value=' + item.Amount + '></div></td>';
                     html += '<td><button class="btn btn-primary btn-link deleteBtn" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button></td>';
                     html += '</tr>';
-                    var newRow = PurchaseReturnTable.row.add($(html)).draw(false).node();
-                    var selectElement = $('#ddn_' + item.PurchaseReturnId);
-                    selectElement.empty();
+                    PurchaseReturnTable.row.add($(html)).draw(false).node();
+                    var selectProductElement = $('#ddn_' + item.PurchaseReturnId);
+                    selectProductElement.empty();
                     var defaultOption = $('<option></option>').val('').text('--Select Option--');
-                    selectElement.append(defaultOption);
+                    selectProductElement.append(defaultOption);
                     $.ajax({
                         url: "/Transaction/GetProductRawMaterial",
                         type: "GET",
@@ -1506,15 +1509,36 @@ $(function () {
                         dataType: "json",
                         success: function (result) {
                             if (result.ResponseCode == 302) {
-
                                 $.each(result.products, function (key, item1) {
                                     var option = $('<option></option>').val(item1.ProductId).text(item1.ProductName);
                                     if (item.Fk_ProductId === item1.ProductId) {
                                         option.attr('selected', 'selected');
-
                                     }
-                                    selectElement.append(option);
-
+                                    selectProductElement.append(option);
+                                });
+                            }
+                        },
+                        error: function (errormessage) {
+                            console.log(errormessage)
+                        }
+                    });
+                    var selectUnitElement = $('#ddnUnit_' + item.PurchaseReturnId);
+                    selectUnitElement.empty();
+                    var defaultUnitOption = $('<option></option>').val('').text('--Select Option--');
+                    selectUnitElement.append(defaultUnitOption);
+                    $.ajax({
+                        url: '/Transaction/GetProductAlternateUnit?ProductId=' + item.Fk_ProductId,
+                        type: "GET",
+                        contentType: "application/json;charset=utf-8",
+                        dataType: "json",
+                        success: function (result) {
+                            if (result.ResponseCode == 302) {
+                                $.each(result.AlternateUnits, function (key, item1) {
+                                    var unitoption = $('<option></option>').val(item1.AlternateUnitId).text(item1.AlternateUnitName);
+                                    if (item.Fk_AlternateUnitId === item1.AlternateUnitId) {
+                                        unitoption.attr('selected', 'selected');
+                                    }
+                                    selectUnitElement.append(unitoption);
                                 });
                             }
                         },

@@ -314,7 +314,6 @@ $('#btnSave').on('click', function () {
     }
 
 });
-
 //----------------------------------------Production List-----------------------------------------//
 //Edit
 $('a[href="#ProductionEntryList"]').on('click', function () {

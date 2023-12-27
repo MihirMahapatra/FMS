@@ -1,15 +1,13 @@
 ﻿$(function () {
-    //default date
+    $("#ReportsLink").addClass("active");
+    $("#StockReportLink").addClass("active");
+    $("#StockReportLink i.far.fa-circle").removeClass("far fa-circle").addClass("far fa-dot-circle");
+    //----------------------------------------varible declaration-----------------------------------------//
     const today = new Date();
     const year = today.getFullYear();
     const month = String(today.getMonth() + 1).padStart(2, '0');
     const day = String(today.getDate()).padStart(2, '0');
     const todayDate = `${day}/${month}/${year}`;
-
-    $("#ReportsLink").addClass("active");
-    $("#StockReportLink").addClass("active");
-    $("#StockReportLink i.far.fa-circle").removeClass("far fa-circle").addClass("far fa-dot-circle");
-    //----------------------------------------varible declaration-----------------------------------------//
     const ddlProductType = $('select[name="ddlProductTypeId"]');
     const fromDate = $('input[name="FromDate"]');
     fromDate.val(todayDate);
@@ -27,7 +25,7 @@
     GetAllProductTypes();
     function GetAllProductTypes() {
         $.ajax({
-            url: "/Transaction/GetAllProductTypes",
+            url: "/Reports/GetAllProductTypes",
             type: "GET",
             contentType: "application/json;charset=utf-8",
             dataType: "json",
@@ -55,7 +53,6 @@
     var PrintData = {}
     $('#btnViewSummerized').on('click', function () {
         $('#loader').show();
-
         $('.SummerizedStockReportTable').empty();
         if (!ddlProductType.val() || ddlProductType.val() === '--Select Option--') {
             toastr.error('ProductType  Is Required.');
@@ -107,7 +104,7 @@
                         $.each(result.StockReports, function (key, item) {
                             html += '<tr>';
                             html += '<td>' + item.ProductName + '</td>';
-                            html += '<td>' + (item.OpeningQty + item.StockQty) + '</td>';
+                            html += '<td>' + item.OpeningQty + '</td>';
                             html += '<td>' + item.PurchaseQty + '</td>';
                             html += '<td>' + item.PurchaseReturnQty + '</td>';
                             html += '<td>' + item.ProductionQty + '</td>';
@@ -117,7 +114,7 @@
                             html += '<td>' + item.DamageQty + '</td>';
                             html += '<td>' + item.OutwardQty + '</td>';
                             html += '<td>' + item.InwardQty + '</td>';
-                            var closing = item.StockQty + item.OpeningQty + item.PurchaseQty + item.ProductionQty + item.SalesReturnQty + item.InwardQty - item.PurchaseReturnQty - item.SalesQty - item.DamageQty - item.OutwardQty - item.ProductionEntryQty;
+                            var closing = item.OpeningQty + item.PurchaseQty + item.ProductionQty + item.SalesReturnQty + item.InwardQty - item.PurchaseReturnQty - item.SalesQty - item.DamageQty - item.OutwardQty - item.ProductionEntryQty;
                             html += '<td>' + closing + '</td>';
                             html += '</tr >';
                         });
@@ -170,7 +167,7 @@
     GetAllProductTypesForDetailed()
     function GetAllProductTypesForDetailed() {
         $.ajax({
-            url: "/Transaction/GetAllProductTypes",
+            url: "/Reports/GetAllProductTypes",
             type: "GET",
             contentType: "application/json;charset=utf-8",
             dataType: "json",
@@ -272,18 +269,8 @@
                     html += '</thead>'
                     html += '<tbody>';
                     if (result.ResponseCode == 302) {
-
-                        $('#BtnPrintDetailed').show();
-                        PrintDataDetailed = {
-                            FromDate: fromDateDetailed.val(),
-                            ToDate: toDateDetailed.val(),
-                            Products: result.products,
-                            ProductName: result.products[0].ProductName
-                        }
-
-
-                        let item = result.product
                         var Stock = 0;
+                        var item = result.product;
                         html += '<tr>';
                         html += '<td></td>';
                         html += '<td></td>';
@@ -420,6 +407,13 @@
                                 html += '</tr >';
                             });
 
+                        }
+                        $('#BtnPrintDetailed').show();
+                        PrintDataDetailed = {
+                            FromDate: fromDateDetailed.val(),
+                            ToDate: toDateDetailed.val(),
+                            Product: result.product,
+                            ProductName: result.product.ProductName
                         }
                     }
                     else {
