@@ -56,6 +56,13 @@
                                     <div class="row">
                                         <div class="col-md-3">
                                             <div class="form-group">
+                                                <label>Labour Type</label>
+                                                <select class="form-control select2bs4" style="width: 100%" name="ddlSummerizedLabourTypes">
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
                                                 <label>From Date</label>
                                                 <div class="input-group  date" id="FromDate" data-target-input="nearest">
                                                     <input type="text" class="form-control datetimepicker-input" data-target="#FromDate" name="FromDate" />
@@ -74,13 +81,6 @@
                                                         <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label>Labour Type</label>
-                                                <select class="form-control select2bs4" style="width: 100%" name="ddlSummerizedLabourTypes">
-                                                </select>
                                             </div>
                                         </div>
                                         <div class="col-md-3">
@@ -111,10 +111,24 @@
                             <div class="card card-primary card-outline">
                                 <div class="card-header ">
                                     <i class="fa-solid fa-file-invoice"></i>
-                                    Condenced List
+                                    Detailed List
                                 </div>
                                 <div class="card-body ">
                                     <div class="row">
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label>Labour Type</label>
+                                                <select class="form-control select2bs4" style="width: 100%" name="ddlDetailedLabourTypes">
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label>Labour</label>
+                                                <select class="form-control select2bs4" style="width: 100%" name="ddlLabour" disabled>
+                                                </select>
+                                            </div>
+                                        </div>
                                         <div class="col-md-3">
                                             <div class="form-group">
                                                 <label>From Date</label>
@@ -137,22 +151,9 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="col-md-9"></div>
                                         <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label>Labour Type</label>
-                                                <select class="form-control select2bs4" style="width: 100%" name="ddlDetailedLabourTypes">
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label>Labour</label>
-                                                <select class="form-control select2bs4" style="width: 100%" name="ddlLabour" disabled>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <button type="button" id="btnViewDetailed" class="btn btn-primary" style="float:left; margin-top:32px">View</button>
+                                            <button type="button" id="btnViewDetailed" class="btn btn-primary">View</button>
                                         </div>
                                         <div id="loader" style="display:none;"></div>
                                         <div class="col-md-12">

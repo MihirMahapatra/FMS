@@ -264,7 +264,7 @@
                     html += '<th>Particular</th>'
                     html += '<th>Inward(+)</th>'
                     html += '<th>Outward(-)</th>'
-                    html += '<th>Closing Stock</th>'
+                    html += '<th>Stock</th>'
                     html += '</tr>'
                     html += '</thead>'
                     html += '<tbody>';
@@ -272,12 +272,7 @@
                         var Stock = 0;
                         var item = result.product;
                         html += '<tr>';
-                        html += '<td></td>';
-                        html += '<td></td>';
-                        html += '<td></td>';
-                        html += '<td></td>';
-                        html += '<td></td>';
-                        html += '<td></td>';
+                        html += '<td colspan="6">Opening Qty</td>';
                         html += '<td>' + (item.OpeningQty + item.OpeningStock) + '</td>';
                         html += '</tr >';
                         Stock = item.OpeningQty + item.OpeningStock;

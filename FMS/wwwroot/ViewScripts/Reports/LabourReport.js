@@ -120,12 +120,11 @@ $(function () {
                             FromDate: fromDate.val(),
                             ToDate: toDate.val(),
                             LaborReports: result.LaborReports
-
                         }
                     }
                     else {
                         html += '<tr>';
-                        html += '<td colspan="6">No Record</td>';
+                        html += '<td colspan="7">No Record</td>';
                         html += '</tr >';
                     }
                     html += ' </tbody>';
@@ -244,19 +243,10 @@ $(function () {
                     html += '</thead>'
                     html += '<tbody>';
                     if (result.ResponseCode == 302) {
-                        $('#BtnPrint').show();
-                        LabourName = result.Labours[0].LabourName
                         $.each(result.Labours, function (key, item) {
                             var Balance = item.OpeningBalance;
                             html += '<tr>';
-                            html += '<td>-</td>';
-                            html += '<td>-</td>';
-                            html += '<td>Opening Bal.</td>';
-                            html += '<td>-</td>';
-                            html += '<td>-</td>';
-                            html += '<td>-</td>';
-                            html += '<td>-</td>';
-                            html += '<td>-</td>';
+                            html += '<td colspan=8>Opening Bal.</td>';
                             html += '<td>' + item.OpeningBalance + '</td>';
                             html += '</tr >';
                             if (item.ProductionEntries !== null) {
@@ -309,6 +299,9 @@ $(function () {
                                 });
                             }
                         });
+
+                        $('#BtnPrint').show();
+                        LabourName = result.Labours[0].LabourName
                         PrintData = {
                             LaborReports: result.Labours,
                             FromDate: fromDateDetailed.val(),
