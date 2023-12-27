@@ -1521,6 +1521,8 @@ namespace FMS.Repository.Admin
             try
             {
                 _Result.IsSuccess = false;
+                Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
+                Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
                 if (DateTime.TryParseExact(data.FormtedDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedDate))
                 {
                     var newLabourRate = new LabourRate
@@ -1528,7 +1530,10 @@ namespace FMS.Repository.Admin
                         Date = convertedDate,
                         Fk_ProductTypeId = data.Fk_ProductTypeId,
                         Fk_ProductId = data.Fk_ProductId,
-                        Rate = data.Rate
+                        Rate = data.Rate,
+                        Fk_FinancialYearId = FinancialYear,
+                        Fk_BranchId = BranchId
+
                     };
                     await _appDbContext.LabourRates.AddAsync(newLabourRate);
                     int count = await _appDbContext.SaveChangesAsync();
@@ -1549,12 +1554,16 @@ namespace FMS.Repository.Admin
             try
             {
                 _Result.IsSuccess = false;
+                Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
+                Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
                 var Query = await _appDbContext.LabourRates.Where(s => s.LabourRateId == data.LabourRateId).FirstOrDefaultAsync();
                 if (Query != null)
                 {
                     if (DateTime.TryParseExact(data.FormtedDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedDate))
                     {
                         data.Date = convertedDate;
+                        data.Fk_BranchId = BranchId;
+                        data.Fk_FinancialYearId = FinancialYear;
                         _mapper.Map(data, Query);
                         int count = await _appDbContext.SaveChangesAsync();
                         _Result.Response = (count > 0) ? ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Modified) : ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Error);
