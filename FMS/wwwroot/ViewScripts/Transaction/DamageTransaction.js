@@ -350,12 +350,23 @@ $(function () {
                     <tbody>
                 `;
                     if (result.ResponseCode == 302) {
-                     $.each(result.DamageOrders, function (key, item) {
+                        $.each(result.DamageOrders, function (key, item) {
+                            let formattedDate = '';
+                            const ModifyDate = item.TransactionDate;
+                            if (ModifyDate) {
+                                const dateObject = new Date(ModifyDate);
+                                if (!isNaN(dateObject)) {
+                                    const day = String(dateObject.getDate()).padStart(2, '0');
+                                    const month = String(dateObject.getMonth() + 1).padStart(2, '0');
+                                    const year = dateObject.getFullYear();
+                                    formattedDate = `${day}/${month}/${year}`;
+                                }
+                            }
                       html += `
                       <tr>
                         <td hidden>${item.DamageOrderId}</td>
                         <td>${item.TransactionNo}</td>
-                        <td>${item.TransactionDate}</td>
+                        <td>${formattedDate}</td>
                         <td>${item.Labour !== null ? item.Labour.LabourName : '-'}</td>
                         <td>${item.ProductType !== null ? item.ProductType.Product_Type : '-'}</td>
                         <td>${item.Reason}</td>

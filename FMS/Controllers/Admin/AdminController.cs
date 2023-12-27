@@ -230,6 +230,19 @@ namespace FMS.Controllers.Admin
                 return BadRequest();
             }
         }
+        [HttpPost]
+        public async Task<IActionResult> UpdateCompany([FromBody] CompanyDetailsModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _adminSvcs.UpdateCompany(model);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
         [HttpGet]
         public async Task<IActionResult> GetCompany()
         {

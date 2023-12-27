@@ -3181,6 +3181,7 @@ namespace FMS.Repository.Transaction
                     TransactionDate = s.TransactionDate,
                     OrderNo = s.OrderNo,
                     GrandTotal = s.GrandTotal,
+                    CustomerName = s.CustomerName,
                     SubLedger = s.SubLedger != null ? new SubLedgerModel { SubLedgerName = s.SubLedger.SubLedgerName } : null,
                 }).ToListAsync();
                 if (Query.Count > 0)
@@ -3210,6 +3211,7 @@ namespace FMS.Repository.Transaction
                 {
                     SalesReturnOrderId = s.SalesReturnOrderId,
                     Fk_SubLedgerId = s.Fk_SubLedgerId,
+                    CustomerName = s.CustomerName,
                     TransactionNo = s.TransactionNo,
                     TransactionType = s.TransactionType,
                     TransactionDate = s.TransactionDate,

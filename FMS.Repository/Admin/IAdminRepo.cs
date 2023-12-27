@@ -13,6 +13,7 @@ namespace FMS.Repository.Admin
         #endregion
         #region Company Details
         Task<Result<bool>> CreateCompany(CompanyDetailsModel data);
+        Task<Result<bool>> UpdateCompany(CompanyDetailsModel model);
         Task<Result<CompanyDetailsModel>> GetCompany();
         #endregion
         #region Role & Claims 

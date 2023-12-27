@@ -376,7 +376,18 @@ $(function () {
                         $.each(item.Journals, function (key, journal) {
                             html += '<tr>';
                             html += '<td>' + item.VoucherNo + '</td>';
-                            html += '<td>' + journal.VoucherDate + '</td>';
+                            let formattedDate = '';
+                            const ModifyDate = journal.VoucherDate;
+                            if (ModifyDate) {
+                                const dateObject = new Date(ModifyDate);
+                                if (!isNaN(dateObject)) {
+                                    const day = String(dateObject.getDate()).padStart(2, '0');
+                                    const month = String(dateObject.getMonth() + 1).padStart(2, '0');
+                                    const year = dateObject.getFullYear();
+                                    formattedDate = `${day}/${month}/${year}`;
+                                }
+                            }
+                            html += '<td>' + formattedDate + '</td>';
                             if (journal.LedgerDevName !== null) {
                                 html += '<td>' + journal.LedgerDevName + '</td>';
                             }

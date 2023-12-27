@@ -6,6 +6,7 @@ using FMS.Repository.Admin;
 using FMS.Utility;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace FMS.Service.Admin
 {
@@ -111,6 +112,52 @@ namespace FMS.Service.Admin
             }
             return Obj;
 
+        }
+        public async Task<Base> UpdateCompany(CompanyDetailsModel model)
+        {
+            var result = await _adminRepo.UpdateCompany(model);
+            Base Obj;
+            if (result.IsSuccess)
+            {
+                if (result.Response == "modified")
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.OK),
+                        SuccessMsg = "Data Updated SuccessFully"
+                    };
+                }
+                else
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                        ErrorMsg = "Failed To Update Data"
+                    };
+                }
+            }
+            else if (result.WarningMessage != null)
+            {
+                Obj = new()
+                {
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = result.Exception,
+                    ErrorMsg = result.WarningMessage,
+                };
+            }
+            else
+            {
+                Obj = new()
+                {
+                    ResponseStatus = result.Response,
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = result.Exception,
+                    ErrorMsg = "Some Error Occourd Try To Contact Your App Devloper"
+                };
+            }
+            return Obj;
         }
         public async Task<CompanyDetailsViewModel> GetCompany()
         {
@@ -2501,9 +2548,6 @@ namespace FMS.Service.Admin
             }
             return Obj;
         }
-
-      
-
         #endregion
         #endregion
     }

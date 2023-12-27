@@ -21,6 +21,7 @@ namespace FMS.Service.Admin
         #endregion
         #region Company Details
         Task<Base> CreateCompany(CompanyDetailsModel data);
+        Task<Base> UpdateCompany(CompanyDetailsModel model);
         Task<CompanyDetailsViewModel> GetCompany();
         #endregion
         #region User Branch Allocation

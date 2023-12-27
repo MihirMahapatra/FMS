@@ -689,7 +689,18 @@ $(function () {
                         html += '<tr>';
                         html += '<td hidden>' + item.SalesOrderId + '</td>';
                         html += '<td>' + item.TransactionNo + '</td>';
-                        html += '<td>' + item.TransactionDate + '</td>';
+                        const ModifyDate = item.TransactionDate;
+                        var formattedDate = '';
+                        if (ModifyDate) {
+                            const dateObject = new Date(ModifyDate);
+                            if (!isNaN(dateObject)) {
+                                const day = String(dateObject.getDate()).padStart(2, '0');
+                                const month = String(dateObject.getMonth() + 1).padStart(2, '0');
+                                const year = dateObject.getFullYear();
+                                formattedDate = `${day}/${month}/${year}`;
+                            }
+                        }
+                        html += '<td>' + formattedDate + '</td>';
                         if (item.SubLedger !== null) {
                             html += '<td>' + item.SubLedger.SubLedgerName + '</td>';
                         }
@@ -1432,12 +1443,23 @@ $(function () {
                         html += '<tr>';
                         html += '<td hidden>' + item.SalesReturnOrderId + '</td>';
                         html += '<td>' + item.TransactionNo + '</td>';
-                        html += '<td>' + item.TransactionDate + '</td>';
+                        const ModifyDate = item.TransactionDate;
+                        var formattedDate = '';
+                        if (ModifyDate) {
+                            const dateObject = new Date(ModifyDate);
+                            if (!isNaN(dateObject)) {
+                                const day = String(dateObject.getDate()).padStart(2, '0');
+                                const month = String(dateObject.getMonth() + 1).padStart(2, '0');
+                                const year = dateObject.getFullYear();
+                                formattedDate = `${day}/${month}/${year}`;
+                            }
+                        }
+                        html += '<td>' + formattedDate + '</td>';
                         if (item.SubLedger !== null) {
                             html += '<td>' + item.SubLedger.SubLedgerName + '</td>';
                         }
                         else {
-                            html += '<td>' - '</td>';
+                            html += '<td>' + item.CustomerName + '</td>';
                         }
                         html += '<td>' + item.OrderNo + '</td>';
                         html += '<td>' + item.GrandTotal + '</td>';
@@ -1510,7 +1532,7 @@ $(function () {
                 if (result.SalesReturnOrder.TransactionType === 'cash') {
                     $('.Sr_hdnddn').hide();
                     $('.Sr_hdntxt').show();
-                    CustomerName.val(result.salesOrder.CustomerName);
+                    Sr_CustomerName.val(result.SalesReturnOrder.CustomerName);
                 } else {
                     $('.Sr_hdnddn').show();
                     $('.Sr_hdntxt').hide();
@@ -1592,7 +1614,7 @@ $(function () {
                         '<div class="input-group">' +
                         '<input type="text" class="form-control" value=' + item.Quantity + '>' +
                         ' <div class="input-group-append">' +
-                        ' <span class="input-group-text" id="Unitrtn">'+ item.Product.Unit.UnitName +'</span>' +
+                        ' <span class="input-group-text" id="Unitrtn" value="N/A">'+"N/A"+'</span>' +
                         '</div>' +
                         '</div>' +
                         '</div>' +
@@ -1625,6 +1647,26 @@ $(function () {
                                     selectElement.append(option);
                                 });
                             }
+                            //This was about unit name
+                            var selectedProductId = selectElement.val();
+                            if (selectedProductId) {
+                                $.ajax({
+                                    url: '/Transaction/GetProductGstWithRate?id=' + selectedProductId,
+                                    type: "GET",
+                                    contentType: "application/json;charset=utf-8",
+                                    dataType: "json",
+                                    success: function (result) {
+                                        if (result.ResponseCode == 302) {
+                                            var span = selectElement.closest('tr').find('span#Unitrtn'); // Specify the ID of the span for accuracy
+                                            span.text(result.product.Unit.UnitName);
+                                        }
+                                    },
+                                    error: function (errormessage) {
+                                        console.log(errormessage);
+                                    }
+                                });
+                            }
+                            //end
                         },
                         error: function (errormessage) {
                             console.log(errormessage)
