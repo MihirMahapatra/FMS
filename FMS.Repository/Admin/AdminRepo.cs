@@ -1463,6 +1463,8 @@ namespace FMS.Repository.Admin
             try
             {
                 _Result.IsSuccess = false;
+                Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
+                Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
                 var Query = await _appDbContext.LabourRates
                                    .Select(lr => new LabourRateModel
                                    {
@@ -1492,6 +1494,8 @@ namespace FMS.Repository.Admin
             try
             {
                 _Result.IsSuccess = false;
+                Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
+                Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
                 var lastProduction = await _appDbContext.LabourRates.Where(s => s.Fk_ProductId == ProductId).OrderByDescending(s => s.Date).
                     Select(s => new LabourRateModel
                     {
