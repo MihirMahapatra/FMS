@@ -333,7 +333,18 @@ $(function () {
                         html += '<tr>';
                         html += '<td hidden>' + item.InwardSupplyOrderId + '</td>';
                         html += '<td>' + item.TransactionNo + '</td>';
-                        html += '<td>' + item.TransactionDate + '</td>';
+                        let formattedDate = '';
+                        const ModifyDate = item.TransactionDate;
+                        if (ModifyDate) {
+                            const dateObject = new Date(ModifyDate);
+                            if (!isNaN(dateObject)) {
+                                const day = String(dateObject.getDate()).padStart(2, '0');
+                                const month = String(dateObject.getMonth() + 1).padStart(2, '0');
+                                const year = dateObject.getFullYear();
+                                formattedDate = `${day}/${month}/${year}`;
+                            }
+                        }
+                        html += '<td>' + formattedDate + '</td>';
                         html += '<td>' + item.BranchName + '</td>';
                         if (item.ProductType !== null) {
                             html += '<td>' + item.ProductType.Product_Type + '</td>';

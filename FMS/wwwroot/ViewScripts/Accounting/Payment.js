@@ -396,7 +396,18 @@ $(function () {
                         $.each(item.Payments, function (key, Payment) {
                             html += '<tr>';
                             html += '<td>' + Payment.VouvherNo + '</td>';
-                            html += '<td>' + Payment.VoucherDate + '</td>';
+                            let formattedDate = '';
+                            const ModifyDate = Payment.VoucherDate;
+                            if (ModifyDate) {
+                                const dateObject = new Date(ModifyDate);
+                                if (!isNaN(dateObject)) {
+                                    const day = String(dateObject.getDate()).padStart(2, '0');
+                                    const month = String(dateObject.getMonth() + 1).padStart(2, '0');
+                                    const year = dateObject.getFullYear();
+                                    formattedDate = `${day}/${month}/${year}`;
+                                }
+                            }
+                            html += '<td>' + formattedDate + '</td>';
                             if (item.LedgerDevName !== null) {
                                 html += '<td>' + Payment.LedgerDevName + '</td>';
                             }

@@ -655,7 +655,18 @@ $(function () {
                         html += '<tr>';
                         html += '<td hidden>' + item.PurchaseOrderId + '</td>';
                         html += '<td>' + item.TransactionNo + '</td>';
-                        html += '<td>' + item.TransactionDate + '</td>';
+                        const ModifyDate = item.TransactionDate;
+                        var formattedDate = '';
+                        if (ModifyDate) {
+                            const dateObject = new Date(ModifyDate);
+                            if (!isNaN(dateObject)) {
+                                const day = String(dateObject.getDate()).padStart(2, '0');
+                                const month = String(dateObject.getMonth() + 1).padStart(2, '0');
+                                const year = dateObject.getFullYear();
+                                formattedDate = `${day}/${month}/${year}`;
+                            }
+                        }
+                        html += '<td>' + formattedDate + '</td>';
                         if (item.SubLedger !== null) {
                             html += '<td>' + item.SubLedger.SubLedgerName + '</td>';
                         }
@@ -1343,7 +1354,18 @@ $(function () {
                         html += '<tr>';
                         html += '<td hidden>' + item.PurchaseReturnOrderId + '</td>';
                         html += '<td>' + item.TransactionNo + '</td>';
-                        html += '<td>' + item.TransactionDate + '</td>';
+                        const ModifyDate = item.TransactionDate;
+                        var formattedDate = '';
+                        if (ModifyDate) {
+                            const dateObject = new Date(ModifyDate);
+                            if (!isNaN(dateObject)) {
+                                const day = String(dateObject.getDate()).padStart(2, '0');
+                                const month = String(dateObject.getMonth() + 1).padStart(2, '0');
+                                const year = dateObject.getFullYear();
+                                formattedDate = `${day}/${month}/${year}`;
+                            }
+                        }
+                        html += '<td>' + formattedDate + '</td>';
                         if (item.SubLedger !== null) {
                             html += '<td>' + item.SubLedger.SubLedgerName + '</td>';
                         }

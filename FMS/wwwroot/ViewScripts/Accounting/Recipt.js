@@ -394,7 +394,18 @@ $(function () {
                         $.each(item.Receipts, function (key, Receipt) {
                             html += '<tr>';
                             html += '<td>' + Receipt.VouvherNo + '</td>';
-                            html += '<td>' + Receipt.VoucherDate + '</td>';
+                            let formattedDate = '';
+                            const ModifyDate = Receipt.VoucherDate;
+                            if (ModifyDate) {
+                                const dateObject = new Date(ModifyDate);
+                                if (!isNaN(dateObject)) {
+                                    const day = String(dateObject.getDate()).padStart(2, '0');
+                                    const month = String(dateObject.getMonth() + 1).padStart(2, '0');
+                                    const year = dateObject.getFullYear();
+                                    formattedDate = `${day}/${month}/${year}`;
+                                }
+                            }
+                            html += '<td>' + formattedDate + '</td>';
                             if (item.LedgerDevName !== null) {
                                 html += '<td>' + Receipt.LedgerDevName + '</td>';
                             }

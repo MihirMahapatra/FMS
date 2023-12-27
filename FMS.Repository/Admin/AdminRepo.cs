@@ -8,6 +8,7 @@ using FMS.Model.ViewModel;
 using FMS.Utility;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.JsonPatch.Internal;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
@@ -342,6 +343,34 @@ namespace FMS.Repository.Admin
             }
             return _Result;
         }
+        public async Task<Result<bool>> UpdateCompany(CompanyDetailsModel model)
+        {
+            Result<bool> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                var companyId = Guid.Parse(model.CompanyId);
+                var Query = await _appDbContext.CompanyDetails.Where(s => s.CompanyId == companyId).FirstOrDefaultAsync();
+                if (Query != null)
+                {
+                    Query.Name = model.Name;
+                    Query.Adress = model.Adress;
+                    Query.Email = model.Email;
+                    Query.GSTIN = model.GSTIN;
+                    Query.Phone = model.Phone;
+                    Query.State = model.State;
+                    int count = await _appDbContext.SaveChangesAsync();
+                    _Result.Response = (count > 0) ? ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Modified) : ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Error);
+                }
+                _Result.IsSuccess = true;
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/UpdateGroup : {_Exception.Message}");
+            }
+            return _Result;
+        }
         public async Task<Result<CompanyDetailsModel>> GetCompany()
         {
             Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
@@ -358,6 +387,7 @@ namespace FMS.Repository.Admin
                     Phone = s.Phone,
                     State = s.State,
                     logo = s.logo,
+                    CompanyId = Convert.ToString(s.CompanyId),
                     BranchName = branchName
                 }).SingleOrDefaultAsync();
                 if (Query != null)
@@ -1959,10 +1989,6 @@ namespace FMS.Repository.Admin
             }
             return _Result;
         }
-
-
-
-
         #endregion
         #endregion
     }
