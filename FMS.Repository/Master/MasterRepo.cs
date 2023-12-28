@@ -1365,7 +1365,8 @@ namespace FMS.Repository.Master
             try
             {
                 _Result.IsSuccess = false;
-                var Query = await _appDbContext.Labours.Where(s => s.LabourId == LabourId)
+                Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
+                var Query = await _appDbContext.Labours.Where(s => s.LabourId == LabourId && s.Fk_BranchId== BranchId)
                                    .Select(l => new LabourModel
                                    {
                                        LabourId = l.LabourId,
@@ -1395,7 +1396,8 @@ namespace FMS.Repository.Master
             try
             {
                 _Result.IsSuccess = false;
-                var Query = await _appDbContext.Labours.Where(s => s.Fk_Labour_TypeId == LabourTypeId)
+                Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
+                var Query = await _appDbContext.Labours.Where(s => s.Fk_Labour_TypeId == LabourTypeId && s.Fk_BranchId== BranchId)
                                    .Select(l => new LabourModel
                                    {
                                        LabourId = l.LabourId,
