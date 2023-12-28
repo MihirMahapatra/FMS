@@ -12,6 +12,6 @@ namespace FMS.Model.CommonModel
         public string ToDate { get; set; }
         public string ProductName { get; set; }
         public List<StockReportModel> StockReport { get; set; }
-        public List<ProductModel> Products { get; set; }
+        public ProductModel Product { get; set; }
     }
 }
