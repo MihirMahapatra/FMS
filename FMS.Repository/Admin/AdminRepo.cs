@@ -8,13 +8,11 @@ using FMS.Model.ViewModel;
 using FMS.Utility;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.JsonPatch.Internal;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
 using System.Globalization;
 using System.Security.Claims;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace FMS.Repository.Admin
 {
@@ -947,6 +945,7 @@ namespace FMS.Repository.Admin
                                        ProductId = s.ProductId,
                                        ProductName = s.ProductName,
                                        Price = s.Price,
+                                       WholeSalePrice = s.WholeSalePrice,
                                        GST = s.GST,
                                        Group = s.Group != null ? new GroupModel { GroupName = s.Group.GroupName } : null,
                                        SubGroup = s.SubGroup != null ? new SubGroupModel { SubGroupName = s.SubGroup.SubGroupName } : null,
@@ -1463,9 +1462,8 @@ namespace FMS.Repository.Admin
             try
             {
                 _Result.IsSuccess = false;
-                Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
-                Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
-                var Query = await _appDbContext.LabourRates
+                string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
+                var Query = await _appDbContext.LabourRates.Where(s => s.FinancialYear == FinancialYear)
                                    .Select(lr => new LabourRateModel
                                    {
                                        LabourRateId = lr.LabourRateId,
@@ -1494,9 +1492,8 @@ namespace FMS.Repository.Admin
             try
             {
                 _Result.IsSuccess = false;
-                Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
-                Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
-                var lastProduction = await _appDbContext.LabourRates.Where(s => s.Fk_ProductId == ProductId).OrderByDescending(s => s.Date).
+                string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
+                var lastProduction = await _appDbContext.LabourRates.Where(s => s.Fk_ProductId == ProductId && s.FinancialYear == FinancialYear).OrderByDescending(s => s.Date).
                     Select(s => new LabourRateModel
                     {
                         Rate = s.Rate,
@@ -1525,8 +1522,7 @@ namespace FMS.Repository.Admin
             try
             {
                 _Result.IsSuccess = false;
-                Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
-                Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
+                string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
                 if (DateTime.TryParseExact(data.FormtedDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedDate))
                 {
                     var newLabourRate = new LabourRate
@@ -1535,9 +1531,7 @@ namespace FMS.Repository.Admin
                         Fk_ProductTypeId = data.Fk_ProductTypeId,
                         Fk_ProductId = data.Fk_ProductId,
                         Rate = data.Rate,
-                        Fk_FinancialYearId = FinancialYear,
-                        Fk_BranchId = BranchId
-
+                        FinancialYear = FinancialYear
                     };
                     await _appDbContext.LabourRates.AddAsync(newLabourRate);
                     int count = await _appDbContext.SaveChangesAsync();
@@ -1558,16 +1552,14 @@ namespace FMS.Repository.Admin
             try
             {
                 _Result.IsSuccess = false;
-                Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
-                Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
-                var Query = await _appDbContext.LabourRates.Where(s => s.LabourRateId == data.LabourRateId).FirstOrDefaultAsync();
+                string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
+                var Query = await _appDbContext.LabourRates.Where(s => s.LabourRateId == data.LabourRateId).SingleOrDefaultAsync();
                 if (Query != null)
                 {
                     if (DateTime.TryParseExact(data.FormtedDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedDate))
                     {
                         data.Date = convertedDate;
-                        data.Fk_BranchId = BranchId;
-                        data.Fk_FinancialYearId = FinancialYear;
+                        data.FinancialYear = FinancialYear;
                         _mapper.Map(data, Query);
                         int count = await _appDbContext.SaveChangesAsync();
                         _Result.Response = (count > 0) ? ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Modified) : ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Error);

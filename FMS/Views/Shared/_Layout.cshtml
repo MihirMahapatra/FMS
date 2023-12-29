@@ -5,18 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - FMS</title>
     @await Html.PartialAsync("_Head")
+    <style>
+        .globalFormColor {
+            background-image: linear-gradient( 109.6deg, rgba(156,252,248,1) 11.2%, rgba(110,123,251,1) 91.1% );
+        }
+        .globalTableColor {
+            background-image: linear-gradient( 109.6deg, rgba(156,252,248,1) 11.2%, rgba(110,123,251,1) 91.1% );
+        }
+        .content{
+            font-family: "Consolas"
+        }
+    </style>
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
     <div class="wrapper">
         @await Html.PartialAsync("_Header")
         @await Html.PartialAsync("_Sidebar")
         <div id="app-content">
-        @RenderBody()
+            @RenderBody()
         </div>
         @await Html.PartialAsync("_Footer")
     </div>
     @await Html.PartialAsync("_FooterScript")
-    <script src="~/app.js"></script>
+    @* <script src="~/app.js"></script> *@
     @RenderSection("additionalScripts", required: false)
 </body>
 </html>

@@ -6,6 +6,7 @@
         public string TransactionNo { get; set; }
         public DateTime TransactionDate { get; set; }
         public string TransactionType { get; set; }
+        public string PriceType { get; set; }
         public Guid? Fk_SubLedgerId { get; set; }
         public string CustomerName { get; set; }
         public Guid Fk_BranchId { get; set; }

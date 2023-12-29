@@ -6,6 +6,7 @@
         public string ProductName { get; set; }
         public decimal OpeningStock {  get; set; }
         public decimal Price { get; set; }
+        public decimal? WholeSalePrice { get; set; }
         public decimal GST { get; set; }
         public Guid Fk_ProductTypeId { get; set; }
         public Guid Fk_UnitId { get; set; }

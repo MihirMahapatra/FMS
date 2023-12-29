@@ -9,7 +9,6 @@
         public string EndDate { get; set; }
         public BranchModel Branch { get; set; } 
         public List<StockModel> Stocks { get; set; } 
-        public List<LabourRateModel> LabourRates { get; set; }
         public List<ProductionEntryModel> ProductionEntries { get; set; }
         public List<ProductionEntryTransactionModel> ProductionEntryTransactions { get; set; }
         public List<LedgerBalanceModel> LedgerBalances { get; set; }

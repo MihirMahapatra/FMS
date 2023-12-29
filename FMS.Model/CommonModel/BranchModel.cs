@@ -10,7 +10,6 @@
         public List<FinancialYearModel> FinancialYears { get; set; }
         public List<UserBranchModel> UserBranch { get; set; }
         public List<LabourModel> Labours { get; set; }
-        public List<LabourRateModel> LabourRates { get; set; }
         public List<StockModel> Stocks { get; set; } 
         public List<LedgerGroupModel> LedgerGroups { get; set; }
         public List<LedgerSubGroupModel> LedgerSubGroups { get; set; }

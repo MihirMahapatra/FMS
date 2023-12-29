@@ -21,7 +21,7 @@
     <!-- Main content -->
     <section class="content">
         <div class="container-fluid">
-            <div class="card card-primary card-outline">
+            <div class="card card-primary card-outline globalFormColor">
                 <div class="card-header">
                     <h3 class="card-title">
                         <i class="fas fa-edit"></i>
@@ -29,7 +29,7 @@
                     </h3>
                 </div>
                 <div class="card-body">
-                    <div class="card card-primary card-outline" style="background:#C7C9DC">
+                    <div class="card card-primary card-outline">
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-md-2">
@@ -63,7 +63,7 @@
                                     <button class="btn btn-primary btn-link cust-btn" id="btnSubGroupEdit" style="margin-top: 32px !important;border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"><i class="fa-solid fa-edit"></i></button>
                                     <button class="btn btn-primary btn-link cust-btn" id="btnSubGroupDelete" style="margin-top: 32px !important;border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"><i class="fa-solid fa-trash-can"></i></button>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <div class="form-group">
                                         <label for="">Product Name</label>
                                         <input type="text" class="form-control" id="" name="ProductName" tabindex="4">
@@ -89,6 +89,12 @@
                                 </div>
                                 <div class="col-md-2">
                                     <div class="form-group">
+                                        <label for="">Wholesale Price</label>
+                                        <input type="text" class="form-control" id="" value="0" name="WholesalePrice" tabindex="6">
+                                    </div>
+                                </div>
+                                <div class="col-md-1">
+                                    <div class="form-group">
                                         <label for="">GST%</label>
                                         <input type="text" class="form-control" value="0" id="" name="GST" tabindex="7">
                                     </div>
@@ -104,7 +110,7 @@
                         </div>
                     </div>
                     <div id="loader" style="display:none;"></div>
-                    <div class="card card-primary card-outline" style="background:#C7C9DC">
+                    <div class="card card-primary card-outline globalTableColor">
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-md-12">
@@ -367,6 +373,12 @@
                         <div class="form-group">
                             <label for="">Price</label>
                             <input type="text" class="form-control" name="mdlPrice">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="">Price(W)</label>
+                            <input type="text" class="form-control" name="mdlWholeSalePrice">
                         </div>
                     </div>
                     <div class="col-md-6">

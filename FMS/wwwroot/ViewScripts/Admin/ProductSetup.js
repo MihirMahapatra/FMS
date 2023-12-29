@@ -22,6 +22,7 @@
     const unitId = $('select[name="ProductUnitId"]');
     const ProductName = $('input[name = "ProductName"]')
     const Price = $('input[name = "Price"]')
+    const WholeSalePrice = $('input[name = "WholesalePrice"]')
     const GST = $('input[name = "GST"]')
     /*---mdlproduct---*/
     const mdlProductId = $('input[name="mdlProductId"]');
@@ -31,6 +32,7 @@
     const mdlGroup = $('select[name="mdlGroup"]');
     const mdlSubGroup = $('select[name="mdlSubGroup"]');
     const mdlPrice = $('input[name="mdlPrice"]');
+    const MdlWholeSalePrice = $('input[name="mdlWholeSalePrice"]');
     const mdlGst = $('input[name="mdlGst"]');
     /***********************************************************Contorl Foucous Of Element***********************************************************/
     productTypeId.focus();
@@ -105,7 +107,6 @@
     $('#btnUnitAdd').on('click', function () {
         $('#modal-add-unit').modal('show');
     });
-
     $('.unitAdd').on('click', UnitAdd);
     function UnitAdd() {
         if (!$('input[name="mdlUnitAdd"]').val()) {
@@ -593,6 +594,7 @@
                 html += '<th>Group</th>'
                 html += '<th>Sub Group</th>'
                 html += '<th>Price</th>'
+                html += '<th>Price(W)</th>'
                 html += '<th>GST</th>'
                 html += '<th>Action</th>'
                 html += '</tr>'
@@ -613,6 +615,7 @@
                             html += '<td> - </td>';
                         }
                         html += '<td>' + item.Price + '</td>';
+                        html += '<td>' + item.WholeSalePrice + '</td>';
                         html += '<td>' + item.GST + '</td>';
                         html += '<td style="background-color:#ffe6e6;">';
                         html += '<button class="btn btn-primary btn-link btn-sm btn-product-edit"   id="btnProductEdit_' + item.ProductId + '" data-id="' + item.ProductId + '" data-toggle="modal" data-target="#modal-edit-Product" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-edit"></i></button>';
@@ -691,6 +694,7 @@
                 Fk_GroupId: groupId.val(),
                 Fk_SubGroupId: subGroupId.val(),
                 Price: Price.val(),
+                WholeSalePrice: WholeSalePrice.val(),
                 GST: GST.val()
             }
 
@@ -730,11 +734,12 @@
         var Group = $tr.find('td:eq(4)').text().trim();
         var SubGroup = $tr.find('td:eq(5)').text().trim();
         var Price = $tr.find('td:eq(6)').text().trim();
-        var Gst = $tr.find('td:eq(7)').text().trim();
-
-        $('input[name="mdlProductId"]').val(Id);
+        var WholeSalePrice = $tr.find('td:eq(7)').text().trim();
+        var Gst = $tr.find('td:eq(8)').text().trim();
+        $('input[name="mdlProductId"]').val(ProductId);
         $('input[name="mdlProductName"]').val(ProductName);
         $('input[name="mdlPrice"]').val(Price);
+        $('input[name="mdlWholeSalePrice"]').val(WholeSalePrice);
         $('input[name="mdlGst"]').val(Gst);
         $.ajax({
             url: "/Admin/GetAllUnits",
@@ -873,14 +878,15 @@
         }
         else {
             const data = {
-                ProductId: $('input[name="mdlProductId"]').val(),
-                ProductName: $('input[name="mdlProductName"]').val(),
-                Fk_ProductTypeId: $('select[name="mdlProductType"]').val(),
-                Fk_UnitId: $('select[name="mdlUnit"]').val(),
-                Fk_GroupId: $('select[name="mdlGroup"]').val(),
-                Fk_SubGroupId: $('select[name="mdlSubGroup"]').val(),
-                Price: $('input[name="mdlPrice"]').val(),
-                GST: $('input[name="mdlGst"]').val()
+                ProductId: mdlProductId.val(),
+                ProductName: mdlProductName.val(),
+                Fk_ProductTypeId: mdlProductType.val(),
+                Fk_UnitId: mdlUnit.val(),
+                Fk_GroupId: mdlGroup.val(),
+                Fk_SubGroupId: mdlSubGroup.val(),
+                Price: mdlPrice.val(),
+                WholeSalePrice: MdlWholeSalePrice.val(),
+                GST: mdlGst.val()
             }
             $.ajax({
                 type: "POST",

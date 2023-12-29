@@ -4,6 +4,7 @@ using FMS.Db.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FMS.Db.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231229025053_Mg-012")]
+    partial class Mg012
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -607,8 +610,11 @@ namespace FMS.Db.Migrations
                     b.Property<DateTime?>("Date")
                         .HasColumnType("datetime");
 
-                    b.Property<string>("FinancialYear")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid?>("Fk_BranchId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("Fk_FinancialYearId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("Fk_ProductId")
                         .HasColumnType("uniqueidentifier");
@@ -622,6 +628,10 @@ namespace FMS.Db.Migrations
                         .HasDefaultValue(0m);
 
                     b.HasKey("LabourRateId");
+
+                    b.HasIndex("Fk_BranchId");
+
+                    b.HasIndex("Fk_FinancialYearId");
 
                     b.HasIndex("Fk_ProductId");
 
@@ -2837,6 +2847,16 @@ namespace FMS.Db.Migrations
 
             modelBuilder.Entity("FMS.Db.DbEntity.LabourRate", b =>
                 {
+                    b.HasOne("FMS.Db.DbEntity.Branch", "Branch")
+                        .WithMany("LabourRates")
+                        .HasForeignKey("Fk_BranchId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("FMS.Db.DbEntity.FinancialYear", "FinancialYear")
+                        .WithMany("LabourRates")
+                        .HasForeignKey("Fk_FinancialYearId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("FMS.Db.DbEntity.Product", "Product")
                         .WithMany("LabourRates")
                         .HasForeignKey("Fk_ProductId")
@@ -2847,6 +2867,10 @@ namespace FMS.Db.Migrations
                         .WithMany("LabourRates")
                         .HasForeignKey("Fk_ProductTypeId")
                         .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Branch");
+
+                    b.Navigation("FinancialYear");
 
                     b.Navigation("Product");
 
@@ -3740,6 +3764,8 @@ namespace FMS.Db.Migrations
 
                     b.Navigation("Journals");
 
+                    b.Navigation("LabourRates");
+
                     b.Navigation("Labours");
 
                     b.Navigation("LedgerBalances");
@@ -3810,6 +3836,8 @@ namespace FMS.Db.Migrations
                     b.Navigation("InwardSupplyTransactions");
 
                     b.Navigation("Journals");
+
+                    b.Navigation("LabourRates");
 
                     b.Navigation("LedgerBalances");
 

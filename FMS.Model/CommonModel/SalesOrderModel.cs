@@ -9,7 +9,8 @@
         public Guid Fk_BranchId { get; set; }
         public Guid Fk_FinancialYearId { get; set; }
         public DateTime TransactionDate { get; set; }
-        public string TransactionType { get; set; }      
+        public string TransactionType { get; set; }
+        public string PriceType { get; set; }
         public string OrderNo { get; set; }
         public DateTime OrderDate { get; set; }
         public decimal SubTotal { get; set; }
