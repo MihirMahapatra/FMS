@@ -1013,7 +1013,7 @@ namespace FMS.Repository.Admin
             }
             return _Result;
         }
-        public async Task<Result<ProductModel>> GetProductGstWithRate(Guid id)
+        public async Task<Result<ProductModel>> GetProductGstWithRate(Guid id, string RateType)
         {
             Result<ProductModel> _Result = new();
             try
@@ -1022,7 +1022,7 @@ namespace FMS.Repository.Admin
                 var product = await _appDbContext.Products.Where(s => s.ProductId == id)
                     .Select(s => new ProductModel
                     {
-                        Price = s.Price,
+                        Price = RateType == "wholesalerate" ? Convert.ToDecimal(s.WholeSalePrice) : s.Price,
                         GST = s.GST,
                         ProductName = s.ProductName,
                         Unit = s.Unit != null ? new UnitModel() { UnitName = s.Unit.UnitName } : null

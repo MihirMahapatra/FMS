@@ -655,6 +655,7 @@
             }
         });
     }
+    $(document).on('click', '#btnRefresh', LoadProducts);  
     $(document).on('click', '.btn-product-create', CreateProduct);
     function CreateProduct() {
         if (!productTypeId.val() || productTypeId.val() === '--Select Option--') {
@@ -711,7 +712,6 @@
                     else {
                         toastr.error(Response.ErrorMsg);
                     }
-                    LoadProducts();
                     ProductName.val('');
                     Price.val('');
                 },

@@ -66,12 +66,6 @@ namespace FMS.Controllers.Transaction
             return new JsonResult(result);
         }
         [HttpGet]
-        public async Task<IActionResult> GetProductGstWithRate([FromQuery] Guid id)
-        {
-            var result = await _adminSvcs.GetProductGstWithRate(id);
-            return new JsonResult(result);
-        }
-        [HttpGet]
         public async Task<IActionResult> GetProductAlternateUnit([FromQuery] Guid ProductId)
         {
             var result = await _adminSvcs.GetAlternateUnitByProductId(ProductId);
@@ -330,6 +324,12 @@ namespace FMS.Controllers.Transaction
             var result = await _adminSvcs.GetProductByTypeId(ProductType);
             return new JsonResult(result);
         }
+        [HttpGet]
+        public async Task<IActionResult> GetProductGstWithRate([FromQuery] Guid id, string RateType)
+        {
+            var result = await _adminSvcs.GetProductGstWithRate(id, RateType);
+            return new JsonResult(result);
+        }
         #region Sales
         [HttpGet]
         public async Task<IActionResult> GetLastSalesTransaction()
@@ -342,6 +342,13 @@ namespace FMS.Controllers.Transaction
         {
             Mapping s1 = Mapping.GetInstance();
             var result = s1.GetSalesType();
+            return new JsonResult(result);
+        }
+        [HttpGet]
+        public IActionResult GetRateType()
+        {
+            Mapping s1 = Mapping.GetInstance();
+            var result = s1.GetRateType();
             return new JsonResult(result);
         }
         [HttpGet]

@@ -2320,7 +2320,7 @@ namespace FMS.Repository.Transaction
                             TransactionDate = convertedTransactionDate,
                             TransactionNo = data.TransactionNo,
                             TransactionType = data.TransactionType,
-
+                            PriceType =data.RateType,
                             OrderNo = data.OrderNo,
                             OrderDate = convertedOrderDate,
                             TranspoterName = data.TranspoterName,
@@ -2832,6 +2832,7 @@ namespace FMS.Repository.Transaction
                             #region Update Sales Odr
                             UpdateSalesOrder.TransactionDate = convertedTransactionDate;
                             UpdateSalesOrder.TransactionType = data.TransactionType;
+                            UpdateSalesOrder.PriceType = data.RateType;
                             if (data.TransactionType == "cash")
                             {
                                 UpdateSalesOrder.CustomerName = data.CustomerName;

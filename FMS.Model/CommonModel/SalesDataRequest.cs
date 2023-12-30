@@ -3,6 +3,7 @@
     public class SalesDataRequest
     {
         public string TransactionType { get; set; }
+        public string RateType { get; set; }
         public Guid SalesOrderId { get; set; }
         public string TransactionNo { get; set; }
         public Guid? Fk_SubLedgerId { get; set; }
