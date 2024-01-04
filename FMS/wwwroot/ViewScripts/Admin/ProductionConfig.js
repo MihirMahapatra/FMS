@@ -3,7 +3,7 @@ $(function () {
     $("#ProductionConfigLink").addClass("active");
     $("#ProductionConfigLink i.far.fa-circle").removeClass("far fa-circle").addClass("far fa-dot-circle");
     var ProductConfigTable = $('#tblProuctConfig').DataTable({
-        "paging": true,
+        "paging": false,
         "lengthChange": false,
         "searching": false,
         "ordering": true,
