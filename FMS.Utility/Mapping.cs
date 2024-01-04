@@ -28,5 +28,14 @@
             };
             return salesType;
         }
+        public Dictionary<string, string> GetRateType()
+        {
+            var rateType = new Dictionary<string, string>
+            {
+                { "wholesalerate", "Wholesale Rate" },
+                { "normalrate", "Normal Rate" },
+            };
+            return rateType;
+        }
     }
 }

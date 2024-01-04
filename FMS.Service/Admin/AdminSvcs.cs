@@ -1257,10 +1257,10 @@ namespace FMS.Service.Admin
             }
             return Obj;
         }
-        public async Task<ProductViewModel> GetProductGstWithRate(Guid id)
+        public async Task<ProductViewModel> GetProductGstWithRate(Guid id, string RateType)
         {
             ProductViewModel Obj;
-            var Result = await _adminRepo.GetProductGstWithRate(id);
+            var Result = await _adminRepo.GetProductGstWithRate(id, RateType);
             if (Result.IsSuccess)
             {
                 if (Result.Response == "success")

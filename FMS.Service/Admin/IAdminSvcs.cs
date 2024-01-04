@@ -57,7 +57,7 @@ namespace FMS.Service.Admin
         Task<ProductViewModel> GetAllProducts();
         Task<ProductViewModel> GetProductByTypeId(Guid ProductTypeId);
         Task<ProductViewModel> GetProductById(Guid ProductId);
-        Task<ProductViewModel> GetProductGstWithRate(Guid id);
+        Task<ProductViewModel> GetProductGstWithRate(Guid id, string RateType);
         Task<Base> CreateProduct(ProductModel data);
         Task<Base> UpdateProduct(ProductModel data);
         Task<Base> DeleteProduct(Guid Id);

@@ -1,14 +1,14 @@
 $(function () {
+    $("#TransactionLink").addClass("active");
+    $("#SalesTransactionLink").addClass("active");
+    $("#SalesTransactionLink i.far.fa-circle").removeClass("far fa-circle").addClass("far fa-dot-circle");
+    //----------------------------------------varible declaration-----------------------------------------//
     //default date
     const today = new Date();
     const year = today.getFullYear();
     const month = String(today.getMonth() + 1).padStart(2, '0');
     const day = String(today.getDate()).padStart(2, '0');
     const todayDate = `${day}/${month}/${year}`;
-    $("#TransactionLink").addClass("active");
-    $("#SalesTransactionLink").addClass("active");
-    $("#SalesTransactionLink i.far.fa-circle").removeClass("far fa-circle").addClass("far fa-dot-circle");
-    //----------------------------------------varible declaration-----------------------------------------//
     var GstTable = $('#tblGstdifference');
     var SalesTable = $('#tblSales').DataTable({
         "paging": false,
@@ -22,6 +22,7 @@ $(function () {
         pageLength: 10 // Set the default page length to 5
     });
     const ddlPayment = $('select[name="ddlPayment"]');
+    const ddlRate = $('select[name="ddlRate"]');
     const CustomerName = $('input[name="CustomerName"]');
     const transactionNo = $('input[name="TransactionNo"]');
     const SalesOrderId = $('input[name="hdnSaleOrderId"]');
@@ -100,7 +101,6 @@ $(function () {
             $('#btnSave').click();
         }
     });
-  
     $('#btnSave').on('focus', function () {
         $(this).css('background-color', 'black');
     });
@@ -229,7 +229,6 @@ $(function () {
     Sr_receivingPerson.on('blur', function () {
         $(this).css('border-color', ''); // Reset background color on blur
     });
-
     $('a[href="#CreateSalesReturn"]').on('click', function () {
         chkPage = true;
     });
@@ -247,7 +246,6 @@ $(function () {
     $('#addSalesReturnRowBtn').on('blur', function () {
         $(this).css('background-color', '');
     });
-
     $('#Sr_btnSave').on('keydown', function (e) {
         if (e.key === 'Enter' || e.keyCode === 13) {
             $('#Sr_btnSave').click();
@@ -316,8 +314,43 @@ $(function () {
         }
     });
     //------------------------------------------Sales Screen-----------------------------------------//
-    //GetSundryDebtors();
     GetLastSalesTransaction();
+    GetSalesType()
+    function GetSalesType() {
+        $.ajax({
+            url: "/Transaction/GetSalesType",
+            type: "GET",
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            success: function (result) {
+                $.each(result, function (key, item) {
+                    var option = $('<option></option>').val(key).text(item);
+                    ddlPayment.append(option);
+                });
+            },
+            error: function (errormessage) {
+                console.log(errormessage)
+            }
+        });
+    }
+    GetRateType();
+    function GetRateType() {
+        $.ajax({
+            url: "/Transaction/GetRateType",
+            type: "GET",
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            success: function (result) {
+                $.each(result, function (key, item) {
+                    var option = $('<option></option>').val(key).text(item);
+                    ddlRate.append(option);
+                });
+            },
+            error: function (errormessage) {
+                console.log(errormessage)
+            }
+        });
+    }
     function GetLastSalesTransaction() {
         $.ajax({
             url: "/Transaction/GetLastSalesTransaction",
@@ -370,24 +403,14 @@ $(function () {
             $('.hdntxt').show();
         }
     });
-    GetSalesType()
-    function GetSalesType() {
-        $.ajax({
-            url: "/Transaction/GetSalesType",
-            type: "GET",
-            contentType: "application/json;charset=utf-8",
-            dataType: "json",
-            success: function (result) {
-                $.each(result, function (key, item) {
-                    var option = $('<option></option>').val(key).text(item);
-                    ddlPayment.append(option);
-                });
-            },
-            error: function (errormessage) {
-                console.log(errormessage)
-            }
-        });
-    }
+    $(document).on('change', 'select[name = "ddlRate"]', function () {
+        selectedOption = ddlRate.val();
+        if (selectedOption === 'wholesalerate') {
+            $('.rate').prop('disabled', true);
+        } else {
+            $('.rate').prop('disabled', false);
+        }
+    });
     $('#addSalesRowBtn').click(function () {
         var uniqueId = 'ddlitem' + new Date().getTime();
         var html = '<tr>';
@@ -403,7 +426,12 @@ $(function () {
             '</div>' +
             '</div>' +
             '</td>';
-        html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
+        if (ddlRate.val() ==='wholesalerate') {
+            html += '<td><div class="form-group"><input type="text" class="form-control rate" value="0" disabled></div></td>';
+        }
+        else {
+            html += '<td><div class="form-group"><input type="text" class="form-control rate" value="0"></div></td>';
+        }
         html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
         html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
         html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
@@ -443,9 +471,10 @@ $(function () {
     $(document).on('change', '.FinishedGood', function ()  {
         var selectElement = $(this);
         var selectedProductId = selectElement.val();
+        var rateType = ddlRate.val();
         if (selectedProductId) {
             $.ajax({
-                url: '/Transaction/GetProductGstWithRate?id=' + selectedProductId,
+                url: '/Transaction/GetProductGstWithRate?id=' + selectedProductId + '&&RateType=' + rateType +' ' ,
                 type: "GET",
                 contentType: "application/json;charset=utf-8",
                 dataType: "json",
@@ -594,6 +623,7 @@ $(function () {
             });
             var requestData = {
                 TransactionType: ddlPayment.val(),
+                RateType: ddlRate.val(),
                 Fk_SubLedgerId: ddlCustomer.val(),
                 CustomerName: CustomerName.val(),
                 TransactionDate: transactionDate.val(),

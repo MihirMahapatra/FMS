@@ -59,7 +59,7 @@ namespace FMS.Repository.Admin
         Task<Result<ProductModel>> GetAllProducts();
         public Task<Result<ProductModel>> GetProductById(Guid ProductId);
         public Task<Result<ProductModel>> GetProductByTypeId(Guid ProductTypeId);
-        public Task<Result<ProductModel>> GetProductGstWithRate(Guid id);
+        public Task<Result<ProductModel>> GetProductGstWithRate(Guid id, string RateType);
         Task<Result<bool>> CreateProduct(ProductModel data);
         Task<Result<bool>> UpdateProduct(ProductModel data);
         Task<Result<bool>> DeleteProduct(Guid Id, IDbContextTransaction transaction, bool IsCallBack);
