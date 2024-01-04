@@ -125,6 +125,7 @@ $(function () {
         }
     });
     $('#btnSave').on('click', function () {
+        $('#loaderBtn').show();
         var rowData = [];
         $('#tblProuctConfig tbody tr').each(function () {
             var row = $(this);
@@ -149,6 +150,7 @@ $(function () {
             data: JSON.stringify(requestData),
             contentType: "application/json;charset=utf-8",
             success: function (Response) {
+                $('#loaderBtn').hide();
                 if (Response.ResponseCode == 201) {
                     toastr.success(Response.SuccessMsg);
                 }
@@ -158,6 +160,7 @@ $(function () {
             },
             error: function (error) {
                 console.log(error);
+                $('#loaderBtn').hide();
             }
         });
     });

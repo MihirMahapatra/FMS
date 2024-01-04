@@ -250,6 +250,7 @@ $(function () {
     //----------Insert Records----------//
     $(document).on('click', '.btn-stock-create', CreateStock);
     function CreateStock() {
+        $('#loader').show();
         if (!productId.val() || productId.val() === '--Select Option--') {
             toastr.error('Product Name Is Required.');
             productId.focus();
@@ -289,6 +290,7 @@ $(function () {
                 data: JSON.stringify(data),
                 contentType: "application/json;charset=utf-8",
                 success: function (Response) {
+                    $('#loader').hide();
                     if (Response.ResponseCode == 201) {
                         toastr.success(Response.SuccessMsg);
                         LoadStocks()
@@ -311,7 +313,9 @@ $(function () {
         }
 
     }
+    $(document).on('click', '#btnRefresh', LoadStocks);
     //-------Update Records---------//
+
     $(document).on('click', '.btn-stock-edit', (event) => {
         const value = $(event.currentTarget).data('id');
         EditStock(value);
@@ -410,7 +414,6 @@ $(function () {
         }
 
     }
-
     //-----------Delete Records-------//
     $(document).on('click', '.btn-stock-delete', (event) => {
         const value = $(event.currentTarget).data('id');

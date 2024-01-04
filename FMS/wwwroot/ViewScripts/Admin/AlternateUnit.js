@@ -139,6 +139,7 @@
     });
     $(document).on('click', '.btn-alternateunit-create', CreateAlternateUnit);
     function CreateAlternateUnit() {
+        $('#loader').show();
         if (!ProductId.val() || ProductId.val() === '--Select Option--') {
             toastr.error('Plz Select Prosuct.');
             ProductId.focus();
@@ -169,23 +170,24 @@
                 data: JSON.stringify(data),
                 contentType: "application/json;charset=utf-8",
                 success: function (Response) {
+                    $('#loader').hide();
                     if (Response.ResponseCode == 201) {
                         toastr.success(Response.SuccessMsg);
                     }
                     else {
                         toastr.error(Response.ErrorMsg);
                     }
-                    LoadAlternateUnit();
                     AlternateUnit.val('');
                     UnitQty.val('0');
                 },
                 error: function (error) {
                     console.log(error);
+                    $('#loader').hide();
                 }
             });
         }
     }
-
+    $(document).on('click', '#btnRefresh', LoadAlternateUnit);  
     $(document).on('click', '.btn-alternateunit-delete', (event) => {
         const value = $(event.currentTarget).data('id');
         DeleteAlternateUnit(value);

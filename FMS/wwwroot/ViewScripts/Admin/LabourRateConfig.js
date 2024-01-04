@@ -203,6 +203,7 @@
     }
     $('.btn-labourrate-create').on('click', CreateLabourRate);
     function CreateLabourRate() {
+        $('#loaderBtn').show();
         if (!date.val()) {
             toastr.error("Date is required.");
             date.focus();
@@ -237,7 +238,7 @@
                 data: JSON.stringify(data),
                 contentType: "application/json;charset=utf-8",
                 success: function (Response) {
-                    loadLabourRates();
+                    $('#loaderBtn').show();
                     if (Response.ResponseCode = 201) {
                         toastr.success(Response.SuccessMsg);
                         date.val(todayDate);
@@ -249,10 +250,12 @@
                 },
                 error: function (error) {
                     console.log(error);
+                    $('#loaderBtn').show();
                 }
             });
         }
     }
+    $(document).on('click', '#btnRefresh', loadLabourRates);  
     $(document).on('click', '.btn-labourrate-edit', (event) => {
         const value = $(event.currentTarget).data('id');
         EditLabourRate(value);

@@ -63,7 +63,7 @@ $(function () {
     });
    
     $('.btn-primary').on('keydown', function (e) {
-        if (e.key === 'Enter' || e.keyCode === 13) {
+        if (e.key === 'Enter' || e.keyCode === 12) {
             $('.btn-primary').click();
         }
     });
@@ -74,7 +74,7 @@ $(function () {
         $(this).css('background-color', '');
     });
     $('.btn - party - create').on('keydown', function (e) {
-        if (e.key === 'Enter' || e.keyCode === 13) {
+        if (e.key === 'Enter' || e.keyCode === 12) {
             $('.btn - party - create').click();
         }
     });
@@ -461,6 +461,7 @@ $(function () {
     //**************************************Party*************************************//
     $('.btn-party-create').on('click', CreateParty);
     function CreateParty() {
+        $('#loader').show();
         if (!partyTypeId.val() || partyTypeId.val() === '--Select Option--') {
             toastr.error('Plz Select a Party Type');
             partyTypeId.focus();
@@ -533,6 +534,7 @@ $(function () {
                 data: JSON.stringify(data),
                 contentType: "application/json;charset=utf-8",
                 success: function (Response) {
+                    $('#loader').hide();
                     console.log(Response)
                     if (Response.ResponseCode == 201) {
                         toastr.success(Response.SuccessMsg);
@@ -548,6 +550,7 @@ $(function () {
                 },
                 error: function (error) {
                     console.log(error);
+                    $('#loader').hide();
                 }
             });
         }

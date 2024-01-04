@@ -21,7 +21,7 @@ $(function () {
         pageLength: 5 // Set the default page length to 5
     });
     var ProuctionEntryTable = $('#tblProuctionEntry').DataTable({
-        "paging": true,
+        "paging": false,
         "lengthChange": false,
         "searching": false,
         "ordering": true,

@@ -211,8 +211,10 @@ $(function () {
             }
         });
     }
+    $(document).on('click', '#btnRefresh', loadLabourDetails);  
     $(document).on('click', '.btn-labourdetail-create', CreateLabourDetail);
     function CreateLabourDetail() {
+        $('#loder').show();
         if (!labourTypeId.val()) {
             toastr.error('Please select Labour Type.');
             labourTypeId.focus();
@@ -254,6 +256,7 @@ $(function () {
             data: JSON.stringify(data),
             contentType: "application/json;charset=utf-8",
             success: function (Response) {
+                $('#loder').hide();
                 loadLabourDetails();
                 if (Response.ResponseCode = 201) {
                     toastr.success(Response.SuccessMsg);
@@ -270,6 +273,7 @@ $(function () {
             },
             error: function (error) {
                 console.log(error);
+                $('#loder').hide();
             }
         });
     }

@@ -38,14 +38,14 @@
                                         </div>
                                         <div class="card-body">
                                             <div class="row">
-                                                <div class="col-md-6">
+                                                <div class="col-md-2">
                                                     <div class="form-group">
                                                         <label>Group Name</label>
                                                         <select class="form-control select2bs4" style="width: 100%;" name="LedgerGroupId">
                                                         </select>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-4">
+                                                <div class="col-md-2">
                                                     <div class="form-group">
                                                         <label>SubGroup (optional)</label>
                                                         <select class="form-control select2bs4" style="width: 100%;" name="LedgerSubGroupId" disabled>
@@ -58,7 +58,6 @@
                                                     <button class="btn btn-primary btn-link cust-btn" id="btnLedgerSubGrupDelete" style=" margin-top: 32px !important;border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"><i class="fa-solid fa-trash-can"></i></button>
                                                 </div>
                                                 <!-------------Ledger------------>
-                                                <div class="col-md-3"></div>
                                                 <div class="col-md-6">
                                                     <div class="card card-primary">
                                                         <div class="card-header">
@@ -68,6 +67,7 @@
                                                             </a>
                                                             <button class="btn btn-primary btn-link" id="addLedgerRowBtn" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px; float:right"> <i class="fa-solid fa-plus"></i></button>
                                                         </div>
+                                                        <div id="loader" style="display:none;"></div>
                                                         <div class="card-body">
                                                             <table id="tblLedger" class="table table-bordered table-hover">
                                                                 <thead>

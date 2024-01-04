@@ -225,6 +225,7 @@ $(function () {
         });
     });
     $('#btnLedger').click(function () {
+        $('#loader').show();
         if (!ddlLedgerGroup.val() || ddlLedgerGroup.val() === '--Select Option--') {
             toastr.error('Plz Select a Group Name For Ledger');
             return;
@@ -241,7 +242,6 @@ $(function () {
             });
             rowData.push(cellData);
         });
-
         var selectedLedgerGroupId = ddlLedgerGroup.val();
         var selectedLedgerSubGroupId = ddlLedgerSubGroup.val();
         var requestData = {
@@ -256,6 +256,7 @@ $(function () {
             data: JSON.stringify(requestData),
             contentType: "application/json;charset=utf-8",
             success: function (Response) {
+                $('#loader').hide();
                 if (Response.ResponseCode == 201) {
                     toastr.success(Response.SuccessMsg);
                     ledgerTable.clear().draw();
@@ -266,6 +267,7 @@ $(function () {
             },
             error: function (error) {
                 console.log(error);
+                $('#loader').hide();
             }
         });
     });
