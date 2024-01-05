@@ -688,6 +688,7 @@
             return;
         }
         else {
+            $('#loader').show();
             const data = {
                 ProductName: ProductName.val(),
                 Fk_ProductTypeId: productTypeId.val(),
@@ -706,6 +707,7 @@
                 data: JSON.stringify(data),
                 contentType: "application/json;charset=utf-8",
                 success: function (Response) {
+                    $('#loader').hide();
                     if (Response.ResponseCode == 201) {
                         toastr.success(Response.SuccessMsg);
                     }
@@ -717,6 +719,7 @@
                 },
                 error: function (error) {
                     console.log(error);
+                    $('#loader').hide();
                 }
             });
         }

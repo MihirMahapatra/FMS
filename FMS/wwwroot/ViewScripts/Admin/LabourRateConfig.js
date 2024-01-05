@@ -203,7 +203,6 @@
     }
     $('.btn-labourrate-create').on('click', CreateLabourRate);
     function CreateLabourRate() {
-        $('#loaderBtn').show();
         if (!date.val()) {
             toastr.error("Date is required.");
             date.focus();
@@ -225,6 +224,7 @@
             return;
         }
         else {
+            $('#loader').show();
             const data = {
                 FormtedDate: date.val(),
                 Fk_ProductTypeId: productTypeId.val(),
@@ -238,7 +238,7 @@
                 data: JSON.stringify(data),
                 contentType: "application/json;charset=utf-8",
                 success: function (Response) {
-                    $('#loaderBtn').show();
+                    $('#loader').hide();
                     if (Response.ResponseCode = 201) {
                         toastr.success(Response.SuccessMsg);
                         date.val(todayDate);
@@ -250,7 +250,7 @@
                 },
                 error: function (error) {
                     console.log(error);
-                    $('#loaderBtn').show();
+                    $('#loaderBtn').hide();
                 }
             });
         }

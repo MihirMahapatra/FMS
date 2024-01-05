@@ -282,6 +282,7 @@ $(function () {
             toastr.error('Narration Is Required.');
             return;
         } else {
+            $('#loader').show();
             var requestData = {
                 VoucherDate: VoucherDate.val(),
                 VoucherNo: VoucherNo.val(),
@@ -316,7 +317,6 @@ $(function () {
                 });
                 requestData.arr.push(rowData);
             });
-            console.log(requestData);
             $.ajax({
                 type: "POST",
                 url: '/Accounting/CreateJournal',
@@ -324,6 +324,7 @@ $(function () {
                 data: JSON.stringify(requestData),
                 contentType: "application/json;charset=utf-8",
                 success: function (Response) {
+                    $('#loader').hide();
                     if (Response.ResponseCode == 201) {
                         toastr.success(Response.SuccessMsg);
                         GetJournalVoucherNo();
@@ -337,6 +338,7 @@ $(function () {
                 },
                 error: function (error) {
                     console.log(error);
+                    $('#loader').hide();
                 }
             });
         }

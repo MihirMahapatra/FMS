@@ -461,7 +461,6 @@ $(function () {
     //**************************************Party*************************************//
     $('.btn-party-create').on('click', CreateParty);
     function CreateParty() {
-        $('#loader').show();
         if (!partyTypeId.val() || partyTypeId.val() === '--Select Option--') {
             toastr.error('Plz Select a Party Type');
             partyTypeId.focus();
@@ -513,6 +512,7 @@ $(function () {
             return;
         }
         else {
+            $('#loader').show();
             const data = {
                 Fk_PartyType: partyTypeId.val(),
                 Fk_StateId: stateId.val(),

@@ -38,7 +38,7 @@ $(function () {
     const VoucherDate = $('input[name="VoucherDate"]');
     VoucherDate.val(todayDate);
     const Narration = $('textarea[name="Narration"]');
-    //-------------------------------------------------------------Journal --------------------------------------------------------//
+    //-------------------------------------------------------------Payment --------------------------------------------------------//
     GetPaymentVoucherNo();
     function GetPaymentVoucherNo() {
         selectedOption = CashBank.val();
@@ -297,6 +297,7 @@ $(function () {
             toastr.error('Narration Is Required.');
             return;
         } else {
+            $('#loader').show();
             var requestData = {
                 CashBank: CashBank.val(),
                 BankLedgerId: Bank.val(),
@@ -341,6 +342,7 @@ $(function () {
                 data: JSON.stringify(requestData),
                 contentType: "application/json;charset=utf-8",
                 success: function (Response) {
+                    $('#loader').hide();
                     if (Response.ResponseCode == 201) {
                         toastr.success(Response.SuccessMsg);
                         GetPaymentVoucherNo();
@@ -354,6 +356,7 @@ $(function () {
                 },
                 error: function (error) {
                     console.log(error);
+                    $('#loader').hide();
                 }
             });
         }

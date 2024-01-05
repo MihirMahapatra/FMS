@@ -214,7 +214,6 @@ $(function () {
     $(document).on('click', '#btnRefresh', loadLabourDetails);  
     $(document).on('click', '.btn-labourdetail-create', CreateLabourDetail);
     function CreateLabourDetail() {
-        $('#loder').show();
         if (!labourTypeId.val()) {
             toastr.error('Please select Labour Type.');
             labourTypeId.focus();
@@ -240,6 +239,7 @@ $(function () {
             Reference.focus();
             return;
         }
+        $('#loder').show();
         const data = {
             Fk_Labour_TypeId: labourTypeId.val(),
             LabourName: labourName.val(),

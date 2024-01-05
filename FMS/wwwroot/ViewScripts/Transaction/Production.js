@@ -263,11 +263,12 @@ $('#tblProuctionEntry tbody').on('change', 'input[type="text"]', function () {
     var amount = quantity * rate;
     row.find('input:eq(3)').val(amount.toFixed(2));
 });
-$('#btnSave').on('click', function () {
+    $('#btnSave').on('click', function () {
     if (!ProductionDate.val()) {
         toastr.error('Production Date  Is Required.');
         return;
     } else {
+        $('#loader').show();
         var rowData = [];
         $('#tblProuctionEntry tbody tr').each(function () {
             var row = $(this);
@@ -294,6 +295,7 @@ $('#btnSave').on('click', function () {
             data: JSON.stringify(requestData),
             contentType: "application/json;charset=utf-8",
             success: function (Response) {
+                $('#loader').hide();
                 if (Response.ResponseCode == 201) {
                     toastr.success(Response.SuccessMsg);
                     ProductionDate.val(todayDate);

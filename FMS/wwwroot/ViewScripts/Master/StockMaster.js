@@ -250,7 +250,6 @@ $(function () {
     //----------Insert Records----------//
     $(document).on('click', '.btn-stock-create', CreateStock);
     function CreateStock() {
-        $('#loader').show();
         if (!productId.val() || productId.val() === '--Select Option--') {
             toastr.error('Product Name Is Required.');
             productId.focus();
@@ -276,6 +275,7 @@ $(function () {
             return;
         }
         else {
+            $('#loader').show();
             const data = {
                 Fk_ProductId: productId.val(),
                 OpeningStock: openingQty.val(),

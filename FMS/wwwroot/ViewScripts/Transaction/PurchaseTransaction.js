@@ -556,6 +556,7 @@ $(function () {
             return;
         }
         else {
+            $('#loader').show();
             var rowData = [];
             $('#tblPurchase tbody tr').each(function () {
                 var row = $(this);
@@ -593,6 +594,7 @@ $(function () {
                 data: JSON.stringify(requestData),
                 contentType: "application/json;charset=utf-8",
                 success: function (Response) {
+                    $('#loader').hide();
                     if (Response.ResponseCode == 201) {
                         toastr.success(Response.SuccessMsg);
                         PurchaseTable.clear().draw();
@@ -616,6 +618,7 @@ $(function () {
                 },
                 error: function (error) {
                     console.log(error);
+                    $('#loader').hide();
                 }
             });
         }
@@ -912,6 +915,7 @@ $(function () {
     }
     $('#btnUpdate').on('click', UpdatePurchase);
     function UpdatePurchase() {
+        
         if (!transactionDate.val()) {
             toastr.error('TransactionDate Is Required.');
             return;
@@ -948,6 +952,7 @@ $(function () {
             receivingPerson.focus();
             return;
         } else {
+            $('#loader').show();
             var rowData = [];
             $('#tblPurchase tbody tr').each(function () {
                 var row = $(this);
@@ -985,6 +990,7 @@ $(function () {
                 data: JSON.stringify(requestData),
                 contentType: "application/json;charset=utf-8",
                 success: function (Response) {
+                    $('#loader').hide();
                     if (Response.ResponseCode == 200) {
                         toastr.success(Response.SuccessMsg);
                         PurchaseTable.clear().draw();
@@ -1011,6 +1017,7 @@ $(function () {
                 },
                 error: function (error) {
                     console.log(error);
+                    $('#loader').hide();
                 }
             });
         }
@@ -1213,6 +1220,7 @@ $(function () {
     });
     $('#Pr_btnSave').on('click', CreatetPurchaseReturn);
     function CreatetPurchaseReturn() {
+        
         if (!Pr_transactionDate.val()) {
             toastr.error('TransactionDate Is Required.');
             return;
@@ -1250,6 +1258,7 @@ $(function () {
             Pr_receivingPerson.focus();
             return;
         } else {
+            $('#loader').show();
             var rowData = [];
             $('#tblPurchaseReturn tbody tr').each(function () {
                 var row = $(this);
@@ -1287,6 +1296,7 @@ $(function () {
                     data: JSON.stringify(requestData),
                     contentType: "application/json;charset=utf-8",
                     success: function (Response) {
+                        $('#loader').hide();
                         if (Response.ResponseCode == 201) {
                             toastr.success(Response.SuccessMsg);
                             PurchaseReturnTable.clear().draw();
@@ -1311,6 +1321,7 @@ $(function () {
                     },
                     error: function (error) {
                         console.log(error);
+                        $('#loader').hide();
                     }
                 });
             }
@@ -1639,6 +1650,7 @@ $(function () {
             Pr_receivingPerson.focus();
             return;
         } else {
+            $('#loader').show();
             var rowData = [];
             $('#tblPurchaseReturn tbody tr').each(function () {
                 var row = $(this);
@@ -1676,6 +1688,7 @@ $(function () {
                 data: JSON.stringify(requestData),
                 contentType: "application/json;charset=utf-8",
                 success: function (Response) {
+                    $('#loader').hide();
                     if (Response.ResponseCode == 200) {
                         toastr.success(Response.SuccessMsg);
                         PurchaseReturnTable.clear().draw();
@@ -1737,6 +1750,7 @@ $(function () {
                     },
                     error: function (error) {
                         console.log(error);
+                        $('#loader').hide();
                     }
                 });
             }

@@ -287,6 +287,7 @@ $(function () {
         UpdateLedgerBalance(value);
     });
     function UpdateLedgerBalance(id) {
+
         var $tr = $('#btnLedgerBalanceUpdate_' + id + '').closest('tr');
         const data = {
             LedgerBalanceId: id,

@@ -593,6 +593,7 @@ $(function () {
             receivingPerson.focus();
             return;
         } else {
+            $('#loader').show();
             var rowData = [];
             $('#tblSales tbody tr').each(function () {
                 var row = $(this);
@@ -647,6 +648,7 @@ $(function () {
                 data: JSON.stringify(requestData),
                 contentType: "application/json;charset=utf-8",
                 success: function (Response) {
+                    $('#loader').hide();
                     if (Response.ResponseCode == 201) {
                         toastr.success(Response.SuccessMsg);
                         SalesTable.clear().draw();
@@ -677,6 +679,7 @@ $(function () {
                     }
                     else {
                         toastr.error(Response.ErrorMsg);
+                        $('#loader').hide();
                     }
                 },
                 error: function (error) {
@@ -1016,6 +1019,7 @@ $(function () {
             receivingPerson.focus();
             return;
         } else {
+            $('#loader').show();
             var rowData = [];
             $('#tblSales tbody tr').each(function () {
                 var row = $(this);
@@ -1053,6 +1057,7 @@ $(function () {
                 data: JSON.stringify(requestData),
                 contentType: "application/json;charset=utf-8",
                 success: function (Response) {
+                    $('#loader').hide();
                     if (Response.ResponseCode == 200) {
                         toastr.success(Response.SuccessMsg);
                         SalesTable.clear().draw();
@@ -1078,6 +1083,7 @@ $(function () {
                 },
                 error: function (error) {
                     console.log(error);
+                    $('#loader').hide();
                 }
             });
         }
@@ -1375,6 +1381,7 @@ $(function () {
             Sr_receivingPerson.focus();
             return;
         } else {
+            $('#loader').show();
             var rowData = [];
             $('#tblSalesReturn tbody tr').each(function () {
                 var row = $(this);
@@ -1413,7 +1420,9 @@ $(function () {
                 data: JSON.stringify(requestData),
                 contentType: "application/json;charset=utf-8",
                 success: function (Response) {
+                    $('#loader').hide();
                     if (Response.ResponseCode == 201) {
+                       
                         toastr.success(Response.SuccessMsg);
                         SalesReturnTable.clear().draw();
                         Sr_transactionDate.val('');
@@ -1435,6 +1444,7 @@ $(function () {
                 },
                 error: function (error) {
                     console.log(error);
+                    $('#loader').hide();
                 }
             });
         }
@@ -1774,6 +1784,7 @@ $(function () {
             Sr_receivingPerson();
             return;
         } else {
+            $('#loader').show();
             var rowData = [];
             $('#tblSalesReturn tbody tr').each(function () {
                 var row = $(this);
@@ -1811,6 +1822,7 @@ $(function () {
                 data: JSON.stringify(requestData),
                 contentType: "application/json;charset=utf-8",
                 success: function (Response) {
+                    $('#loader').hide();
                     if (Response.ResponseCode == 200) {
                         toastr.success(Response.SuccessMsg);
                         SalesReturnTable.clear().draw();
@@ -1832,6 +1844,7 @@ $(function () {
                 },
                 error: function (error) {
                     console.log(error);
+                    $('#loader').hide();
                 }
             });
         }

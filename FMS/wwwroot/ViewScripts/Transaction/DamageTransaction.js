@@ -272,6 +272,7 @@ $(function () {
             return;
         }
         else {
+            $('#loader').show();
             var rowData = [];
             $('#tblDamage tbody tr').each(function () {
                 var row = $(this);
@@ -301,6 +302,7 @@ $(function () {
                 data: JSON.stringify(requestData),
                 contentType: "application/json;charset=utf-8",
                 success: function (Response) {
+                    $('#loader').hide();
                     if (Response.ResponseCode == 201) {
                         toastr.success(Response.SuccessMsg);
                         DamageTable.clear().draw();
@@ -315,6 +317,7 @@ $(function () {
                 },
                 error: function (error) {
                     console.log(error);
+                    $('#loader').hide();
                 }
             });
         }
@@ -576,6 +579,7 @@ $(function () {
         $(this).closest('tr').remove();
     });
     $(document).on('click', '#btnUpdate', function () {
+       
         if (!transactionDate.val()) {
             toastr.error('TransactionDate Is Required.');
             transactionDate.focus();
@@ -591,6 +595,7 @@ $(function () {
             reason.focus();
             return;
         } else {
+            $('#loader').show();
             var rowData = [];
             $('#tblDamage tbody tr').each(function () {
                 var row = $(this);
@@ -620,6 +625,7 @@ $(function () {
                 data: JSON.stringify(requestData),
                 contentType: "application/json;charset=utf-8",
                 success: function (Response) {
+                    $('#loader').hide();
                     if (Response.ResponseCode == 200) {
                         toastr.success(Response.SuccessMsg);
                         DamageTable.clear().draw();
@@ -634,6 +640,7 @@ $(function () {
                 },
                 error: function (error) {
                     console.log(error);
+                    $('#loader').hide();
                 }
             });
         }

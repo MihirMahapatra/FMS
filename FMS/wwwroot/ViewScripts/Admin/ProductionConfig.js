@@ -125,7 +125,7 @@ $(function () {
         }
     });
     $('#btnSave').on('click', function () {
-        $('#loaderBtn').show();
+        $('#loader').show();
         var rowData = [];
         $('#tblProuctConfig tbody tr').each(function () {
             var row = $(this);
@@ -150,7 +150,7 @@ $(function () {
             data: JSON.stringify(requestData),
             contentType: "application/json;charset=utf-8",
             success: function (Response) {
-                $('#loaderBtn').hide();
+                $('#loader').hide();
                 if (Response.ResponseCode == 201) {
                     toastr.success(Response.SuccessMsg);
                 }
@@ -160,7 +160,7 @@ $(function () {
             },
             error: function (error) {
                 console.log(error);
-                $('#loaderBtn').hide();
+                $('#loader').hide();
             }
         });
     });

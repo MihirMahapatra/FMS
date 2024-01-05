@@ -269,6 +269,7 @@
             toastr.error('Services Date  Is Required.');
             return;
         } else {
+            $('#loader').show();
             var rowData = [];
             $('#tblServiceEntry tbody tr').each(function () {
                 var row = $(this);
@@ -295,6 +296,7 @@
                 data: JSON.stringify(requestData),
                 contentType: "application/json;charset=utf-8",
                 success: function (Response) {
+                    $('#loader').hide();
                     if (Response.ResponseCode == 201) {
                         toastr.success(Response.SuccessMsg);
                         ServiceDate.val(todayDate)
@@ -310,6 +312,7 @@
                 },
                 error: function (error) {
                     console.log(error);
+                    $('#loader').hide();
                 }
             });
         }
@@ -350,7 +353,6 @@
                 html += '</thead>'
                 html += '<tbody>';
                 if (result.ResponseCode == 302) {
-
                     $.each(result.ProductionEntries, function (key, item) {
                         html += '<tr>';
                         html += '<td hidden>' + item.ProductionEntryId + '</td>';
