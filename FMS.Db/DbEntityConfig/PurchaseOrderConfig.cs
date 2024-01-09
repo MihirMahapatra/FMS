@@ -27,9 +27,6 @@ namespace FMS.Db.DbEntityConfig
             builder.Property(e => e.Discount).HasColumnType("decimal(18,2)").IsRequired(true);
             builder.Property(e => e.Gst).HasColumnType("decimal(18,2)").IsRequired(false);
             builder.Property(e => e.GrandTotal).HasColumnType("decimal(18,2)").IsRequired(true);
-            builder.HasOne(e => e.SubLedger).WithMany(s => s.PurchaseOrders).HasForeignKey(e => e.Fk_SubLedgerId).OnDelete(DeleteBehavior.NoAction);
-            builder.HasOne(p => p.Branch).WithMany(po => po.PurchaseOrders).HasForeignKey(po => po.Fk_BranchId).OnDelete(DeleteBehavior.NoAction);
-            builder.HasOne(p => p.FinancialYear).WithMany(po => po.PurchaseOrders).HasForeignKey(po => po.Fk_FinancialYearId).OnDelete(DeleteBehavior.NoAction);
             builder.HasOne(e => e.SubLedger).WithMany(s => s.PurchaseOrders).HasForeignKey(e => e.Fk_SubLedgerId).OnDelete(DeleteBehavior.Restrict);
             builder.HasOne(p => p.Branch).WithMany(po => po.PurchaseOrders).HasForeignKey(po => po.Fk_BranchId).OnDelete(DeleteBehavior.Restrict);
             builder.HasOne(p => p.FinancialYear).WithMany(po => po.PurchaseOrders).HasForeignKey(po => po.Fk_FinancialYearId).OnDelete(DeleteBehavior.Restrict);

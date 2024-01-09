@@ -1366,7 +1366,7 @@ namespace FMS.Repository.Master
             {
                 _Result.IsSuccess = false;
                 Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
-                var Query = await _appDbContext.Labours.Where(s => s.LabourId == LabourId && s.Fk_BranchId== BranchId)
+                var Query = await _appDbContext.Labours.Where(s => s.LabourId == LabourId && s.Fk_BranchId == BranchId)
                                    .Select(l => new LabourModel
                                    {
                                        LabourId = l.LabourId,
@@ -1396,23 +1396,41 @@ namespace FMS.Repository.Master
             try
             {
                 _Result.IsSuccess = false;
-                Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
-                var Query = await _appDbContext.Labours.Where(s => s.Fk_Labour_TypeId == LabourTypeId && s.Fk_BranchId== BranchId)
-                                   .Select(l => new LabourModel
-                                   {
-                                       LabourId = l.LabourId,
-                                       LabourName = l.LabourName,
-                                       LabourType = l.LabourType != null ? new LabourTypeModel() { Labour_Type = l.LabourType.Labour_Type } : null,
-                                       Address = l.Address,
-                                       Phone = l.Phone,
-                                       Reference = l.Reference,
-                                   }).ToListAsync();
-                if (Query != null)
+                if (_HttpContextAccessor.HttpContext.Session.GetString("BranchId") != "All")
                 {
-                    _Result.CollectionObjData = Query;
-                    _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
+                    Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
+                    _Result.CollectionObjData = await _appDbContext.Labours.Where(s => s.Fk_Labour_TypeId == LabourTypeId && s.Fk_BranchId == BranchId)
+                       .Select(l => new LabourModel
+                       {
+                           LabourId = l.LabourId,
+                           LabourName = l.LabourName,
+                           LabourType = l.LabourType != null ? new LabourTypeModel() { Labour_Type = l.LabourType.Labour_Type } : null,
+                           Address = l.Address,
+                           Phone = l.Phone,
+                           Reference = l.Reference,
+                       }).ToListAsync();
                 }
-                _Result.IsSuccess = true;
+                else
+                {
+                    _Result.CollectionObjData = await _appDbContext.Labours.Where(s => s.Fk_Labour_TypeId == LabourTypeId)
+                      .Select(l => new LabourModel
+                      {
+                          LabourId = l.LabourId,
+                          LabourName = l.LabourName,
+                          LabourType = l.LabourType != null ? new LabourTypeModel() { Labour_Type = l.LabourType.Labour_Type } : null,
+                          Address = l.Address,
+                          Phone = l.Phone,
+                          Reference = l.Reference,
+                      }).ToListAsync();
+                }
+
+                if (_Result.CollectionObjData.Count > 0)
+                {
+                    _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
+                    _Result.IsSuccess = true;
+                }
+             
+
             }
             catch (Exception _Exception)
             {
