@@ -140,8 +140,15 @@
                                                 Balance -= (item.TotalAmount);
                                                 <tr class="small-row">
                                                     <td>@item.TransactionDate.ToString("dd/MM/yyyy")</td>
-                                                    <td>@item.ProductTypeName</td>
-                                                    <td>@item.TransactionNo</td>
+                                                    @if(item.ProductTypeName != null)
+                                                    {
+                                                        <td>@item.ProductTypeName</td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>Damage</td>
+                                                    }    
+                                                     <td>@item.TransactionNo</td>
                                                     <td>-</td>
                                                     <td>-</td>
                                                     <td>-</td>
@@ -159,7 +166,14 @@
                                                 Balance -= (item.Amount);
                                                 <tr class="small-row">
                                                     <td>@item.VoucherDate.ToString("dd/MM/yyyy")</td>
-                                                    <td>@item.LedgerName</td>
+                                                    @if (item.LedgerName != null)
+                                                    {
+                                                        <td>@item.LedgerName</td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>Payment</td>
+                                                    }
                                                     <td>@item.VouvherNo</td>
                                                     <td>-</td>
                                                     <td>-</td>
