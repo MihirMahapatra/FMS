@@ -137,7 +137,7 @@
                                             foreach (var item in report.DamageOrders)
                                             {
                                              
-                                                Balance -= item.TotalAmount;
+                                                Balance -= (item.TotalAmount);
                                                 <tr class="small-row">
                                                     <td>@item.TransactionDate.ToString("dd/MM/yyyy")</td>
                                                     <td>@item.ProductTypeName</td>
@@ -147,7 +147,7 @@
                                                     <td>-</td>
                                                     <td>@item.TotalAmount</td>
                                                     <td>-</td>
-                                                    <td style="text-align:center">@Math.Abs(@Balance).ToString("0.00")</td>
+                                                    <td style="text-align:center">@Balance.ToString("0.00")</td>
                                                 </tr>
                                             }
                                         }
@@ -156,7 +156,7 @@
                                             foreach (var item in report.Payment)
                                             {
                                                
-                                                Balance -= item.Amount;
+                                                Balance -= (item.Amount);
                                                 <tr class="small-row">
                                                     <td>@item.VoucherDate.ToString("dd/MM/yyyy")</td>
                                                     <td>@item.LedgerName</td>
@@ -164,9 +164,9 @@
                                                     <td>-</td>
                                                     <td>-</td>
                                                     <td>-</td>
-                                                    <td>@item.Amount</td>
                                                     <td>-</td>
-                                                    <td style="text-align:center">@Math.Abs(Balance).ToString("0.00")</td>
+                                                    <td>@item.Amount</td>
+                                                    <td style="text-align:center">@Balance.ToString("0.00")</td>
                                                 </tr>
                                             }
                                         }
