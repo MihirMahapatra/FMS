@@ -278,8 +278,19 @@
                         Stock = item.OpeningQty + item.OpeningStock;
                         if (item.ProductionEntries !== null) {
                             $.each(item.ProductionEntries, function (key, Production) {
+                                const ModifyDate = Production.ProductionDate;
+                                var formattedDate = '';
+                                if (ModifyDate) {
+                                    const dateObject = new Date(ModifyDate);
+                                    if (!isNaN(dateObject)) {
+                                        const day = String(dateObject.getDate()).padStart(2, '0');
+                                        const month = String(dateObject.getMonth() + 1).padStart(2, '0');
+                                        const year = dateObject.getFullYear();
+                                        formattedDate = `${day}/${month}/${year}`;
+                                    }
+                                }
                                 html += '<tr>';
-                                html += '<td>' + Production.ProductionDate + '</td>';
+                                html += '<td>' + formattedDate + '</td>';
                                 html += '<td>' + item.ProductName + '</td>';
                                 html += '<td>' + Production.ProductionNo + '</td>';
                                 html += '<td>Production</td>';
@@ -292,8 +303,19 @@
                         }
                         if (item.ProductionEntryTransactions != null) {
                             $.each(item.ProductionEntryTransactions, function (key, Pet) {
+                                const ModifyDate = Pet.TransactionDate;
+                                var formattedDate = '';
+                                if (ModifyDate) {
+                                    const dateObject = new Date(ModifyDate);
+                                    if (!isNaN(dateObject)) {
+                                        const day = String(dateObject.getDate()).padStart(2, '0');
+                                        const month = String(dateObject.getMonth() + 1).padStart(2, '0');
+                                        const year = dateObject.getFullYear();
+                                        formattedDate = `${day}/${month}/${year}`;
+                                    }
+                                }
                                 html += '<tr>';
-                                html += '<td>' + Pet.TransactionDate + '</td>';
+                                html += '<td>' + formattedDate + '</td>';
                                 html += '<td>' + item.ProductName + '</td>';
                                 html += '<td>' + Pet.TransactionNo + '</td>';
                                 html += '<td>Raw Material Used For Production</td>';
@@ -306,8 +328,19 @@
                         }
                         if (item.DamageTransactions != null) {
                             $.each(item.DamageTransactions, function (key, Damage) {
+                                const ModifyDate = Damage.TransactionDate;
+                                var formattedDate = '';
+                                if (ModifyDate) {
+                                    const dateObject = new Date(ModifyDate);
+                                    if (!isNaN(dateObject)) {
+                                        const day = String(dateObject.getDate()).padStart(2, '0');
+                                        const month = String(dateObject.getMonth() + 1).padStart(2, '0');
+                                        const year = dateObject.getFullYear();
+                                        formattedDate = `${day}/${month}/${year}`;
+                                    }
+                                }
                                 html += '<tr>';
-                                html += '<td>' + Damage.TransactionDate + '</td>';
+                                html += '<td>' + formattedDate + '</td>';
                                 html += '<td>' + item.ProductName + '</td>';
                                 html += '<td>' + Damage.TransactionNo + '</td>';
                                 html += '<td>Damage</td>';
@@ -320,8 +353,19 @@
                         }
                         if (item.SalesTransactions != null) {
                             $.each(item.SalesTransactions, function (key, Sales) {
+                                const ModifyDate = Sales.TransactionDate;
+                                var formattedDate = '';
+                                if (ModifyDate) {
+                                    const dateObject = new Date(ModifyDate);
+                                    if (!isNaN(dateObject)) {
+                                        const day = String(dateObject.getDate()).padStart(2, '0');
+                                        const month = String(dateObject.getMonth() + 1).padStart(2, '0');
+                                        const year = dateObject.getFullYear();
+                                        formattedDate = `${day}/${month}/${year}`;
+                                    }
+                                }
                                 html += '<tr>';
-                                html += '<td>' + Sales.TransactionDate + '</td>';
+                                html += '<td>' + formattedDate + '</td>';
                                 html += '<td>' + item.ProductName + '</td>';
                                 html += '<td>' + Sales.TransactionNo + '</td>';
                                 html += '<td>Sales</td>';
@@ -334,8 +378,19 @@
                         }
                         if (item.SalesReturnTransactions != null) {
                             $.each(item.SalesReturnTransactions, function (key, SalesReturn) {
+                                const ModifyDate = SalesReturn.TransactionDate;
+                                var formattedDate = '';
+                                if (ModifyDate) {
+                                    const dateObject = new Date(ModifyDate);
+                                    if (!isNaN(dateObject)) {
+                                        const day = String(dateObject.getDate()).padStart(2, '0');
+                                        const month = String(dateObject.getMonth() + 1).padStart(2, '0');
+                                        const year = dateObject.getFullYear();
+                                        formattedDate = `${day}/${month}/${year}`;
+                                    }
+                                }
                                 html += '<tr>';
-                                html += '<td>' + SalesReturn.TransactionDate + '</td>';
+                                html += '<td>' + formattedDate + '</td>';
                                 html += '<td>' + item.ProductName + '</td>';
                                 html += '<td>' + SalesReturn.TransactionNo + '</td>';
                                 html += '<td>Sales Return</td>';
@@ -348,8 +403,19 @@
                         }
                         if (item.PurchaseTransactions != null) {
                             $.each(item.PurchaseTransactions, function (key, Purchase) {
+                                const ModifyDate = Purchase.TransactionDate;
+                                var formattedDate = '';
+                                if (ModifyDate) {
+                                    const dateObject = new Date(ModifyDate);
+                                    if (!isNaN(dateObject)) {
+                                        const day = String(dateObject.getDate()).padStart(2, '0');
+                                        const month = String(dateObject.getMonth() + 1).padStart(2, '0');
+                                        const year = dateObject.getFullYear();
+                                        formattedDate = `${day}/${month}/${year}`;
+                                    }
+                                }
                                 html += '<tr>';
-                                html += '<td>' + Purchase.TransactionDate + '</td>';
+                                html += '<td>' + formattedDate + '</td>';
                                 html += '<td>' + item.ProductName + '</td>';
                                 html += '<td>' + Purchase.TransactionNo + '</td>';
                                 html += '<td>Purchase</td>';
@@ -362,8 +428,19 @@
                         }
                         if (item.PurchaseReturnTransactions != null) {
                             $.each(item.PurchaseReturnTransactions, function (key, PurchaseReturn) {
+                                const ModifyDate = PurchaseReturn.TransactionDate;
+                                var formattedDate = '';
+                                if (ModifyDate) {
+                                    const dateObject = new Date(ModifyDate);
+                                    if (!isNaN(dateObject)) {
+                                        const day = String(dateObject.getDate()).padStart(2, '0');
+                                        const month = String(dateObject.getMonth() + 1).padStart(2, '0');
+                                        const year = dateObject.getFullYear();
+                                        formattedDate = `${day}/${month}/${year}`;
+                                    }
+                                }
                                 html += '<tr>';
-                                html += '<td>' + PurchaseReturn.TransactionDate + '</td>';
+                                html += '<td>' + formattedDate + '</td>';
                                 html += '<td>' + item.ProductName + '</td>';
                                 html += '<td>' + PurchaseReturn.TransactionNo + '</td>';
                                 html += '<td>Purchase Return</td>';
@@ -376,8 +453,19 @@
                         }
                         if (item.InwardSupplyTransactions != null) {
                             $.each(item.InwardSupplyTransactions, function (key, Inward) {
+                                const ModifyDate = Inward.TransactionDate;
+                                var formattedDate = '';
+                                if (ModifyDate) {
+                                    const dateObject = new Date(ModifyDate);
+                                    if (!isNaN(dateObject)) {
+                                        const day = String(dateObject.getDate()).padStart(2, '0');
+                                        const month = String(dateObject.getMonth() + 1).padStart(2, '0');
+                                        const year = dateObject.getFullYear();
+                                        formattedDate = `${day}/${month}/${year}`;
+                                    }
+                                }
                                 html += '<tr>';
-                                html += '<td>' + Inward.TransactionDate + '</td>';
+                                html += '<td>' + formattedDate + '</td>';
                                 html += '<td>' + item.ProductName + '</td>';
                                 html += '<td>' + Inward.TransactionNo + '</td>';
                                 html += '<td>Inward Supply</td>';
@@ -390,8 +478,19 @@
                         }
                         if (item.OutwardSupplyTransactions != null) {
                             $.each(item.OutwardSupplyTransactions, function (key, Outward) {
+                                const ModifyDate = Outward.TransactionDate;
+                                var formattedDate = '';
+                                if (ModifyDate) {
+                                    const dateObject = new Date(ModifyDate);
+                                    if (!isNaN(dateObject)) {
+                                        const day = String(dateObject.getDate()).padStart(2, '0');
+                                        const month = String(dateObject.getMonth() + 1).padStart(2, '0');
+                                        const year = dateObject.getFullYear();
+                                        formattedDate = `${day}/${month}/${year}`;
+                                    }
+                                }
                                 html += '<tr>';
-                                html += '<td>' + Outward.TransactionDate + '</td>';
+                                html += '<td>' + formattedDate + '</td>';
                                 html += '<td>' + item.ProductName + '</td>';
                                 html += '<td>' + Outward.TransactionNo + '</td>';
                                 html += '<td>Outward Supply</td>';

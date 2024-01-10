@@ -202,8 +202,19 @@ $(function () {
                         html += '<td>' + result.Party.OpeningBalType + '</td>';
                         html += '</tr >';
                         $.each(result.Party.SalesOrders, function (key, SalesOrder) {
+                            const ModifyDate = SalesOrder.TransactionDate;
+                            var formattedDate = '';
+                            if (ModifyDate) {
+                                const dateObject = new Date(ModifyDate);
+                                if (!isNaN(dateObject)) {
+                                    const day = String(dateObject.getDate()).padStart(2, '0');
+                                    const month = String(dateObject.getMonth() + 1).padStart(2, '0');
+                                    const year = dateObject.getFullYear();
+                                    formattedDate = `${day}/${month}/${year}`;
+                                }
+                            }
                             html += '<tr>';
-                            html += '<td>' + SalesOrder.TransactionDate + '</td>';
+                            html += '<td>' + formattedDate + '</td>';
                             html += '<td>' + SalesOrder.TransactionNo + '</td>';
                             html += '<td>Credit Sale</td>';
                             html += '<td>' + SalesOrder.GrandTotal + '</td>';
@@ -220,8 +231,19 @@ $(function () {
                             html += '</tr >';
                         });
                         $.each(result.Party.SalesReturns, function (key, SalesReturn) {
+                            const ModifyDate = SalesReturn.TransactionDate;
+                            var formattedDate = '';
+                            if (ModifyDate) {
+                                const dateObject = new Date(ModifyDate);
+                                if (!isNaN(dateObject)) {
+                                    const day = String(dateObject.getDate()).padStart(2, '0');
+                                    const month = String(dateObject.getMonth() + 1).padStart(2, '0');
+                                    const year = dateObject.getFullYear();
+                                    formattedDate = `${day}/${month}/${year}`;
+                                }
+                            }
                             html += '<tr>';
-                            html += '<td>' + SalesReturn.TransactionDate + '</td>';
+                            html += '<td>' + formattedDate + '</td>';
                             html += '<td>' + SalesReturn.TransactionNo + '</td>';
                             html += '<td>Sales Return</td>';
                             html += '<td>' + SalesReturn.GrandTotal + '</td>';
@@ -238,8 +260,19 @@ $(function () {
                             html += '</tr >';
                         });
                         $.each(result.Party.Receipts, function (key, Recipt) {
+                            const ModifyDate = Recipt.VoucherDate;
+                            var formattedDate = '';
+                            if (ModifyDate) {
+                                const dateObject = new Date(ModifyDate);
+                                if (!isNaN(dateObject)) {
+                                    const day = String(dateObject.getDate()).padStart(2, '0');
+                                    const month = String(dateObject.getMonth() + 1).padStart(2, '0');
+                                    const year = dateObject.getFullYear();
+                                    formattedDate = `${day}/${month}/${year}`;
+                                }
+                            }
                             html += '<tr>';
-                            html += '<td>' + Recipt.VoucherDate + '</td>';
+                            html += '<td>' + formattedDate + '</td>';
                             html += '<td>' + Recipt.VouvherNo + '</td>';
                             html += '<td>' + Recipt.narration + '</td>';
                             html += '<td></td>';

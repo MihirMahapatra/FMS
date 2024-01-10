@@ -251,8 +251,19 @@ $(function () {
                             html += '</tr >';
                             if (item.ProductionEntries !== null) {
                                 $.each(item.ProductionEntries, function (key, Production) {
+                                    const ModifyDate = Production.ProductionDate;
+                                    var formattedDate = '';
+                                    if (ModifyDate) {
+                                        const dateObject = new Date(ModifyDate);
+                                        if (!isNaN(dateObject)) {
+                                            const day = String(dateObject.getDate()).padStart(2, '0');
+                                            const month = String(dateObject.getMonth() + 1).padStart(2, '0');
+                                            const year = dateObject.getFullYear();
+                                            formattedDate = `${day}/${month}/${year}`;
+                                        }
+                                    }
                                     html += '<tr>';
-                                    html += '<td>' + Production.ProductionDate + '</td>';
+                                    html += '<td>' + formattedDate + '</td>';
                                     html += '<td>' + Production.ProductionNo + '</td>';
                                     html += '<td>' + Production.Product.ProductName + '</td>';
                                     html += '<td>' + Production.Quantity + '</td>';
@@ -268,8 +279,19 @@ $(function () {
                             }
                             if (item.Payment !== null) {
                                 $.each(item.Payment, function (key, Payment) {
+                                    const ModifyDate = Payment.VoucherDate;
+                                    var formattedDate = '';
+                                    if (ModifyDate) {
+                                        const dateObject = new Date(ModifyDate);
+                                        if (!isNaN(dateObject)) {
+                                            const day = String(dateObject.getDate()).padStart(2, '0');
+                                            const month = String(dateObject.getMonth() + 1).padStart(2, '0');
+                                            const year = dateObject.getFullYear();
+                                            formattedDate = `${day}/${month}/${year}`;
+                                        }
+                                    }
                                     html += '<tr>';
-                                    html += '<td>' + Payment.VoucherDate + '</td>';
+                                    html += '<td>' + formattedDate + '</td>';
                                     html += '<td>' + Payment.VouvherNo + '</td>';
                                     html += '<td>Payment</td>';
                                     html += '<td>-</td>';
@@ -284,8 +306,19 @@ $(function () {
                             }
                             if (item.DamageOrders !== null) {
                                 $.each(item.DamageOrders, function (key, Damage) {
+                                    const ModifyDate = Damage.TransactionDate;
+                                    var formattedDate = '';
+                                    if (ModifyDate) {
+                                        const dateObject = new Date(ModifyDate);
+                                        if (!isNaN(dateObject)) {
+                                            const day = String(dateObject.getDate()).padStart(2, '0');
+                                            const month = String(dateObject.getMonth() + 1).padStart(2, '0');
+                                            const year = dateObject.getFullYear();
+                                            formattedDate = `${day}/${month}/${year}`;
+                                        }
+                                    }
                                     html += '<tr>';
-                                    html += '<td>' + Damage.TransactionDate + '</td>';
+                                    html += '<td>' + formattedDate + '</td>';
                                     html += '<td>' + Damage.TransactionNo + '</td>';
                                     html += '<td>Damage</td>';
                                     html += '<td>-</td>';
