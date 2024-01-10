@@ -1501,6 +1501,43 @@ namespace FMS.Service.Admin
             }
             return Obj;
         }
+        public async Task<AlternateUnitViewModel> GetAlternateUnitByAlternateUnitId(Guid AlternateUnitId)
+        {
+            AlternateUnitViewModel Obj;
+            var Result = await _adminRepo.GetAlternateUnitByAlternateUnitId(AlternateUnitId);
+            if (Result.IsSuccess)
+            {
+                if (Result.Response == "success")
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
+                        AlternateUnit = Result.SingleObjData,
+                    };
+                }
+                else
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.NotFound),
+                        Message = "No Record Found"
+                    };
+                }
+            }
+            else
+            {
+                Obj = new()
+                {
+                    ResponseStatus = Result.Response,
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    Message = "Some Eroor Occoured"
+                };
+            }
+            return Obj;
+        }
         public async Task<Base> CreateAlternateUnit(AlternateUnitModel data)
         {
             Base Obj;
@@ -1920,10 +1957,84 @@ namespace FMS.Service.Admin
         }
         #endregion
         #region Labour Rate Master
-        public async Task<LabourRateViewModel> GetAllLabourRates()
+        public async Task<LabourRateViewModel> GetAllLabourRates( )
         {
             LabourRateViewModel Obj;
             var Result = await _adminRepo.GetAllLabourRates();
+            if (Result.IsSuccess)
+            {
+                if (Result.Response == "success")
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
+                        LabourRates = Result.CollectionObjData,
+                    };
+                }
+                else
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.NotFound),
+                        Message = "No Record Found"
+                    };
+                }
+            }
+            else
+            {
+                Obj = new()
+                {
+                    ResponseStatus = Result.Response,
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    Message = "Some Eroor Occoured"
+                };
+            }
+            return Obj;
+        }
+        public async Task<LabourRateViewModel> GetProductionLabourRates(Guid ProductTypeId)
+        {
+            LabourRateViewModel Obj;
+            var Result = await _adminRepo.GetProductionLabourRates(ProductTypeId);
+            if (Result.IsSuccess)
+            {
+                if (Result.Response == "success")
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
+                        LabourRates = Result.CollectionObjData,
+                    };
+                }
+                else
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.NotFound),
+                        Message = "No Record Found"
+                    };
+                }
+            }
+            else
+            {
+                Obj = new()
+                {
+                    ResponseStatus = Result.Response,
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    Message = "Some Eroor Occoured"
+                };
+            }
+            return Obj;
+        }
+        public async Task<LabourRateViewModel> GetServiceLabourRates(Guid ProductTypeId)
+        {
+            LabourRateViewModel Obj;
+            var Result = await _adminRepo.GetServiceLabourRates(ProductTypeId);
             if (Result.IsSuccess)
             {
                 if (Result.Response == "success")

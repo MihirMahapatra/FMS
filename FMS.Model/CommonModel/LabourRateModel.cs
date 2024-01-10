@@ -10,8 +10,10 @@ namespace FMS.Model.CommonModel
         public DateTime? Date { get; set; }
         public Guid? Fk_ProductTypeId { get; set; }
         public Guid Fk_ProductId { get; set; }
+        public Guid? Fk_BranchId { get; set; }
         public decimal Rate { get; set; }
         public ProductTypeModel ProductType { get; set; }
         public ProductModel Product { get; set; }
+        public BranchModel Branch { get; set; }
     }
 }

@@ -367,10 +367,20 @@ $(function () {
             '    <select class="form-control form-control-sm select2bs4 Rawmaterial" style="width: 100%;" id="' + uniqueId + '"></select>' +
             '</div>' +
             '</td>';
-        html += '<td style="width:8%"><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
+        html += '<td style="width:8%"><div class="form-group"><input type="text" id="Qtypr" class="form-control" value="0"></div></td>';
         html += '<td style="width:12%">' +
             '<div class="form-group">' +
-            '<select class="form-control form-control select2bs4" style="width:100%"></select>' +
+            '<select class="form-control form-control select2bs4 selectedUnit" style="width:100%"></select>' +
+            '</div>' +
+            '</td>';
+        html += '<td>' +
+            '<div class="form-group">' +
+            '<div class="input-group">' +
+            '<input type="text" class="form-control" value="0">' +
+            ' <div class="input-group-append">' +
+            ' <span class="input-group-text" id="Unit">N/A</span>' +
+            '</div>' +
+            '</div>' +
             '</div>' +
             '</td>';
         html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
@@ -426,8 +436,8 @@ $(function () {
                         for (var i = 0; i < 7; i++) {
                             Textbox.eq(i).val('0');
                         }
-                        Textbox.eq(1).val(result.product.Price);
-                        Textbox.eq(4).val(result.product.GST);
+                        Textbox.eq(2).val(result.product.Price);
+                        Textbox.eq(5).val(result.product.GST);
                     }
                 },
                 error: function (errormessage) {
@@ -461,27 +471,54 @@ $(function () {
                 }
             });
         }
-        });
+    });
+    $(document).on('change', '.selectedUnit', function () {
+        var selectElement = $(this);
+        var SelectedAlternateUnitId = selectElement.val();
+        if (SelectedAlternateUnitId) {
+            $.ajax({
+                url: '/Transaction/GetAlternateUnitByAlternateUnitId?AlternateUnitId=' + SelectedAlternateUnitId,
+                type: "GET",
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    if (result.ResponseCode == 302) {
+                        var Textbox = selectElement.closest('tr').find('input[type="text"]');
+                        var qtyprElement = $('#Qtypr');
+                        console.log(qtyprElement);
+                        var qty = qtyprElement.val();
+                        TotalUnits = qty * result.AlternateUnit.UnitQuantity
+                        Textbox.eq(1).val(TotalUnits);
+                        var span = selectElement.closest('tr').find('span#Unit');
+                        span.text(result.AlternateUnit.Unit.UnitName)
+                    }
+                },
+                error: function (errormessage) {
+                    console.log(errormessage);
+                }
+            });
+        }
+    });
     $('#tblPurchase tbody').on('change', 'input[type="text"]', function () {
         var row = $(this).closest('tr');
         var quantity = parseFloat(row.find('input:eq(1)').val());
-        var rate = parseFloat(row.find('input:eq(2)').val());
-        var discountPercentage = parseFloat(row.find('input:eq(3)').val());
-        var GstPercentage = parseFloat(row.find('input:eq(5)').val());
+        var rate = parseFloat(row.find('input:eq(3)').val());
+        var discountPercentage = parseFloat(row.find('input:eq(4)').val());
+        var GstPercentage = parseFloat(row.find('input:eq(6)').val());
         var amount = quantity * rate * (1 - discountPercentage / 100);
         var GstAmounts = amount * GstPercentage / (100 + GstPercentage);
         var discountAmount = (discountPercentage > 0) ? (rate * quantity - amount) : 0;
-        row.find('input:eq(7)').val(amount.toFixed(2));
-        row.find('input:eq(6)').val(GstAmounts.toFixed(2));
-        row.find('input:eq(4)').val(discountAmount.toFixed(2));
+        row.find('input:eq(8)').val(amount.toFixed(2));
+        row.find('input:eq(7)').val(GstAmounts.toFixed(2));
+        row.find('input:eq(5)').val(discountAmount.toFixed(2));
 
         var totalAmount = 0;
         var totalGstAmount = 0;
         var totalDiscountAmount = 0;
         $('#tblPurchase tbody tr').each(function () {
-            var amount = parseFloat($(this).find('input:eq(7)').val());
-            var GstAmount = parseFloat($(this).find('input:eq(6)').val());
-            var DiscountAmount = parseFloat($(this).find('input:eq(4)').val());
+            var amount = parseFloat($(this).find('input:eq(8)').val());
+            var GstAmount = parseFloat($(this).find('input:eq(7)').val());
+            var DiscountAmount = parseFloat($(this).find('input:eq(5)').val());
             if (!isNaN(amount)) {
                 totalAmount += amount;
             }
@@ -500,7 +537,7 @@ $(function () {
 
         const gstDifferences = {};
         $('#tblPurchase tbody tr').each(function () {
-            const gstRate = parseFloat($(this).find('input:eq(5)').val());
+            const gstRate = parseFloat($(this).find('input:eq(6)').val());
             const amount = parseFloat($(this).find('input:eq(7)').val());
             if (!isNaN(gstRate) && !isNaN(amount)) {
                 if (gstRate in gstDifferences) {
@@ -819,7 +856,17 @@ $(function () {
                     html += '<td><div class="form-group"><input type="text" class="form-control" id="" value=' + item.Quantity + '></div></td>';
                     html += '<td style="width:12%">' +
                         '<div class="form-group">' +
-                        '<select class="form-control form-control select2bs4" style="width:100%" id="ddnUnit_' + item.PurchaseId + '"></select>' +
+                        '<select class="form-control form-control select2bs4 selectedUnit" style="width:100%" id="ddnUnit_' + item.PurchaseId + '"></select>' +
+                        '</div>' +
+                        '</td>';
+                    html += '<td>' +
+                        '<div class="form-group">' +
+                        '<div class="input-group">' +
+                        '<input type="text" class="form-control" value="0">' +
+                        ' <div class="input-group-append">' +
+                        ' <span class="input-group-text" id="Unit">N/A</span>' +
+                        '</div>' +
+                        '</div>' +
                         '</div>' +
                         '</td>';
                     html += '<td><div class="form-group"><input type="text" class="form-control" id=""  value=' + item.Rate + '></div></td>';
@@ -1113,10 +1160,20 @@ $(function () {
         var html = '<tr>';
         html += '<td hidden><input type="hidden" class="form-control" value="0"></td>';
         html += '<td><div class="form-group"><select class="form-control form-control-sm select2bs4 Rawmaterial" style="width: 100%;" id="' + uniqueId + '"></select></div></td>';
-        html += '<td style="width:8%"><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
+        html += '<td style="width:8%"><div class="form-group"><input type="text" class="form-control" id="Qtyrt" value="0"></div></td>';
         html += '<td style="width:12%">' +
             '<div class="form-group">' +
-            '<select class="form-control form-control select2bs4" style="width:100%"></select>' +
+            '<select class="form-control form-control select2bs4 selectedUnitRTN" style="width:100%"></select>' +
+            '</div>' +
+            '</td>';
+        html += '<td>' +
+            '<div class="form-group">' +
+            '<div class="input-group">' +
+            '<input type="text" class="form-control" value="0">' +
+            ' <div class="input-group-append">' +
+            ' <span class="input-group-text" id="Unit">N/A</span>' +
+            '</div>' +
+            '</div>' +
             '</div>' +
             '</td>';
         html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
@@ -1153,6 +1210,32 @@ $(function () {
             theme: 'bootstrap4'
         });
     }
+    $(document).on('change', '.selectedUnitRTN', function () {
+        var selectElement = $(this);
+        var SelectedAlternateUnitId = selectElement.val();
+        if (SelectedAlternateUnitId) {
+            $.ajax({
+                url: '/Transaction/GetAlternateUnitByAlternateUnitId?AlternateUnitId=' + SelectedAlternateUnitId,
+                type: "GET",
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    if (result.ResponseCode == 302) {
+                        var Textbox = selectElement.closest('tr').find('input[type="text"]');
+                        var qtyprElement = $('#Qtyrt');
+                        var qty = qtyprElement.val();
+                        TotalUnits = qty * result.AlternateUnit.UnitQuantity
+                        Textbox.eq(1).val(TotalUnits);
+                        var span = selectElement.closest('tr').find('span#Unit');
+                        span.text(result.AlternateUnit.Unit.UnitName)
+                    }
+                },
+                error: function (errormessage) {
+                    console.log(errormessage);
+                }
+            });
+        }
+    });
     $(document).on('click', '.deleteBtnReturn', function () {
         $(this).closest('tr').remove();
     });
@@ -1165,23 +1248,23 @@ $(function () {
     $('#tblPurchaseReturn tbody').on('change', 'input[type="text"]', function () {
         var row = $(this).closest('tr');
         var quantity = parseFloat(row.find('input:eq(1)').val());
-        var rate = parseFloat(row.find('input:eq(2)').val());
-        var discountPercentage = parseFloat(row.find('input:eq(3)').val());
-        var GstPercentage = parseFloat(row.find('input:eq(5)').val());
+        var rate = parseFloat(row.find('input:eq(3)').val());
+        var discountPercentage = parseFloat(row.find('input:eq(4)').val());
+        var GstPercentage = parseFloat(row.find('input:eq(6)').val());
         var amount = quantity * rate * (1 - discountPercentage / 100);
         var GstAmounts = amount * GstPercentage / (100 + GstPercentage);
         var discountAmount = (discountPercentage > 0) ? (rate * quantity - amount) : 0;
-        row.find('input:eq(7)').val(amount.toFixed(2));
-        row.find('input:eq(6)').val(GstAmounts.toFixed(2));
-        row.find('input:eq(4)').val(discountAmount);
+        row.find('input:eq(8)').val(amount.toFixed(2));
+        row.find('input:eq(7)').val(GstAmounts.toFixed(2));
+        row.find('input:eq(5)').val(discountAmount);
 
         var totalAmount = 0;
         var totalGstAmount = 0;
         var totalDiscountAmount = 0;
         $('#tblPurchaseReturn tbody tr').each(function () {
-            var amount = parseFloat($(this).find('input:eq(7)').val());
-            var GstAmount = parseFloat($(this).find('input:eq(6)').val());
-            var DiscountAmount = parseFloat($(this).find('input:eq(4)').val());
+            var amount = parseFloat($(this).find('input:eq(8)').val());
+            var GstAmount = parseFloat($(this).find('input:eq(7)').val());
+            var DiscountAmount = parseFloat($(this).find('input:eq(5)').val());
             if (!isNaN(amount)) {
                 totalAmount += amount;
             }
@@ -1199,7 +1282,7 @@ $(function () {
         $('input[name="Pr_DiscountAmount"]').val(totalDiscountAmount.toFixed(2));
         const gstDifferences = {};
         $('#tblPurchaseReturn tbody tr').each(function () {
-            const gstRate = parseFloat($(this).find('input:eq(5)').val()); // Assuming GST rate is in the 6th input field (0-based index).
+            const gstRate = parseFloat($(this).find('input:eq(6)').val()); // Assuming GST rate is in the 6th input field (0-based index).
             const amount = parseFloat($(this).find('input:eq(7)').val());   // Assuming the amount is in the 8th input field (0-based index).
 
             if (!isNaN(gstRate) && !isNaN(amount)) {

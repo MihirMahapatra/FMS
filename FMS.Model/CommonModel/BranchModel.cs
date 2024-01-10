@@ -37,5 +37,8 @@
         public List<OutwardSupplyTransactionModel> OutwardSupplyTransactions { get; set; }
         public List<DamageOrderModel> DamageOrders { get; set; }
         public List<DamageTransactionModel> DamageTransactions { get; set; }
+        public List<LabourRateModel> LabourRates { get; set; }
+
+
     }
 }

@@ -39,5 +39,6 @@
         public ICollection<DamageOrder> DamageOrders { get; set; }
         public ICollection<DamageTransaction> DamageTransactions { get; set; }
         public ICollection<CompanyDetails> CompanyDetails { get; set; }
+        public ICollection<LabourRate> LabourRates { get; set; }
     }
 }

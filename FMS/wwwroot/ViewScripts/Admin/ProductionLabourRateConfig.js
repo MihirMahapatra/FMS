@@ -1,7 +1,7 @@
 ﻿$(function () {
     $("#AdminLink").addClass("active");
-    $("#LabourRateConfigLink").addClass("active");
-    $("#LabourRateConfigLink i.far.fa-circle").removeClass("far fa-circle").addClass("far fa-dot-circle");
+    $("#ProductionLabourRateConfigLink").addClass("active");
+    $("#ProductionLabourRateConfigLink i.far.fa-circle").removeClass("far fa-circle").addClass("far fa-dot-circle");
     /***************************************Variable Declaration***********************************************************/
     //Default Date 
     const today = new Date();
@@ -52,7 +52,7 @@
         $('#loader').show();
         $('.tblLabourRate').empty();
         $.ajax({
-            url: "/Admin/GetAllLabourRates",
+            url: "/Admin/GetProductionLabourRates",
             type: "GET",
             contentType: "application/json;charset=utf-8",
             dataType: "json",
@@ -145,45 +145,13 @@
             }
         });
     }
-    loadProductTypes();
-    function loadProductTypes() {
-        productTypeId.empty();
-        var defaultOption = $('<option></option>').val('').text('--Select Option--');
-        productTypeId.append(defaultOption);
-        $.ajax({
-            url: "/Admin/GetAllProductTypesForLabour",
-            type: "GET",
-            contentType: "application/json;charset=utf-8",
-            dataType: "json",
-            success: function (result) {
-                if (result.ResponseCode == 302) {
-                    $.each(result.ProductTypes, function (key, item) {
-                        var option = $('<option></option>').val(item.ProductTypeId).text(item.Product_Type);
-                        productTypeId.append(option);
-                    });
-                }
-            },
-            error: function (errormessage) {
-                console.log(errormessage)
-            }
-        });
-    }
-    productTypeId.on('change', function () {
-        var productTypIdSelected = productTypeId.val();
-        if (productTypIdSelected) {
-            itemId.prop("disabled", false);
-            LoadProducts(productTypIdSelected);
-        }
-        else {
-            itemId.prop("disabled", true);
-        }
-    });
-    function LoadProducts(productType) {
+    LoadProducts();
+    function LoadProducts() {
         itemId.empty();
         var defaultOption = $('<option></option>').val('').text('--Select Option--');
         itemId.append(defaultOption);
         $.ajax({
-            url: '/Admin/GetProductByType?ProductType=' + productType + '',
+            url: '/Admin/GetProductFinishedGoods',
             type: "GET",
             contentType: "application/json;charset=utf-8",
             dataType: "json",
@@ -208,11 +176,6 @@
             date.focus();
             return;
         }
-        else if (!productTypeId.val() || productTypeId.val() === '--Select Option--') {
-            toastr.error("Product Type Field required.");
-            itemId.focus();
-            return;
-        }
         else if (!itemId.val() || itemId.val() === '--Select Option--') {
             toastr.error("Item Field required.");
             itemId.focus();
@@ -227,7 +190,6 @@
             $('#loader').show();
             const data = {
                 FormtedDate: date.val(),
-                Fk_ProductTypeId: productTypeId.val(),
                 Fk_ProductId: itemId.val(),
                 Rate: rate.val(),
             }
@@ -278,67 +240,67 @@
         $('#datepicker_' + id).datetimepicker({
             format: 'DD/MM/YYYY',
         });
-        $.ajax({
-            url: "/Admin/GetAllProductTypesForLabour",
-            type: "GET",
-            contentType: "application/json;charset=utf-8",
-            dataType: "json",
-            success: function (result) {
-                var ProductTypeId;
-                if (result.ResponseCode == 302) {
-                    var html = '';
-                    html += '<div class="form-group">';
-                    html += '<select class="form-control select2bs4" style="width: 100%;" name="ProductTypeId">';
-                    $.each(result.ProductTypes, function (key, item) {
-                        if (item.Product_Type === ProductType) {
-                            html += '<option value="' + item.ProductTypeId + '" selected>' + item.Product_Type + '</option>';
-                            ProductTypeId = item.ProductTypeId;
+        //$.ajax({
+        //    url: "/Admin/GetAllProductTypesForLabour",
+        //    type: "GET",
+        //    contentType: "application/json;charset=utf-8",
+        //    dataType: "json",
+        //    success: function (result) {
+        //        var ProductTypeId;
+        //        if (result.ResponseCode == 302) {
+        //            var html = '';
+        //            html += '<div class="form-group">';
+        //            html += '<select class="form-control select2bs4" style="width: 100%;" name="ProductTypeId">';
+        //            $.each(result.ProductTypes, function (key, item) {
+        //                if (item.Product_Type === ProductType) {
+        //                    html += '<option value="' + item.ProductTypeId + '" selected>' + item.Product_Type + '</option>';
+        //                    ProductTypeId = item.ProductTypeId;
 
-                        } else {
-                            html += '<option value="' + item.ProductTypeId + '">' + item.Product_Type + '</option>';
-                        }
-                    });
-                    html += '</select>';
-                    html += '</div>';
-                    $tr.find('td:eq(2)').html(html);
-                    $tr.find('.select2bs4').select2({
-                        theme: 'bootstrap4'
-                    });
-                    $.ajax({
-                        url: '/Admin/GetProductByType?ProductType=' + ProductTypeId + '',
-                        type: "GET",
-                        contentType: "application/json;charset=utf-8",
-                        dataType: "json",
-                        success: function (result) {
-                            var html = '';
-                            if (result.ResponseCode == 302) {
-                                html += '<div class="form-group">';
-                                html += '<select class="form-control select2bs4" style="width: 100%;" name="ItemId">';
-                                $.each(result.products, function (key, item) {
-                                    if (item.ProductName === ProductName) {
-                                        html += '<option value="' + item.ProductId + '" selected>' + item.ProductName + '</option>';
-                                    } else {
-                                        html += '<option value="' + item.ProductId + '">' + item.ProductName + '</option>';
-                                    }
-                                });
-                                html += '</select>';
-                                html += '</div>';
-                                $tr.find('td:eq(3)').html(html);
-                                $tr.find('.select2bs4').select2({
-                                    theme: 'bootstrap4'
-                                });
-                            }
-                        },
-                        error: function (errormessage) {
-                            console.log(errormessage)
-                        }
-                    });
-                }
-            },
-            error: function (errormessage) {
-                console.log(errormessage)
-            }
-        });
+        //                } else {
+        //                    html += '<option value="' + item.ProductTypeId + '">' + item.Product_Type + '</option>';
+        //                }
+        //            });
+        //            html += '</select>';
+        //            html += '</div>';
+        //            $tr.find('td:eq(2)').html(html);
+        //            $tr.find('.select2bs4').select2({
+        //                theme: 'bootstrap4'
+        //            });
+        //            $.ajax({
+        //                url: '/Admin/GetProductByType?ProductType=' + ProductTypeId + '',
+        //                type: "GET",
+        //                contentType: "application/json;charset=utf-8",
+        //                dataType: "json",
+        //                success: function (result) {
+        //                    var html = '';
+        //                    if (result.ResponseCode == 302) {
+        //                        html += '<div class="form-group">';
+        //                        html += '<select class="form-control select2bs4" style="width: 100%;" name="ItemId">';
+        //                        $.each(result.products, function (key, item) {
+        //                            if (item.ProductName === ProductName) {
+        //                                html += '<option value="' + item.ProductId + '" selected>' + item.ProductName + '</option>';
+        //                            } else {
+        //                                html += '<option value="' + item.ProductId + '">' + item.ProductName + '</option>';
+        //                            }
+        //                        });
+        //                        html += '</select>';
+        //                        html += '</div>';
+        //                        $tr.find('td:eq(3)').html(html);
+        //                        $tr.find('.select2bs4').select2({
+        //                            theme: 'bootstrap4'
+        //                        });
+        //                    }
+        //                },
+        //                error: function (errormessage) {
+        //                    console.log(errormessage)
+        //                }
+        //            });
+        //        }
+        //    },
+        //    error: function (errormessage) {
+        //        console.log(errormessage)
+        //    }
+        //});
         $tr.find('td:eq(4)').html('<div class="form-group"><input type="text" class="form-control" value="' + rate + '"></div>');
         $tr.find('#btnLabourRateEdit_' + id + ', #btnLabourRateDelete_' + id + '').hide();
         $tr.find('#btnLabourRateUpdate_' + id + ',#btnLabourRateCancel_' + id + '').show();
@@ -352,7 +314,7 @@
         const data = {
             LabourRateId: id,
             FormtedDate: $tr.find($('#datepicker_' + id + ' input.datetimepicker-input')).val(),
-            Fk_ProductTypeId: $tr.find('Select').eq(0).find('option:selected').val(),
+            //Fk_ProductTypeId: $tr.find('Select').eq(0).find('option:selected').val(),
             Fk_ProductId: $tr.find('Select').eq(1).find('option:selected').val(),
             Rate: $tr.find('input[type="text"]').eq(1).val(),
         }
@@ -386,12 +348,12 @@
     function CancelLabourRate(id) {
         var $tr = $('#btnLabourRateCancel_' + id + '').closest('tr');
         var date = moment($tr.find($('#datepicker_' + id + ' input.datetimepicker-input')).val(), 'DD/MM/YYYY').format('DD/MM/YYYY');
-        var ProductType = $tr.find('Select').eq(0).find('option:selected').text();
-        var productName = $tr.find('Select').eq(1).find('option:selected').text();
+        //var ProductType = $tr.find('Select').eq(0).find('option:selected').text();
+        //var productName = $tr.find('Select').eq(1).find('option:selected').text();
         var rate = $tr.find('input[type="text"]').eq(1).val();
         $tr.find('td:eq(1)').text(date);
-        $tr.find('td:eq(2)').text(ProductType);
-        $tr.find('td:eq(3)').text(productName);
+        //$tr.find('td:eq(2)').text(ProductType);
+        //$tr.find('td:eq(3)').text(productName);
         $tr.find('td:eq(4)').text(rate);
         $tr.find('#btnLabourRateEdit_' + id + ', #btnLabourRateDelete_' + id + '').show();
         $tr.find('#btnLabourRateUpdate_' + id + ',#btnLabourRateCancel_' + id + '').hide();

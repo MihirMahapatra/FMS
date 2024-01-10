@@ -68,6 +68,7 @@ namespace FMS.Repository.Admin
         #region Alternate Units
         Task<Result<AlternateUnitModel>> GetAlternateUnits();
         Task<Result<AlternateUnitModel>> GetAlternateUnitByProductId(Guid ProductId);
+        Task<Result<AlternateUnitModel>> GetAlternateUnitByAlternateUnitId(Guid AlternateUnitId);
         Task<Result<bool>> CreateAlternateUnit(AlternateUnitModel data);
         Task<Result<bool>> UpdateAlternateUnit(AlternateUnitModel data);
         Task<Result<bool>> DeleteAlternateUnit(Guid Id);
@@ -84,6 +85,8 @@ namespace FMS.Repository.Admin
         #endregion
         #region Labour Rate Configration
         Task<Result<LabourRateModel>> GetAllLabourRates();
+        Task<Result<LabourRateModel>> GetProductionLabourRates(Guid ProductTypeId);
+        Task<Result<LabourRateModel>> GetServiceLabourRates(Guid ProductTypeId);
         Task<Result<LabourRateModel>> GetLabourRateByProductId(Guid ProductId);
         Task<Result<bool>> CreateLabourRate(LabourRateModel data);
         Task<Result<bool>> UpdateLabourRate(LabourRateModel data);

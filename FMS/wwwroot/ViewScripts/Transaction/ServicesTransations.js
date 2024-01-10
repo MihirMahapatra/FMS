@@ -117,6 +117,7 @@
             '</div>' +
             '</td>';
         html += '<td><div class="form-group"><input type="text" class="form-control" disabled></div></td>';
+        html += '<td><div class="form-group"><input type="text" class="form-control"></div></td>';
         html += '<td><div class="form-group"><input type="text" class="form-control" disabled></div></td>';
         html += '<td style="background-color:#ffe6e6;">';
         html += '<button class="btn btn-primary btn-link addBtn" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-plus"></i></button>';
@@ -261,8 +262,9 @@
         var row = $(this).closest('tr');
         var quantity = parseFloat(row.find('input:eq(1)').val());
         var rate = parseFloat(row.find('input:eq(2)').val());
-        var amount = quantity * rate;
-        row.find('input:eq(3)').val(amount.toFixed(2));
+        var otamount = parseFloat(row.find('input:eq(3)').val());
+        var amount = (quantity * rate) + otamount;
+        row.find('input:eq(4)').val(amount.toFixed(2));
     });
     $('#btnSave').on('click', function () {
         if (!ServiceDate.val()) {
@@ -304,6 +306,7 @@
                         $('.qty').val('');
                         $('.rate').val('');
                         $('.amount').val('');
+                        $('.otamount').val('');
                     }
                     else {
                         toastr.error(Response.ErrorMsg);
@@ -347,6 +350,7 @@
                 html += '<th>Labour Type</th>'
                 html += '<th>Quantity</th>'
                 html += '<th>Rate</th>'
+                html += '<th>OTAmount</th>'
                 html += '<th>Amount</th>'
                 html += '<th>Action</th>'
                 html += '</tr>'
@@ -385,6 +389,7 @@
                         html += '<td>' + item.LabourType + '</td>';
                         html += '<td>' + item.Quantity + '</td>';
                         html += '<td>' + item.Rate + '</td>';
+                        html += '<td>' + item.OTAmount + '</td>';
                         html += '<td>' + item.Amount + '</td>';
                         html += '<td style="background-color:#ffe6e6;">';
                         html += '<button class="btn btn-primary btn-link btn-sm btn-serviceEntry-edit"   id="btnServicesEntryEdit_' + item.ProductionEntryId + '"     data-id="' + item.ProductionEntryId + '" data-toggle="modal" data-target="#modal-edit-service-entry" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-edit"></i></button>';
@@ -438,7 +443,8 @@
         var labourType = $tr.find('td:eq(5)').text().trim();
         var quantity = $tr.find('td:eq(6)').text().trim();
         var rate = $tr.find('td:eq(7)').text().trim();
-        var amount = $tr.find('td:eq(8)').text().trim();
+        var Otamount = $tr.find('td:eq(8)').text().trim();
+        var amount = $tr.find('td:eq(9)').text().trim();
         //fill Modal data
         $('input[name="mdlServiceEntryId"]').val(Id);
         $('input[name="mdlTransactionNo"]').val(TransactionNo);
@@ -446,7 +452,9 @@
         $('input[name="mdlLabourType"]').val(labourType);
         $('input[name="mdlQuantity"]').val(quantity);
         $('input[name="mdlRate"]').val(rate);
+        $('input[name="mdlOtAmount"]').val(Otamount);
         $('input[name="mdlAmount"]').val(amount);
+       
         $.ajax({
             url: "/Transaction/GetServiceGoods",
             type: "GET",
@@ -544,6 +552,13 @@
         var amount = quantity * rate;
         $('input[name="mdlAmount"]').val(amount)
     });
+    $('input[name="mdlOtAmount"]').change(function () {
+        var quantity = $('input[name="mdlQuantity"]').val();
+        var rate = $('input[name="mdlRate"]').val();
+        var otamount = $('input[name="mdlOtAmount"]').val();
+        var amount = (quantity * rate) + otamount;
+        $('input[name="mdlAmount"]').val(amount)
+    });
     //Update
     $('#modal-edit-service-entry').on('click', '.btnUpdate', (event) => {
         const data = {
@@ -555,6 +570,7 @@
             LabourType: $('input[name="mdlLabourType"]').val(),
             Quantity: $('input[name="mdlQuantity"]').val(),
             Rate: $('input[name="mdlRate"]').val(),
+            OTAmount: $('input[name="mdlOtAmount"]').val(),
             Amount: $('input[name="mdlAmount"]').val(),
             LedgerId: $('input[name="mdlLedgerId"]').val(),
         }

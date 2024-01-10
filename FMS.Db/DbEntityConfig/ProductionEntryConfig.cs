@@ -22,6 +22,7 @@ namespace FMS.Db.DbEntityConfig
             builder.Property(e => e.Quantity).HasColumnType("decimal(18, 2)").HasDefaultValue(0);
             builder.Property(e => e.Rate).HasColumnType("decimal(18, 2)").HasDefaultValue(0);
             builder.Property(e => e.Amount).HasColumnType("decimal(18, 2)").HasDefaultValue(0);
+            builder.Property(e => e.OTAmount).HasColumnType("decimal(18, 2)").HasDefaultValue(0);
             builder.HasOne(p=> p.Product).WithMany(pe=>pe.ProductionEntries).HasForeignKey(e=> e.Fk_ProductId).OnDelete(DeleteBehavior.Restrict); 
             builder.HasOne(l => l.Labour).WithMany(pe => pe.ProductionEntries).HasForeignKey(e => e.Fk_LabourId).OnDelete(DeleteBehavior.Restrict); 
             builder.HasOne(f => f.FinancialYear).WithMany(pe => pe.ProductionEntries).HasForeignKey(e => e.Fk_FinancialYearId).OnDelete(DeleteBehavior.Restrict); 

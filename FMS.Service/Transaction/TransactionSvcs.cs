@@ -750,7 +750,7 @@ namespace FMS.Service.Transaction
         public async Task<Base> CreateServiceEntry(ProductionEntryRequest data)
         {
             Base Obj;
-            var Result = await _transactionRepo.CreateProductionEntry(data);
+            var Result = await _transactionRepo.CreateServiceEntry(data);
             if (Result.IsSuccess)
             {
                 if (Result.Response == "created")

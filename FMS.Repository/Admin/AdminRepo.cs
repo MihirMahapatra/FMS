@@ -1180,6 +1180,31 @@ namespace FMS.Repository.Admin
             }
             return _Result;
         }
+        public async Task<Result<AlternateUnitModel>> GetAlternateUnitByAlternateUnitId(Guid AlternateUnitId)
+        {
+            Result<AlternateUnitModel> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                var Query = await _appDbContext.AlternateUnits.Where(s => s.AlternateUnitId == AlternateUnitId).Select(s => new AlternateUnitModel
+                {
+                    Unit = new UnitModel { UnitName = s.Unit.UnitName },
+                    UnitQuantity = s.UnitQuantity,
+                }).SingleOrDefaultAsync();
+                if (Query != null)
+                {
+                    _Result.SingleObjData = Query;
+                    _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
+                }
+                _Result.IsSuccess = true;
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/GetAllUnits : {_Exception.Message}");
+            }
+            return _Result;
+        }
         public async Task<Result<bool>> CreateAlternateUnit(AlternateUnitModel data)
         {
             Result<bool> _Result = new();
@@ -1486,6 +1511,67 @@ namespace FMS.Repository.Admin
             }
             return _Result;
         }
+        public async Task<Result<LabourRateModel>> GetProductionLabourRates(Guid ProductTypeId)
+        {
+            Result<LabourRateModel> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
+                var Query = await _appDbContext.LabourRates.Where(s => s.FinancialYear == FinancialYear && s.Fk_ProductTypeId == ProductTypeId)
+                                   .Select(lr => new LabourRateModel
+                                   {
+                                       LabourRateId = lr.LabourRateId,
+                                       Date = lr.Date,
+                                       ProductType = lr.ProductType != null ? new ProductTypeModel { Product_Type = lr.ProductType.Product_Type } : null,
+                                       Product = lr.Product != null ? new ProductModel { ProductName = lr.Product.ProductName } : null,
+                                       Rate = lr.Rate
+                                   }).ToListAsync();
+                if (Query.Count > 0)
+                {
+                    _Result.CollectionObjData = Query;
+                    _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
+                }
+                _Result.IsSuccess = true;
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/GetAllLabourRates : {_Exception.Message}");
+            }
+            return _Result;
+        }
+        public async Task<Result<LabourRateModel>> GetServiceLabourRates(Guid ProductTypeId)
+        {
+            Result<LabourRateModel> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
+                Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
+                var Query = await _appDbContext.LabourRates.Where(s => s.FinancialYear == FinancialYear && s.Fk_ProductTypeId == ProductTypeId && s.Fk_BranchId == BranchId)
+                                   .Select(lr => new LabourRateModel
+                                   {
+                                       LabourRateId = lr.LabourRateId,
+                                       Date = lr.Date,
+                                       ProductType = lr.ProductType != null ? new ProductTypeModel { Product_Type = lr.ProductType.Product_Type } : null,
+                                       Product = lr.Product != null ? new ProductModel { ProductName = lr.Product.ProductName } : null,
+                                       Rate = lr.Rate
+                                   }).ToListAsync();
+                if (Query.Count > 0)
+                {
+                    _Result.CollectionObjData = Query;
+                    _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
+                }
+                _Result.IsSuccess = true;
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/GetAllLabourRates : {_Exception.Message}");
+            }
+            return _Result;
+        }
         public async Task<Result<LabourRateModel>> GetLabourRateByProductId(Guid ProductId)
         {
             Result<LabourRateModel> _Result = new();
@@ -1523,15 +1609,18 @@ namespace FMS.Repository.Admin
             {
                 _Result.IsSuccess = false;
                 string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
+                Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
                 if (DateTime.TryParseExact(data.FormtedDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedDate))
                 {
+                    data.Fk_ProductTypeId = await _appDbContext.Products.Where(s => s.ProductId == data.Fk_ProductId).Select(s => s.Fk_ProductTypeId).SingleOrDefaultAsync();
                     var newLabourRate = new LabourRate
                     {
                         Date = convertedDate,
                         Fk_ProductTypeId = data.Fk_ProductTypeId,
                         Fk_ProductId = data.Fk_ProductId,
                         Rate = data.Rate,
-                        FinancialYear = FinancialYear
+                        FinancialYear = FinancialYear,
+                        Fk_BranchId = data.Fk_ProductTypeId == MappingProductType.ServiceGoods ? BranchId : null
                     };
                     await _appDbContext.LabourRates.AddAsync(newLabourRate);
                     int count = await _appDbContext.SaveChangesAsync();
@@ -1553,14 +1642,14 @@ namespace FMS.Repository.Admin
             {
                 _Result.IsSuccess = false;
                 string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
+                Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
                 var Query = await _appDbContext.LabourRates.Where(s => s.LabourRateId == data.LabourRateId).SingleOrDefaultAsync();
                 if (Query != null)
                 {
                     if (DateTime.TryParseExact(data.FormtedDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedDate))
                     {
-                        data.Date = convertedDate;
-                        data.FinancialYear = FinancialYear;
-                        _mapper.Map(data, Query);
+                        Query.Date = convertedDate;
+                        Query.Rate = data.Rate;
                         int count = await _appDbContext.SaveChangesAsync();
                         _Result.Response = (count > 0) ? ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Modified) : ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Error);
                     }
@@ -1994,6 +2083,7 @@ namespace FMS.Repository.Admin
             }
             return _Result;
         }
+
         #endregion
         #endregion
     }

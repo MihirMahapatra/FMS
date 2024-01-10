@@ -599,35 +599,46 @@ namespace FMS.Controllers.Admin
         }
         #endregion
         #region Labour Rate Configuration
+        #region Production Labour Rate Configuration
         [HttpGet]
-        public IActionResult LabourRateConfig()
+        public IActionResult ProductionLabourRateConfig()
         {
 
             return PartialView();
         }
         [HttpGet]
-        public async Task<IActionResult> GetAllLabourRates()
+        public async Task<IActionResult> GetProductFinishedGoods()
         {
-            var result = await _adminSvcs.GetAllLabourRates();
+            var result = await _adminSvcs.GetProductByTypeId(MappingProductType.FinishedGood);
             return new JsonResult(result);
         }
         [HttpGet]
-        public async Task<IActionResult> GetAllProductTypesForLabour()
+        public async Task<IActionResult> GetProductionLabourRates()
         {
-            var result = await _adminSvcs.GetProductTypes();
-            var elementToRemove = result.ProductTypes.FirstOrDefault(x => x.ProductTypeId == MappingProductType.RawMaterial);
-            if (elementToRemove != null)
-            {
-                result.ProductTypes.Remove(elementToRemove);
-            }
+            var result = await _adminSvcs.GetProductionLabourRates(MappingProductType.FinishedGood);
+            return new JsonResult(result);
+        }
+        #endregion
+        #region Services Labour Rate Configuration
+        [HttpGet]
+        public IActionResult ServicesLabourRateConfig()
+        {
+
+            return PartialView();
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetProductServiceGoods()
+        {
+            var result = await _adminSvcs.GetProductByTypeId(MappingProductType.ServiceGoods);
             return new JsonResult(result);
         }
         [HttpGet]
-        public async Task<IActionResult> GetProductByType(Guid ProductType)
+        public async Task<IActionResult> GetServiceLabourRates()
         {
-            var result = await _adminSvcs.GetProductByTypeId(ProductType);
+            var result = await _adminSvcs.GetServiceLabourRates(MappingProductType.ServiceGoods);
             return new JsonResult(result);
         }
+        #endregion
         [HttpPost, Authorize(Policy = "Create")]
         public async Task<IActionResult> CreateLabourRate([FromBody] LabourRateModel data)
         {
@@ -662,6 +673,7 @@ namespace FMS.Controllers.Admin
             return new JsonResult(result);
         }
         #endregion
+    
         #region Account Configuration
         [HttpGet]
         public IActionResult AccountConfig()

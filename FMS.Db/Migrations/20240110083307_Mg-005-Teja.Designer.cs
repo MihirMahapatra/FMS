@@ -4,6 +4,7 @@ using FMS.Db.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FMS.Db.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240110083307_Mg-005-Teja")]
+    partial class Mg005Teja
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1405,11 +1408,6 @@ namespace FMS.Db.Migrations
                     b.Property<string>("LabourType")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("OTAmount")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("decimal(18, 2)")
-                        .HasDefaultValue(0m);
 
                     b.Property<DateTime>("ProductionDate")
                         .HasMaxLength(10)
