@@ -224,9 +224,6 @@
                             } else {
                                 span.text("N/A");
                             }
-
-
-                            //console.log();
                         }
                     }
                 },
