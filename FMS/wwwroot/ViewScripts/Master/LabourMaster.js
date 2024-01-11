@@ -239,6 +239,11 @@ $(function () {
             Reference.focus();
             return;
         }
+        if (!balanceType.val()) {
+            toastr.error('Balance Type Is Required');
+            balanceType.focus();
+            return;
+        }
         $('#loder').show();
         const data = {
             Fk_Labour_TypeId: labourTypeId.val(),
@@ -264,8 +269,7 @@ $(function () {
                     address.val('');
                     Phone.val('');
                     Reference.val('');
-                    openingBalance.val('');
-                    balanceType.val('');
+                    openingBalance.val('0'); 
                 }
                 else {
                     toastr.error(Response.ErrorMsg);

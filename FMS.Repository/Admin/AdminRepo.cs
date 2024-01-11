@@ -1579,18 +1579,35 @@ namespace FMS.Repository.Admin
             {
                 _Result.IsSuccess = false;
                 string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
-                var lastProduction = await _appDbContext.LabourRates.Where(s => s.Fk_ProductId == ProductId && s.FinancialYear == FinancialYear).OrderByDescending(s => s.Date).
-                    Select(s => new LabourRateModel
-                    {
-                        Rate = s.Rate,
-                        Product = new ProductModel
-                        {
-                            Unit = new UnitModel { UnitName = s.Product.Unit.UnitName }
-                        }
-                    }).FirstOrDefaultAsync();
-                if (lastProduction != null)
+                Guid ProductType = await _appDbContext.Products.Where(s => s.ProductId == ProductId).Select(s => s.Fk_ProductTypeId).SingleOrDefaultAsync();
+                if (ProductType == MappingProductType.ServiceGoods)
                 {
-                    _Result.SingleObjData = lastProduction;
+                    Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
+                    _Result.SingleObjData = await _appDbContext.LabourRates.Where(s => s.Fk_ProductId == ProductId && s.FinancialYear == FinancialYear && s.Fk_BranchId== BranchId).OrderByDescending(s => s.Date).
+                 Select(s => new LabourRateModel
+                 {
+                     Rate = s.Rate,
+                     Product = new ProductModel
+                     {
+                         Unit = new UnitModel { UnitName = s.Product.Unit.UnitName }
+                     }
+                 }).FirstOrDefaultAsync();
+                }
+                else
+                {
+                    _Result.SingleObjData = await _appDbContext.LabourRates.Where(s => s.Fk_ProductId == ProductId && s.FinancialYear == FinancialYear).OrderByDescending(s => s.Date).
+                 Select(s => new LabourRateModel
+                 {
+                     Rate = s.Rate,
+                     Product = new ProductModel
+                     {
+                         Unit = new UnitModel { UnitName = s.Product.Unit.UnitName }
+                     }
+                 }).FirstOrDefaultAsync();
+                }
+
+                if (_Result.SingleObjData != null)
+                {
                     _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
                 }
                 _Result.IsSuccess = true;

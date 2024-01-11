@@ -167,7 +167,7 @@ $(function () {
         if (selectedOptionText === 'RAW MATERIALS') {
             html = '<tr>';
             html += '<td hidden><input type="hidden" class="form-control" value="0"></td>';
-            html += '<td><div class="form-group"><select class="form-control form-control-sm select2bs4" style="width: 100%;" id="' + uniqueId + '"></select></div></td>';
+            html += '<td><div class="form-group"><select class="form-control form-control-sm select2bs4 SelectedProduct" style="width: 100%;" id="' + uniqueId + '"></select></div></td>';
             html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
             html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
             html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
@@ -199,7 +199,7 @@ $(function () {
         else if (selectedOptionText === 'FINISHED GOODS') {
             html = '<tr>';
             html += '<td hidden><input type="hidden" class="form-control" value="0"></td>';
-            html += '<td><div class="form-group"><select class="form-control form-control-sm select2bs4" style="width: 100%;" id="' + uniqueId + '"></select></div></td>';
+            html += '<td><div class="form-group"><select class="form-control form-control-sm select2bs4 SelectedProduct" style="width: 100%;" id="' + uniqueId + '"></select></div></td>';
             html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
             html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
             html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
@@ -236,6 +236,28 @@ $(function () {
             theme: 'bootstrap4'
         });
     }
+
+    $(document).on('change', '.SelectedProduct', function () {
+        var selectElement = $(this);
+        var selectedProductId = selectElement.val();
+        if (selectedProductId) {
+            $.ajax({
+                url: '/Transaction/GetProductGstWithRate?id=' + selectedProductId,
+                type: "GET",
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    if (result.ResponseCode == 302) {
+                        var Textbox = selectElement.closest('tr').find('input[type="text"]');
+                          Textbox.eq(1).val(result.product.Price);
+                    }
+                },
+                error: function (errormessage) {
+                    console.log(errormessage);
+                }
+            });
+        }
+    });
     $(document).on('click', '.deleteBtn', function () {
         $(this).closest('tr').remove();
     });
