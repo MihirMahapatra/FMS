@@ -83,10 +83,11 @@
                             <thead style="height: 10px;">
                                 <tr class="small-row">
                                     <th style="width:10%">Date</th>
-                                    <th style="width:20%">Item</th>
+                                    <th style="width:15%">Item</th>
                                     <th style="width:10%">TrnxNo</th>
                                     <th style="width:10%">Qty</th>
                                     <th style="width:10%">Rate</th>
+                                    <th style="width:5%">OTAmnt</th>
                                     <th style="width:10%">Bill</th>
                                     <th style="width:10%">Dmg</th>
                                     <th style="width:15%">Pmnt</th>
@@ -101,6 +102,7 @@
                                     <tr class="small-row">
                                         <td>-</td>
                                         <td>Opening Bal</td>
+                                        <td>-</td>
                                         <td>-</td>
                                         <td>-</td>
                                         <td>-</td>
@@ -125,6 +127,7 @@
                                                     <td>@item.ProductionNo</td>
                                                     <td>@item.Quantity</td>
                                                     <td>@item.Rate</td>
+                                                    <td>@item.OTAmount</td>
                                                     <td>@item.Amount</td>
                                                     <td>-</td>
                                                     <td>-</td>
@@ -152,6 +155,7 @@
                                                     <td>-</td>
                                                     <td>-</td>
                                                     <td>-</td>
+                                                    <td>-</td>
                                                     <td>@item.TotalAmount</td>
                                                     <td>-</td>
                                                     <td style="text-align:center">@Balance.ToString("0.00")</td>
@@ -175,6 +179,7 @@
                                                         <td>Payment</td>
                                                     }
                                                     <td>@item.VouvherNo</td>
+                                                    <td>-</td>
                                                     <td>-</td>
                                                     <td>-</td>
                                                     <td>-</td>

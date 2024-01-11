@@ -235,6 +235,7 @@ $(function () {
                     html += '<th>Particular</th>'
                     html += '<th>Qty</th>'
                     html += '<th>Rate</th>'
+                    html += '<th>OT Amount</th>'
                     html += '<th>Billing</th>'
                     html += '<th>Damage</th>'
                     html += '<th>Payment</th>'
@@ -246,7 +247,7 @@ $(function () {
                         $.each(result.Labours, function (key, item) {
                             var Balance = item.OpeningBalance;
                             html += '<tr>';
-                            html += '<td colspan=8>Opening Bal.</td>';
+                            html += '<td colspan=9>Opening Bal.</td>';
                             html += '<td>' + item.OpeningBalance + '</td>';
                             html += '</tr >';
                             if (item.ProductionEntries !== null) {
@@ -268,6 +269,7 @@ $(function () {
                                     html += '<td>' + Production.Product.ProductName + '</td>';
                                     html += '<td>' + Production.Quantity + '</td>';
                                     html += '<td>' + Production.Rate + '</td>';
+                                    html += '<td>' + Production.OTAmount + '</td>';
                                     html += '<td>' + Production.Amount + '</td>';
                                     html += '<td>-</td>';
                                     html += '<td>-</td>';
@@ -298,6 +300,7 @@ $(function () {
                                     html += '<td>-</td>';
                                     html += '<td>-</td>';
                                     html += '<td>-</td>';
+                                    html += '<td>-</td>';
                                     html += '<td>' + Payment.Amount + '</td>';
                                     Balance -= Payment.Amount
                                     html += '<td>' + Balance + '</td>';
@@ -321,6 +324,7 @@ $(function () {
                                     html += '<td>' + formattedDate + '</td>';
                                     html += '<td>' + Damage.TransactionNo + '</td>';
                                     html += '<td>Damage</td>';
+                                    html += '<td>-</td>';
                                     html += '<td>-</td>';
                                     html += '<td>-</td>';
                                     html += '<td>-</td>';
