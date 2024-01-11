@@ -464,6 +464,11 @@ namespace FMS.Controllers.Transaction
         public async Task<IActionResult> GetAllProductTypes()
         {
             var result = await _adminSvcs.GetProductTypes();
+            var elementToRemove = result.ProductTypes.FirstOrDefault(x => x.ProductTypeId == MappingProductType.ServiceGoods);
+            if (elementToRemove != null)
+            {
+                result.ProductTypes.Remove(elementToRemove);
+            }
             return new JsonResult(result);
         }
         [HttpGet]
