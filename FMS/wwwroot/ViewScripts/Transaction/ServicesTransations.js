@@ -117,7 +117,7 @@
             '</div>' +
             '</td>';
         html += '<td><div class="form-group"><input type="text" class="form-control" disabled></div></td>';
-        html += '<td><div class="form-group"><input type="text" class="form-control"></div></td>';
+        html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
         html += '<td><div class="form-group"><input type="text" class="form-control" disabled></div></td>';
         html += '<td style="background-color:#ffe6e6;">';
         html += '<button class="btn btn-primary btn-link addBtn" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-plus"></i></button>';
@@ -180,33 +180,7 @@
         var tableBody = $('#tblRawMaterialDetails tbody');
         tableBody.empty();
         if (selectedProductId) {
-            $.ajax({
-                url: '/Transaction/GetProductionConfig?ProductId=' + selectedProductId,
-                type: 'GET',
-                contentType: 'application/json;charset=utf-8',
-                dataType: 'json',
-                success: function (result) {
-                    if (result.ResponseCode == 302) {
-                        console.log(result);
-                        var html = '';
-                        $.each(result.Productions, function (key, item) {
-                            html += '<tr>';
-                            html += '<td>' + item.ProductName + '</td>';
-                            html += '<td>' + item.Quantity + ' ' + item.Unit + '</td>';
-                            html += '</tr >';
-                        });
-                    }
-                    else {
-                        html += '<tr>';
-                        html += '<td colspan="2">No Record</td>';
-                        html += '</tr >';
-                    }
-                    tableBody.append(html);
-                },
-                error: function (errormessage) {
-                    console.log(errormessage);
-                }
-            });
+          
             $.ajax({
                 url: '/Transaction/GetProductLabourRate?ProductId=' + selectedProductId,
                 type: 'GET',
@@ -550,9 +524,9 @@
         $('input[name="mdlAmount"]').val(amount)
     });
     $('input[name="mdlOtAmount"]').change(function () {
-        var quantity = $('input[name="mdlQuantity"]').val();
-        var rate = $('input[name="mdlRate"]').val();
-        var otamount = $('input[name="mdlOtAmount"]').val();
+        var quantity = parseFloat($('input[name="mdlQuantity"]').val());
+        var rate = parseFloat($('input[name="mdlRate"]').val());
+        var otamount = parseFloat($('input[name="mdlOtAmount"]').val());
         var amount = (quantity * rate) + otamount;
         $('input[name="mdlAmount"]').val(amount)
     });
