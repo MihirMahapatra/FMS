@@ -12,8 +12,10 @@ namespace FMS.Model.CommonModel
         public string ProductName { get; set; }
         public Guid Fk_BranchId { get; set; }
         public Guid Fk_FinancialYearId { get; set; }
-        public decimal Quantity { get; set; }
+        public decimal AlternateQuantity { get; set; }
         public Guid Fk_AlternateUnitId { get; set; }
+        public decimal UnitQuantity { get; set; }
+        public string UnitName {  get; set; }
         public decimal Rate { get; set; }
         public decimal Discount { get; set; }
         public decimal GstAmount { get; set; }

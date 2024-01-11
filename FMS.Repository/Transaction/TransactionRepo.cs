@@ -153,7 +153,9 @@ namespace FMS.Repository.Transaction
                     PurchaseTransactions = _appDbContext.PurchaseTransactions.Where(x => x.Fk_PurchaseOrderId == s.PurchaseOrderId).Select(x => new PurchaseTransactionModel
                     {
                         PurchaseId = x.PurchaseId,
-                        Quantity = x.Quantity,
+                        AlternateQuantity = x.AlternateQuantity,
+                        UnitQuantity = x.UnitQuantity,
+                        UnitName = x.Product.Unit.UnitName,
                         Fk_AlternateUnitId = x.Fk_AlternateUnitId,
                         AlternateUnit = x.AlternateUnit != null ? new AlternateUnitModel { AlternateUnitName = x.AlternateUnit.AlternateUnitName } : null,
                         Rate = x.Rate,
@@ -300,14 +302,15 @@ namespace FMS.Repository.Transaction
                                 Fk_BranchId = BranchId,
                                 Fk_FinancialYearId = FinancialYear,
                                 Fk_ProductId = Guid.Parse(item[1]),
-                                Quantity = Convert.ToDecimal(item[2]),
+                                AlternateQuantity = Convert.ToDecimal(item[2]),
                                 Fk_AlternateUnitId = Guid.Parse(item[3]),
-                                Rate = Convert.ToDecimal(item[4]),
-                                Discount = Convert.ToDecimal(item[5]),
-                                DiscountAmount = Convert.ToDecimal(item[6]),
-                                Gst = Convert.ToDecimal(item[7]),
-                                GstAmount = Convert.ToDecimal(item[8]),
-                                Amount = Convert.ToDecimal(item[9]),
+                                UnitQuantity = Convert.ToDecimal(item[4]),
+                                Rate = Convert.ToDecimal(item[5]),
+                                Discount = Convert.ToDecimal(item[6]),
+                                DiscountAmount = Convert.ToDecimal(item[7]),
+                                Gst = Convert.ToDecimal(item[8]),
+                                GstAmount = Convert.ToDecimal(item[9]),
+                                Amount = Convert.ToDecimal(item[10]),
                             };
                             await _appDbContext.PurchaseTransactions.AddAsync(newPurchaseTransaction);
                             await _appDbContext.SaveChangesAsync();
@@ -330,34 +333,24 @@ namespace FMS.Repository.Transaction
                             await _appDbContext.Journals.AddAsync(NewJournalPurchaseTransactionr);
                             await _appDbContext.SaveChangesAsync();
                             #endregion
-                            #region Stock
-                            //Update Stock
-                            var ModifyAlternateUnitToActualUnit = await _appDbContext.AlternateUnits.Where(s => s.FK_ProductId == newPurchaseTransaction.Fk_ProductId && s.AlternateUnitId == newPurchaseTransaction.Fk_AlternateUnitId).SingleOrDefaultAsync();
-                            if (ModifyAlternateUnitToActualUnit != null)
+                            #region Update Stock
+                            var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == newPurchaseTransaction.Fk_ProductId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).FirstOrDefaultAsync();
+                            if (UpdateStock != null)
                             {
-                                var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == newPurchaseTransaction.Fk_ProductId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).FirstOrDefaultAsync();
-                                if (UpdateStock != null)
-                                {
-                                    UpdateStock.AvilableStock += (newPurchaseTransaction.Quantity * ModifyAlternateUnitToActualUnit.UnitQuantity);
-                                }
-                                else
-                                {
-                                    var AddNewStock = new Stock
-                                    {
-                                        Fk_BranchId = BranchId,
-                                        Fk_ProductId = newPurchaseTransaction.Fk_ProductId,
-                                        Fk_FinancialYear = FinancialYear,
-                                        AvilableStock = (newPurchaseTransaction.Quantity * ModifyAlternateUnitToActualUnit.UnitQuantity)
-                                    };
-                                    await _appDbContext.Stocks.AddAsync(AddNewStock);
-                                }
-                                await _appDbContext.SaveChangesAsync();
+                                UpdateStock.AvilableStock += newPurchaseTransaction.UnitQuantity;
                             }
                             else
                             {
-                                _Result.WarningMessage = "Alternate Unit Not Set Yet";
-                                return _Result;
+                                var AddNewStock = new Stock
+                                {
+                                    Fk_BranchId = BranchId,
+                                    Fk_ProductId = newPurchaseTransaction.Fk_ProductId,
+                                    Fk_FinancialYear = FinancialYear,
+                                    AvilableStock = newPurchaseTransaction.UnitQuantity
+                                };
+                                await _appDbContext.Stocks.AddAsync(AddNewStock);
                             }
+                            await _appDbContext.SaveChangesAsync();
                             #endregion
                         }
                         _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Created);
@@ -462,7 +455,7 @@ namespace FMS.Repository.Transaction
                                         {
                                             if (UpdatePurchaseTransaction.Fk_ProductId != Guid.Parse(item[1]))
                                             {
-                                                UpdateStock.AvilableStock -= (UpdatePurchaseTransaction.Quantity * ModifyAlternateUnitToActualUnit.UnitQuantity);
+                                                UpdateStock.AvilableStock -= (UpdatePurchaseTransaction.AlternateQuantity * ModifyAlternateUnitToActualUnit.UnitQuantity);
                                                 await _appDbContext.SaveChangesAsync();
                                                 var UpdateNewStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == Guid.Parse(item[1]) && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
                                                 var AlternateUnitToActualUnit = await _appDbContext.AlternateUnits.Where(s => s.FK_ProductId == Guid.Parse(item[1]) && s.AlternateUnitId == Guid.Parse(item[3])).SingleOrDefaultAsync();
@@ -484,9 +477,9 @@ namespace FMS.Repository.Transaction
                                                     await _appDbContext.SaveChangesAsync();
                                                 }
                                             }
-                                            if (UpdatePurchaseTransaction.Quantity != Convert.ToDecimal(item[2]))
+                                            if (UpdatePurchaseTransaction.AlternateQuantity != Convert.ToDecimal(item[2]))
                                             {
-                                                var quantityDifference = UpdatePurchaseTransaction.Quantity - Convert.ToDecimal(item[2]);
+                                                var quantityDifference = UpdatePurchaseTransaction.AlternateQuantity - Convert.ToDecimal(item[2]);
                                                 UpdateStock.AvilableStock -= (quantityDifference * ModifyAlternateUnitToActualUnit.UnitQuantity);
                                                 await _appDbContext.SaveChangesAsync();
                                             }
@@ -504,7 +497,7 @@ namespace FMS.Repository.Transaction
                                         #region Update Purchase Trn
                                         UpdatePurchaseTransaction.TransactionDate = convertedTransactionDate;
                                         UpdatePurchaseTransaction.Fk_ProductId = Guid.Parse(item[1]);
-                                        UpdatePurchaseTransaction.Quantity = Convert.ToDecimal(item[2]);
+                                        UpdatePurchaseTransaction.AlternateQuantity = Convert.ToDecimal(item[2]);
                                         UpdatePurchaseTransaction.Fk_AlternateUnitId = Guid.Parse(item[3]);
                                         UpdatePurchaseTransaction.Rate = Convert.ToDecimal(item[4]);
                                         UpdatePurchaseTransaction.Discount = Convert.ToDecimal(item[5]);
@@ -525,7 +518,7 @@ namespace FMS.Repository.Transaction
                                             Fk_BranchId = BranchId,
                                             Fk_FinancialYearId = FinancialYear,
                                             Fk_ProductId = Guid.Parse(item[1]),
-                                            Quantity = Convert.ToDecimal(item[2]),
+                                            AlternateQuantity = Convert.ToDecimal(item[2]),
                                             Fk_AlternateUnitId = Guid.Parse(item[3]),
                                             Rate = Convert.ToDecimal(item[4]),
                                             Discount = Convert.ToDecimal(item[5]),
@@ -560,7 +553,7 @@ namespace FMS.Repository.Transaction
                                         var ModifyAlternateUnitToActualUnit = await _appDbContext.AlternateUnits.Where(s => s.FK_ProductId == newPurchaseTransaction.Fk_ProductId && s.AlternateUnitId == newPurchaseTransaction.Fk_AlternateUnitId).SingleOrDefaultAsync();
                                         if (UpdateStock != null)
                                         {
-                                            UpdateStock.AvilableStock += (newPurchaseTransaction.Quantity * ModifyAlternateUnitToActualUnit.UnitQuantity);
+                                            UpdateStock.AvilableStock += (newPurchaseTransaction.AlternateQuantity * ModifyAlternateUnitToActualUnit.UnitQuantity);
                                         }
                                         else
                                         {
@@ -569,7 +562,7 @@ namespace FMS.Repository.Transaction
                                                 Fk_BranchId = BranchId,
                                                 Fk_ProductId = newPurchaseTransaction.Fk_ProductId,
                                                 Fk_FinancialYear = FinancialYear,
-                                                AvilableStock = (newPurchaseTransaction.Quantity * ModifyAlternateUnitToActualUnit.UnitQuantity)
+                                                AvilableStock = (newPurchaseTransaction.AlternateQuantity * ModifyAlternateUnitToActualUnit.UnitQuantity)
                                             };
                                             await _appDbContext.Stocks.AddAsync(AddNewStock);
                                         }
@@ -630,8 +623,7 @@ namespace FMS.Repository.Transaction
                                 var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == item.Fk_ProductId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
                                 if (UpdateStock != null)
                                 {
-                                    var ModifyAlternateUnitToActualUnit = await _appDbContext.AlternateUnits.Where(s => s.FK_ProductId == item.Fk_ProductId && s.AlternateUnitId == item.Fk_AlternateUnitId).SingleOrDefaultAsync();
-                                    UpdateStock.AvilableStock -= (item.Quantity * ModifyAlternateUnitToActualUnit.UnitQuantity);
+                                    UpdateStock.AvilableStock -= item.UnitQuantity;
                                     await _appDbContext.SaveChangesAsync();
                                 }
                                 #endregion
@@ -2323,7 +2315,7 @@ namespace FMS.Repository.Transaction
                             TransactionDate = convertedTransactionDate,
                             TransactionNo = data.TransactionNo,
                             TransactionType = data.TransactionType,
-                            PriceType =data.RateType,
+                            PriceType = data.RateType,
                             OrderNo = data.OrderNo,
                             OrderDate = convertedOrderDate,
                             TranspoterName = data.TranspoterName,

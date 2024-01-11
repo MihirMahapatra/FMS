@@ -367,10 +367,10 @@ $(function () {
             '    <select class="form-control form-control-sm select2bs4 Rawmaterial" style="width: 100%;" id="' + uniqueId + '"></select>' +
             '</div>' +
             '</td>';
-        html += '<td style="width:8%"><div class="form-group"><input type="text" id="Qtypr" class="form-control" value="0"></div></td>';
+        html += '<td style="width:8%"><div class="form-group"><input type="text" id="txtAlternateQty" class="form-control" value="0"></div></td>';
         html += '<td style="width:12%">' +
             '<div class="form-group">' +
-            '<select class="form-control form-control select2bs4 selectedUnit" style="width:100%"></select>' +
+            '<select class="form-control form-control select2bs4 selectedUnit" style="width:100%" disabled></select>' +
             '</div>' +
             '</td>';
         html += '<td>' +
@@ -436,7 +436,7 @@ $(function () {
                         for (var i = 0; i < 7; i++) {
                             Textbox.eq(i).val('0');
                         }
-                        Textbox.eq(2).val(result.product.Price);
+                      /*  Textbox.eq(2).val(result.product.Price);*/
                         Textbox.eq(5).val(result.product.GST);
                     }
                 },
@@ -473,8 +473,8 @@ $(function () {
         }
     });
     $(document).on('change', '.selectedUnit', function () {
-        var selectElement = $(this);
-        var SelectedAlternateUnitId = selectElement.val();
+        var row = $(this).closest('tr');
+        var SelectedAlternateUnitId = $(this).val();
         if (SelectedAlternateUnitId) {
             $.ajax({
                 url: '/Transaction/GetAlternateUnitByAlternateUnitId?AlternateUnitId=' + SelectedAlternateUnitId,
@@ -483,14 +483,10 @@ $(function () {
                 dataType: "json",
                 success: function (result) {
                     if (result.ResponseCode == 302) {
-                        var Textbox = selectElement.closest('tr').find('input[type="text"]');
-                        var qtyprElement = $('#Qtypr');
-                        console.log(qtyprElement);
-                        var qty = qtyprElement.val();
-                        TotalUnits = qty * result.AlternateUnit.UnitQuantity
-                        Textbox.eq(1).val(TotalUnits);
-                        var span = selectElement.closest('tr').find('span#Unit');
-                        span.text(result.AlternateUnit.Unit.UnitName)
+                        var alternateUnitQty = row.find('input:eq(1)').val();
+                        var TotalUnitQty = parseFloat(alternateUnitQty) !== 0 ? alternateUnitQty * result.AlternateUnit.UnitQuantity : result.AlternateUnit.UnitQuantity;
+                        row.find('input:eq(2)').val(TotalUnitQty);
+                        row.find('span#Unit').text(result.AlternateUnit.Unit.UnitName);
                     }
                 },
                 error: function (errormessage) {
@@ -499,9 +495,19 @@ $(function () {
             });
         }
     });
+    $(document).on('change', '#txtAlternateQty', function () {
+        var row = $(this).closest('tr');
+        var alternateQty = $(this).val();
+        var alternateUnitDropDown = row.find('select:eq(1)');
+        parseFloat(alternateQty) !== 0 ? alternateUnitDropDown.prop('disabled', false) : alternateUnitDropDown.prop('disabled', true);
+        /*When Quantity change if alternateUnitDropDown option not select option*/
+        //if(!alternateUnitDropDown.val('')) {
+        //    console.log(alternateUnitDropDown.text());`   
+        //}
+    });
     $('#tblPurchase tbody').on('change', 'input[type="text"]', function () {
         var row = $(this).closest('tr');
-        var quantity = parseFloat(row.find('input:eq(1)').val());
+        var quantity = parseFloat(row.find('input:eq(2)').val());
         var rate = parseFloat(row.find('input:eq(3)').val());
         var discountPercentage = parseFloat(row.find('input:eq(4)').val());
         var GstPercentage = parseFloat(row.find('input:eq(6)').val());
@@ -554,6 +560,7 @@ $(function () {
             gstDifferenceBody.append(row);
         }
     });
+
     $('#btnSave').on('click', CreatePurchase);
     function CreatePurchase() {
         if (!transactionDate.val()) {
@@ -763,6 +770,7 @@ $(function () {
         $('#btnUpdate').show();
     });
     function GetPurchaseById(Id) {
+        debugger
 
         $.ajax({
             url: '/Transaction/GetPurchaseById?Id=' + Id + '',
@@ -770,7 +778,7 @@ $(function () {
             contentType: "application/json;charset=utf-8",
             dataType: "json",
             success: function (result) {
-               
+               debugger
                 purchaseOrderId.val(result.purchaseOrder.PurchaseOrderId)
                 const ModifytransactionDate = result.purchaseOrder.TransactionDate;
                 if (ModifytransactionDate) {
@@ -853,7 +861,8 @@ $(function () {
                         '    <select class="form-control form-control-sm select2bs4 Rawmaterial" style="width: 100%;" id="ddnProduct_' + item.PurchaseId + '"></select>' +
                         '</div>' +
                         '</td>';
-                    html += '<td><div class="form-group"><input type="text" class="form-control" id="" value=' + item.Quantity + '></div></td>';
+
+                    html += '<td style="width:8%"><div class="form-group"><input type="text" id="txtAlternateQty" class="form-control" value=' + item.AlternateQuantity + '></div></td>';
                     html += '<td style="width:12%">' +
                         '<div class="form-group">' +
                         '<select class="form-control form-control select2bs4 selectedUnit" style="width:100%" id="ddnUnit_' + item.PurchaseId + '"></select>' +
@@ -862,9 +871,9 @@ $(function () {
                     html += '<td>' +
                         '<div class="form-group">' +
                         '<div class="input-group">' +
-                        '<input type="text" class="form-control" value="0">' +
+                        '<input type="text" class="form-control" value=' + item.UnitQuantity + '>' +
                         ' <div class="input-group-append">' +
-                        ' <span class="input-group-text" id="Unit">N/A</span>' +
+                        ' <span class="input-group-text" id="Unit">' + item.UnitName+'</span>' +
                         '</div>' +
                         '</div>' +
                         '</div>' +
