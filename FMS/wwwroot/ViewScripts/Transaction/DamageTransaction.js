@@ -307,7 +307,6 @@ $(function () {
                 });
                 rowData.push(cellData);
             });
-
             var requestData = {
                 TransactionDate: transactionDate.val(),
                 TransactionNo: transactionNo.val(),

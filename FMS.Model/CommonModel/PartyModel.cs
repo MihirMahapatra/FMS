@@ -29,6 +29,7 @@
         public List<PurchaseReturnOrderModel> PurchaseReturns { get; set; }
         public List<SalesOrderModel> SalesOrders { get; set; }
         public List<SalesReturnOrderModel> SalesReturns { get; set; }
+        public List<SalesTransactionModel> SalesTransactions { get; set; }
         public List<ReceiptModel> Receipts { get; set; }
         public List<PaymentModel> payments { get; set; }
     }

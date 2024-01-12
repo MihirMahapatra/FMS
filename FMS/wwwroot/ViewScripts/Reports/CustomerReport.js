@@ -15,10 +15,15 @@ $(function () {
     toDateSummerized.val(todayDate);
     const ddlZeroValued = $('select[name="ddlZerovalued"]');
     const ddlCustomer = $('select[name="ddlCustomerId"]');
+    const TddlCustomer = $('select[name="TddlCustomerId"]');
     const fromDateDetailed = $('input[name="FromDateDetailed"]');
     fromDateDetailed.val(todayDate);
     const toDateDetailed = $('input[name="ToDateDetailed"]');
     toDateDetailed.val(todayDate);
+    const TfromDateDetailed = $('input[name="TFromDateDetailed"]');
+    TfromDateDetailed.val(todayDate);
+    const TtoDateDetailed = $('input[name="TToDateDetailed"]');
+    TtoDateDetailed.val(todayDate);
     //--------------------------------Customer Report Summerized------------------------------------------------//
     var PrintData = {}
     $('#btnViewSummerized').on('click', function () {
@@ -332,4 +337,34 @@ $(function () {
             },
         });
     });
+
+    //-----------------------------------------------------------------Transation Detailed Report --------------------------------------------//
+    TGetSundryDebtors();
+    function TGetSundryDebtors() {
+        $.ajax({
+            url: "/Transaction/GetSundryDebtors",
+            type: "GET",
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            success: function (result) {
+                if (result.ResponseCode == 302) {
+                    TddlCustomer.empty();
+                    var defaultOption = $('<option></option>').val('').text('--Select Option--');
+                    TddlCustomer.append(defaultOption);
+                    $.each(result.SubLedgers, function (key, item) {
+                        var option = $('<option></option>').val(item.SubLedgerId).text(item.SubLedgerName);
+                        TddlCustomer.append(option);
+                    });
+                }
+                else {
+                    TddlCustomer.empty();
+                    var defaultOption = $('<option></option>').val('').text('--Select Option--');
+                    TddlCustomer.append(defaultOption);
+                }
+            },
+            error: function (errormessage) {
+                console.log(errormessage)
+            }
+        });
+    }
 })

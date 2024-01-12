@@ -8,6 +8,7 @@
         public DateTime TransactionDate { get; set; }
         public string TransactionType { get; set; }
         public Guid Fk_ProductId { get; set; }
+        public string ProductName { get; set; }
         public Guid Fk_BranchId { get; set; }
         public Guid Fk_FinancialYearId { get; set; }
         public decimal Quantity { get; set; }

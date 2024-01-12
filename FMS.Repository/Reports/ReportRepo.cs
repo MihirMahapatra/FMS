@@ -212,6 +212,7 @@ namespace FMS.Repository.Reports
             }
             return _Result;
         }
+
         #endregion
         #region Labour Report
         public async Task<Result<LaborReportModel>> GetSummerizedLabourReport(LabourReportDataRequest requestData)
@@ -298,8 +299,8 @@ namespace FMS.Repository.Reports
                             .Where(s => s.LabourId == requestData.LabourId && s.Fk_Labour_TypeId == requestData.LabourTypeId && s.Fk_BranchId == BranchId)
                             .Select(s => new LabourModel
                             {
-                                LabourName =s.LabourName,
-                                ProductionEntries = s.ProductionEntries.Where(d => d.Fk_FinancialYearId == FinancialYearId && d.FK_BranchId == BranchId && d.ProductionDate >= convertedFromDate && d.ProductionDate <= convertedToDate).Select(d => new ProductionEntryModel { ProductionDate = d.ProductionDate, ProductionNo = d.ProductionNo, Quantity = d.Quantity, Rate = d.Rate, Amount = d.Amount, Product = new ProductModel { ProductName = d.Product.ProductName } }).ToList(),
+                                LabourName = s.LabourName,
+                                ProductionEntries = s.ProductionEntries.Where(d => d.Fk_FinancialYearId == FinancialYearId && d.FK_BranchId == BranchId && d.ProductionDate >= convertedFromDate && d.ProductionDate <= convertedToDate).Select(d => new ProductionEntryModel { ProductionDate = d.ProductionDate, ProductionNo = d.ProductionNo, OTAmount = d.OTAmount, Quantity = d.Quantity, Rate = d.Rate, Amount = d.Amount, Product = new ProductModel { ProductName = d.Product.ProductName } }).ToList(),
                                 Payment = _appDbContext.Payments.Where(l => l.Fk_SubLedgerId == s.Fk_SubLedgerId && l.Fk_FinancialYearId == FinancialYearId && l.Fk_BranchId == BranchId && l.VoucherDate >= convertedFromDate && l.VoucherDate <= convertedToDate).Select(t => new PaymentModel { VoucherDate = t.VoucherDate, VouvherNo = t.VouvherNo, Amount = t.Amount }).ToList(),
                                 DamageOrders = s.DamageOrders.Where(l => l.Fk_LabourId == s.LabourId && l.Fk_FinancialYearId == FinancialYearId && l.Fk_BranchId == BranchId && l.TransactionDate >= convertedFromDate && l.TransactionDate <= convertedToDate).Select(d => new DamageOrderModel { TransactionDate = d.TransactionDate, TransactionNo = d.TransactionNo, TotalAmount = d.TotalAmount }).ToList(),
                                 OpeningBalance =
@@ -320,8 +321,9 @@ namespace FMS.Repository.Reports
                             .Where(s => s.LabourId == requestData.LabourId && s.Fk_Labour_TypeId == requestData.LabourTypeId)
                             .Select(s => new LabourModel
                             {
+
                                 LabourName = s.LabourName,
-                                ProductionEntries = s.ProductionEntries.Where(d => d.Fk_LabourId == s.LabourId && ListFinancialYearId.Contains(d.Fk_FinancialYearId) && d.ProductionDate >= convertedFromDate && d.ProductionDate <= convertedToDate).Select(d => new ProductionEntryModel { ProductionDate = d.ProductionDate, ProductionNo = d.ProductionNo, Quantity = d.Quantity, Rate = d.Rate, Amount = d.Amount, Product = new ProductModel { ProductName = d.Product.ProductName } }).ToList(),
+                                ProductionEntries = s.ProductionEntries.Where(d => d.Fk_LabourId == s.LabourId && ListFinancialYearId.Contains(d.Fk_FinancialYearId) && d.ProductionDate >= convertedFromDate && d.ProductionDate <= convertedToDate).Select(d => new ProductionEntryModel { ProductionDate = d.ProductionDate, ProductionNo = d.ProductionNo, Quantity = d.Quantity, Rate = d.Rate, OTAmount = d.OTAmount, Amount = d.Amount, Product = new ProductModel { ProductName = d.Product.ProductName } }).ToList(),
                                 Payment = _appDbContext.Payments.Where(l => l.Fk_SubLedgerId == s.Fk_SubLedgerId && ListFinancialYearId.Contains(l.Fk_FinancialYearId) && l.VoucherDate >= convertedFromDate && l.VoucherDate <= convertedToDate).Select(t => new PaymentModel { VoucherDate = t.VoucherDate, VouvherNo = t.VouvherNo, Amount = t.Amount }).ToList(),
                                 DamageOrders = s.DamageOrders.Where(l => l.Fk_LabourId == s.LabourId && ListFinancialYearId.Contains(l.Fk_FinancialYearId) && l.TransactionDate >= convertedFromDate && l.TransactionDate <= convertedToDate).Select(d => new DamageOrderModel { TransactionDate = d.TransactionDate, TransactionNo = d.TransactionNo, TotalAmount = d.TotalAmount }).ToList(),
                                 OpeningBalance =
@@ -450,6 +452,82 @@ namespace FMS.Repository.Reports
                         _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
                     }
                     _Result.IsSuccess = true;
+                }
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"ReportRepo/GetDetailedCustomerReport : {_Exception.Message}");
+            }
+            return _Result;
+        }
+        public async Task<Result<PartyModel>> GetTransactionCustomerReport(PartyReportDataRequest requestData)
+        {
+            Result<PartyModel> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                PartyModel Models = new();
+                if (DateTime.TryParseExact(requestData.FromDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedFromDate) && DateTime.TryParseExact(requestData.ToDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedToDate))
+                {
+                    Guid? SubLedgerId = await _appDbContext.Parties.Where(s => s.PartyId == requestData.PartyId).Select(s => s.Fk_SubledgerId).SingleOrDefaultAsync();
+                    if (SubLedgerId != null)
+                    {
+                        if (_HttpContextAccessor.HttpContext.Session.GetString("BranchId") != "All")
+                        {
+                            Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
+                            Guid FinancialYearId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
+                            var Sales = await _appDbContext.SalesOrders.Where(s => s.TransactionDate >= convertedFromDate && s.TransactionDate <= convertedToDate && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYearId && s.Fk_SubLedgerId == SubLedgerId).Select(s =>
+                              new SalesOrderModel()
+                              {
+                                  TransactionDate = s.TransactionDate,
+                                  TransactionNo = s.TransactionNo,
+                                  OrderDate = s.OrderDate,
+                                  OrderNo = s.OrderNo,
+                                  GrandTotal = s.GrandTotal,
+                                  SalesTransactions = s.SalesTransactions.Where(s => s.TransactionDate >= convertedFromDate && s.TransactionDate <= convertedToDate && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYearId).Select(x => new SalesTransactionModel()
+                                  {
+                                      ProductName = x.Product.ProductName,
+                                      Quantity = x.Quantity,
+                                      DiscountAmount = x.DiscountAmount,
+                                      GstAmount = x.GstAmount,
+                                      Amount = x.Amount,
+                                  }).ToList()
+                              }).ToListAsync();
+                            var SalesReturn = await _appDbContext.SalesReturnOrders.Where(s => s.TransactionDate >= convertedFromDate && s.TransactionDate <= convertedToDate && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYearId && s.Fk_SubLedgerId == SubLedgerId).Select(s =>
+                             new SalesReturnOrderModel()
+                             {
+                                 TransactionDate = s.TransactionDate,
+                                 TransactionNo = s.TransactionNo,
+                                 OrderDate = s.OrderDate,
+                                 OrderNo = s.OrderNo,
+                                 GrandTotal = s.GrandTotal,
+                                 SalesReturnTransactions = s.SalesReturnTransactions.Where(s => s.TransactionDate >= convertedFromDate && s.TransactionDate <= convertedToDate && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYearId).Select(x => new SalesReturnTransactionModel()
+                                 {
+                                     ProductName = x.Product.ProductName,
+                                     Quantity = x.Quantity,
+                                     DiscountAmount = x.DiscountAmount,
+                                     GstAmount = x.GstAmount,
+                                     Amount = x.Amount,
+                                 }).ToList()
+                             }).ToListAsync();
+                        }
+                        else
+                        {
+                            var ListFinancialYearId = await _appDbContext.FinancialYears.Where(x => x.Financial_Year == _HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId")).Select(x => x.FinancialYearId).ToListAsync();  
+                        }
+                        if (Models != null)
+                        {
+                            _Result.SingleObjData = Models;
+                            _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
+                        }
+                        _Result.IsSuccess = true;
+                    }
+                    else
+                    {
+
+                    }
+
                 }
             }
             catch (Exception _Exception)
