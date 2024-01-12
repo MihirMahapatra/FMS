@@ -20,7 +20,7 @@ namespace FMS.Db.DbEntityConfig
             builder.Property(e => e.FK_BranchId).IsRequired(true);
             builder.Property(e => e.ProductionDate).HasColumnType("datetime");
             builder.Property(e => e.Quantity).HasColumnType("decimal(18, 2)").HasDefaultValue(0);
-            builder.Property(e => e.Rate).HasColumnType("decimal(18, 2)").HasDefaultValue(0);
+            builder.Property(e => e.Rate).HasColumnType("decimal(18, 4)").HasDefaultValue(0);
             builder.Property(e => e.Amount).HasColumnType("decimal(18, 2)").HasDefaultValue(0);
             builder.Property(e => e.OTAmount).HasColumnType("decimal(18, 2)").HasDefaultValue(0);
             builder.HasOne(p=> p.Product).WithMany(pe=>pe.ProductionEntries).HasForeignKey(e=> e.Fk_ProductId).OnDelete(DeleteBehavior.Restrict); 
