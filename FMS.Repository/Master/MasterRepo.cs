@@ -800,7 +800,7 @@ namespace FMS.Repository.Master
                                        GstNo = s.GstNo,
                                        CreditLimit = s.CreditLimit,
                                        Ledger = s.LedgerDev != null ? new LedgerModel { LedgerName = s.LedgerDev.LedgerName } : null,
-                                       SubLedgerBalance = _appDbContext.SubLedgerBalances.Where(sb => sb.Fk_SubLedgerId == s.Fk_SubledgerId && sb.Fk_FinancialYearId == FinancialYear).Select(
+                                       SubLedgerBalance = _appDbContext.SubLedgerBalances.Where(sb => sb.Fk_SubLedgerId == s.Fk_SubledgerId && sb.Fk_FinancialYearId == FinancialYear && s.Fk_BranchId==BranchId).Select(
                                            sb => new SubLedgerBalanceModel
                                            {
                                                OpeningBalance = sb.OpeningBalance,

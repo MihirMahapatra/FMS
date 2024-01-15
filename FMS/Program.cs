@@ -107,6 +107,7 @@ try
     builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options =>
     {
         options.LoginPath = "/Account/Login";
+        options.Cookie.Expiration = TimeSpan.FromDays(1);
     });
     //****************************************************Global Autherization****************************************************//
     builder.Services.AddControllersWithViews(options =>

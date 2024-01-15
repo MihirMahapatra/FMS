@@ -33,21 +33,37 @@ namespace FMS.Repository.Transaction
             Result<SubLedgerModel> _Result = new();
             try
             {
-                Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
-                Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
                 _Result.IsSuccess = false;
-                var Query = await (from s in _appDbContext.SubLedgers
-                                   join sb in _appDbContext.SubLedgerBalances
-                                   on s.SubLedgerId equals sb.Fk_SubLedgerId
-                                   where s.Fk_LedgerId == PartyTypeId && sb.Fk_BranchId == BranchId && sb.Fk_FinancialYearId == FinancialYear
-                                   select new SubLedgerModel
-                                   {
-                                       SubLedgerId = s.SubLedgerId,
-                                       SubLedgerName = s.SubLedgerName,
-                                   }).ToListAsync();
-                if (Query.Count > 0)
+                if (_HttpContextAccessor.HttpContext.Session.GetString("BranchId") != "All")
                 {
-                    _Result.CollectionObjData = Query;
+                    Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
+                    Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
+                 
+                    _Result.CollectionObjData = await (from s in _appDbContext.SubLedgers
+                                       join sb in _appDbContext.SubLedgerBalances
+                                       on s.SubLedgerId equals sb.Fk_SubLedgerId
+                                       where s.Fk_LedgerId == PartyTypeId && sb.Fk_BranchId == BranchId && sb.Fk_FinancialYearId == FinancialYear
+                                       select new SubLedgerModel
+                                       {
+                                           SubLedgerId = s.SubLedgerId,
+                                           SubLedgerName = s.SubLedgerName,
+                                       }).ToListAsync();
+                }
+                else
+                {
+                    _Result.CollectionObjData = await (from s in _appDbContext.SubLedgers
+                                                       join sb in _appDbContext.SubLedgerBalances
+                                                       on s.SubLedgerId equals sb.Fk_SubLedgerId
+                                                       where s.Fk_LedgerId == PartyTypeId
+                                                       select new SubLedgerModel
+                                                       {
+                                                           SubLedgerId = s.SubLedgerId,
+                                                           SubLedgerName = s.SubLedgerName,
+                                                       }).ToListAsync();
+                }
+                    
+                if (_Result.CollectionObjData.Count > 0)
+                {
                     _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
                 }
                 _Result.IsSuccess = true;
