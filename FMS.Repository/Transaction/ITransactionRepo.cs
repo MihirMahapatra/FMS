@@ -28,16 +28,16 @@ namespace FMS.Repository.Transaction
         #region Production Entry
         Task<Result<string>> GetLastProductionNo();
         Task<Result<ProductionModel>> GetProductionConfig(Guid ProductId);
-        Task<Result<ProductionEntryModel>> GetProductionEntry();
+        Task<Result<LabourOrderModel>> GetProductionEntry();
         Task<Result<bool>> CreateProductionEntry(ProductionEntryRequest data);
-        Task<Result<bool>> UpdateProductionEntry(ProductionEntryModel data);
+        Task<Result<bool>> UpdateProductionEntry(LabourOrderModel data);
         Task<Result<bool>> DeleteProductionEntry(Guid Id, IDbContextTransaction transaction, bool IsCallBack);
         #endregion
         #region Service Entry
         Task<Result<string>> GetLastServiceNo();
-        Task<Result<ProductionEntryModel>> GetServiceEntry();
+        Task<Result<LabourOrderModel>> GetServiceEntry();
         Task<Result<bool>> CreateServiceEntry(ProductionEntryRequest data);
-        Task<Result<bool>> UpdateServiceEntry(ProductionEntryModel data);
+        Task<Result<bool>> UpdateServiceEntry(LabourOrderModel data);
         Task<Result<bool>> DeleteServiceEntry(Guid Id, IDbContextTransaction transaction, bool IsCallBack);
         #endregion
         #region Sales Transaction

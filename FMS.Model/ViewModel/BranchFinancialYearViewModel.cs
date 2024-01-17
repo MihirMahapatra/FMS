@@ -1,4 +1,5 @@
-﻿using FMS.Model.CommonModel;
+﻿using FMS.Db.DbEntity;
+using FMS.Model.CommonModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;

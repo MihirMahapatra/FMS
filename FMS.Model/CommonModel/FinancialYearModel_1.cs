@@ -1,15 +1,15 @@
 ﻿namespace FMS.Model.CommonModel
 {
-    public class BranchFinancialYearModel : Base
+    public class FinancialYearModel : Base
     {
-        public Guid BranchFinancialYearId { get; set; }
-        public Guid Fk_FinancialYearId { get; set; }
-        public Guid FK_BranchId { get; set; }
-        public BranchModel Branch { get; set; }  
-        public FinancialYearModel FinancialYear{ get; set; }
+        public Guid FinancialYearId { get; set; }
+        public string Financial_Year { get; set; }
+        public string StartDate { get; set; }
+        public string EndDate { get; set; }
+        public List<BranchFinancialYearModel> BranchFinancialYears { get; set; }
         public List<StockModel> Stocks { get; set; } 
-        public List<ProductionEntryModel> ProductionEntries { get; set; }
-        public List<ProductionEntryTransactionModel> ProductionEntryTransactions { get; set; }
+        public List<LabourOrderModel> ProductionEntries { get; set; }
+        public List<LabourTransactionModel> ProductionEntryTransactions { get; set; }
         public List<LedgerBalanceModel> LedgerBalances { get; set; }
         public List<SubLedgerBalanceModel> SubLedgerBalances { get; set; }
         public List<JournalModel> Journals { get; set; } 

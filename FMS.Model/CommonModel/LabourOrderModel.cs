@@ -1,11 +1,11 @@
 ﻿namespace FMS.Model.CommonModel
 {
-    public class ProductionEntryModel : Base
+    public class LabourOrderModel : Base
     {
-        public Guid ProductionEntryId { get; set; }
-        public string ProductionNo { get; set; }
+        public Guid LabourOrderId { get; set; }
+        public string TransactionNo { get; set; }
         public string Date { get; set; }
-        public DateTime ProductionDate { get; set; }
+        public DateTime TransactionDate { get; set; }
         public Guid Fk_ProductId { get; set; }
         public Guid Fk_LabourId { get; set; }
         public string LabourType { get; set; }
@@ -19,7 +19,7 @@
         public LabourModel Labour { get; set; }
         public BranchFinancialYearModel FinancialYear { get; set; } 
         public BranchModel Branch { get; set; }
-        public List<ProductionEntryTransactionModel> ProductionEntryTransactions { get; set; }
+        public List<LabourTransactionModel> LabourTransactions { get; set; }
     }
 }
   

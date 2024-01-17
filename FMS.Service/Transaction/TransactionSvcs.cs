@@ -531,9 +531,9 @@ namespace FMS.Service.Transaction
             }
             return Obj;
         }
-        public async Task<ProductionEntryViewModel> GetProductionEntry()
+        public async Task<LabourOrderViewModel> GetProductionEntry()
         {
-            ProductionEntryViewModel Obj;
+            LabourOrderViewModel Obj;
             var Result = await _transactionRepo.GetProductionEntry();
             if (Result.IsSuccess)
             {
@@ -543,7 +543,7 @@ namespace FMS.Service.Transaction
                     {
                         ResponseStatus = Result.Response,
                         ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
-                        ProductionEntries = Result.CollectionObjData,
+                        LabourOrders = Result.CollectionObjData,
                     };
                 }
                 else
@@ -614,7 +614,7 @@ namespace FMS.Service.Transaction
             }
             return Obj;
         }
-        public async Task<Base> UpdateProductionEntry(ProductionEntryModel data)
+        public async Task<Base> UpdateProductionEntry(LabourOrderModel data)
         {
             var Result = await _transactionRepo.UpdateProductionEntry(data);
             Base Obj;
@@ -710,9 +710,9 @@ namespace FMS.Service.Transaction
             };
 
         }
-        public async Task<ProductionEntryViewModel> GetServiceEntry()
+        public async Task<LabourOrderViewModel> GetServiceEntry()
         {
-            ProductionEntryViewModel Obj;
+            LabourOrderViewModel Obj;
             var Result = await _transactionRepo.GetServiceEntry();
             if (Result.IsSuccess)
             {
@@ -722,7 +722,7 @@ namespace FMS.Service.Transaction
                     {
                         ResponseStatus = Result.Response,
                         ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
-                        ProductionEntries = Result.CollectionObjData,
+                        LabourOrders = Result.CollectionObjData,
                     };
                 }
                 else
@@ -793,7 +793,7 @@ namespace FMS.Service.Transaction
             }
             return Obj;
         }
-        public async Task<Base> UpdateServiceEntry(ProductionEntryModel data)
+        public async Task<Base> UpdateServiceEntry(LabourOrderModel data)
         {
             var Result = await _transactionRepo.UpdateServiceEntry(data);
             Base Obj;

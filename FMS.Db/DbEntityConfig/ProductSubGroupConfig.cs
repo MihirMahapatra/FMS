@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace FMS.Db.DbEntityConfig
 {
-    public class SubGroupConfig : IEntityTypeConfiguration<ProductSubGroup>
+    public class ProductSubGroupConfig : IEntityTypeConfiguration<ProductSubGroup>
     {
         public void Configure(EntityTypeBuilder<ProductSubGroup> builder)
         {
-            builder.ToTable("SubGroups", "dbo");
+            builder.ToTable("roductSubGroups", "dbo");
             builder.HasKey(e => e.ProductSubGroupId);
             builder.Property(e => e.ProductSubGroupId).HasDefaultValueSql("(newid())");
             builder.Property(e => e.Fk_ProductGroupId).IsRequired(false);

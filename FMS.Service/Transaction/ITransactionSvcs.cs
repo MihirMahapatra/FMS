@@ -29,16 +29,16 @@ namespace FMS.Service.Transaction
         #region Production Entry
         Task<Base> GetLastProductionNo();
         Task<ProductionViewModel> GetProductionConfig(Guid ProductId);
-        Task<ProductionEntryViewModel> GetProductionEntry();
+        Task<LabourOrderViewModel> GetProductionEntry();
         Task<Base> CreateProductionEntry(ProductionEntryRequest data);
-        Task<Base> UpdateProductionEntry(ProductionEntryModel data);
+        Task<Base> UpdateProductionEntry(LabourOrderModel data);
         Task<Base> DeleteProductionEntry(Guid Id);
         #endregion
         #region Service Entry
         Task<Base> GetLastServiceNo();
-        Task<ProductionEntryViewModel> GetServiceEntry();
+        Task<LabourOrderViewModel> GetServiceEntry();
         Task<Base> CreateServiceEntry(ProductionEntryRequest data);
-        Task<Base> UpdateServiceEntry(ProductionEntryModel data);
+        Task<Base> UpdateServiceEntry(LabourOrderModel data);
         Task<Base> DeleteServiceEntry(Guid Id);
         #endregion
         #region Sales Transaction

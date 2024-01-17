@@ -16,7 +16,6 @@ namespace FMS.Repository.Devloper
         #endregion
         #region Branch Financial Year
         Task<Result<BranchFinancialYearModel>> GetBranchFinancialYears();
-        Task<Result<FinancialYearModel>> GetFinancialYearById(Guid FinancialYearId);
         Task<Result<BranchFinancialYearModel>> GetBranchFinancialYears(Guid BranchId);
         Task<Result<bool>> CreateBranchFinancialYear(BranchFinancialYearModel data);
         Task<Result<bool>> UpdateBranchFinancialYear(BranchFinancialYearModel data);
@@ -25,6 +24,7 @@ namespace FMS.Repository.Devloper
         #region Financial Year
         Task<Result<FinancialYearModel>> GetFinancialYears(Guid BranchId);
         Task<Result<FinancialYearModel>> GetFinancialYears();
+        Task<Result<FinancialYearModel>> GetFinancialYearById(Guid FinancialYearId);
         Task<Result<bool>> CreateFinancialYear(FinancialYearModel data);
         Task<Result<bool>> UpdateFinancialYear(FinancialYearModel data);
         Task<Result<bool>> DeleteFinancialYear(Guid Id, IDbContextTransaction transaction);

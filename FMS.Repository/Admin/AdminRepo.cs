@@ -325,7 +325,7 @@ namespace FMS.Repository.Admin
                     GSTIN = data.GSTIN,
                     Email = data.Email,
                     Phone = data.Phone,
-                    logo = data.logo,
+                    Logo = data.logo,
                     Fk_BranchId = BranchId
                 };
                 await _appDbContext.CompanyDetails.AddAsync(newCompanyDetails);
@@ -384,7 +384,7 @@ namespace FMS.Repository.Admin
                     Email = s.Email,
                     Phone = s.Phone,
                     State = s.State,
-                    logo = s.logo,
+                    logo = s.Logo,
                     CompanyId = Convert.ToString(s.CompanyId),
                     BranchName = branchName
                 }).SingleOrDefaultAsync();
@@ -584,8 +584,8 @@ namespace FMS.Repository.Admin
                 var Query = await _appDbContext.ProductGroups.Select(s =>
                     new GroupModel
                     {
-                        GroupId = s.GroupId,
-                        GroupName = s.GroupName,
+                        GroupId = s.ProductGroupId,
+                        GroupName = s.ProductGroupName,
                     }).ToListAsync();
                 if (Query.Count > 0)
                 {
@@ -611,8 +611,8 @@ namespace FMS.Repository.Admin
                 var Query = await _appDbContext.ProductGroups.Where(p => p.Fk_ProductTypeId == ProdutTypeId).Select(s =>
                     new GroupModel
                     {
-                        GroupId = s.GroupId,
-                        GroupName = s.GroupName,
+                        GroupId = s.ProductGroupId,
+                        GroupName = s.ProductGroupName,
                     }).ToListAsync();
                 if (Query.Count > 0)
                 {
@@ -635,7 +635,7 @@ namespace FMS.Repository.Admin
             try
             {
                 _Result.IsSuccess = false;
-                var Query = await _appDbContext.ProductGroups.Where(s => s.GroupName == data.GroupName).FirstOrDefaultAsync();
+                var Query = await _appDbContext.ProductGroups.Where(s => s.ProductGroupName == data.GroupName).FirstOrDefaultAsync();
                 if (Query == null)
                 {
                     var newGroup = _mapper.Map<ProductGroup>(data);
@@ -658,7 +658,7 @@ namespace FMS.Repository.Admin
             try
             {
                 _Result.IsSuccess = false;
-                var Query = await _appDbContext.ProductGroups.Where(s => s.GroupId == data.GroupId).FirstOrDefaultAsync();
+                var Query = await _appDbContext.ProductGroups.Where(s => s.ProductGroupId == data.GroupId).FirstOrDefaultAsync();
                 if (Query != null)
                 {
                     _mapper.Map(data, Query);
@@ -687,7 +687,7 @@ namespace FMS.Repository.Admin
                 {
                     if (Id != Guid.Empty)
                     {
-                        var Query = await _appDbContext.ProductGroups.FirstOrDefaultAsync(x => x.GroupId == Id);
+                        var Query = await _appDbContext.ProductGroups.FirstOrDefaultAsync(x => x.ProductGroupId == Id);
                         if (Query != null)
                         {
                             _appDbContext.ProductGroups.Remove(Query);
@@ -947,7 +947,7 @@ namespace FMS.Repository.Admin
                                        Price = s.Price,
                                        WholeSalePrice = s.WholeSalePrice,
                                        GST = s.GST,
-                                       Group = s.ProductGroup != null ? new GroupModel { GroupName = s.ProductGroup.GroupName } : null,
+                                       Group = s.ProductGroup != null ? new GroupModel { GroupName = s.ProductGroup.ProductGroupName } : null,
                                        SubGroup = s.ProductSubGroup != null ? new SubGroupModel { SubGroupName = s.ProductSubGroup.ProductSubGroupName } : null,
                                        Unit = s.Unit != null ? new UnitModel { UnitName = s.Unit.UnitName } : null,
                                        ProductType = s.ProductType != null ? new ProductTypeModel { Product_Type = s.ProductType.Product_Type } : null,

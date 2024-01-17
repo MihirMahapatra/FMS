@@ -17,7 +17,7 @@ namespace FMS.Db.DbEntityConfig
             builder.HasKey(e => e.CompanyId);
             builder.Property(e => e.CompanyId).HasDefaultValueSql("(newid())");
             builder.Property(e => e.Fk_BranchId).IsRequired(true);
-            builder.Property(e => e.logo).IsRequired(true);
+            builder.Property(e => e.Logo).IsRequired(true);
             builder.Property(e => e.State).IsRequired(true);
             builder.Property(e => e.Adress).HasMaxLength(100).IsRequired(true);
             builder.Property(e => e.GSTIN).IsRequired(true);

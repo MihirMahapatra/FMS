@@ -21,8 +21,8 @@
         public List<SalesOrderModel> SalesOrders { get; set; }
         public List<PurchaseTransactionModel> PurchaseTransactions { get; set; }
         public List<SalesTransactionModel> SalesTransactions { get; set; }
-        public List<ProductionEntryModel> ProductionEntries { get; set; }
-        public List<ProductionEntryTransactionModel> ProductionEntryTransactions { get; set; }
+        public List<LabourOrderModel> ProductionEntries { get; set; }
+        public List<LabourTransactionModel> ProductionEntryTransactions { get; set; }
         public ICollection<JournalModel> Journals { get; set; }
         public List<PaymentModel> Payments { get; set; }
         public List<ReceiptModel> Receipts { get; set; }
@@ -37,7 +37,5 @@
         public List<DamageOrderModel> DamageOrders { get; set; }
         public List<DamageTransactionModel> DamageTransactions { get; set; }
         public List<LabourRateModel> LabourRates { get; set; }
-
-
     }
 }

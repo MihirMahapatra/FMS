@@ -12,7 +12,7 @@ namespace FMS.Db.DbEntityConfig
             builder.HasKey(e => e.PurchaseReturnId);
             builder.Property(e => e.PurchaseReturnId).HasDefaultValueSql("(newid())");
             builder.Property(e => e.TransactionNo).HasMaxLength(100).IsRequired(true);
-            builder.Property(e => e.TransactionDate).HasColumnType("datetime").IsRequired(false);
+            builder.Property(e => e.TransactionDate).HasColumnType("datetime").IsRequired(true);
             builder.Property(e => e.Fk_PurchaseReturnOrderId).IsRequired(true);
             builder.Property(e => e.Fk_ProductId).IsRequired(true);
             builder.Property(e => e.Fk_AlternateUnitId).IsRequired(true);

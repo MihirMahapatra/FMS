@@ -222,7 +222,7 @@ namespace FMS.Controllers.Transaction
 
         }
         [HttpPost, Authorize(Policy = "Edit")]
-        public async Task<IActionResult> UpdateProductionEntry([FromBody] ProductionEntryModel model)
+        public async Task<IActionResult> UpdateProductionEntry([FromBody] LabourOrderModel model)
         {
             if (ModelState.IsValid)
             {
@@ -288,7 +288,7 @@ namespace FMS.Controllers.Transaction
             }
         }
         [HttpPost, Authorize(Policy = "Edit")]
-        public async Task<IActionResult> UpdateServiceEntry([FromBody] ProductionEntryModel model)
+        public async Task<IActionResult> UpdateServiceEntry([FromBody] LabourOrderModel model)
         {
             if (ModelState.IsValid)
             {

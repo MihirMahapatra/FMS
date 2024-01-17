@@ -5,7 +5,7 @@
         public Guid PurchaseReturnId { get; }
         public Guid Fk_PurchaseReturnOrderId { get; set; }
         public string TransactionNo { get; set; }
-        public DateTime? TransactionDate { get; set; }
+        public DateTime TransactionDate { get; set; }
         public Guid Fk_ProductId { get; set; }
         public Guid Fk_BranchId { get; set; }
         public Guid Fk_FinancialYearId { get; set; }

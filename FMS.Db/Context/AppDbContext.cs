@@ -78,7 +78,7 @@ public partial class AppDbContext : IdentityDbContext<AppUser>
         new UserBranchConfig().Configure(modelBuilder.Entity<UserBranch>());
         new CompanyDetailsConfig().Configure(modelBuilder.Entity<CompanyDetails>());
         new ProductGroupConfig().Configure(modelBuilder.Entity<ProductGroup>());
-        new SubGroupConfig().Configure(modelBuilder.Entity<ProductSubGroup>());
+        new ProductSubGroupConfig().Configure(modelBuilder.Entity<ProductSubGroup>());
         new UnitConfig().Configure(modelBuilder.Entity<Unit>());
         new AlternateUnitConfig().Configure(modelBuilder.Entity<AlternateUnit>());
         new ProductTypeConfig().Configure(modelBuilder.Entity<ProductType>());

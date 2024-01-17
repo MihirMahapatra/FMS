@@ -20,8 +20,8 @@
         public List<StockModel> Stocks { get; set; }
         public List<ProductionModel> FinishedGoodProductions { get; set; }
         public List<ProductionModel> RawMaterialProductions { get; set; }
-        public List<ProductionEntryModel> ProductionEntries { get; set; }
-        public List<ProductionEntryTransactionModel> ProductionEntryTransactions { get; set; }
+        public List<LabourOrderModel> ProductionEntries { get; set; }
+        public List<LabourTransactionModel> ProductionEntryTransactions { get; set; }
         public List<PurchaseTransactionModel> PurchaseTransactions { get; set; }
         public List<SalesTransactionModel> SalesTransactions { get; set; }
         public List<SalesReturnTransactionModel> SalesReturnTransactions { get; set; }

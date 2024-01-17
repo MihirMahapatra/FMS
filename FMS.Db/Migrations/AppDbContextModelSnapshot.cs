@@ -246,6 +246,10 @@ namespace FMS.Db.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Logo")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
@@ -254,10 +258,6 @@ namespace FMS.Db.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("State")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("logo")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -708,10 +708,10 @@ namespace FMS.Db.Migrations
                     b.Property<Guid>("Fk_FinancialYearId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("Fk_ProductId")
+                    b.Property<Guid>("Fk_LabourOdrId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("Fk_ProductionEntryId")
+                    b.Property<Guid>("Fk_ProductId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("Quantity")
@@ -730,9 +730,9 @@ namespace FMS.Db.Migrations
 
                     b.HasIndex("Fk_FinancialYearId");
 
-                    b.HasIndex("Fk_ProductId");
+                    b.HasIndex("Fk_LabourOdrId");
 
-                    b.HasIndex("Fk_ProductionEntryId");
+                    b.HasIndex("Fk_ProductId");
 
                     b.ToTable("LabourTransactions", "dbo");
                 });
@@ -1415,7 +1415,7 @@ namespace FMS.Db.Migrations
 
             modelBuilder.Entity("FMS.Db.DbEntity.ProductGroup", b =>
                 {
-                    b.Property<Guid>("GroupId")
+                    b.Property<Guid>("ProductGroupId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier")
                         .HasDefaultValueSql("(newid())");
@@ -1423,12 +1423,12 @@ namespace FMS.Db.Migrations
                     b.Property<Guid?>("Fk_ProductTypeId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("GroupName")
+                    b.Property<string>("ProductGroupName")
                         .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
-                    b.HasKey("GroupId");
+                    b.HasKey("ProductGroupId");
 
                     b.HasIndex("Fk_ProductTypeId");
 
@@ -1454,7 +1454,7 @@ namespace FMS.Db.Migrations
 
                     b.HasIndex("Fk_ProductGroupId");
 
-                    b.ToTable("SubGroups", "dbo");
+                    b.ToTable("roductSubGroups", "dbo");
                 });
 
             modelBuilder.Entity("FMS.Db.DbEntity.ProductType", b =>
@@ -1747,7 +1747,7 @@ namespace FMS.Db.Migrations
                         .HasColumnType("decimal(18, 2)")
                         .HasDefaultValue(0m);
 
-                    b.Property<DateTime?>("TransactionDate")
+                    b.Property<DateTime>("TransactionDate")
                         .HasColumnType("datetime");
 
                     b.Property<string>("TransactionNo")
@@ -2223,7 +2223,7 @@ namespace FMS.Db.Migrations
                     b.Property<decimal>("Rate")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<DateTime?>("TransactionDate")
+                    b.Property<DateTime>("TransactionDate")
                         .HasColumnType("datetime");
 
                     b.Property<string>("TransactionNo")
@@ -2942,15 +2942,15 @@ namespace FMS.Db.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("FMS.Db.DbEntity.Product", "Product")
+                    b.HasOne("FMS.Db.DbEntity.LabourOrder", "LabourOrder")
                         .WithMany("LabourTransactions")
-                        .HasForeignKey("Fk_ProductId")
+                        .HasForeignKey("Fk_LabourOdrId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("FMS.Db.DbEntity.LabourOrder", "LabourOrder")
+                    b.HasOne("FMS.Db.DbEntity.Product", "Product")
                         .WithMany("LabourTransactions")
-                        .HasForeignKey("Fk_ProductionEntryId")
+                        .HasForeignKey("Fk_ProductId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -3222,7 +3222,7 @@ namespace FMS.Db.Migrations
                         .IsRequired();
 
                     b.HasOne("FMS.Db.DbEntity.ProductSubGroup", "ProductSubGroup")
-                        .WithMany("products")
+                        .WithMany("Products")
                         .HasForeignKey("Fk_ProductSubGroupId")
                         .OnDelete(DeleteBehavior.Restrict);
 
@@ -3250,7 +3250,7 @@ namespace FMS.Db.Migrations
             modelBuilder.Entity("FMS.Db.DbEntity.ProductGroup", b =>
                 {
                     b.HasOne("FMS.Db.DbEntity.ProductType", "ProductType")
-                        .WithMany("Groups")
+                        .WithMany("ProductGroups")
                         .HasForeignKey("Fk_ProductTypeId")
                         .OnDelete(DeleteBehavior.Restrict);
 
@@ -4016,20 +4016,20 @@ namespace FMS.Db.Migrations
 
             modelBuilder.Entity("FMS.Db.DbEntity.ProductSubGroup", b =>
                 {
-                    b.Navigation("products");
+                    b.Navigation("Products");
                 });
 
             modelBuilder.Entity("FMS.Db.DbEntity.ProductType", b =>
                 {
                     b.Navigation("DamageOrders");
 
-                    b.Navigation("Groups");
-
                     b.Navigation("InwardSupplyOrders");
 
                     b.Navigation("LabourRates");
 
                     b.Navigation("OutwardSupplyOrders");
+
+                    b.Navigation("ProductGroups");
 
                     b.Navigation("Products");
                 });

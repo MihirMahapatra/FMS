@@ -20,7 +20,7 @@ namespace FMS.Db.DbEntityConfig
             builder.Property(e => e.Fk_ProductTypeId).IsRequired(true);
             builder.Property(e => e.Fk_UnitId).IsRequired(true);
             builder.HasOne(d => d.ProductGroup).WithMany(e => e.Products).HasForeignKey(d => d.Fk_ProductGroupId).OnDelete(DeleteBehavior.Restrict);
-            builder.HasOne(d => d.ProductSubGroup).WithMany(e => e.products).HasForeignKey(d => d.Fk_ProductSubGroupId).OnDelete(DeleteBehavior.Restrict).IsRequired(false);
+            builder.HasOne(d => d.ProductSubGroup).WithMany(e => e.Products).HasForeignKey(d => d.Fk_ProductSubGroupId).OnDelete(DeleteBehavior.Restrict).IsRequired(false);
             builder.HasOne(d => d.ProductType).WithMany(e => e.Products).HasForeignKey(d => d.Fk_ProductTypeId).OnDelete(DeleteBehavior.Restrict);
             builder.HasOne(d => d.Unit).WithMany(e => e.Products).HasForeignKey(d => d.Fk_UnitId).OnDelete(DeleteBehavior.Restrict);
 

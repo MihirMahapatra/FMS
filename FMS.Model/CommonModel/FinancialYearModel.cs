@@ -6,11 +6,12 @@ using System.Threading.Tasks;
 
 namespace FMS.Model.CommonModel
 {
-    public class FinancialYearModel
+    public class BranchFinancialYearModel
     {
-        public Guid FinancialYearId { get; set; }
-        public string Financial_Year { get; set; }
-        public string StartDate { get; set; }
-        public string EndDate { get; set; }
+        public Guid BranchFinancialYearId { get; set; }
+        public Guid Fk_FinancialYearId { get; set; }
+        public Guid FK_BranchId { get; set; }
+        public BranchModel Branch { get; set; }
+        public FinancialYearModel FinancialYear { get; set; }
     }
 }

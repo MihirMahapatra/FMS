@@ -15,7 +15,7 @@
         public LabourTypeModel LabourType { get; set; }
         public BranchModel Branch { get; set; }
         public SubLedgerModel SubLedger { get; set; }
-        public List<ProductionEntryModel> ProductionEntries { get; set; }
+        public List<LabourOrderModel> LabourOrders { get; set; }
         public List<DamageOrderModel> DamageOrders { get; set; }
         public List<PaymentModel> Payment {  get; set; }
     }
