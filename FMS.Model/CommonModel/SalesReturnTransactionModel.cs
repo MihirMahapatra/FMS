@@ -21,6 +21,6 @@
         public SalesReturnOrderModel SalesReturnOrder { get; set; }
         public ProductModel Product { get; set; }
         public BranchModel Branch { get; set; }
-        public FinancialYearModel FinancialYear { get; set; }
+        public BranchFinancialYearModel FinancialYear { get; set; }
     }
 }

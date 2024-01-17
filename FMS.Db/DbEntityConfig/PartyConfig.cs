@@ -15,7 +15,6 @@ namespace FMS.Db.DbEntityConfig
             builder.Property(e => e.Fk_SubledgerId).IsRequired(false);
             builder.Property(e => e.Fk_StateId).IsRequired(true);
             builder.Property(e => e.Fk_CityId).IsRequired(true);
-            builder.Property(e => e.Fk_BranchId).IsRequired(true);
             builder.Property(e => e.PartyName).HasMaxLength(200).IsRequired(true);
             builder.Property(e => e.Address).HasMaxLength(500).IsRequired(true);
             builder.Property(e => e.Phone).HasMaxLength(20).IsRequired(true);
@@ -26,7 +25,6 @@ namespace FMS.Db.DbEntityConfig
             builder.HasOne(p => p.SubLedger).WithMany(s => s.Parties).HasForeignKey(p => p.Fk_SubledgerId).OnDelete(DeleteBehavior.Restrict);
             builder.HasOne(p => p.State).WithMany(s => s.Parties).HasForeignKey(p => p.Fk_StateId).OnDelete(DeleteBehavior.Restrict);
             builder.HasOne(p => p.City).WithMany(s => s.Parties).HasForeignKey(p => p.Fk_CityId).OnDelete(DeleteBehavior.Restrict);
-            builder.HasOne(bs => bs.Branch).WithMany(b => b.Parties).HasForeignKey(bs => bs.Fk_BranchId).OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

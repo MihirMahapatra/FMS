@@ -20,7 +20,7 @@
         public decimal GstAmount { get; set; }
         public decimal Amount { get; set; }
         public BranchModel Branch { get; set; }
-        public FinancialYearModel FinancialYear { get; set; }
+        public BranchFinancialYearModel FinancialYear { get; set; }
         public SalesOrderModel SalesOrder { get; set; }
         public ProductModel Product { get; set; }
     }

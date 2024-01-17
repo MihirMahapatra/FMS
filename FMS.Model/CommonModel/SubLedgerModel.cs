@@ -3,8 +3,8 @@
     public class SubLedgerModel : Base
     {
         public Guid SubLedgerId { get; set; }
-        public Guid? Fk_LedgerId { get; set; }
-        public Guid Fk_BranchId { get; set; }
+        public Guid Fk_LedgerId { get; set; }
+        public Guid? Fk_BranchId { get; set; }
         public string LedgerName { get; set; }
         public string SubLedgerName { get; set; }
         public LedgerModel Ledger { get; set; }

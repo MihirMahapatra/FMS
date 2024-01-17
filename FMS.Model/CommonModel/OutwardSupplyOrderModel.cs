@@ -12,7 +12,7 @@
         public Guid Fk_FinancialYearId { get; set; }
         public decimal TotalAmount { get; set; }
         public BranchModel Branch { get; set; }
-        public FinancialYearModel FinancialYear { get; set; }
+        public BranchFinancialYearModel FinancialYear { get; set; }
         public ProductTypeModel ProductType { get; set; }
         public List<OutwardSupplyTransactionModel> OutwardSupplyTransactions { get; set; }
         public string ProductTypeName { get; set; }

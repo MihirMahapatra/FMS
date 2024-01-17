@@ -8,10 +8,19 @@ namespace FMS.Repository.Devloper
     {
         #region Branch
         Task<Result<BranchModel>> GetAllBranch();
+        Task<Result<BranchModel>> GetBranchById(Guid BranchId);
         Task<Result<BranchModel>> GetBranchAccordingToUser(string UserId);
         Task<Result<bool>> CreateBranch(BranchModel data);
         Task<Result<bool>> UpdateBranch(BranchModel data);
         Task<Result<bool>> DeleteBranch(Guid Id, IDbContextTransaction transaction);
+        #endregion
+        #region Branch Financial Year
+        Task<Result<BranchFinancialYearModel>> GetBranchFinancialYears();
+        Task<Result<FinancialYearModel>> GetFinancialYearById(Guid FinancialYearId);
+        Task<Result<BranchFinancialYearModel>> GetBranchFinancialYears(Guid BranchId);
+        Task<Result<bool>> CreateBranchFinancialYear(BranchFinancialYearModel data);
+        Task<Result<bool>> UpdateBranchFinancialYear(BranchFinancialYearModel data);
+        Task<Result<bool>> DeleteBranchFinancialYear(Guid Id, IDbContextTransaction transaction);
         #endregion
         #region Financial Year
         Task<Result<FinancialYearModel>> GetFinancialYears(Guid BranchId);

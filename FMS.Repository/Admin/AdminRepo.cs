@@ -581,7 +581,7 @@ namespace FMS.Repository.Admin
             try
             {
                 _Result.IsSuccess = false;
-                var Query = await _appDbContext.Groups.Select(s =>
+                var Query = await _appDbContext.ProductGroups.Select(s =>
                     new GroupModel
                     {
                         GroupId = s.GroupId,
@@ -608,7 +608,7 @@ namespace FMS.Repository.Admin
             try
             {
                 _Result.IsSuccess = false;
-                var Query = await _appDbContext.Groups.Where(p => p.Fk_ProductTypeId == ProdutTypeId).Select(s =>
+                var Query = await _appDbContext.ProductGroups.Where(p => p.Fk_ProductTypeId == ProdutTypeId).Select(s =>
                     new GroupModel
                     {
                         GroupId = s.GroupId,
@@ -635,11 +635,11 @@ namespace FMS.Repository.Admin
             try
             {
                 _Result.IsSuccess = false;
-                var Query = await _appDbContext.Groups.Where(s => s.GroupName == data.GroupName).FirstOrDefaultAsync();
+                var Query = await _appDbContext.ProductGroups.Where(s => s.GroupName == data.GroupName).FirstOrDefaultAsync();
                 if (Query == null)
                 {
-                    var newGroup = _mapper.Map<Group>(data);
-                    await _appDbContext.Groups.AddAsync(newGroup);
+                    var newGroup = _mapper.Map<ProductGroup>(data);
+                    await _appDbContext.ProductGroups.AddAsync(newGroup);
                     int count = await _appDbContext.SaveChangesAsync();
                     _Result.Response = (count > 0) ? ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Created) : ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Error);
                 }
@@ -658,7 +658,7 @@ namespace FMS.Repository.Admin
             try
             {
                 _Result.IsSuccess = false;
-                var Query = await _appDbContext.Groups.Where(s => s.GroupId == data.GroupId).FirstOrDefaultAsync();
+                var Query = await _appDbContext.ProductGroups.Where(s => s.GroupId == data.GroupId).FirstOrDefaultAsync();
                 if (Query != null)
                 {
                     _mapper.Map(data, Query);
@@ -687,10 +687,10 @@ namespace FMS.Repository.Admin
                 {
                     if (Id != Guid.Empty)
                     {
-                        var Query = await _appDbContext.Groups.FirstOrDefaultAsync(x => x.GroupId == Id);
+                        var Query = await _appDbContext.ProductGroups.FirstOrDefaultAsync(x => x.GroupId == Id);
                         if (Query != null)
                         {
-                            _appDbContext.Groups.Remove(Query);
+                            _appDbContext.ProductGroups.Remove(Query);
                             int count = await _appDbContext.SaveChangesAsync();
                             _Result.Response = (count > 0) ? ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Deleted) : ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Error);
                         }
@@ -719,11 +719,11 @@ namespace FMS.Repository.Admin
             try
             {
                 _Result.IsSuccess = false;
-                var Query = await _appDbContext.SubGroups.Where(s => s.Fk_GroupId == GroupId).
+                var Query = await _appDbContext.SubGroups.Where(s => s.Fk_ProductGroupId == GroupId).
                                    Select(s => new SubGroupModel
                                    {
-                                       SubGroupId = s.SubGroupId,
-                                       SubGroupName = s.SubGroupName
+                                       SubGroupId = s.ProductSubGroupId,
+                                       SubGroupName = s.ProductSubGroupName
                                    }).ToListAsync();
                 if (Query.Count > 0)
                 {
@@ -745,10 +745,10 @@ namespace FMS.Repository.Admin
             try
             {
                 _Result.IsSuccess = false;
-                var Query = await _appDbContext.SubGroups.FirstOrDefaultAsync(s => s.Fk_GroupId == data.Fk_GroupId && s.SubGroupName == data.SubGroupName);
+                var Query = await _appDbContext.SubGroups.FirstOrDefaultAsync(s => s.Fk_ProductGroupId == data.Fk_GroupId && s.ProductSubGroupName == data.SubGroupName);
                 if (Query == null)
                 {
-                    var newSubGroup = _mapper.Map<SubGroup>(data);
+                    var newSubGroup = _mapper.Map<ProductSubGroup>(data);
                     await _appDbContext.SubGroups.AddAsync(newSubGroup);
                     int count = await _appDbContext.SaveChangesAsync();
                     _Result.Response = (count > 0) ? ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Created) : ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Error);
@@ -768,7 +768,7 @@ namespace FMS.Repository.Admin
             try
             {
                 _Result.IsSuccess = false;
-                var Query = await _appDbContext.SubGroups.FirstOrDefaultAsync(s => s.SubGroupId == data.SubGroupId);
+                var Query = await _appDbContext.SubGroups.FirstOrDefaultAsync(s => s.ProductSubGroupId == data.SubGroupId);
                 if (Query != null)
                 {
                     _mapper.Map(data, Query);
@@ -797,7 +797,7 @@ namespace FMS.Repository.Admin
                 {
                     if (Id != Guid.Empty)
                     {
-                        var Query = await _appDbContext.SubGroups.FirstOrDefaultAsync(x => x.SubGroupId == Id);
+                        var Query = await _appDbContext.SubGroups.FirstOrDefaultAsync(x => x.ProductSubGroupId == Id);
                         if (Query != null)
                         {
                             _appDbContext.SubGroups.Remove(Query);
@@ -947,8 +947,8 @@ namespace FMS.Repository.Admin
                                        Price = s.Price,
                                        WholeSalePrice = s.WholeSalePrice,
                                        GST = s.GST,
-                                       Group = s.Group != null ? new GroupModel { GroupName = s.Group.GroupName } : null,
-                                       SubGroup = s.SubGroup != null ? new SubGroupModel { SubGroupName = s.SubGroup.SubGroupName } : null,
+                                       Group = s.ProductGroup != null ? new GroupModel { GroupName = s.ProductGroup.GroupName } : null,
+                                       SubGroup = s.ProductSubGroup != null ? new SubGroupModel { SubGroupName = s.ProductSubGroup.ProductSubGroupName } : null,
                                        Unit = s.Unit != null ? new UnitModel { UnitName = s.Unit.UnitName } : null,
                                        ProductType = s.ProductType != null ? new ProductTypeModel { Product_Type = s.ProductType.Product_Type } : null,
                                    }).ToListAsync();
@@ -1049,7 +1049,7 @@ namespace FMS.Repository.Admin
             try
             {
                 _Result.IsSuccess = false;
-                var Query = await _appDbContext.Products.Where(s => s.Fk_GroupId == data.Fk_GroupId && s.Fk_ProductTypeId == data.Fk_ProductTypeId && s.ProductName == data.ProductName).FirstOrDefaultAsync();
+                var Query = await _appDbContext.Products.Where(s => s.Fk_ProductGroupId == data.Fk_GroupId && s.Fk_ProductTypeId == data.Fk_ProductTypeId && s.ProductName == data.ProductName).FirstOrDefaultAsync();
                 if (Query == null)
                 {
                     var newProduct = _mapper.Map<Product>(data);

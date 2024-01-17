@@ -12,7 +12,7 @@
         public decimal TotalAmount { get; set; }
         public string Reason { get; set; } = null;
         public BranchModel Branch { get; set; }
-        public FinancialYearModel FinancialYear { get; set; }
+        public BranchFinancialYearModel FinancialYear { get; set; }
         public ProductTypeModel ProductType { get; set; }
         public LabourModel Labour { get; set; }
         public List<DamageTransactionModel> DamageTransactions { get; set; }

@@ -13,7 +13,7 @@
         public LabourType LabourType { get; set; }
         public Branch Branch { get; set; }
         public SubLedger SubLedger { get; set; }
-        public ICollection<ProductionEntry> ProductionEntries { get; set; }
+        public ICollection<LabourOrder> LabourOrders { get; set; }
         public ICollection<DamageOrder> DamageOrders { get; set; }
     }
 }

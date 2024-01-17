@@ -1,10 +1,10 @@
 ﻿namespace FMS.Db.DbEntity
 {
-    public class ProductionEntry
+    public class LabourOrder
     {
-        public Guid ProductionEntryId { get; set; }
-        public string ProductionNo { get; set; }
-        public DateTime ProductionDate { get; set; }
+        public Guid LabourOrderId { get; set; }
+        public string TransactionNo { get; set; }
+        public DateTime TransactionDate { get; set; }
         public Guid Fk_ProductId { get; set; }
         public Guid Fk_LabourId { get; set; }
         public string LabourType { get; set; }
@@ -18,6 +18,6 @@
         public Labour Labour { get; set; }
         public FinancialYear FinancialYear { get; set; }
         public Branch Branch { get; set; }
-        public ICollection<ProductionEntryTransaction> ProductionEntryTransactions { get; set; }
+        public ICollection<LabourTransaction> LabourTransactions { get; set; }
     }
 }

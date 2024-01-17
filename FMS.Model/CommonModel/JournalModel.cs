@@ -18,7 +18,7 @@
         public LedgerModel Ledger { get; set; } 
         public SubLedgerModel SubLedger { get; set; } 
         public BranchModel Branch { get; set; } 
-        public FinancialYearModel FinancialYear { get; set; }
+        public BranchFinancialYearModel FinancialYear { get; set; }
         public string LedgerName { get; set; }
         public string SubLedgerName { get; set; }
         public string LedgerDevName { get; set; }

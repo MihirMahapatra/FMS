@@ -22,7 +22,7 @@
         public string ReceivingPerson { get; set; } = null;
         public SubLedgerModel SubLedger { get; set; }
         public BranchModel Branch { get; set; }
-        public FinancialYearModel FinancialYear { get; set; }
+        public BranchFinancialYearModel FinancialYear { get; set; }
         public List<PurchaseTransactionModel> PurchaseTransactions { get; set; } 
     }
 }

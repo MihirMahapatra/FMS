@@ -52,6 +52,31 @@ namespace FMS.Repository.Devloper
             }
             return _Result;
         }
+        public async Task<Result<BranchModel>> GetBranchById(Guid BranchId)
+        {
+            Result<BranchModel> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                var Query = await (from s in _appDbContext.Branches
+                                   where s.BranchId == BranchId
+                                   select new BranchModel
+                                   {
+                                       BranchId = s.BranchId,
+                                       BranchName = s.BranchName
+                                   }).SingleOrDefaultAsync();
+                {
+                    _Result.SingleObjData = Query;
+                    _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
+                }
+                _Result.IsSuccess = true;
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+            }
+            return _Result;
+        }
         public async Task<Result<BranchModel>> GetBranchAccordingToUser(string UserId)
         {
             Result<BranchModel> _Result = new();
@@ -185,51 +210,6 @@ namespace FMS.Repository.Devloper
         }
         #endregion
         #region Financial Year
-        public async Task<Result<FinancialYearModel>> GetFinancialYears(Guid BranchId)
-        {
-            Result<FinancialYearModel> _Result = new();
-            List<FinancialYearModel> Query = null;
-            try
-            {
-                _Result.IsSuccess = false;
-                if (BranchId != Guid.Empty)
-                {
-                    Query = await (from s in _appDbContext.FinancialYears
-                                   where s.FK_BranchId == BranchId
-                                   orderby s.StartDate descending
-                                   select new FinancialYearModel
-                                   {
-                                       FinancialYearId = s.FinancialYearId,
-                                       Branch = s.Branch != null ? new BranchModel { BranchName = s.Branch.BranchName } : null,
-                                       Financial_Year = s.Financial_Year,
-                                       StartDate = s.StartDate.ToString(),
-                                       EndDate = s.EndDate.ToString(),
-                                   }).ToListAsync();
-                }
-                else
-                {
-                    Query = await (from s in _appDbContext.FinancialYears
-                                   orderby s.StartDate descending
-                                   group s by s.Financial_Year into g
-                                   select new FinancialYearModel
-                                   {
-                                       Financial_Year = g.Key,
-                                   }).ToListAsync();
-                }
-                if (Query.Count > 0)
-                {
-                    _Result.CollectionObjData = Query;
-                    _Result.Count = Query.Count;
-                    _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
-                }
-                _Result.IsSuccess = true;
-            }
-            catch (Exception _Exception)
-            {
-                _Result.Exception = _Exception;
-            }
-            return _Result;
-        }
         public async Task<Result<FinancialYearModel>> GetFinancialYears()
         {
             Result<FinancialYearModel> _Result = new();
@@ -241,7 +221,6 @@ namespace FMS.Repository.Devloper
                                    select new FinancialYearModel
                                    {
                                        FinancialYearId = s.FinancialYearId,
-                                       Branch = s.Branch != null ? new BranchModel { BranchName = s.Branch.BranchName } : null,
                                        Financial_Year = s.Financial_Year,
                                        StartDate = s.StartDate.ToString(),
                                        EndDate = s.EndDate.ToString(),
@@ -250,9 +229,68 @@ namespace FMS.Repository.Devloper
                 {
                     _Result.CollectionObjData = Query;
                     _Result.Count = Query.Count;
+                    _Result.IsSuccess = true;
                     _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
                 }
-                _Result.IsSuccess = true;
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+            }
+            return _Result;
+        }
+        public async Task<Result<FinancialYearModel>> GetFinancialYearById(Guid FinancialYearId)
+        {
+            Result<FinancialYearModel> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                var Query = await (from s in _appDbContext.FinancialYears
+                                   where s.FinancialYearId == FinancialYearId
+                                   select new FinancialYearModel
+                                   {
+                                       FinancialYearId = s.FinancialYearId,
+                                       Financial_Year = s.Financial_Year,
+                                   }).SingleOrDefaultAsync();
+                if (Query!=null)
+                {
+                    _Result.SingleObjData = Query;
+                    _Result.IsSuccess = true;
+                    _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
+                }
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+            }
+            return _Result;
+        }
+        public async Task<Result<FinancialYearModel>> GetFinancialYears(Guid BranchId)
+        {
+            Result<FinancialYearModel> _Result = new();
+
+            try
+            {
+                _Result.IsSuccess = false;
+                if (BranchId != Guid.Empty)
+                {
+                    var Query = await (from s in _appDbContext.FinancialYears
+                                       orderby s.StartDate descending
+                                       select new FinancialYearModel
+                                       {
+                                           FinancialYearId = s.FinancialYearId,
+                                           Financial_Year = s.Financial_Year,
+                                           StartDate = s.StartDate.ToString(),
+                                           EndDate = s.EndDate.ToString(),
+                                       }).ToListAsync();
+                    if (Query.Count > 0)
+                    {
+                        _Result.CollectionObjData = Query;
+                        _Result.Count = Query.Count;
+                        _Result.IsSuccess = true;
+                        _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
+                    }
+                }
             }
             catch (Exception _Exception)
             {
@@ -266,9 +304,7 @@ namespace FMS.Repository.Devloper
             try
             {
                 _Result.IsSuccess = false;
-
-                var Query = await (from s in _appDbContext.FinancialYears where s.Financial_Year == data.Financial_Year && s.FK_BranchId == data.FK_BranchId select s).FirstOrDefaultAsync();
-
+                var Query = await (from s in _appDbContext.FinancialYears where s.Financial_Year == data.Financial_Year select s).FirstOrDefaultAsync();
                 if (Query == null)
                 {
                     if (DateTime.TryParseExact(data.StartDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedStartDate) && DateTime.TryParseExact(data.EndDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedEndDate))
@@ -276,38 +312,15 @@ namespace FMS.Repository.Devloper
                         var newYear = new FinancialYear()
                         {
                             Financial_Year = data.Financial_Year,
-                            FK_BranchId = data.FK_BranchId,
                             StartDate = convertedStartDate,
-                            EndDate = convertedEndDate
+                            EndDate = convertedEndDate,
                         };
                         await _appDbContext.FinancialYears.AddAsync(newYear);
                         await _appDbContext.SaveChangesAsync();
-                        //update stocks
-                        var previousFinancialYearId = await _appDbContext.FinancialYears.OrderByDescending(fy => fy.StartDate).Skip(1).Select(fy => fy.FinancialYearId).FirstOrDefaultAsync();
-                        if (previousFinancialYearId != Guid.Empty)
-                        {
-                            var PeviousYearStock = await _appDbContext.Stocks.Where(s => s.Fk_FinancialYear == previousFinancialYearId && s.Fk_BranchId == data.FK_BranchId).ToListAsync();
-                            foreach (var item in PeviousYearStock)
-                            {
-                                var addOpeningStock = new Stock()
-                                {
-                                    Fk_ProductId = item.Fk_ProductId,
-                                    Fk_FinancialYear = newYear.FinancialYearId,
-                                    Fk_BranchId = item.Fk_BranchId,
-                                    OpeningStock = item.AvilableStock,
-                                    AvilableStock = item.AvilableStock,
-                                    MinQty = item.MinQty,
-                                    MaxQty = item.MaxQty,
-
-                                };
-                                await _appDbContext.Stocks.AddAsync(addOpeningStock);
-                                await _appDbContext.SaveChangesAsync();
-                            }
-                        }
+                        _Result.IsSuccess = true;
                         _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Created);
                     }
                 }
-                _Result.IsSuccess = true;
             }
             catch (Exception _Exception)
             {
@@ -321,7 +334,7 @@ namespace FMS.Repository.Devloper
             try
             {
                 _Result.IsSuccess = false;
-                var Query = await (from s in _appDbContext.FinancialYears where s.FinancialYearId == data.FinancialYearId select s).FirstOrDefaultAsync();
+                var Query = await (from s in _appDbContext.FinancialYears where s.Financial_Year == data.Financial_Year select s).FirstOrDefaultAsync();
                 if (Query != null)
                 {
                     if (DateTime.TryParseExact(data.StartDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedStartDate) && DateTime.TryParseExact(data.EndDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedEndDate))
@@ -335,7 +348,6 @@ namespace FMS.Repository.Devloper
                             _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Modified);
                         }
                     }
-
                 }
                 _Result.IsSuccess = true;
             }
@@ -351,8 +363,6 @@ namespace FMS.Repository.Devloper
             try
             {
                 _Result.IsSuccess = false;
-                Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
-                Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
                 using var localTransaction = transaction ?? await _appDbContext.Database.BeginTransactionAsync();
                 try
                 {
@@ -384,6 +394,185 @@ namespace FMS.Repository.Devloper
             }
 
 
+            return _Result;
+        }
+        #endregion
+        #region Branch Financial Year
+        public async Task<Result<BranchFinancialYearModel>> GetBranchFinancialYears(Guid BranchId)
+        {
+            Result<BranchFinancialYearModel> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                if (BranchId != Guid.Empty)
+                {
+                    var Query = await (from s in _appDbContext.BranchFinancialYears
+                                       where s.Fk_BranchId == BranchId
+                                       select new BranchFinancialYearModel
+                                       {
+                                           Fk_FinancialYearId = s.Fk_FinancialYearId,
+                                           FinancialYear = s.FinancialYear != null ? new FinancialYearModel { Financial_Year = s.FinancialYear.Financial_Year } : null,
+                                           Branch = s.Branch != null ? new BranchModel { BranchName = s.Branch.BranchName } : null,
+                                       }).OrderByDescending(s => s.FinancialYear.Financial_Year).ToListAsync();
+                    if (Query.Count > 0)
+                    {
+                        _Result.CollectionObjData = Query;
+                        _Result.Count = Query.Count;
+                        _Result.IsSuccess = true;
+                        _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
+                    }
+                }
+                else
+                {
+                    _Result.WarningMessage = "Branch Dont Have Any Financial Year";
+                }
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+            }
+            return _Result;
+        }
+        public async Task<Result<BranchFinancialYearModel>> GetBranchFinancialYears()
+        {
+            Result<BranchFinancialYearModel> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                var Query = await (from s in _appDbContext.BranchFinancialYears
+                                   select new BranchFinancialYearModel
+                                   {
+                                       BranchFinancialYearId = s.BranchFinancialYearId,
+                                       Branch = s.Branch != null ? new BranchModel { BranchName = s.Branch.BranchName } : null,
+                                       FinancialYear = s.FinancialYear != null ? new FinancialYearModel { Financial_Year = s.FinancialYear.Financial_Year } : null,
+                                   }).ToListAsync();
+                if (Query.Count > 0)
+                {
+                    _Result.CollectionObjData = Query;
+                    _Result.Count = Query.Count;
+                    _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
+                }
+                _Result.IsSuccess = true;
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+            }
+            return _Result;
+        }
+        public async Task<Result<bool>> CreateBranchFinancialYear(BranchFinancialYearModel data)
+        {
+            Result<bool> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                var Query = await (from s in _appDbContext.BranchFinancialYears where s.Fk_FinancialYearId == data.Fk_FinancialYearId && s.Fk_BranchId == data.FK_BranchId select s).SingleOrDefaultAsync();
+                if (Query == null)
+                {
+                    var newYear = new BranchFinancialYear()
+                    {
+                        Fk_FinancialYearId = data.Fk_FinancialYearId,
+                        Fk_BranchId = data.FK_BranchId,
+                    };
+                    await _appDbContext.BranchFinancialYears.AddAsync(newYear);
+                    await _appDbContext.SaveChangesAsync();
+                    var previousFinancialYearId = await _appDbContext.FinancialYears.OrderByDescending(fy => fy.StartDate).Skip(1).Select(fy => fy.FinancialYearId).FirstOrDefaultAsync();
+                    if (previousFinancialYearId != Guid.Empty)
+                    {
+                        #region Create Stock 
+                        var PeviousYearStock = await _appDbContext.Stocks.Where(s => s.Fk_FinancialYear == previousFinancialYearId && s.Fk_BranchId == data.FK_BranchId).ToListAsync();
+                        foreach (var item in PeviousYearStock)
+                        {
+                            var addOpeningStock = new Stock()
+                            {
+                                Fk_ProductId = item.Fk_ProductId,
+                                Fk_FinancialYear = newYear.Fk_FinancialYearId,
+                                Fk_BranchId = item.Fk_BranchId,
+                                OpeningStock = item.AvilableStock,
+                                AvilableStock = item.AvilableStock,
+                                MinQty = item.MinQty,
+                                MaxQty = item.MaxQty,
+
+                            };
+                            await _appDbContext.Stocks.AddAsync(addOpeningStock);
+                            await _appDbContext.SaveChangesAsync();
+                        }
+                        #endregion
+                        #region Create Ledger Balances
+                        #endregion
+                        #region Create SubLedger Balances
+                        #endregion
+                    }
+                    _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Created);
+                }
+                _Result.IsSuccess = true;
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+            }
+            return _Result;
+        }
+        public async Task<Result<bool>> UpdateBranchFinancialYear(BranchFinancialYearModel data)
+        {
+            Result<bool> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                var Query = await (from s in _appDbContext.BranchFinancialYears where s.BranchFinancialYearId == data.BranchFinancialYearId select s).SingleOrDefaultAsync();
+                if (Query != null)
+                {
+                    Query.Fk_FinancialYearId = data.FK_BranchId;
+                    Query.Fk_BranchId = data.Fk_FinancialYearId;
+                    int count = await _appDbContext.SaveChangesAsync();
+                    if (count > 0)
+                    {
+                        _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Modified);
+                    }
+                }
+                _Result.IsSuccess = true;
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+            }
+            return _Result;
+        }
+        public async Task<Result<bool>> DeleteBranchFinancialYear(Guid Id, IDbContextTransaction transaction)
+        {
+            Result<bool> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                using var localTransaction = transaction ?? await _appDbContext.Database.BeginTransactionAsync();
+                try
+                {
+                    if (Id != Guid.Empty)
+                    {
+                        var Query = await _appDbContext.BranchFinancialYears.FirstOrDefaultAsync(x => x.BranchFinancialYearId == Id);
+                        if (Query != null)
+                        {
+                            _appDbContext.BranchFinancialYears.Remove(Query);
+                            int count = await _appDbContext.SaveChangesAsync();
+                            if (count > 0)
+                            {
+                                _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Deleted);
+                            }
+                        }
+                        _Result.IsSuccess = true;
+                        localTransaction.Commit();
+                    }
+                }
+                catch
+                {
+                    localTransaction.Rollback();
+                    throw;
+                }
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+            }
             return _Result;
         }
         #endregion
@@ -504,7 +693,7 @@ namespace FMS.Repository.Devloper
             {
                 _Result.Exception = _Exception;
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"DevloperRepo/DeleteLedgerGroup : {_Exception.Message}");
-            }                               
+            }
             return _Result;
         }
         #endregion
@@ -625,7 +814,7 @@ namespace FMS.Repository.Devloper
             {
                 _Result.Exception = _Exception;
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"DevloperRepo/DeleteLedgerSubGroup : {_Exception.Message}");
-            }                                
+            }
             return _Result;
         }
         #endregion
@@ -771,9 +960,9 @@ namespace FMS.Repository.Devloper
                 _Result.Exception = _Exception;
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"DevloperRepo/DeleteLedger : {_Exception.Message}");
             }
-            
-            
-            
+
+
+
             return _Result;
         }
 

@@ -7,7 +7,6 @@
         public Guid Fk_SubledgerId { get; set; }
         public Guid Fk_StateId { get; set; }
         public Guid Fk_CityId { get; set; }
-        public Guid Fk_BranchId { get; set; }
         public string PartyName { get; set; }
         public string Address { get; set; }
         public string Phone { get; set; }
@@ -19,7 +18,6 @@
         public PartyTypeModel PartyType { get; set; }
         public StateModel State { get; set; }
         public CityModel City { get; set; }
-        public BranchModel Branch { get; set; }
         public LedgerModel Ledger { get; set; }
         public SubLedgerModel SubLedger { get; set; }
         public SubLedgerBalanceModel SubLedgerBalance { get; set; }

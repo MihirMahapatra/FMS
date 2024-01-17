@@ -73,6 +73,33 @@ namespace FMS.Controllers.Devloper
             return new JsonResult(result);
         }
         #endregion
+        #region Branch Financial Year
+        [HttpGet]
+        public async Task<IActionResult> GetBranchFinancialYears()
+        {
+            var result = await _devloperSvcs.GetBranchFinancialYears();
+            return new JsonResult(result);
+        }
+        [HttpPost, Authorize(Policy = "Create")]
+        public async Task<IActionResult> CreateBranchFinancialYear([FromBody] BranchFinancialYearModel model)
+        {
+            var result = await _devloperSvcs.CreateBranchFinancialYear(model);
+            return new JsonResult(result);
+        }
+        [HttpPost, Authorize(Policy = "Edit")]
+        public async Task<IActionResult> UpdateBranchFinancialYear([FromBody] BranchFinancialYearModel model)
+        {
+            var result = await _devloperSvcs.UpdateBranchFinancialYear(model);
+            return new JsonResult(result);
+        }
+        [HttpPost, Authorize(Policy = "Delete")]
+        public async Task<IActionResult> DeleteBranchFinancialYear([FromQuery] string id)
+        {
+            Guid BranchId = Guid.Parse(id);
+            var result = await _devloperSvcs.DeleteBranchFinancialYear(BranchId);
+            return new JsonResult(result);
+        }
+        #endregion
         #region Accounting Setup
         #region LedgerGroup
         [HttpGet]

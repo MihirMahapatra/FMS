@@ -4,16 +4,16 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace FMS.Db.DbEntityConfig
 {
-    public class SubGroupConfig : IEntityTypeConfiguration<SubGroup>
+    public class SubGroupConfig : IEntityTypeConfiguration<ProductSubGroup>
     {
-        public void Configure(EntityTypeBuilder<SubGroup> builder)
+        public void Configure(EntityTypeBuilder<ProductSubGroup> builder)
         {
             builder.ToTable("SubGroups", "dbo");
-            builder.HasKey(e => e.SubGroupId);
-            builder.Property(e => e.SubGroupId).HasDefaultValueSql("(newid())");
-            builder.Property(e => e.Fk_GroupId).IsRequired(false);
-            builder.Property(e => e.SubGroupName).HasMaxLength(200).IsRequired(true);
-            builder.HasOne(s => s.Group).WithMany(t => t.SubGroups).HasForeignKey(s => s.Fk_GroupId).OnDelete(DeleteBehavior.Restrict);
+            builder.HasKey(e => e.ProductSubGroupId);
+            builder.Property(e => e.ProductSubGroupId).HasDefaultValueSql("(newid())");
+            builder.Property(e => e.Fk_ProductGroupId).IsRequired(false);
+            builder.Property(e => e.ProductSubGroupName).HasMaxLength(200).IsRequired(true);
+            builder.HasOne(s => s.ProductGroup).WithMany(t => t.ProductSubGroups).HasForeignKey(s => s.Fk_ProductGroupId).OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

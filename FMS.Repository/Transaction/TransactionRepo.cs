@@ -39,28 +39,13 @@ namespace FMS.Repository.Transaction
                     Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
                     Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
                  
-                    _Result.CollectionObjData = await (from s in _appDbContext.SubLedgers
-                                       join sb in _appDbContext.SubLedgerBalances
-                                       on s.SubLedgerId equals sb.Fk_SubLedgerId
-                                       where s.Fk_LedgerId == PartyTypeId && sb.Fk_BranchId == BranchId && sb.Fk_FinancialYearId == FinancialYear
+                    _Result.CollectionObjData = await (from s in _appDbContext.SubLedgers where s.Fk_LedgerId == PartyTypeId 
                                        select new SubLedgerModel
                                        {
                                            SubLedgerId = s.SubLedgerId,
                                            SubLedgerName = s.SubLedgerName,
                                        }).ToListAsync();
-                }
-                else
-                {
-                    _Result.CollectionObjData = await (from s in _appDbContext.SubLedgers
-                                                       join sb in _appDbContext.SubLedgerBalances
-                                                       on s.SubLedgerId equals sb.Fk_SubLedgerId
-                                                       where s.Fk_LedgerId == PartyTypeId
-                                                       select new SubLedgerModel
-                                                       {
-                                                           SubLedgerId = s.SubLedgerId,
-                                                           SubLedgerName = s.SubLedgerName,
-                                                       }).ToListAsync();
-                }
+                }               
                     
                 if (_Result.CollectionObjData.Count > 0)
                 {
@@ -1330,10 +1315,10 @@ namespace FMS.Repository.Transaction
             {
                 Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
                 _Result.IsSuccess = false;
-                var lastProduction = await _appDbContext.ProductionEntries.Where(s => s.FK_BranchId == BranchId && s.LabourType.ToLower() == "production").OrderByDescending(s => s.ProductionNo).Select(s => new { s.ProductionNo }).FirstOrDefaultAsync();
+                var lastProduction = await _appDbContext.LabourOrders.Where(s => s.FK_BranchId == BranchId && s.LabourType.ToLower() == "production").OrderByDescending(s => s.TransactionNo).Select(s => new { s.TransactionNo }).FirstOrDefaultAsync();
                 if (lastProduction != null)
                 {
-                    var lastProductionNo = lastProduction.ProductionNo;
+                    var lastProductionNo = lastProduction.TransactionNo;
                     _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
                     if (int.TryParse(lastProductionNo.AsSpan(2), out int currentId))
                     {
@@ -1395,11 +1380,11 @@ namespace FMS.Repository.Transaction
             {
                 Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
                 Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
-                var Query = await _appDbContext.ProductionEntries.Where(s => s.LabourType.ToLower() == "production" && s.Fk_FinancialYearId == FinancialYear && s.FK_BranchId == BranchId).Select(s => new ProductionEntryModel
+                var Query = await _appDbContext.LabourOrders.Where(s => s.LabourType.ToLower() == "production" && s.Fk_FinancialYearId == FinancialYear && s.FK_BranchId == BranchId).Select(s => new ProductionEntryModel
                 {
-                    ProductionEntryId = s.ProductionEntryId,
-                    ProductionNo = s.ProductionNo,
-                    ProductionDate = s.ProductionDate,
+                    ProductionEntryId = s.LabourOrderId,
+                    ProductionNo = s.TransactionNo,
+                    ProductionDate = s.TransactionDate,
                     Product = s.Product != null ? new ProductModel { ProductName = s.Product.ProductName } : null,
                     Labour = s.Labour != null ? new LabourModel { LabourName = s.Labour.LabourName } : null,
                     LabourType = s.LabourType,
@@ -1439,10 +1424,10 @@ namespace FMS.Repository.Transaction
                         foreach (var item in data.RowData)
                         {
                             #region Production Entry
-                            var newProductionEntry = new ProductionEntry
+                            var newProductionEntry = new LabourOrder
                             {
-                                ProductionDate = convertedProductionDate,
-                                ProductionNo = data.ProductionNo,
+                                TransactionDate = convertedProductionDate,
+                                TransactionNo = data.ProductionNo,
                                 FK_BranchId = BranchId,
                                 Fk_FinancialYearId = FinancialYear,
                                 Fk_ProductId = Guid.Parse(item[0]),
@@ -1452,7 +1437,7 @@ namespace FMS.Repository.Transaction
                                 Rate = Convert.ToDecimal(item[4]),
                                 Amount = Convert.ToDecimal(item[5])
                             };
-                            await _appDbContext.ProductionEntries.AddAsync(newProductionEntry);
+                            await _appDbContext.LabourOrders.AddAsync(newProductionEntry);
                             await _appDbContext.SaveChangesAsync();
                             #endregion
                             #region Stock
@@ -1497,17 +1482,17 @@ namespace FMS.Repository.Transaction
                                     await _appDbContext.SaveChangesAsync();
                                 }
                                 //******************************************Production Entry Transaction***************************************************//
-                                var newProductionEntryTransaction = new ProductionEntryTransaction()
+                                var newProductionEntryTransaction = new LabourTransaction()
                                 {
-                                    Fk_ProductionEntryId = newProductionEntry.ProductionEntryId,
-                                    TransactionNo = newProductionEntry.ProductionNo,
+                                    Fk_ProductionEntryId = newProductionEntry.LabourOrderId,
+                                    TransactionNo = newProductionEntry.TransactionNo,
                                     TransactionDate = convertedProductionDate,
                                     Fk_BranchId = BranchId,
                                     Fk_FinancialYearId = FinancialYear,
                                     Fk_ProductId = item1.RawMaterialId,
                                     Quantity = (newProductionEntry.Quantity * item1.Quantity),
                                 };
-                                await _appDbContext.ProductionEntryTransactions.AddAsync(newProductionEntryTransaction);
+                                await _appDbContext.LabourTransactions.AddAsync(newProductionEntryTransaction);
                                 await _appDbContext.SaveChangesAsync();
                             }
                             #endregion
@@ -1571,7 +1556,7 @@ namespace FMS.Repository.Transaction
                 {
                     if (DateTime.TryParseExact(data.Date, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedProductionDate))
                     {
-                        var UpdateProductionEntry = await (from s in _appDbContext.ProductionEntries where s.ProductionEntryId == data.ProductionEntryId && s.FK_BranchId == BranchId select s).SingleOrDefaultAsync();
+                        var UpdateProductionEntry = await (from s in _appDbContext.LabourOrders where s.LabourOrderId == data.ProductionEntryId && s.FK_BranchId == BranchId select s).SingleOrDefaultAsync();
                         if (UpdateProductionEntry != null)
                         {
                             var getFinishedGoodRawmaterial = await _appDbContext.Productions.Where(s => s.FinishedGoodId == data.Fk_ProductId).ToListAsync();
@@ -1609,7 +1594,7 @@ namespace FMS.Repository.Transaction
                                         await _appDbContext.SaveChangesAsync();
                                     }
                                     //******************************************Production Entry Transaction***************************************************//
-                                    var getSingleProductionEntryTransaction = await _appDbContext.ProductionEntryTransactions.Where(s => s.Fk_ProductionEntryId == UpdateProductionEntry.ProductionEntryId && s.Fk_ProductId == item.RawMaterialId && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).SingleOrDefaultAsync();
+                                    var getSingleProductionEntryTransaction = await _appDbContext.LabourTransactions.Where(s => s.Fk_ProductionEntryId == UpdateProductionEntry.LabourOrderId && s.Fk_ProductId == item.RawMaterialId && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).SingleOrDefaultAsync();
                                     if (getSingleProductionEntryTransaction != null)
                                     {
                                         var differencetrn = ((UpdateProductionEntry.Quantity - data.Quantity) * item.Quantity);
@@ -1643,7 +1628,7 @@ namespace FMS.Repository.Transaction
                                 }
                                 #endregion
                                 # region Delete Production Entry Transaction
-                                var deleteProductionEntryTransaction = await _appDbContext.ProductionEntryTransactions.Where(s => s.Fk_ProductionEntryId == UpdateProductionEntry.ProductionEntryId && s.Fk_BranchId == BranchId).ToListAsync();
+                                var deleteProductionEntryTransaction = await _appDbContext.LabourTransactions.Where(s => s.Fk_ProductionEntryId == UpdateProductionEntry.LabourOrderId && s.Fk_BranchId == BranchId).ToListAsync();
                                 _appDbContext.RemoveRange(deleteProductionEntryTransaction);
                                 await _appDbContext.SaveChangesAsync();
                                 #endregion
@@ -1658,17 +1643,17 @@ namespace FMS.Repository.Transaction
                                         await _appDbContext.SaveChangesAsync();
                                     }
                                     //******************************************Production Entry Transaction***************************************************//
-                                    var newProductionEntryTransaction = new ProductionEntryTransaction()
+                                    var newProductionEntryTransaction = new LabourTransaction()
                                     {
-                                        Fk_ProductionEntryId = UpdateProductionEntry.ProductionEntryId,
-                                        TransactionNo = UpdateProductionEntry.ProductionNo,
+                                        Fk_ProductionEntryId = UpdateProductionEntry.LabourOrderId,
+                                        TransactionNo = UpdateProductionEntry.TransactionNo,
                                         TransactionDate = convertedProductionDate,
                                         Fk_BranchId = BranchId,
                                         Fk_FinancialYearId = FinancialYear,
                                         Fk_ProductId = item.RawMaterialId,
                                         Quantity = (data.Quantity * item.Quantity),
                                     };
-                                    await _appDbContext.ProductionEntryTransactions.AddAsync(newProductionEntryTransaction);
+                                    await _appDbContext.LabourTransactions.AddAsync(newProductionEntryTransaction);
                                     await _appDbContext.SaveChangesAsync();
                                 }
 
@@ -1724,7 +1709,7 @@ namespace FMS.Repository.Transaction
                             }
                             #endregion
                             #region Update Production Entry
-                            UpdateProductionEntry.ProductionDate = convertedProductionDate;
+                            UpdateProductionEntry.TransactionDate = convertedProductionDate;
                             UpdateProductionEntry.Fk_ProductId = data.Fk_ProductId;
                             UpdateProductionEntry.Fk_LabourId = data.Fk_LabourId;
                             UpdateProductionEntry.LabourType = data.LabourType;
@@ -1765,11 +1750,11 @@ namespace FMS.Repository.Transaction
                 {
                     if (Id != Guid.Empty)
                     {
-                        var DeleteProductionEntry = await (from s in _appDbContext.ProductionEntries where s.ProductionEntryId == Id && s.FK_BranchId == BranchId select s).SingleOrDefaultAsync();
+                        var DeleteProductionEntry = await (from s in _appDbContext.LabourOrders where s.LabourOrderId == Id && s.FK_BranchId == BranchId select s).SingleOrDefaultAsync();
                         if (DeleteProductionEntry != null)
                         {
                             #region Production Entry Transaction 
-                            var DeleteProductionEntryTransacion = await (from s in _appDbContext.ProductionEntryTransactions where s.Fk_ProductionEntryId == Id && s.Fk_BranchId == BranchId select s).ToListAsync();
+                            var DeleteProductionEntryTransacion = await (from s in _appDbContext.LabourTransactions where s.Fk_ProductionEntryId == Id && s.Fk_BranchId == BranchId select s).ToListAsync();
                             if (DeleteProductionEntryTransacion != null)
                             {
                                 foreach (var item in DeleteProductionEntryTransacion)
@@ -1784,7 +1769,7 @@ namespace FMS.Repository.Transaction
                                     }
                                     #endregion
                                 }
-                                _appDbContext.ProductionEntryTransactions.RemoveRange(DeleteProductionEntryTransacion);
+                                _appDbContext.LabourTransactions.RemoveRange(DeleteProductionEntryTransacion);
                                 await _appDbContext.SaveChangesAsync();
                             }
                             #endregion
@@ -1829,7 +1814,7 @@ namespace FMS.Repository.Transaction
                             }
                             #endregion
                             //Delete Production Entry
-                            _appDbContext.ProductionEntries.Remove(DeleteProductionEntry);
+                            _appDbContext.LabourOrders.Remove(DeleteProductionEntry);
                             await _appDbContext.SaveChangesAsync();
                         }
                         _Result.IsSuccess = true;
@@ -1860,10 +1845,10 @@ namespace FMS.Repository.Transaction
             {
                 Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
                 _Result.IsSuccess = false;
-                var lastService = await _appDbContext.ProductionEntries.Where(s => s.FK_BranchId == BranchId && s.LabourType.ToLower() == "service").OrderByDescending(s => s.ProductionNo).Select(s => new { s.ProductionNo }).FirstOrDefaultAsync();
+                var lastService = await _appDbContext.LabourOrders.Where(s => s.FK_BranchId == BranchId && s.LabourType.ToLower() == "service").OrderByDescending(s => s.TransactionNo).Select(s => new { s.TransactionNo }).FirstOrDefaultAsync();
                 if (lastService != null)
                 {
-                    var lastServicnNo = lastService.ProductionNo;
+                    var lastServicnNo = lastService.TransactionNo;
                     _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
                     if (int.TryParse(lastServicnNo.AsSpan(2), out int currentId))
                     {
@@ -1892,11 +1877,11 @@ namespace FMS.Repository.Transaction
             {
                 Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
                 Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
-                var Query = await _appDbContext.ProductionEntries.Where(s => s.Fk_FinancialYearId == FinancialYear && s.FK_BranchId == BranchId && s.LabourType.ToLower() == "service").Select(s => new ProductionEntryModel
+                var Query = await _appDbContext.LabourOrders.Where(s => s.Fk_FinancialYearId == FinancialYear && s.FK_BranchId == BranchId && s.LabourType.ToLower() == "service").Select(s => new ProductionEntryModel
                 {
-                    ProductionEntryId = s.ProductionEntryId,
-                    ProductionNo = s.ProductionNo,
-                    ProductionDate = s.ProductionDate,
+                    ProductionEntryId = s.LabourOrderId,
+                    ProductionNo = s.TransactionNo,
+                    ProductionDate = s.TransactionDate,
                     Product = s.Product != null ? new ProductModel { ProductName = s.Product.ProductName } : null,
                     Labour = s.Labour != null ? new LabourModel { LabourName = s.Labour.LabourName } : null,
                     LabourType = s.LabourType,
@@ -1937,10 +1922,10 @@ namespace FMS.Repository.Transaction
                         foreach (var item in data.RowData)
                         {
                             #region Production Entry
-                            var newProductionEntry = new ProductionEntry
+                            var newProductionEntry = new LabourOrder
                             {
-                                ProductionDate = convertedProductionDate,
-                                ProductionNo = data.ProductionNo,
+                                TransactionDate = convertedProductionDate,
+                                TransactionNo = data.ProductionNo,
                                 FK_BranchId = BranchId,
                                 Fk_FinancialYearId = FinancialYear,
                                 Fk_ProductId = Guid.Parse(item[0]),
@@ -1951,7 +1936,7 @@ namespace FMS.Repository.Transaction
                                 OTAmount = Convert.ToDecimal(item[5]),
                                 Amount = Convert.ToDecimal(item[6])
                             };
-                            await _appDbContext.ProductionEntries.AddAsync(newProductionEntry);
+                            await _appDbContext.LabourOrders.AddAsync(newProductionEntry);
                             await _appDbContext.SaveChangesAsync();
                             #endregion
                             #region SubLedgerBalance & Ledger Balance
@@ -2014,7 +1999,7 @@ namespace FMS.Repository.Transaction
                 {
                     if (DateTime.TryParseExact(data.Date, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedProductionDate))
                     {
-                        var UpdateProductionEntry = await (from s in _appDbContext.ProductionEntries where s.ProductionEntryId == data.ProductionEntryId && s.FK_BranchId == BranchId select s).SingleOrDefaultAsync();
+                        var UpdateProductionEntry = await (from s in _appDbContext.LabourOrders where s.LabourOrderId == data.ProductionEntryId && s.FK_BranchId == BranchId select s).SingleOrDefaultAsync();
                         if (UpdateProductionEntry != null)
                         {
                             #region Ledger & SubLedger Balance
@@ -2050,7 +2035,7 @@ namespace FMS.Repository.Transaction
                             }
                             #endregion
                             #region Update Production Entry
-                            UpdateProductionEntry.ProductionDate = convertedProductionDate;
+                            UpdateProductionEntry.TransactionDate = convertedProductionDate;
                             UpdateProductionEntry.Fk_ProductId = data.Fk_ProductId;
                             UpdateProductionEntry.Fk_LabourId = data.Fk_LabourId;
                             UpdateProductionEntry.LabourType = data.LabourType;
@@ -2092,14 +2077,14 @@ namespace FMS.Repository.Transaction
                 {
                     if (Id != Guid.Empty)
                     {
-                        var DeleteProductionEntry = await (from s in _appDbContext.ProductionEntries where s.ProductionEntryId == Id && s.FK_BranchId == BranchId select s).SingleOrDefaultAsync();
+                        var DeleteProductionEntry = await (from s in _appDbContext.LabourOrders where s.LabourOrderId == Id && s.FK_BranchId == BranchId select s).SingleOrDefaultAsync();
                         if (DeleteProductionEntry != null)
                         {
                             #region Production Entry Transaction 
-                            var DeleteProductionEntryTransacion = await (from s in _appDbContext.ProductionEntryTransactions where s.Fk_ProductionEntryId == Id && s.Fk_BranchId == BranchId select s).ToListAsync();
+                            var DeleteProductionEntryTransacion = await (from s in _appDbContext.LabourTransactions where s.Fk_ProductionEntryId == Id && s.Fk_BranchId == BranchId select s).ToListAsync();
                             if (DeleteProductionEntryTransacion != null)
                             {
-                                _appDbContext.ProductionEntryTransactions.RemoveRange(DeleteProductionEntryTransacion);
+                                _appDbContext.LabourTransactions.RemoveRange(DeleteProductionEntryTransacion);
                                 await _appDbContext.SaveChangesAsync();
                             }
                             #endregion                         
@@ -2135,7 +2120,7 @@ namespace FMS.Repository.Transaction
                             }
                             #endregion
                             //Delete Production Entry
-                            _appDbContext.ProductionEntries.Remove(DeleteProductionEntry);
+                            _appDbContext.LabourOrders.Remove(DeleteProductionEntry);
                             await _appDbContext.SaveChangesAsync();
                         }
                         _Result.IsSuccess = true;
@@ -2165,8 +2150,7 @@ namespace FMS.Repository.Transaction
             try
             {
                 _Result.IsSuccess = false;
-                var Query = await (from s in _appDbContext.SubLedgers
-                                   where s.Fk_LedgerId == PartyTypeId
+                var Query = await (from s in _appDbContext.SubLedgers where s.Fk_LedgerId == PartyTypeId
                                    select new SubLedgerModel
                                    {
                                        SubLedgerId = s.SubLedgerId,

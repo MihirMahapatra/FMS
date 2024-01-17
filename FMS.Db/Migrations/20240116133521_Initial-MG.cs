@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace FMS.Db.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialMg : Migration
+    public partial class InitialMG : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -48,16 +48,18 @@ namespace FMS.Db.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Groups",
+                name: "FinancialYears",
                 schema: "dbo",
                 columns: table => new
                 {
-                    GroupId = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "(newid())"),
-                    GroupName = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false)
+                    FinancialYearId = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "(newid())"),
+                    Financial_Year = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    StartDate = table.Column<DateTime>(type: "datetime", nullable: false),
+                    EndDate = table.Column<DateTime>(type: "datetime", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Groups", x => x.GroupId);
+                    table.PrimaryKey("PK_FinancialYears", x => x.FinancialYearId);
                 });
 
             migrationBuilder.CreateTable(
@@ -150,26 +152,30 @@ namespace FMS.Db.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "FinancialYears",
+                name: "CompanyDetails",
                 schema: "dbo",
                 columns: table => new
                 {
-                    FinancialYearId = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "(newid())"),
-                    FK_BranchId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Financial_Year = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    StartDate = table.Column<DateTime>(type: "datetime", nullable: false),
-                    EndDate = table.Column<DateTime>(type: "datetime", nullable: false)
+                    CompanyId = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "(newid())"),
+                    Fk_BranchId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    State = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Adress = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    GSTIN = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    logo = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_FinancialYears", x => x.FinancialYearId);
+                    table.PrimaryKey("PK_CompanyDetails", x => x.CompanyId);
                     table.ForeignKey(
-                        name: "FK_FinancialYears_Branches_FK_BranchId",
-                        column: x => x.FK_BranchId,
+                        name: "FK_CompanyDetails_Branches_Fk_BranchId",
+                        column: x => x.Fk_BranchId,
                         principalSchema: "dbo",
                         principalTable: "Branches",
                         principalColumn: "BranchId",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -194,23 +200,30 @@ namespace FMS.Db.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "SubGroups",
+                name: "BranchFinancialYears",
                 schema: "dbo",
                 columns: table => new
                 {
-                    SubGroupId = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "(newid())"),
-                    Fk_GroupId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    SubGroupName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false)
+                    BranchFinancialYearId = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "(newid())"),
+                    Fk_FinancialYearId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Fk_BranchId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_SubGroups", x => x.SubGroupId);
+                    table.PrimaryKey("PK_BranchFinancialYears", x => x.BranchFinancialYearId);
                     table.ForeignKey(
-                        name: "FK_SubGroups_Groups_Fk_GroupId",
-                        column: x => x.Fk_GroupId,
+                        name: "FK_BranchFinancialYears_Branches_Fk_BranchId",
+                        column: x => x.Fk_BranchId,
                         principalSchema: "dbo",
-                        principalTable: "Groups",
-                        principalColumn: "GroupId",
+                        principalTable: "Branches",
+                        principalColumn: "BranchId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_BranchFinancialYears_FinancialYears_Fk_FinancialYearId",
+                        column: x => x.Fk_FinancialYearId,
+                        principalSchema: "dbo",
+                        principalTable: "FinancialYears",
+                        principalColumn: "FinancialYearId",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -270,44 +283,6 @@ namespace FMS.Db.Migrations
                         principalTable: "LedgerGroups",
                         principalColumn: "LedgerGroupId",
                         onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AspNetUsers",
-                schema: "dbo",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    FkTokenId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: true),
-                    BirthDate = table.Column<DateTime>(type: "datetime", nullable: true),
-                    Photo = table.Column<string>(type: "varchar(500)", unicode: false, maxLength: 500, nullable: true),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValueSql: "((1))"),
-                    UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    NormalizedEmail = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    EmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
-                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    SecurityStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneNumberConfirmed = table.Column<bool>(type: "bit", nullable: false),
-                    TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
-                    LockoutEnd = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    LockoutEnabled = table.Column<bool>(type: "bit", nullable: false),
-                    AccessFailedCount = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AspNetUsers", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_AppUser_RegisterToken",
-                        column: x => x.FkTokenId,
-                        principalSchema: "dbo",
-                        principalTable: "RegisterTokens",
-                        principalColumn: "TokenId",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -391,6 +366,65 @@ namespace FMS.Db.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ProductGroups",
+                schema: "dbo",
+                columns: table => new
+                {
+                    GroupId = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "(newid())"),
+                    GroupName = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    Fk_ProductTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProductGroups", x => x.GroupId);
+                    table.ForeignKey(
+                        name: "FK_ProductGroups_ProductTypes_Fk_ProductTypeId",
+                        column: x => x.Fk_ProductTypeId,
+                        principalSchema: "dbo",
+                        principalTable: "ProductTypes",
+                        principalColumn: "ProductTypeId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUsers",
+                schema: "dbo",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    FkTokenId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: true),
+                    BirthDate = table.Column<DateTime>(type: "datetime", nullable: true),
+                    Photo = table.Column<string>(type: "varchar(500)", unicode: false, maxLength: 500, nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValueSql: "((1))"),
+                    UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    NormalizedEmail = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    EmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
+                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SecurityStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneNumberConfirmed = table.Column<bool>(type: "bit", nullable: false),
+                    TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
+                    LockoutEnd = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    LockoutEnabled = table.Column<bool>(type: "bit", nullable: false),
+                    AccessFailedCount = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AppUser_RegisterToken",
+                        column: x => x.FkTokenId,
+                        principalSchema: "dbo",
+                        principalTable: "RegisterTokens",
+                        principalColumn: "TokenId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Cities",
                 schema: "dbo",
                 columns: table => new
@@ -416,53 +450,6 @@ namespace FMS.Db.Migrations
                         principalSchema: "dbo",
                         principalTable: "States",
                         principalColumn: "StateId",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Products",
-                schema: "dbo",
-                columns: table => new
-                {
-                    ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "(newid())"),
-                    ProductName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false, defaultValue: 0m),
-                    GST = table.Column<decimal>(type: "decimal(18,2)", nullable: false, defaultValue: 0m),
-                    Fk_ProductTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Fk_UnitId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Fk_GroupId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Fk_SubGroupId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Products", x => x.ProductId);
-                    table.ForeignKey(
-                        name: "FK_Products_Groups_Fk_GroupId",
-                        column: x => x.Fk_GroupId,
-                        principalSchema: "dbo",
-                        principalTable: "Groups",
-                        principalColumn: "GroupId",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Products_ProductTypes_Fk_ProductTypeId",
-                        column: x => x.Fk_ProductTypeId,
-                        principalSchema: "dbo",
-                        principalTable: "ProductTypes",
-                        principalColumn: "ProductTypeId",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Products_SubGroups_Fk_SubGroupId",
-                        column: x => x.Fk_SubGroupId,
-                        principalSchema: "dbo",
-                        principalTable: "SubGroups",
-                        principalColumn: "SubGroupId",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Products_Units_Fk_UnitId",
-                        column: x => x.Fk_UnitId,
-                        principalSchema: "dbo",
-                        principalTable: "Units",
-                        principalColumn: "UnitId",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -502,6 +489,7 @@ namespace FMS.Db.Migrations
                     LedgerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "(newid())"),
                     LedgerName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     LedgerType = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: true),
+                    HasSubLedger = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
                     Fk_LedgerGroupId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Fk_LedgerSubGroupId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
@@ -521,6 +509,27 @@ namespace FMS.Db.Migrations
                         principalSchema: "dbo",
                         principalTable: "LedgerSubGroups",
                         principalColumn: "LedgerSubGroupId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SubGroups",
+                schema: "dbo",
+                columns: table => new
+                {
+                    ProductSubGroupId = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "(newid())"),
+                    Fk_ProductGroupId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    ProductSubGroupName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SubGroups", x => x.ProductSubGroupId);
+                    table.ForeignKey(
+                        name: "FK_SubGroups_ProductGroups_Fk_ProductGroupId",
+                        column: x => x.Fk_ProductGroupId,
+                        principalSchema: "dbo",
+                        principalTable: "ProductGroups",
+                        principalColumn: "GroupId",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -647,221 +656,13 @@ namespace FMS.Db.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "InwardSupplyTransactions",
-                schema: "dbo",
-                columns: table => new
-                {
-                    InwardSupplyTransactionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NEWID()"),
-                    Fk_InwardSupplyOrderId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    TransactionNo = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    TransactionDate = table.Column<DateTime>(type: "datetime", nullable: false),
-                    Fk_ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Fk_BranchId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Fk_FinancialYearId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Quantity = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Rate = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_InwardSupplyTransactions", x => x.InwardSupplyTransactionId);
-                    table.ForeignKey(
-                        name: "FK_InwardSupplyTransactions_Branches_Fk_BranchId",
-                        column: x => x.Fk_BranchId,
-                        principalSchema: "dbo",
-                        principalTable: "Branches",
-                        principalColumn: "BranchId",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_InwardSupplyTransactions_FinancialYears_Fk_FinancialYearId",
-                        column: x => x.Fk_FinancialYearId,
-                        principalSchema: "dbo",
-                        principalTable: "FinancialYears",
-                        principalColumn: "FinancialYearId",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_InwardSupplyTransactions_InwardSupplyOrders_Fk_InwardSupplyOrderId",
-                        column: x => x.Fk_InwardSupplyOrderId,
-                        principalSchema: "dbo",
-                        principalTable: "InwardSupplyOrders",
-                        principalColumn: "InwardSupplyOrderId",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_InwardSupplyTransactions_Products_Fk_ProductId",
-                        column: x => x.Fk_ProductId,
-                        principalSchema: "dbo",
-                        principalTable: "Products",
-                        principalColumn: "ProductId",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "LabourRates",
-                schema: "dbo",
-                columns: table => new
-                {
-                    LabourRateId = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "(newid())"),
-                    Fk_BranchId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    Fk_FinancialYearId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    Date = table.Column<DateTime>(type: "datetime", nullable: true),
-                    Fk_ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Rate = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_LabourRates", x => x.LabourRateId);
-                    table.ForeignKey(
-                        name: "FK_LabourRates_Branches_Fk_BranchId",
-                        column: x => x.Fk_BranchId,
-                        principalSchema: "dbo",
-                        principalTable: "Branches",
-                        principalColumn: "BranchId",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_LabourRates_FinancialYears_Fk_FinancialYearId",
-                        column: x => x.Fk_FinancialYearId,
-                        principalSchema: "dbo",
-                        principalTable: "FinancialYears",
-                        principalColumn: "FinancialYearId",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_LabourRates_Products_Fk_ProductId",
-                        column: x => x.Fk_ProductId,
-                        principalSchema: "dbo",
-                        principalTable: "Products",
-                        principalColumn: "ProductId",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "OutwardSupplyTransactions",
-                schema: "dbo",
-                columns: table => new
-                {
-                    OutwardSupplyTransactionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NEWID()"),
-                    Fk_OutwardSupplyOrderId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    TransactionNo = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    TransactionDate = table.Column<DateTime>(type: "datetime", nullable: false),
-                    Fk_ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Fk_BranchId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Fk_FinancialYearId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Quantity = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Rate = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_OutwardSupplyTransactions", x => x.OutwardSupplyTransactionId);
-                    table.ForeignKey(
-                        name: "FK_OutwardSupplyTransactions_Branches_Fk_BranchId",
-                        column: x => x.Fk_BranchId,
-                        principalSchema: "dbo",
-                        principalTable: "Branches",
-                        principalColumn: "BranchId",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_OutwardSupplyTransactions_FinancialYears_Fk_FinancialYearId",
-                        column: x => x.Fk_FinancialYearId,
-                        principalSchema: "dbo",
-                        principalTable: "FinancialYears",
-                        principalColumn: "FinancialYearId",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_OutwardSupplyTransactions_OutwardSupplyOrders_Fk_OutwardSupplyOrderId",
-                        column: x => x.Fk_OutwardSupplyOrderId,
-                        principalSchema: "dbo",
-                        principalTable: "OutwardSupplyOrders",
-                        principalColumn: "OutwardSupplyOrderId",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_OutwardSupplyTransactions_Products_Fk_ProductId",
-                        column: x => x.Fk_ProductId,
-                        principalSchema: "dbo",
-                        principalTable: "Products",
-                        principalColumn: "ProductId",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Productions",
-                schema: "dbo",
-                columns: table => new
-                {
-                    ProductionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    FinishedGoodId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    RawMaterialId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Quantity = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Unit = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    ProductId1 = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Productions", x => x.ProductionId);
-                    table.ForeignKey(
-                        name: "FK_Productions_Products_ProductId",
-                        column: x => x.ProductId,
-                        principalSchema: "dbo",
-                        principalTable: "Products",
-                        principalColumn: "ProductId");
-                    table.ForeignKey(
-                        name: "FK_Productions_Products_ProductId1",
-                        column: x => x.ProductId1,
-                        principalSchema: "dbo",
-                        principalTable: "Products",
-                        principalColumn: "ProductId");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Stocks",
-                schema: "dbo",
-                columns: table => new
-                {
-                    StockId = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "(newid())"),
-                    Fk_BranchId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Fk_ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Fk_FinancialYear = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    MinQty = table.Column<decimal>(type: "decimal(18,2)", nullable: false, defaultValue: 0m),
-                    MaxQty = table.Column<decimal>(type: "decimal(18,2)", nullable: false, defaultValue: 0m),
-                    OpeningStock = table.Column<decimal>(type: "decimal(18,2)", nullable: false, defaultValue: 0m),
-                    Rate = table.Column<decimal>(type: "decimal(18,2)", nullable: false, defaultValue: 0m),
-                    Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false, defaultValue: 0m),
-                    AvilableStock = table.Column<decimal>(type: "decimal(18,2)", nullable: false, defaultValue: 0m)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Stocks", x => x.StockId);
-                    table.ForeignKey(
-                        name: "FK_Stocks_Branches_Fk_BranchId",
-                        column: x => x.Fk_BranchId,
-                        principalSchema: "dbo",
-                        principalTable: "Branches",
-                        principalColumn: "BranchId",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Stocks_FinancialYears_Fk_FinancialYear",
-                        column: x => x.Fk_FinancialYear,
-                        principalSchema: "dbo",
-                        principalTable: "FinancialYears",
-                        principalColumn: "FinancialYearId",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Stocks_Products_Fk_ProductId",
-                        column: x => x.Fk_ProductId,
-                        principalSchema: "dbo",
-                        principalTable: "Products",
-                        principalColumn: "ProductId",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "LedgerBalances",
                 schema: "dbo",
                 columns: table => new
                 {
                     LedgerBalanceId = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "(newid())"),
                     Fk_LedgerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Fk_BranchId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Fk_BranchId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     Fk_FinancialYear = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     OpeningBalance = table.Column<decimal>(type: "decimal(18,2)", nullable: false, defaultValue: 0m),
                     OpeningBalanceType = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
@@ -907,7 +708,8 @@ namespace FMS.Db.Migrations
                 columns: table => new
                 {
                     SubLedgerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "(newid())"),
-                    Fk_LedgerId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    Fk_LedgerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Fk_BranchId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     SubLedgerName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     LedgerId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     LedgerDevLedgerId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
@@ -915,6 +717,13 @@ namespace FMS.Db.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_SubLedgers", x => x.SubLedgerId);
+                    table.ForeignKey(
+                        name: "FK_SubLedgers_Branches_Fk_BranchId",
+                        column: x => x.Fk_BranchId,
+                        principalSchema: "dbo",
+                        principalTable: "Branches",
+                        principalColumn: "BranchId",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_SubLedgers_Ledgers_LedgerId",
                         column: x => x.LedgerId,
@@ -927,6 +736,54 @@ namespace FMS.Db.Migrations
                         principalSchema: "dbo",
                         principalTable: "ledgersDev",
                         principalColumn: "LedgerId");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Products",
+                schema: "dbo",
+                columns: table => new
+                {
+                    ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "(newid())"),
+                    ProductName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false, defaultValue: 0m),
+                    WholeSalePrice = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    GST = table.Column<decimal>(type: "decimal(18,2)", nullable: false, defaultValue: 0m),
+                    Fk_ProductTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Fk_UnitId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Fk_ProductGroupId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Fk_ProductSubGroupId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Products", x => x.ProductId);
+                    table.ForeignKey(
+                        name: "FK_Products_ProductGroups_Fk_ProductGroupId",
+                        column: x => x.Fk_ProductGroupId,
+                        principalSchema: "dbo",
+                        principalTable: "ProductGroups",
+                        principalColumn: "GroupId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Products_ProductTypes_Fk_ProductTypeId",
+                        column: x => x.Fk_ProductTypeId,
+                        principalSchema: "dbo",
+                        principalTable: "ProductTypes",
+                        principalColumn: "ProductTypeId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Products_SubGroups_Fk_ProductSubGroupId",
+                        column: x => x.Fk_ProductSubGroupId,
+                        principalSchema: "dbo",
+                        principalTable: "SubGroups",
+                        principalColumn: "ProductSubGroupId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Products_Units_Fk_UnitId",
+                        column: x => x.Fk_UnitId,
+                        principalSchema: "dbo",
+                        principalTable: "Units",
+                        principalColumn: "UnitId",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -1045,7 +902,6 @@ namespace FMS.Db.Migrations
                     Fk_SubledgerId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     Fk_StateId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Fk_CityId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Fk_BranchId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     PartyName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     Address = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
                     Phone = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
@@ -1057,13 +913,6 @@ namespace FMS.Db.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Parties", x => x.PartyId);
-                    table.ForeignKey(
-                        name: "FK_Parties_Branches_Fk_BranchId",
-                        column: x => x.Fk_BranchId,
-                        principalSchema: "dbo",
-                        principalTable: "Branches",
-                        principalColumn: "BranchId",
-                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Parties_Cities_Fk_CityId",
                         column: x => x.Fk_CityId,
@@ -1111,6 +960,7 @@ namespace FMS.Db.Migrations
                     ChequeNo = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     ChequeDate = table.Column<DateTime>(type: "datetime", nullable: true),
                     CashBank = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    CashBankLedgerId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     Fk_LedgerGroupId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Fk_LedgerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Fk_SubLedgerId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
@@ -1276,6 +1126,7 @@ namespace FMS.Db.Migrations
                     ChequeNo = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     ChequeDate = table.Column<DateTime>(type: "datetime", nullable: true),
                     CashBank = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    CashBankLedgerId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     Fk_LedgerGroupId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Fk_LedgerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Fk_SubLedgerId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
@@ -1341,13 +1192,12 @@ namespace FMS.Db.Migrations
                     SalesOrderId = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NEWID()"),
                     TransactionNo = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
                     TransactionType = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
+                    PriceType = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
                     Fk_SubLedgerId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CustomerName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
                     Fk_BranchId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Fk_FinancialYearId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     TransactionDate = table.Column<DateTime>(type: "datetime", nullable: false),
-                    InvoiceNo = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    InvoiceDate = table.Column<DateTime>(type: "datetime", nullable: false),
                     OrderNo = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     OrderDate = table.Column<DateTime>(type: "datetime", nullable: false),
                     SubTotal = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
@@ -1391,14 +1241,13 @@ namespace FMS.Db.Migrations
                 {
                     SalesReturnOrderId = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "(newid())"),
                     TransactionNo = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    TransactionDate = table.Column<DateTime>(type: "datetime", nullable: false),
                     TransactionType = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    PriceType = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
                     Fk_SubLedgerId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CustomerName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
                     Fk_BranchId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Fk_FinancialYearId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    TransactionDate = table.Column<DateTime>(type: "datetime", nullable: false),
-                    InvoiceNo = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    InvoiceDate = table.Column<DateTime>(type: "datetime", nullable: false),
                     OrderNo = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     OrderDate = table.Column<DateTime>(type: "datetime", nullable: false),
                     SubTotal = table.Column<decimal>(type: "decimal(18,2)", nullable: false, defaultValue: 0m),
@@ -1443,7 +1292,7 @@ namespace FMS.Db.Migrations
                     SubLedgerBalanceId = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "(newid())"),
                     Fk_LedgerBalanceId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Fk_SubLedgerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Fk_BranchId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Fk_BranchId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     Fk_FinancialYearId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     OpeningBalance = table.Column<decimal>(type: "decimal(18,2)", nullable: false, defaultValue: 0m),
                     OpeningBalanceType = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
@@ -1480,6 +1329,246 @@ namespace FMS.Db.Migrations
                         principalSchema: "dbo",
                         principalTable: "SubLedgers",
                         principalColumn: "SubLedgerId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AlternateUnits",
+                schema: "dbo",
+                columns: table => new
+                {
+                    AlternateUnitId = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "(newid())"),
+                    AlternateUnitName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    AlternateQuantity = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    FK_ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Fk_UnitId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UnitQuantity = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AlternateUnits", x => x.AlternateUnitId);
+                    table.ForeignKey(
+                        name: "FK_AlternateUnits_Products_FK_ProductId",
+                        column: x => x.FK_ProductId,
+                        principalSchema: "dbo",
+                        principalTable: "Products",
+                        principalColumn: "ProductId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_AlternateUnits_Units_Fk_UnitId",
+                        column: x => x.Fk_UnitId,
+                        principalSchema: "dbo",
+                        principalTable: "Units",
+                        principalColumn: "UnitId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "InwardSupplyTransactions",
+                schema: "dbo",
+                columns: table => new
+                {
+                    InwardSupplyTransactionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NEWID()"),
+                    Fk_InwardSupplyOrderId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TransactionNo = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TransactionDate = table.Column<DateTime>(type: "datetime", nullable: false),
+                    Fk_ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Fk_BranchId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Fk_FinancialYearId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Quantity = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Rate = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_InwardSupplyTransactions", x => x.InwardSupplyTransactionId);
+                    table.ForeignKey(
+                        name: "FK_InwardSupplyTransactions_Branches_Fk_BranchId",
+                        column: x => x.Fk_BranchId,
+                        principalSchema: "dbo",
+                        principalTable: "Branches",
+                        principalColumn: "BranchId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_InwardSupplyTransactions_FinancialYears_Fk_FinancialYearId",
+                        column: x => x.Fk_FinancialYearId,
+                        principalSchema: "dbo",
+                        principalTable: "FinancialYears",
+                        principalColumn: "FinancialYearId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_InwardSupplyTransactions_InwardSupplyOrders_Fk_InwardSupplyOrderId",
+                        column: x => x.Fk_InwardSupplyOrderId,
+                        principalSchema: "dbo",
+                        principalTable: "InwardSupplyOrders",
+                        principalColumn: "InwardSupplyOrderId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_InwardSupplyTransactions_Products_Fk_ProductId",
+                        column: x => x.Fk_ProductId,
+                        principalSchema: "dbo",
+                        principalTable: "Products",
+                        principalColumn: "ProductId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "LabourRates",
+                schema: "dbo",
+                columns: table => new
+                {
+                    LabourRateId = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "(newid())"),
+                    FinancialYear = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Date = table.Column<DateTime>(type: "datetime", nullable: true),
+                    Fk_ProductTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    Fk_ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Fk_BranchId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    Rate = table.Column<decimal>(type: "decimal(18,4)", nullable: false, defaultValue: 0m)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LabourRates", x => x.LabourRateId);
+                    table.ForeignKey(
+                        name: "FK_LabourRates_Branches_Fk_BranchId",
+                        column: x => x.Fk_BranchId,
+                        principalSchema: "dbo",
+                        principalTable: "Branches",
+                        principalColumn: "BranchId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_LabourRates_ProductTypes_Fk_ProductTypeId",
+                        column: x => x.Fk_ProductTypeId,
+                        principalSchema: "dbo",
+                        principalTable: "ProductTypes",
+                        principalColumn: "ProductTypeId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_LabourRates_Products_Fk_ProductId",
+                        column: x => x.Fk_ProductId,
+                        principalSchema: "dbo",
+                        principalTable: "Products",
+                        principalColumn: "ProductId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OutwardSupplyTransactions",
+                schema: "dbo",
+                columns: table => new
+                {
+                    OutwardSupplyTransactionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NEWID()"),
+                    Fk_OutwardSupplyOrderId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TransactionNo = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TransactionDate = table.Column<DateTime>(type: "datetime", nullable: false),
+                    Fk_ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Fk_BranchId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Fk_FinancialYearId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Quantity = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Rate = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OutwardSupplyTransactions", x => x.OutwardSupplyTransactionId);
+                    table.ForeignKey(
+                        name: "FK_OutwardSupplyTransactions_Branches_Fk_BranchId",
+                        column: x => x.Fk_BranchId,
+                        principalSchema: "dbo",
+                        principalTable: "Branches",
+                        principalColumn: "BranchId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_OutwardSupplyTransactions_FinancialYears_Fk_FinancialYearId",
+                        column: x => x.Fk_FinancialYearId,
+                        principalSchema: "dbo",
+                        principalTable: "FinancialYears",
+                        principalColumn: "FinancialYearId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_OutwardSupplyTransactions_OutwardSupplyOrders_Fk_OutwardSupplyOrderId",
+                        column: x => x.Fk_OutwardSupplyOrderId,
+                        principalSchema: "dbo",
+                        principalTable: "OutwardSupplyOrders",
+                        principalColumn: "OutwardSupplyOrderId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_OutwardSupplyTransactions_Products_Fk_ProductId",
+                        column: x => x.Fk_ProductId,
+                        principalSchema: "dbo",
+                        principalTable: "Products",
+                        principalColumn: "ProductId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Productions",
+                schema: "dbo",
+                columns: table => new
+                {
+                    ProductionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    FinishedGoodId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    RawMaterialId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Quantity = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Unit = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    ProductId1 = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Productions", x => x.ProductionId);
+                    table.ForeignKey(
+                        name: "FK_Productions_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalSchema: "dbo",
+                        principalTable: "Products",
+                        principalColumn: "ProductId");
+                    table.ForeignKey(
+                        name: "FK_Productions_Products_ProductId1",
+                        column: x => x.ProductId1,
+                        principalSchema: "dbo",
+                        principalTable: "Products",
+                        principalColumn: "ProductId");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Stocks",
+                schema: "dbo",
+                columns: table => new
+                {
+                    StockId = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "(newid())"),
+                    Fk_BranchId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Fk_ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Fk_FinancialYear = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    MinQty = table.Column<decimal>(type: "decimal(18,2)", nullable: false, defaultValue: 0m),
+                    MaxQty = table.Column<decimal>(type: "decimal(18,2)", nullable: false, defaultValue: 0m),
+                    OpeningStock = table.Column<decimal>(type: "decimal(18,2)", nullable: false, defaultValue: 0m),
+                    Rate = table.Column<decimal>(type: "decimal(18,2)", nullable: false, defaultValue: 0m),
+                    Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false, defaultValue: 0m),
+                    AvilableStock = table.Column<decimal>(type: "decimal(18,2)", nullable: false, defaultValue: 0m)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Stocks", x => x.StockId);
+                    table.ForeignKey(
+                        name: "FK_Stocks_Branches_Fk_BranchId",
+                        column: x => x.Fk_BranchId,
+                        principalSchema: "dbo",
+                        principalTable: "Branches",
+                        principalColumn: "BranchId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Stocks_FinancialYears_Fk_FinancialYear",
+                        column: x => x.Fk_FinancialYear,
+                        principalSchema: "dbo",
+                        principalTable: "FinancialYears",
+                        principalColumn: "FinancialYearId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Stocks_Products_Fk_ProductId",
+                        column: x => x.Fk_ProductId,
+                        principalSchema: "dbo",
+                        principalTable: "Products",
+                        principalColumn: "ProductId",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -1532,158 +1621,53 @@ namespace FMS.Db.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ProductionEntries",
+                name: "LabourOrders",
                 schema: "dbo",
                 columns: table => new
                 {
-                    ProductionEntryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "(newid())"),
-                    ProductionNo = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ProductionDate = table.Column<DateTime>(type: "datetime", maxLength: 10, nullable: false),
+                    LabourOrderId = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "(newid())"),
+                    TransactionNo = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TransactionDate = table.Column<DateTime>(type: "datetime", maxLength: 10, nullable: false),
                     Fk_ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Fk_LabourId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     LabourType = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Fk_FinancialYearId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     FK_BranchId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Quantity = table.Column<decimal>(type: "decimal(18,2)", nullable: false, defaultValue: 0m),
-                    Rate = table.Column<decimal>(type: "decimal(18,2)", nullable: false, defaultValue: 0m),
-                    Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false, defaultValue: 0m)
+                    Rate = table.Column<decimal>(type: "decimal(18,4)", nullable: false, defaultValue: 0m),
+                    Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false, defaultValue: 0m),
+                    OTAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false, defaultValue: 0m)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ProductionEntries", x => x.ProductionEntryId);
+                    table.PrimaryKey("PK_LabourOrders", x => x.LabourOrderId);
                     table.ForeignKey(
-                        name: "FK_ProductionEntries_Branches_FK_BranchId",
+                        name: "FK_LabourOrders_Branches_FK_BranchId",
                         column: x => x.FK_BranchId,
                         principalSchema: "dbo",
                         principalTable: "Branches",
                         principalColumn: "BranchId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_ProductionEntries_FinancialYears_Fk_FinancialYearId",
+                        name: "FK_LabourOrders_FinancialYears_Fk_FinancialYearId",
                         column: x => x.Fk_FinancialYearId,
                         principalSchema: "dbo",
                         principalTable: "FinancialYears",
                         principalColumn: "FinancialYearId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_ProductionEntries_Labours_Fk_LabourId",
+                        name: "FK_LabourOrders_Labours_Fk_LabourId",
                         column: x => x.Fk_LabourId,
                         principalSchema: "dbo",
                         principalTable: "Labours",
                         principalColumn: "LabourId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_ProductionEntries_Products_Fk_ProductId",
+                        name: "FK_LabourOrders_Products_Fk_ProductId",
                         column: x => x.Fk_ProductId,
                         principalSchema: "dbo",
                         principalTable: "Products",
                         principalColumn: "ProductId",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "PurchaseTransactions",
-                schema: "dbo",
-                columns: table => new
-                {
-                    PurchaseId = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NEWID()"),
-                    Fk_PurchaseOrderId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    TransactionNo = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    TransactionDate = table.Column<DateTime>(type: "datetime", nullable: true),
-                    Fk_ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Fk_BranchId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Fk_FinancialYearId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Quantity = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Rate = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Discount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    DiscountAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Gst = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    GstAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PurchaseTransactions", x => x.PurchaseId);
-                    table.ForeignKey(
-                        name: "FK_PurchaseTransactions_Branches_Fk_BranchId",
-                        column: x => x.Fk_BranchId,
-                        principalSchema: "dbo",
-                        principalTable: "Branches",
-                        principalColumn: "BranchId",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_PurchaseTransactions_FinancialYears_Fk_FinancialYearId",
-                        column: x => x.Fk_FinancialYearId,
-                        principalSchema: "dbo",
-                        principalTable: "FinancialYears",
-                        principalColumn: "FinancialYearId",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_PurchaseTransactions_Products_Fk_ProductId",
-                        column: x => x.Fk_ProductId,
-                        principalSchema: "dbo",
-                        principalTable: "Products",
-                        principalColumn: "ProductId",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_PurchaseTransactions_PurchaseOrders_Fk_PurchaseOrderId",
-                        column: x => x.Fk_PurchaseOrderId,
-                        principalSchema: "dbo",
-                        principalTable: "PurchaseOrders",
-                        principalColumn: "PurchaseOrderId",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "PurchaseReturnTransactions",
-                schema: "dbo",
-                columns: table => new
-                {
-                    PurchaseReturnId = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "(newid())"),
-                    Fk_PurchaseReturnOrderId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    TransactionNo = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    TransactionDate = table.Column<DateTime>(type: "datetime", nullable: true),
-                    Fk_ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Fk_BranchId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Fk_FinancialYearId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Quantity = table.Column<decimal>(type: "decimal(18,2)", nullable: false, defaultValue: 0m),
-                    Rate = table.Column<decimal>(type: "decimal(18,2)", nullable: false, defaultValue: 0m),
-                    Discount = table.Column<decimal>(type: "decimal(18,2)", nullable: false, defaultValue: 0m),
-                    DiscountAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false, defaultValue: 0m),
-                    Gst = table.Column<decimal>(type: "decimal(18,2)", nullable: false, defaultValue: 0m),
-                    GstAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false, defaultValue: 0m),
-                    Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false, defaultValue: 0m)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PurchaseReturnTransactions", x => x.PurchaseReturnId);
-                    table.ForeignKey(
-                        name: "FK_PurchaseReturnTransactions_Branches_Fk_BranchId",
-                        column: x => x.Fk_BranchId,
-                        principalSchema: "dbo",
-                        principalTable: "Branches",
-                        principalColumn: "BranchId",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_PurchaseReturnTransactions_FinancialYears_Fk_FinancialYearId",
-                        column: x => x.Fk_FinancialYearId,
-                        principalSchema: "dbo",
-                        principalTable: "FinancialYears",
-                        principalColumn: "FinancialYearId",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_PurchaseReturnTransactions_Products_Fk_ProductId",
-                        column: x => x.Fk_ProductId,
-                        principalSchema: "dbo",
-                        principalTable: "Products",
-                        principalColumn: "ProductId",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_PurchaseReturnTransactions_PurchaseReturnOrders_Fk_PurchaseReturnOrderId",
-                        column: x => x.Fk_PurchaseReturnOrderId,
-                        principalSchema: "dbo",
-                        principalTable: "PurchaseReturnOrders",
-                        principalColumn: "PurchaseReturnOrderId",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -1796,6 +1780,129 @@ namespace FMS.Db.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "PurchaseReturnTransactions",
+                schema: "dbo",
+                columns: table => new
+                {
+                    PurchaseReturnId = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "(newid())"),
+                    Fk_PurchaseReturnOrderId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TransactionNo = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    TransactionDate = table.Column<DateTime>(type: "datetime", nullable: true),
+                    Fk_ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Fk_BranchId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Fk_FinancialYearId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Quantity = table.Column<decimal>(type: "decimal(18,2)", nullable: false, defaultValue: 0m),
+                    Fk_AlternateUnitId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Rate = table.Column<decimal>(type: "decimal(18,2)", nullable: false, defaultValue: 0m),
+                    Discount = table.Column<decimal>(type: "decimal(18,2)", nullable: false, defaultValue: 0m),
+                    DiscountAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false, defaultValue: 0m),
+                    Gst = table.Column<decimal>(type: "decimal(18,2)", nullable: false, defaultValue: 0m),
+                    GstAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false, defaultValue: 0m),
+                    Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false, defaultValue: 0m)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PurchaseReturnTransactions", x => x.PurchaseReturnId);
+                    table.ForeignKey(
+                        name: "FK_PurchaseReturnTransactions_AlternateUnits_Fk_AlternateUnitId",
+                        column: x => x.Fk_AlternateUnitId,
+                        principalSchema: "dbo",
+                        principalTable: "AlternateUnits",
+                        principalColumn: "AlternateUnitId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_PurchaseReturnTransactions_Branches_Fk_BranchId",
+                        column: x => x.Fk_BranchId,
+                        principalSchema: "dbo",
+                        principalTable: "Branches",
+                        principalColumn: "BranchId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_PurchaseReturnTransactions_FinancialYears_Fk_FinancialYearId",
+                        column: x => x.Fk_FinancialYearId,
+                        principalSchema: "dbo",
+                        principalTable: "FinancialYears",
+                        principalColumn: "FinancialYearId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_PurchaseReturnTransactions_Products_Fk_ProductId",
+                        column: x => x.Fk_ProductId,
+                        principalSchema: "dbo",
+                        principalTable: "Products",
+                        principalColumn: "ProductId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_PurchaseReturnTransactions_PurchaseReturnOrders_Fk_PurchaseReturnOrderId",
+                        column: x => x.Fk_PurchaseReturnOrderId,
+                        principalSchema: "dbo",
+                        principalTable: "PurchaseReturnOrders",
+                        principalColumn: "PurchaseReturnOrderId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PurchaseTransactions",
+                schema: "dbo",
+                columns: table => new
+                {
+                    PurchaseId = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NEWID()"),
+                    Fk_PurchaseOrderId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TransactionNo = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TransactionDate = table.Column<DateTime>(type: "datetime", nullable: true),
+                    Fk_ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Fk_BranchId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Fk_FinancialYearId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    AlternateQuantity = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Fk_AlternateUnitId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UnitQuantity = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Rate = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Discount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    DiscountAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Gst = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    GstAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PurchaseTransactions", x => x.PurchaseId);
+                    table.ForeignKey(
+                        name: "FK_PurchaseTransactions_AlternateUnits_Fk_AlternateUnitId",
+                        column: x => x.Fk_AlternateUnitId,
+                        principalSchema: "dbo",
+                        principalTable: "AlternateUnits",
+                        principalColumn: "AlternateUnitId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_PurchaseTransactions_Branches_Fk_BranchId",
+                        column: x => x.Fk_BranchId,
+                        principalSchema: "dbo",
+                        principalTable: "Branches",
+                        principalColumn: "BranchId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_PurchaseTransactions_FinancialYears_Fk_FinancialYearId",
+                        column: x => x.Fk_FinancialYearId,
+                        principalSchema: "dbo",
+                        principalTable: "FinancialYears",
+                        principalColumn: "FinancialYearId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_PurchaseTransactions_Products_Fk_ProductId",
+                        column: x => x.Fk_ProductId,
+                        principalSchema: "dbo",
+                        principalTable: "Products",
+                        principalColumn: "ProductId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_PurchaseTransactions_PurchaseOrders_Fk_PurchaseOrderId",
+                        column: x => x.Fk_PurchaseOrderId,
+                        principalSchema: "dbo",
+                        principalTable: "PurchaseOrders",
+                        principalColumn: "PurchaseOrderId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "DamageTransactions",
                 schema: "dbo",
                 columns: table => new
@@ -1845,11 +1952,11 @@ namespace FMS.Db.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ProductionEntryTransactions",
+                name: "LabourTransactions",
                 schema: "dbo",
                 columns: table => new
                 {
-                    ProductionEntryTransactionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "(newid())"),
+                    LabourTransactionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "(newid())"),
                     TransactionNo = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     TransactionDate = table.Column<DateTime>(type: "datetime", nullable: false),
                     Fk_ProductionEntryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -1860,30 +1967,30 @@ namespace FMS.Db.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ProductionEntryTransactions", x => x.ProductionEntryTransactionId);
+                    table.PrimaryKey("PK_LabourTransactions", x => x.LabourTransactionId);
                     table.ForeignKey(
-                        name: "FK_ProductionEntryTransactions_Branches_Fk_BranchId",
+                        name: "FK_LabourTransactions_Branches_Fk_BranchId",
                         column: x => x.Fk_BranchId,
                         principalSchema: "dbo",
                         principalTable: "Branches",
                         principalColumn: "BranchId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_ProductionEntryTransactions_FinancialYears_Fk_FinancialYearId",
+                        name: "FK_LabourTransactions_FinancialYears_Fk_FinancialYearId",
                         column: x => x.Fk_FinancialYearId,
                         principalSchema: "dbo",
                         principalTable: "FinancialYears",
                         principalColumn: "FinancialYearId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_ProductionEntryTransactions_ProductionEntries_Fk_ProductionEntryId",
+                        name: "FK_LabourTransactions_LabourOrders_Fk_ProductionEntryId",
                         column: x => x.Fk_ProductionEntryId,
                         principalSchema: "dbo",
-                        principalTable: "ProductionEntries",
-                        principalColumn: "ProductionEntryId",
+                        principalTable: "LabourOrders",
+                        principalColumn: "LabourOrderId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_ProductionEntryTransactions_Products_Fk_ProductId",
+                        name: "FK_LabourTransactions_Products_Fk_ProductId",
                         column: x => x.Fk_ProductId,
                         principalSchema: "dbo",
                         principalTable: "Products",
@@ -1922,7 +2029,9 @@ namespace FMS.Db.Migrations
                 columns: new[] { "ProductTypeId", "Product_Type" },
                 values: new object[,]
                 {
+                    { new Guid("66ada405-1229-45df-9598-90b602078933"), "MOULD & MECHINARY" },
                     { new Guid("a4ab180b-acc7-44ce-aef7-c588d41edd5c"), "FINISHED GOODS" },
+                    { new Guid("b504237f-af5f-485a-bec9-0906c50df3c6"), "SERVICE GOODS" },
                     { new Guid("b524f4a7-1bb2-4347-84ae-e0da56eb4a31"), "RAW MATERIALS" }
                 });
 
@@ -1943,6 +2052,18 @@ namespace FMS.Db.Migrations
                     { new Guid("f07a3165-d63b-4dae-a820-ec79d83363b1"), new Guid("01548ef6-3fe2-4c0f-9a5f-ceed35066136"), null, "Labour A/c", "None" },
                     { new Guid("fbf4a6c7-c33d-4ad0-b7a5-abb319cc1b93"), new Guid("2fc89e45-7365-46b7-933c-9abae2e5967a"), null, "Sundry Debtors", "None" }
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AlternateUnits_FK_ProductId",
+                schema: "dbo",
+                table: "AlternateUnits",
+                column: "FK_ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AlternateUnits_Fk_UnitId",
+                schema: "dbo",
+                table: "AlternateUnits",
+                column: "Fk_UnitId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -1998,6 +2119,18 @@ namespace FMS.Db.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_BranchFinancialYears_Fk_BranchId",
+                schema: "dbo",
+                table: "BranchFinancialYears",
+                column: "Fk_BranchId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BranchFinancialYears_Fk_FinancialYearId",
+                schema: "dbo",
+                table: "BranchFinancialYears",
+                column: "Fk_FinancialYearId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Cities_Fk_BranchId",
                 schema: "dbo",
                 table: "Cities",
@@ -2008,6 +2141,12 @@ namespace FMS.Db.Migrations
                 schema: "dbo",
                 table: "Cities",
                 column: "Fk_StateId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CompanyDetails_Fk_BranchId",
+                schema: "dbo",
+                table: "CompanyDetails",
+                column: "Fk_BranchId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_DamageOrders_Fk_BranchId",
@@ -2056,12 +2195,6 @@ namespace FMS.Db.Migrations
                 schema: "dbo",
                 table: "DamageTransactions",
                 column: "Fk_ProductId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_FinancialYears_FK_BranchId",
-                schema: "dbo",
-                table: "FinancialYears",
-                column: "FK_BranchId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_InwardSupplyOrders_Fk_BranchId",
@@ -2142,22 +2275,46 @@ namespace FMS.Db.Migrations
                 column: "LedgerId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_LabourOrders_FK_BranchId",
+                schema: "dbo",
+                table: "LabourOrders",
+                column: "FK_BranchId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LabourOrders_Fk_FinancialYearId",
+                schema: "dbo",
+                table: "LabourOrders",
+                column: "Fk_FinancialYearId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LabourOrders_Fk_LabourId",
+                schema: "dbo",
+                table: "LabourOrders",
+                column: "Fk_LabourId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LabourOrders_Fk_ProductId",
+                schema: "dbo",
+                table: "LabourOrders",
+                column: "Fk_ProductId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_LabourRates_Fk_BranchId",
                 schema: "dbo",
                 table: "LabourRates",
                 column: "Fk_BranchId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_LabourRates_Fk_FinancialYearId",
-                schema: "dbo",
-                table: "LabourRates",
-                column: "Fk_FinancialYearId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_LabourRates_Fk_ProductId",
                 schema: "dbo",
                 table: "LabourRates",
                 column: "Fk_ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LabourRates_Fk_ProductTypeId",
+                schema: "dbo",
+                table: "LabourRates",
+                column: "Fk_ProductTypeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Labours_Fk_BranchId",
@@ -2176,6 +2333,30 @@ namespace FMS.Db.Migrations
                 schema: "dbo",
                 table: "Labours",
                 column: "Fk_SubLedgerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LabourTransactions_Fk_BranchId",
+                schema: "dbo",
+                table: "LabourTransactions",
+                column: "Fk_BranchId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LabourTransactions_Fk_FinancialYearId",
+                schema: "dbo",
+                table: "LabourTransactions",
+                column: "Fk_FinancialYearId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LabourTransactions_Fk_ProductId",
+                schema: "dbo",
+                table: "LabourTransactions",
+                column: "Fk_ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LabourTransactions_Fk_ProductionEntryId",
+                schema: "dbo",
+                table: "LabourTransactions",
+                column: "Fk_ProductionEntryId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_LedgerBalances_Fk_BranchId",
@@ -2292,12 +2473,6 @@ namespace FMS.Db.Migrations
                 column: "Fk_ProductId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Parties_Fk_BranchId",
-                schema: "dbo",
-                table: "Parties",
-                column: "Fk_BranchId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Parties_Fk_CityId",
                 schema: "dbo",
                 table: "Parties",
@@ -2364,52 +2539,10 @@ namespace FMS.Db.Migrations
                 column: "LedgerId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductionEntries_FK_BranchId",
+                name: "IX_ProductGroups_Fk_ProductTypeId",
                 schema: "dbo",
-                table: "ProductionEntries",
-                column: "FK_BranchId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ProductionEntries_Fk_FinancialYearId",
-                schema: "dbo",
-                table: "ProductionEntries",
-                column: "Fk_FinancialYearId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ProductionEntries_Fk_LabourId",
-                schema: "dbo",
-                table: "ProductionEntries",
-                column: "Fk_LabourId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ProductionEntries_Fk_ProductId",
-                schema: "dbo",
-                table: "ProductionEntries",
-                column: "Fk_ProductId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ProductionEntryTransactions_Fk_BranchId",
-                schema: "dbo",
-                table: "ProductionEntryTransactions",
-                column: "Fk_BranchId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ProductionEntryTransactions_Fk_FinancialYearId",
-                schema: "dbo",
-                table: "ProductionEntryTransactions",
-                column: "Fk_FinancialYearId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ProductionEntryTransactions_Fk_ProductId",
-                schema: "dbo",
-                table: "ProductionEntryTransactions",
-                column: "Fk_ProductId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ProductionEntryTransactions_Fk_ProductionEntryId",
-                schema: "dbo",
-                table: "ProductionEntryTransactions",
-                column: "Fk_ProductionEntryId");
+                table: "ProductGroups",
+                column: "Fk_ProductTypeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Productions_ProductId",
@@ -2424,22 +2557,22 @@ namespace FMS.Db.Migrations
                 column: "ProductId1");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Products_Fk_GroupId",
+                name: "IX_Products_Fk_ProductGroupId",
                 schema: "dbo",
                 table: "Products",
-                column: "Fk_GroupId");
+                column: "Fk_ProductGroupId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Products_Fk_ProductSubGroupId",
+                schema: "dbo",
+                table: "Products",
+                column: "Fk_ProductSubGroupId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Products_Fk_ProductTypeId",
                 schema: "dbo",
                 table: "Products",
                 column: "Fk_ProductTypeId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Products_Fk_SubGroupId",
-                schema: "dbo",
-                table: "Products",
-                column: "Fk_SubGroupId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Products_Fk_UnitId",
@@ -2484,6 +2617,12 @@ namespace FMS.Db.Migrations
                 column: "Fk_SubLedgerId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_PurchaseReturnTransactions_Fk_AlternateUnitId",
+                schema: "dbo",
+                table: "PurchaseReturnTransactions",
+                column: "Fk_AlternateUnitId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_PurchaseReturnTransactions_Fk_BranchId",
                 schema: "dbo",
                 table: "PurchaseReturnTransactions",
@@ -2506,6 +2645,12 @@ namespace FMS.Db.Migrations
                 schema: "dbo",
                 table: "PurchaseReturnTransactions",
                 column: "Fk_PurchaseReturnOrderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PurchaseTransactions_Fk_AlternateUnitId",
+                schema: "dbo",
+                table: "PurchaseTransactions",
+                column: "Fk_AlternateUnitId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PurchaseTransactions_Fk_BranchId",
@@ -2676,10 +2821,10 @@ namespace FMS.Db.Migrations
                 column: "Fk_ProductId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SubGroups_Fk_GroupId",
+                name: "IX_SubGroups_Fk_ProductGroupId",
                 schema: "dbo",
                 table: "SubGroups",
-                column: "Fk_GroupId");
+                column: "Fk_ProductGroupId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_SubLedgerBalances_Fk_BranchId",
@@ -2704,6 +2849,12 @@ namespace FMS.Db.Migrations
                 schema: "dbo",
                 table: "SubLedgerBalances",
                 column: "Fk_SubLedgerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SubLedgers_Fk_BranchId",
+                schema: "dbo",
+                table: "SubLedgers",
+                column: "Fk_BranchId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_SubLedgers_LedgerDevLedgerId",
@@ -2754,6 +2905,14 @@ namespace FMS.Db.Migrations
                 schema: "dbo");
 
             migrationBuilder.DropTable(
+                name: "BranchFinancialYears",
+                schema: "dbo");
+
+            migrationBuilder.DropTable(
+                name: "CompanyDetails",
+                schema: "dbo");
+
+            migrationBuilder.DropTable(
                 name: "DamageTransactions",
                 schema: "dbo");
 
@@ -2770,6 +2929,10 @@ namespace FMS.Db.Migrations
                 schema: "dbo");
 
             migrationBuilder.DropTable(
+                name: "LabourTransactions",
+                schema: "dbo");
+
+            migrationBuilder.DropTable(
                 name: "OutwardSupplyTransactions",
                 schema: "dbo");
 
@@ -2779,10 +2942,6 @@ namespace FMS.Db.Migrations
 
             migrationBuilder.DropTable(
                 name: "Payments",
-                schema: "dbo");
-
-            migrationBuilder.DropTable(
-                name: "ProductionEntryTransactions",
                 schema: "dbo");
 
             migrationBuilder.DropTable(
@@ -2834,6 +2993,10 @@ namespace FMS.Db.Migrations
                 schema: "dbo");
 
             migrationBuilder.DropTable(
+                name: "LabourOrders",
+                schema: "dbo");
+
+            migrationBuilder.DropTable(
                 name: "OutwardSupplyOrders",
                 schema: "dbo");
 
@@ -2842,11 +3005,11 @@ namespace FMS.Db.Migrations
                 schema: "dbo");
 
             migrationBuilder.DropTable(
-                name: "ProductionEntries",
+                name: "PurchaseReturnOrders",
                 schema: "dbo");
 
             migrationBuilder.DropTable(
-                name: "PurchaseReturnOrders",
+                name: "AlternateUnits",
                 schema: "dbo");
 
             migrationBuilder.DropTable(
@@ -2870,11 +3033,11 @@ namespace FMS.Db.Migrations
                 schema: "dbo");
 
             migrationBuilder.DropTable(
-                name: "States",
+                name: "Labours",
                 schema: "dbo");
 
             migrationBuilder.DropTable(
-                name: "Labours",
+                name: "States",
                 schema: "dbo");
 
             migrationBuilder.DropTable(
@@ -2898,10 +3061,6 @@ namespace FMS.Db.Migrations
                 schema: "dbo");
 
             migrationBuilder.DropTable(
-                name: "ProductTypes",
-                schema: "dbo");
-
-            migrationBuilder.DropTable(
                 name: "SubGroups",
                 schema: "dbo");
 
@@ -2918,7 +3077,7 @@ namespace FMS.Db.Migrations
                 schema: "dbo");
 
             migrationBuilder.DropTable(
-                name: "Groups",
+                name: "ProductGroups",
                 schema: "dbo");
 
             migrationBuilder.DropTable(
@@ -2927,6 +3086,10 @@ namespace FMS.Db.Migrations
 
             migrationBuilder.DropTable(
                 name: "LedgerSubGroupDevs",
+                schema: "dbo");
+
+            migrationBuilder.DropTable(
+                name: "ProductTypes",
                 schema: "dbo");
 
             migrationBuilder.DropTable(

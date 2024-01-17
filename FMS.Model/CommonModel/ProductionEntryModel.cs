@@ -17,7 +17,7 @@
         public decimal OTAmount { get; set; }
         public ProductModel Product { get; set; } 
         public LabourModel Labour { get; set; }
-        public FinancialYearModel FinancialYear { get; set; } 
+        public BranchFinancialYearModel FinancialYear { get; set; } 
         public BranchModel Branch { get; set; }
         public List<ProductionEntryTransactionModel> ProductionEntryTransactions { get; set; }
     }

@@ -23,7 +23,7 @@ namespace FMS.Model.CommonModel
         public decimal Gst { get; set; }
         public decimal Amount { get; set; }
         public BranchModel Branch { get; set; }
-        public FinancialYearModel FinancialYear { get; set; }
+        public BranchFinancialYearModel FinancialYear { get; set; }
         public PurchaseOrderModel PurchaseOrder { get; set; } 
         public ProductModel Product { get; set; }
         public AlternateUnitModel AlternateUnit { get; set; }

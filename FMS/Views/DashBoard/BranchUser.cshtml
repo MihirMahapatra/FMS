@@ -14,9 +14,6 @@
 
 </head>
 <body class="hold-transition login-page">
-
-
-
     <div class="login-box">
         <div class="card">
             <div class="card-body login-card-body">
@@ -24,18 +21,7 @@
                     <div class="row">
                         <div class="col-12">
                             <div class="form-group mb-3">
-                                <select class="form-control select2bs4" style="width: 100%;" name="FinancialYearId">
-                                    @if (Model.FinancialYears != null)
-                                    {
-                                        @foreach (var item in Model.FinancialYears)
-                                        {
-                                            <option value="@item.FinancialYearId">@item.Financial_Year</option>
-                                        }
-                                    }
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <select class="form-control select2bs4" style="width: 100%;" name="BranchId">
+                                <select class="form-control select2bs4" style="width: 100%;" id="BranchId" name="BranchId">
                                     <option selected="selected">-- Select Branch --</option>
                                     @if (Model.Branches != null)
                                     {
@@ -46,6 +32,12 @@
                                     }
                                 </select>
                             </div>
+                            <div class="form-group">
+                                <select class="form-control select2bs4" style="width: 100%;" name="FinancialYearId">
+                                 
+                                </select>
+                            </div>
+                            
                         </div>
                         <div class="col-8"></div>
                         <div class="col-4">
@@ -59,6 +51,7 @@
 
     @await Html.PartialAsync("_FooterScript")
     <script src="~/scripts/FormScript.js"></script>
+    <script src="~/viewscripts/dashboard/branchuser.js"></script>
     @if (TempData["SuccessMsg"] != null)
     {
         <script>

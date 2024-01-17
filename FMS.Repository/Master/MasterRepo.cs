@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
 using System.Globalization;
-using Group = FMS.Db.DbEntity.Group;
+using Group = FMS.Db.DbEntity.ProductGroup;
 
 namespace FMS.Repository.Master
 {
@@ -614,7 +614,7 @@ namespace FMS.Repository.Master
                                    join s in _appDbContext.Stocks
                                    on p.ProductId equals s.Fk_ProductId
                                    into stockGroup
-                                   where !stockGroup.Any(s => s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear) && p.Fk_GroupId == GroupId && p.Fk_SubGroupId == (SubGroupId == Guid.Empty ? null : SubGroupId)
+                                   where !stockGroup.Any(s => s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear) && p.Fk_ProductGroupId == GroupId && p.Fk_ProductSubGroupId == (SubGroupId == Guid.Empty ? null : SubGroupId)
                                    select new ProductModel()
                                    {
                                        ProductId = p.ProductId,
@@ -784,13 +784,11 @@ namespace FMS.Repository.Master
         {
             Result<PartyModel> _Result = new();
             try
-            {
-                Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
+            {  
                 Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
                 _Result.IsSuccess = false;
-                var Query = await (from s in _appDbContext.Parties
-                                   where s.Fk_BranchId == BranchId
-                                   select new PartyModel
+                var Query = await _appDbContext.Parties.Select(s=>
+                                   new PartyModel()
                                    {
                                        PartyId = s.PartyId,
                                        PartyName = s.PartyName,
@@ -800,14 +798,14 @@ namespace FMS.Repository.Master
                                        GstNo = s.GstNo,
                                        CreditLimit = s.CreditLimit,
                                        Ledger = s.LedgerDev != null ? new LedgerModel { LedgerName = s.LedgerDev.LedgerName } : null,
-                                       SubLedgerBalance = _appDbContext.SubLedgerBalances.Where(sb => sb.Fk_SubLedgerId == s.Fk_SubledgerId && sb.Fk_FinancialYearId == FinancialYear && s.Fk_BranchId==BranchId).Select(
+                                       SubLedgerBalance =  s.SubLedger.SubLedgerBalances.Where(sb => sb.Fk_SubLedgerId == s.Fk_SubledgerId && sb.Fk_FinancialYearId == FinancialYear).Select(
                                            sb => new SubLedgerBalanceModel
                                            {
                                                OpeningBalance = sb.OpeningBalance,
                                                OpeningBalanceType = sb.OpeningBalanceType,
                                                RunningBalance = sb.RunningBalance,
                                                RunningBalanceType = sb.RunningBalanceType
-                                           }).FirstOrDefault(),
+                                           }).SingleOrDefault(),
                                        State = s.State != null ? new StateModel { StateName = s.State.StateName } : null,
                                        City = s.City != null ? new CityModel { CityName = s.City.CityName } : null,
                                    }).ToListAsync();
@@ -836,7 +834,7 @@ namespace FMS.Repository.Master
                     Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
                     Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
                     _Result.IsSuccess = false;
-                    var existingParty = await _appDbContext.Parties.FirstOrDefaultAsync(s => s.PartyName == data.PartyName && s.Fk_PartyType == data.Fk_PartyType && s.Fk_BranchId == BranchId);
+                    var existingParty = await _appDbContext.Parties.FirstOrDefaultAsync(s => s.PartyName == data.PartyName && s.Fk_PartyType == data.Fk_PartyType);
                     if (existingParty == null)
                     {
                         #region create SubLedger
@@ -844,13 +842,12 @@ namespace FMS.Repository.Master
                         {
                             Fk_LedgerId = data.Fk_PartyType,
                             SubLedgerName = data.PartyName,
-                            Fk_BranchId = BranchId
                         };
                         await _appDbContext.SubLedgers.AddAsync(newSubLedger);
                         await _appDbContext.SaveChangesAsync();
                         #endregion
                         #region Check LedgerBalance Exist 
-                        var isledgerBalanceExist = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == data.Fk_PartyType && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).FirstOrDefaultAsync();
+                        var isledgerBalanceExist = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == data.Fk_PartyType && s.Fk_FinancialYear == FinancialYear).FirstOrDefaultAsync();
                         Guid LedgerBalanceId = Guid.Empty;
                         if (isledgerBalanceExist != null)
                         {
@@ -867,7 +864,6 @@ namespace FMS.Repository.Master
                                 OpeningBalanceType = data.BalanceType,
                                 RunningBalance = data.BalanceType == "Dr" ? data.OpeningBalance : -data.OpeningBalance,
                                 RunningBalanceType = data.BalanceType,
-                                Fk_BranchId = BranchId,
                                 Fk_FinancialYear = FinancialYear
                             };
 
@@ -885,7 +881,6 @@ namespace FMS.Repository.Master
                             OpeningBalance = data.BalanceType == "Dr" ? data.OpeningBalance : -data.OpeningBalance,
                             RunningBalanceType = data.BalanceType,
                             RunningBalance = data.BalanceType == "Dr" ? data.OpeningBalance : -data.OpeningBalance,
-                            Fk_BranchId = BranchId,
                             Fk_FinancialYearId = FinancialYear
                         };
                         await _appDbContext.SubLedgerBalances.AddAsync(newSubLedgerBalance);
@@ -894,14 +889,18 @@ namespace FMS.Repository.Master
                         #region Create Party
                         data.Fk_SubledgerId = newSubLedger.SubLedgerId;
                         var newParty = _mapper.Map<Party>(data);
-                        newParty.Fk_BranchId = BranchId;
                         await _appDbContext.Parties.AddAsync(newParty);
                         await _appDbContext.SaveChangesAsync();
                         #endregion
+
+                        transaction.Commit();
+                        _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Created);
+                        _Result.IsSuccess = true;
                     }
-                    transaction.Commit();
-                    _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Created);
-                    _Result.IsSuccess = true;
+                    else
+                    {
+                        _Result.WarningMessage = "A Party With Same Name Already Exist";
+                    }
                 }
                 catch
                 {
@@ -922,11 +921,9 @@ namespace FMS.Repository.Master
             try
             {
                 _Result.IsSuccess = false;
-                Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
-                var Query = await _appDbContext.Parties.FirstOrDefaultAsync(s => s.PartyId == data.PartyId && s.Fk_BranchId == BranchId);
+                var Query = await _appDbContext.Parties.FirstOrDefaultAsync(s => s.PartyId == data.PartyId);
                 if (Query != null)
                 {
-                    Query.Fk_BranchId = BranchId;
                     Query.Address = data.Address;
                     Query.CreditLimit = data.CreditLimit;
                     Query.Email = data.Email;
@@ -936,7 +933,6 @@ namespace FMS.Repository.Master
                     Query.GstNo = data.GstNo;
                     Query.PartyName = data.PartyName;
                     Query.Phone = data.Phone;
-
                     int count = await _appDbContext.SaveChangesAsync();
                     _Result.Response = (count > 0) ? ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Modified) : ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Error);
                 }
@@ -1608,13 +1604,13 @@ namespace FMS.Repository.Master
                                     if (IsSuccess.IsSuccess) IsCallBack = false;
                                 }
                             }
-                            var ProductionEntry = await _appDbContext.ProductionEntries.Where(x => x.Fk_LabourId == Id && x.FK_BranchId == BranchId).ToListAsync();
+                            var ProductionEntry = await _appDbContext.LabourOrders.Where(x => x.Fk_LabourId == Id && x.FK_BranchId == BranchId).ToListAsync();
                             if (ProductionEntry.Count > 0)
                             {
                                 foreach (var item in ProductionEntry)
                                 {
                                     IsCallBack = true;
-                                    var IsSuccess = await _transactionRepo.DeleteProductionEntry(item.ProductionEntryId, localTransaction, IsCallBack);
+                                    var IsSuccess = await _transactionRepo.DeleteProductionEntry(item.LabourOrderId, localTransaction, IsCallBack);
                                     if (IsSuccess.IsSuccess) IsCallBack = false;
                                 }
                             }

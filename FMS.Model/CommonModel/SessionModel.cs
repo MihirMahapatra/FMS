@@ -9,6 +9,6 @@ namespace FMS.Model.CommonModel
         [Required]
         public string BranchId { get; set; }
         public List<BranchModel> Branches { get; set; }
-        public List<FinancialYearModel> FinancialYears { get; set; }
+        public List<BranchFinancialYearModel> FinancialYears { get; set; }
     }
 }

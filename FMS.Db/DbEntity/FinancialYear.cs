@@ -1,16 +1,21 @@
-﻿namespace FMS.Db.DbEntity
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace FMS.Db.DbEntity
 {
     public class FinancialYear
     {
-        public Guid FinancialYearId { get; set; }
-        public Guid FK_BranchId { get; set; }
+        public Guid FinancialYearId {  get; set; }
         public String Financial_Year { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
-        public Branch Branch { get; set; }
+        public ICollection<BranchFinancialYear> BranchFinancialYears { get; set; }
         public ICollection<Stock> Stocks { get; set; }
-        public ICollection<ProductionEntry> ProductionEntries { get; set; }
-        public ICollection<ProductionEntryTransaction> ProductionEntryTransactions { get; set; }
+        public ICollection<LabourOrder> LabourOrders { get; set; }
+        public ICollection<LabourTransaction> LabourTransactions { get; set; }
         public ICollection<LedgerBalance> LedgerBalances { get; set; }
         public ICollection<SubLedgerBalance> SubLedgerBalances { get; set; }
         public ICollection<Journal> Journals { get; set; }
