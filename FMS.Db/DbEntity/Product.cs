@@ -20,10 +20,6 @@ namespace FMS.Db.DbEntity
         public ICollection<AlternateUnit> AlternateUnits { get; set; }
         public ICollection<LabourRate> LabourRates { get; set; }
         public ICollection<Stock> Stocks { get; set; }
-        [InverseProperty("FinishedGood")]
-        public ICollection<Production> FinishedGoodProductions { get; set; }
-        [InverseProperty("RawMaterial")]
-        public ICollection<Production> RawMaterialProductions { get; set; }
         public ICollection<LabourOrder> LabourOrders { get; set; }
         public ICollection<LabourTransaction> LabourTransactions { get; set; }
         public ICollection<PurchaseTransaction> PurchaseTransactions { get; set; }

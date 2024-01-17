@@ -22,7 +22,7 @@ public partial class AppDbContext : IdentityDbContext<AppUser>
     public DbSet<Branch> Branches { get; set; }
     public DbSet<BranchFinancialYear> BranchFinancialYears { get; set; }
     public  DbSet<UserBranch> UserBranches { get; set; }
-    public DbSet<CompanyDetails> CompanyDetails { get; set; }
+    public DbSet<Company> Companies { get; set; }
     public  DbSet<ProductGroup> ProductGroups { get; set; }
     public  DbSet<ProductSubGroup> SubGroups { get; set; }
     public  DbSet<Unit> Units { get; set; }
@@ -76,13 +76,14 @@ public partial class AppDbContext : IdentityDbContext<AppUser>
         new BranchConfig().Configure(modelBuilder.Entity<Branch>());
         new BranchFinancialYearConfig().Configure(modelBuilder.Entity<BranchFinancialYear>());
         new UserBranchConfig().Configure(modelBuilder.Entity<UserBranch>());
-        new CompanyDetailsConfig().Configure(modelBuilder.Entity<CompanyDetails>());
+        new CompanyConfig().Configure(modelBuilder.Entity<Company>());
         new ProductGroupConfig().Configure(modelBuilder.Entity<ProductGroup>());
         new ProductSubGroupConfig().Configure(modelBuilder.Entity<ProductSubGroup>());
         new UnitConfig().Configure(modelBuilder.Entity<Unit>());
         new AlternateUnitConfig().Configure(modelBuilder.Entity<AlternateUnit>());
         new ProductTypeConfig().Configure(modelBuilder.Entity<ProductType>());
         new ProductConfig().Configure(modelBuilder.Entity<Product>());
+        new ProductionConfig().Configure(modelBuilder.Entity<Production>());
         new LabourOrderConfig().Configure(modelBuilder.Entity<LabourOrder>());
         new LabourTransactionConfig().Configure(modelBuilder.Entity<LabourTransaction>());
         new StockConfig().Configure(modelBuilder.Entity<Stock>());

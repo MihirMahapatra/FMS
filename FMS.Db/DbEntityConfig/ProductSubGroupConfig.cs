@@ -8,7 +8,7 @@ namespace FMS.Db.DbEntityConfig
     {
         public void Configure(EntityTypeBuilder<ProductSubGroup> builder)
         {
-            builder.ToTable("roductSubGroups", "dbo");
+            builder.ToTable("ProductSubGroups", "dbo");
             builder.HasKey(e => e.ProductSubGroupId);
             builder.Property(e => e.ProductSubGroupId).HasDefaultValueSql("(newid())");
             builder.Property(e => e.Fk_ProductGroupId).IsRequired(false);

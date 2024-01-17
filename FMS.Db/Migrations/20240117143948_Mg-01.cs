@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace FMS.Db.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialMg : Migration
+    public partial class Mg01 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -90,6 +90,22 @@ namespace FMS.Db.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Productions",
+                schema: "dbo",
+                columns: table => new
+                {
+                    ProductionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "(newid())"),
+                    Fk_FinishedGoodId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Fk_RawMaterialId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Quantity = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Unit = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Productions", x => x.ProductionId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ProductTypes",
                 schema: "dbo",
                 columns: table => new
@@ -152,7 +168,7 @@ namespace FMS.Db.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CompanyDetails",
+                name: "Company",
                 schema: "dbo",
                 columns: table => new
                 {
@@ -168,9 +184,9 @@ namespace FMS.Db.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CompanyDetails", x => x.CompanyId);
+                    table.PrimaryKey("PK_Company", x => x.CompanyId);
                     table.ForeignKey(
-                        name: "FK_CompanyDetails_Branches_Fk_BranchId",
+                        name: "FK_Company_Branches_Fk_BranchId",
                         column: x => x.Fk_BranchId,
                         principalSchema: "dbo",
                         principalTable: "Branches",
@@ -513,7 +529,7 @@ namespace FMS.Db.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "roductSubGroups",
+                name: "ProductSubGroups",
                 schema: "dbo",
                 columns: table => new
                 {
@@ -523,9 +539,9 @@ namespace FMS.Db.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_roductSubGroups", x => x.ProductSubGroupId);
+                    table.PrimaryKey("PK_ProductSubGroups", x => x.ProductSubGroupId);
                     table.ForeignKey(
-                        name: "FK_roductSubGroups_ProductGroups_Fk_ProductGroupId",
+                        name: "FK_ProductSubGroups_ProductGroups_Fk_ProductGroupId",
                         column: x => x.Fk_ProductGroupId,
                         principalSchema: "dbo",
                         principalTable: "ProductGroups",
@@ -764,6 +780,13 @@ namespace FMS.Db.Migrations
                         principalColumn: "ProductGroupId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
+                        name: "FK_Products_ProductSubGroups_Fk_ProductSubGroupId",
+                        column: x => x.Fk_ProductSubGroupId,
+                        principalSchema: "dbo",
+                        principalTable: "ProductSubGroups",
+                        principalColumn: "ProductSubGroupId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
                         name: "FK_Products_ProductTypes_Fk_ProductTypeId",
                         column: x => x.Fk_ProductTypeId,
                         principalSchema: "dbo",
@@ -776,13 +799,6 @@ namespace FMS.Db.Migrations
                         principalSchema: "dbo",
                         principalTable: "Units",
                         principalColumn: "UnitId",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Products_roductSubGroups_Fk_ProductSubGroupId",
-                        column: x => x.Fk_ProductSubGroupId,
-                        principalSchema: "dbo",
-                        principalTable: "roductSubGroups",
-                        principalColumn: "ProductSubGroupId",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -1418,9 +1434,9 @@ namespace FMS.Db.Migrations
                 columns: table => new
                 {
                     LabourRateId = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "(newid())"),
-                    FinancialYear = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Date = table.Column<DateTime>(type: "datetime", nullable: true),
-                    Fk_ProductTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    Fk_FinancialYearId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Date = table.Column<DateTime>(type: "datetime", nullable: false),
+                    Fk_ProductTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Fk_ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Fk_BranchId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     Rate = table.Column<decimal>(type: "decimal(18,4)", nullable: false, defaultValue: 0m)
@@ -1434,6 +1450,13 @@ namespace FMS.Db.Migrations
                         principalSchema: "dbo",
                         principalTable: "Branches",
                         principalColumn: "BranchId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_LabourRates_FinancialYears_Fk_FinancialYearId",
+                        column: x => x.Fk_FinancialYearId,
+                        principalSchema: "dbo",
+                        principalTable: "FinancialYears",
+                        principalColumn: "FinancialYearId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_LabourRates_ProductTypes_Fk_ProductTypeId",
@@ -1498,36 +1521,6 @@ namespace FMS.Db.Migrations
                         principalTable: "Products",
                         principalColumn: "ProductId",
                         onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Productions",
-                schema: "dbo",
-                columns: table => new
-                {
-                    ProductionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    FinishedGoodId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    RawMaterialId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Quantity = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Unit = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    ProductId1 = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Productions", x => x.ProductionId);
-                    table.ForeignKey(
-                        name: "FK_Productions_Products_ProductId",
-                        column: x => x.ProductId,
-                        principalSchema: "dbo",
-                        principalTable: "Products",
-                        principalColumn: "ProductId");
-                    table.ForeignKey(
-                        name: "FK_Productions_Products_ProductId1",
-                        column: x => x.ProductId1,
-                        principalSchema: "dbo",
-                        principalTable: "Products",
-                        principalColumn: "ProductId");
                 });
 
             migrationBuilder.CreateTable(
@@ -2143,9 +2136,9 @@ namespace FMS.Db.Migrations
                 column: "Fk_StateId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CompanyDetails_Fk_BranchId",
+                name: "IX_Company_Fk_BranchId",
                 schema: "dbo",
-                table: "CompanyDetails",
+                table: "Company",
                 column: "Fk_BranchId");
 
             migrationBuilder.CreateIndex(
@@ -2303,6 +2296,12 @@ namespace FMS.Db.Migrations
                 schema: "dbo",
                 table: "LabourRates",
                 column: "Fk_BranchId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LabourRates_Fk_FinancialYearId",
+                schema: "dbo",
+                table: "LabourRates",
+                column: "Fk_FinancialYearId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_LabourRates_Fk_ProductId",
@@ -2545,18 +2544,6 @@ namespace FMS.Db.Migrations
                 column: "Fk_ProductTypeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Productions_ProductId",
-                schema: "dbo",
-                table: "Productions",
-                column: "ProductId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Productions_ProductId1",
-                schema: "dbo",
-                table: "Productions",
-                column: "ProductId1");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Products_Fk_ProductGroupId",
                 schema: "dbo",
                 table: "Products",
@@ -2579,6 +2566,12 @@ namespace FMS.Db.Migrations
                 schema: "dbo",
                 table: "Products",
                 column: "Fk_UnitId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProductSubGroups_Fk_ProductGroupId",
+                schema: "dbo",
+                table: "ProductSubGroups",
+                column: "Fk_ProductGroupId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PurchaseOrders_Fk_BranchId",
@@ -2711,12 +2704,6 @@ namespace FMS.Db.Migrations
                 schema: "dbo",
                 table: "Receipts",
                 column: "LedgerId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_roductSubGroups_Fk_ProductGroupId",
-                schema: "dbo",
-                table: "roductSubGroups",
-                column: "Fk_ProductGroupId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_SalesOrders_Fk_BranchId",
@@ -2909,7 +2896,7 @@ namespace FMS.Db.Migrations
                 schema: "dbo");
 
             migrationBuilder.DropTable(
-                name: "CompanyDetails",
+                name: "Company",
                 schema: "dbo");
 
             migrationBuilder.DropTable(
@@ -3061,11 +3048,11 @@ namespace FMS.Db.Migrations
                 schema: "dbo");
 
             migrationBuilder.DropTable(
-                name: "Units",
+                name: "ProductSubGroups",
                 schema: "dbo");
 
             migrationBuilder.DropTable(
-                name: "roductSubGroups",
+                name: "Units",
                 schema: "dbo");
 
             migrationBuilder.DropTable(

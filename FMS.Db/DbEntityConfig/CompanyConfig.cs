@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace FMS.Db.DbEntityConfig
 {
-    public class CompanyDetailsConfig : IEntityTypeConfiguration<CompanyDetails>
+    public class CompanyConfig : IEntityTypeConfiguration<Company>
     {
-        public void Configure(EntityTypeBuilder<CompanyDetails> builder)
+        public void Configure(EntityTypeBuilder<Company> builder)
         {
-            builder.ToTable("CompanyDetails", "dbo");
+            builder.ToTable("Company", "dbo");
             builder.HasKey(e => e.CompanyId);
             builder.Property(e => e.CompanyId).HasDefaultValueSql("(newid())");
             builder.Property(e => e.Fk_BranchId).IsRequired(true);

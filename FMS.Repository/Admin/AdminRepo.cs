@@ -317,7 +317,7 @@ namespace FMS.Repository.Admin
             try
             {
                 _Result.IsSuccess = false;
-                var newCompanyDetails = new CompanyDetails
+                var newCompanyDetails = new Company
                 {
                     State = data.State,
                     Name = data.Name,
@@ -328,7 +328,7 @@ namespace FMS.Repository.Admin
                     Logo = data.logo,
                     Fk_BranchId = BranchId
                 };
-                await _appDbContext.CompanyDetails.AddAsync(newCompanyDetails);
+                await _appDbContext.Companies.AddAsync(newCompanyDetails);
                 int count = await _appDbContext.SaveChangesAsync();
                 _Result.Response = (count > 0) ? ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Created) : ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Error);
 
@@ -348,7 +348,7 @@ namespace FMS.Repository.Admin
             {
                 _Result.IsSuccess = false;
                 var companyId = Guid.Parse(model.CompanyId);
-                var Query = await _appDbContext.CompanyDetails.Where(s => s.CompanyId == companyId).FirstOrDefaultAsync();
+                var Query = await _appDbContext.Companies.Where(s => s.CompanyId == companyId).FirstOrDefaultAsync();
                 if (Query != null)
                 {
                     Query.Name = model.Name;
@@ -376,7 +376,7 @@ namespace FMS.Repository.Admin
             Result<CompanyDetailsModel> _Result = new();
             try
             {
-                var Query = await _appDbContext.CompanyDetails.Where(s => s.Fk_BranchId == BranchId).Select(s => new CompanyDetailsModel
+                var Query = await _appDbContext.Companies.Where(s => s.Fk_BranchId == BranchId).Select(s => new CompanyDetailsModel
                 {
                     Name = s.Name,
                     GSTIN = s.GSTIN,
@@ -1368,8 +1368,8 @@ namespace FMS.Repository.Admin
                     ProductionId = s.ProductionId,
                     Unit = s.Unit,
                     Quantity = s.Quantity,
-                    FinishedGoodName = _appDbContext.Products.Where(p => p.ProductId == s.FinishedGoodId).Select(s => s.ProductName).SingleOrDefault(),
-                    RawMaterialName = _appDbContext.Products.Where(p => p.ProductId == s.RawMaterialId).Select(s => s.ProductName).SingleOrDefault(),
+                    FinishedGoodName = _appDbContext.Products.Where(p => p.ProductId == s.Fk_FinishedGoodId).Select(s => s.ProductName).SingleOrDefault(),
+                    RawMaterialName = _appDbContext.Products.Where(p => p.ProductId == s.Fk_RawMaterialId).Select(s => s.ProductName).SingleOrDefault(),
                 }).ToListAsync();
                 if (Query.Count > 0)
                 {
@@ -1391,7 +1391,7 @@ namespace FMS.Repository.Admin
             try
             {
                 _Result.IsSuccess = false;
-                var Query = _appDbContext.Productions.Where(s => s.FinishedGoodId == Guid.Parse(data.FinishedGoodId)).FirstOrDefaultAsync();
+                var Query = _appDbContext.Productions.Where(s => s.Fk_FinishedGoodId == Guid.Parse(data.FinishedGoodId)).FirstOrDefaultAsync();
                 if (Query.Result == null)
                 {
                     List<Production> products = new();
@@ -1399,8 +1399,8 @@ namespace FMS.Repository.Admin
                     {
                         var AddNewMixProduct = new Production
                         {
-                            FinishedGoodId = Guid.Parse(data.FinishedGoodId),
-                            RawMaterialId = Guid.Parse(item[0]),
+                            Fk_FinishedGoodId = Guid.Parse(data.FinishedGoodId),
+                            Fk_RawMaterialId = Guid.Parse(item[0]),
                             Quantity = Convert.ToDecimal(item[1]),
                             Unit = item[2].ToString()
                         };
@@ -1428,8 +1428,8 @@ namespace FMS.Repository.Admin
                 if (Query != null)
                 {
                     Query.Quantity = data.Quantity;
-                    Query.FinishedGoodId = data.FinishedGoodId;
-                    Query.RawMaterialId = data.RawMaterialId;
+                    Query.Fk_FinishedGoodId = data.FinishedGoodId;
+                    Query.Fk_RawMaterialId = data.RawMaterialId;
                     int count = await _appDbContext.SaveChangesAsync();
                     _Result.Response = (count > 0) ? ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Modified) : ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Error);
                 }
@@ -1487,8 +1487,8 @@ namespace FMS.Repository.Admin
             try
             {
                 _Result.IsSuccess = false;
-                string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
-                var Query = await _appDbContext.LabourRates.Where(s => s.FinancialYear == FinancialYear)
+                Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
+                var Query = await _appDbContext.LabourRates.Where(s => s.Fk_FinancialYearId == FinancialYear)
                                    .Select(lr => new LabourRateModel
                                    {
                                        LabourRateId = lr.LabourRateId,
@@ -1517,8 +1517,8 @@ namespace FMS.Repository.Admin
             try
             {
                 _Result.IsSuccess = false;
-                string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
-                var Query = await _appDbContext.LabourRates.Where(s => s.FinancialYear == FinancialYear && s.Fk_ProductTypeId == ProductTypeId)
+                Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
+                var Query = await _appDbContext.LabourRates.Where(s => s.Fk_FinancialYearId == FinancialYear && s.Fk_ProductTypeId == ProductTypeId)
                                    .Select(lr => new LabourRateModel
                                    {
                                        LabourRateId = lr.LabourRateId,
@@ -1547,9 +1547,9 @@ namespace FMS.Repository.Admin
             try
             {
                 _Result.IsSuccess = false;
-                string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
+                Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
                 Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
-                var Query = await _appDbContext.LabourRates.Where(s => s.FinancialYear == FinancialYear && s.Fk_ProductTypeId == ProductTypeId && s.Fk_BranchId == BranchId)
+                var Query = await _appDbContext.LabourRates.Where(s => s.Fk_FinancialYearId == FinancialYear && s.Fk_ProductTypeId == ProductTypeId && s.Fk_BranchId == BranchId)
                                    .Select(lr => new LabourRateModel
                                    {
                                        LabourRateId = lr.LabourRateId,
@@ -1578,12 +1578,12 @@ namespace FMS.Repository.Admin
             try
             {
                 _Result.IsSuccess = false;
-                string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
+                Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
                 Guid ProductType = await _appDbContext.Products.Where(s => s.ProductId == ProductId).Select(s => s.Fk_ProductTypeId).SingleOrDefaultAsync();
                 if (ProductType == MappingProductType.ServiceGoods)
                 {
                     Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
-                    _Result.SingleObjData = await _appDbContext.LabourRates.Where(s => s.Fk_ProductId == ProductId && s.FinancialYear == FinancialYear && s.Fk_BranchId== BranchId).OrderByDescending(s => s.Date).
+                    _Result.SingleObjData = await _appDbContext.LabourRates.Where(s => s.Fk_ProductId == ProductId && s.Fk_FinancialYearId == FinancialYear && s.Fk_BranchId== BranchId).OrderByDescending(s => s.Date).
                  Select(s => new LabourRateModel
                  {
                      Rate = s.Rate,
@@ -1595,7 +1595,7 @@ namespace FMS.Repository.Admin
                 }
                 else
                 {
-                    _Result.SingleObjData = await _appDbContext.LabourRates.Where(s => s.Fk_ProductId == ProductId && s.FinancialYear == FinancialYear).OrderByDescending(s => s.Date).
+                    _Result.SingleObjData = await _appDbContext.LabourRates.Where(s => s.Fk_ProductId == ProductId && s.Fk_FinancialYearId == FinancialYear).OrderByDescending(s => s.Date).
                  Select(s => new LabourRateModel
                  {
                      Rate = s.Rate,
@@ -1625,7 +1625,7 @@ namespace FMS.Repository.Admin
             try
             {
                 _Result.IsSuccess = false;
-                string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
+                Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
                 Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
                 if (DateTime.TryParseExact(data.FormtedDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedDate))
                 {
@@ -1636,7 +1636,7 @@ namespace FMS.Repository.Admin
                         Fk_ProductTypeId = data.Fk_ProductTypeId,
                         Fk_ProductId = data.Fk_ProductId,
                         Rate = data.Rate,
-                        FinancialYear = FinancialYear,
+                        Fk_FinancialYearId = FinancialYear,
                         Fk_BranchId = data.Fk_ProductTypeId == MappingProductType.ServiceGoods ? BranchId : null
                     };
                     await _appDbContext.LabourRates.AddAsync(newLabourRate);

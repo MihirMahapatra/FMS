@@ -20,6 +20,9 @@ namespace FMS.Db.DbEntityConfig
             builder.Property(e => e.Quantity).HasColumnType("decimal(18,2)").IsRequired(true);
             builder.Property(e => e.Rate).HasColumnType("decimal(18,2)").IsRequired(true);
             builder.Property(e => e.Discount).HasColumnType("decimal(18,2)").IsRequired(true);
+            builder.Property(e => e.DiscountAmount).HasColumnType("decimal(18,2)").IsRequired(true);
+            builder.Property(e => e.Gst).HasColumnType("decimal(18,2)").IsRequired(true);
+            builder.Property(e => e.GstAmount).HasColumnType("decimal(18,2)").IsRequired(true);
             builder.Property(e => e.Amount).HasColumnType("decimal(18,2)").IsRequired(true);
             builder.HasOne(p => p.SalesOrder).WithMany(po => po.SalesTransactions).HasForeignKey(po => po.Fk_SalesOrderId).OnDelete(DeleteBehavior.Restrict);
             builder.HasOne(p => p.Product).WithMany(po => po.SalesTransactions).HasForeignKey(po => po.Fk_ProductId).OnDelete(DeleteBehavior.Restrict);

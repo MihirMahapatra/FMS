@@ -1347,11 +1347,11 @@ namespace FMS.Repository.Transaction
             {
                 var Query = await (from Production in _appDbContext.Productions
                                    join product in _appDbContext.Products
-                                        on Production.RawMaterialId equals product.ProductId
-                                   where Production.FinishedGoodId == ProductId
+                                        on Production.Fk_RawMaterialId equals product.ProductId
+                                   where Production.Fk_FinishedGoodId == ProductId
                                    select new ProductionModel
                                    {
-                                       RawMaterialId = Production.RawMaterialId,
+                                       RawMaterialId = Production.Fk_RawMaterialId,
                                        ProductName = product.ProductName,
                                        Quantity = Production.Quantity,
                                        Unit = Production.Unit
@@ -1460,10 +1460,10 @@ namespace FMS.Repository.Transaction
                                 await _appDbContext.Stocks.AddAsync(AddNewFinishedGoodStock);
                             }
                             //update Rawmterial Stock
-                            var getFinishedGoodRawmaterial = await _appDbContext.Productions.Where(s => s.FinishedGoodId == newProductionEntry.Fk_ProductId).ToListAsync();
+                            var getFinishedGoodRawmaterial = await _appDbContext.Productions.Where(s => s.Fk_FinishedGoodId == newProductionEntry.Fk_ProductId).ToListAsync();
                             foreach (var item1 in getFinishedGoodRawmaterial)
                             {
-                                var UpdateRawMaterialStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == item1.RawMaterialId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                var UpdateRawMaterialStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == item1.Fk_RawMaterialId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
                                 if (UpdateRawMaterialStock != null)
                                 {
                                     UpdateRawMaterialStock.AvilableStock -= (newProductionEntry.Quantity * item1.Quantity);
@@ -1474,7 +1474,7 @@ namespace FMS.Repository.Transaction
                                     var AddNewRawMaterialStock = new Stock
                                     {
                                         Fk_BranchId = BranchId,
-                                        Fk_ProductId = item1.RawMaterialId,
+                                        Fk_ProductId = item1.Fk_RawMaterialId,
                                         Fk_FinancialYear = FinancialYear,
                                         AvilableStock = -(item1.Quantity)
                                     };
@@ -1489,7 +1489,7 @@ namespace FMS.Repository.Transaction
                                     TransactionDate = convertedProductionDate,
                                     Fk_BranchId = BranchId,
                                     Fk_FinancialYearId = FinancialYear,
-                                    Fk_ProductId = item1.RawMaterialId,
+                                    Fk_ProductId = item1.Fk_RawMaterialId,
                                     Quantity = (newProductionEntry.Quantity * item1.Quantity),
                                 };
                                 await _appDbContext.LabourTransactions.AddAsync(newProductionEntryTransaction);
@@ -1559,7 +1559,7 @@ namespace FMS.Repository.Transaction
                         var UpdateProductionEntry = await (from s in _appDbContext.LabourOrders where s.LabourOrderId == data.LabourOrderId && s.FK_BranchId == BranchId select s).SingleOrDefaultAsync();
                         if (UpdateProductionEntry != null)
                         {
-                            var getFinishedGoodRawmaterial = await _appDbContext.Productions.Where(s => s.FinishedGoodId == data.Fk_ProductId).ToListAsync();
+                            var getFinishedGoodRawmaterial = await _appDbContext.Productions.Where(s => s.Fk_FinishedGoodId == data.Fk_ProductId).ToListAsync();
                             var UpdateFinishedGoodStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == data.Fk_ProductId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
 
                             if (data.Fk_ProductId == UpdateProductionEntry.Fk_ProductId)
@@ -1586,7 +1586,7 @@ namespace FMS.Repository.Transaction
                                 //Update RawMaterial Stock
                                 foreach (var item in getFinishedGoodRawmaterial)
                                 {
-                                    var UpdateRawMaterialStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == item.RawMaterialId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                    var UpdateRawMaterialStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == item.Fk_RawMaterialId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
                                     if (UpdateRawMaterialStock != null)
                                     {
                                         var quantityDifference = ((UpdateProductionEntry.Quantity - data.Quantity) * item.Quantity);
@@ -1594,7 +1594,7 @@ namespace FMS.Repository.Transaction
                                         await _appDbContext.SaveChangesAsync();
                                     }
                                     //******************************************Production Entry Transaction***************************************************//
-                                    var getSingleProductionEntryTransaction = await _appDbContext.LabourTransactions.Where(s => s.Fk_LabourOdrId == UpdateProductionEntry.LabourOrderId && s.Fk_ProductId == item.RawMaterialId && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).SingleOrDefaultAsync();
+                                    var getSingleProductionEntryTransaction = await _appDbContext.LabourTransactions.Where(s => s.Fk_LabourOdrId == UpdateProductionEntry.LabourOrderId && s.Fk_ProductId == item.Fk_RawMaterialId && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).SingleOrDefaultAsync();
                                     if (getSingleProductionEntryTransaction != null)
                                     {
                                         var differencetrn = ((UpdateProductionEntry.Quantity - data.Quantity) * item.Quantity);
@@ -1609,10 +1609,10 @@ namespace FMS.Repository.Transaction
                             {
                                 #region Revert Stock
                                 //Revert RawMaterial Stock
-                                var getOldProductFinishedGoodRawmaterial = await _appDbContext.Productions.Where(s => s.FinishedGoodId == UpdateProductionEntry.Fk_ProductId).ToListAsync();
+                                var getOldProductFinishedGoodRawmaterial = await _appDbContext.Productions.Where(s => s.Fk_FinishedGoodId == UpdateProductionEntry.Fk_ProductId).ToListAsync();
                                 foreach (var item in getOldProductFinishedGoodRawmaterial)
                                 {
-                                    var UpdateRawMaterialStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == item.RawMaterialId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                    var UpdateRawMaterialStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == item.Fk_RawMaterialId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
                                     if (UpdateRawMaterialStock != null)
                                     {
                                         UpdateRawMaterialStock.AvilableStock += (item.Quantity * UpdateProductionEntry.Quantity);
@@ -1636,7 +1636,7 @@ namespace FMS.Repository.Transaction
                                 //Update RawMaterial Stock
                                 foreach (var item in getFinishedGoodRawmaterial)
                                 {
-                                    var UpdateRawMaterialStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == item.RawMaterialId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                    var UpdateRawMaterialStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == item.Fk_RawMaterialId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
                                     if (UpdateRawMaterialStock != null)
                                     {
                                         UpdateRawMaterialStock.AvilableStock -= (data.Quantity * item.Quantity);
@@ -1650,7 +1650,7 @@ namespace FMS.Repository.Transaction
                                         TransactionDate = convertedProductionDate,
                                         Fk_BranchId = BranchId,
                                         Fk_FinancialYearId = FinancialYear,
-                                        Fk_ProductId = item.RawMaterialId,
+                                        Fk_ProductId = item.Fk_RawMaterialId,
                                         Quantity = (data.Quantity * item.Quantity),
                                     };
                                     await _appDbContext.LabourTransactions.AddAsync(newProductionEntryTransaction);

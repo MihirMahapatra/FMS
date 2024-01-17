@@ -1,7 +1,7 @@
 ﻿
 namespace FMS.Db.DbEntity
 {
-    public class CompanyDetails
+    public class Company
     {
         public Guid CompanyId { get; set; }
         public Guid Fk_BranchId { get; set; }

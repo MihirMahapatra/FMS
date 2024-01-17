@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FMS.Db.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240117072710_Initial-Mg")]
-    partial class InitialMg
+    [Migration("20240117143948_Mg-01")]
+    partial class Mg01
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -226,7 +226,7 @@ namespace FMS.Db.Migrations
                     b.ToTable("Cities", "dbo");
                 });
 
-            modelBuilder.Entity("FMS.Db.DbEntity.CompanyDetails", b =>
+            modelBuilder.Entity("FMS.Db.DbEntity.Company", b =>
                 {
                     b.Property<Guid>("CompanyId")
                         .ValueGeneratedOnAdd()
@@ -268,7 +268,7 @@ namespace FMS.Db.Migrations
 
                     b.HasIndex("Fk_BranchId");
 
-                    b.ToTable("CompanyDetails", "dbo");
+                    b.ToTable("Company", "dbo");
                 });
 
             modelBuilder.Entity("FMS.Db.DbEntity.DamageOrder", b =>
@@ -667,19 +667,19 @@ namespace FMS.Db.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasDefaultValueSql("(newid())");
 
-                    b.Property<DateTime?>("Date")
+                    b.Property<DateTime>("Date")
                         .HasColumnType("datetime");
 
-                    b.Property<string>("FinancialYear")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<Guid?>("Fk_BranchId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("Fk_FinancialYearId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("Fk_ProductId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("Fk_ProductTypeId")
+                    b.Property<Guid>("Fk_ProductTypeId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("Rate")
@@ -690,6 +690,8 @@ namespace FMS.Db.Migrations
                     b.HasKey("LabourRateId");
 
                     b.HasIndex("Fk_BranchId");
+
+                    b.HasIndex("Fk_FinancialYearId");
 
                     b.HasIndex("Fk_ProductId");
 
@@ -1457,7 +1459,7 @@ namespace FMS.Db.Migrations
 
                     b.HasIndex("Fk_ProductGroupId");
 
-                    b.ToTable("roductSubGroups", "dbo");
+                    b.ToTable("ProductSubGroups", "dbo");
                 });
 
             modelBuilder.Entity("FMS.Db.DbEntity.ProductType", b =>
@@ -1503,31 +1505,24 @@ namespace FMS.Db.Migrations
                 {
                     b.Property<Guid>("ProductionId")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("(newid())");
+
+                    b.Property<Guid>("Fk_FinishedGoodId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("FinishedGoodId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("ProductId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("ProductId1")
+                    b.Property<Guid>("Fk_RawMaterialId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("Quantity")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<Guid>("RawMaterialId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<string>("Unit")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("ProductionId");
-
-                    b.HasIndex("ProductId");
-
-                    b.HasIndex("ProductId1");
 
                     b.ToTable("Productions", "dbo");
                 });
@@ -2657,7 +2652,7 @@ namespace FMS.Db.Migrations
                     b.Navigation("State");
                 });
 
-            modelBuilder.Entity("FMS.Db.DbEntity.CompanyDetails", b =>
+            modelBuilder.Entity("FMS.Db.DbEntity.Company", b =>
                 {
                     b.HasOne("FMS.Db.DbEntity.Branch", "Branch")
                         .WithMany("CompanyDetails")
@@ -2913,6 +2908,12 @@ namespace FMS.Db.Migrations
                         .HasForeignKey("Fk_BranchId")
                         .OnDelete(DeleteBehavior.Restrict);
 
+                    b.HasOne("FMS.Db.DbEntity.FinancialYear", "FinancialYear")
+                        .WithMany("LabourRates")
+                        .HasForeignKey("Fk_FinancialYearId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("FMS.Db.DbEntity.Product", "Product")
                         .WithMany("LabourRates")
                         .HasForeignKey("Fk_ProductId")
@@ -2922,9 +2923,12 @@ namespace FMS.Db.Migrations
                     b.HasOne("FMS.Db.DbEntity.ProductType", "ProductType")
                         .WithMany("LabourRates")
                         .HasForeignKey("Fk_ProductTypeId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("Branch");
+
+                    b.Navigation("FinancialYear");
 
                     b.Navigation("Product");
 
@@ -3268,17 +3272,6 @@ namespace FMS.Db.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("ProductGroup");
-                });
-
-            modelBuilder.Entity("FMS.Db.DbEntity.Production", b =>
-                {
-                    b.HasOne("FMS.Db.DbEntity.Product", null)
-                        .WithMany("FinishedGoodProductions")
-                        .HasForeignKey("ProductId");
-
-                    b.HasOne("FMS.Db.DbEntity.Product", null)
-                        .WithMany("RawMaterialProductions")
-                        .HasForeignKey("ProductId1");
                 });
 
             modelBuilder.Entity("FMS.Db.DbEntity.PurchaseOrder", b =>
@@ -3857,6 +3850,8 @@ namespace FMS.Db.Migrations
 
                     b.Navigation("LabourOrders");
 
+                    b.Navigation("LabourRates");
+
                     b.Navigation("LabourTransactions");
 
                     b.Navigation("LedgerBalances");
@@ -3985,8 +3980,6 @@ namespace FMS.Db.Migrations
 
                     b.Navigation("DamageTransactions");
 
-                    b.Navigation("FinishedGoodProductions");
-
                     b.Navigation("InwardSupplyTransactions");
 
                     b.Navigation("LabourOrders");
@@ -4000,8 +3993,6 @@ namespace FMS.Db.Migrations
                     b.Navigation("PurchaseReturnTransactions");
 
                     b.Navigation("PurchaseTransactions");
-
-                    b.Navigation("RawMaterialProductions");
 
                     b.Navigation("SalesReturnTransactions");
 
