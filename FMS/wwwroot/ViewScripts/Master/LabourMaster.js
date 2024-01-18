@@ -35,10 +35,7 @@ $(function () {
         $(this).val(inputValue);
     });
     openingBalance.on("input", function () {
-        var inputValue = $(this).val().replace(/[^0-9.]/g, '');
-        if (inputValue.length > 10) {
-            inputValue = inputValue.substr(0, 10);
-        }
+        var inputValue = $(this).val().replace(/[^0-9.]/g, '')     
         $(this).val(inputValue);
     });
     /***************************************Contorl Foucous Of Element Labour Details***********************************************************/

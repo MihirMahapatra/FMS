@@ -9,6 +9,23 @@
     const UnitQty = $('input[name = "UnitQty"]');
     const AlternateQty = $('input[name = "AlternateQty"]');
     const AlternateUnit = $('input[name = "AlternateUnit"]');
+    /************************************Validation Section**************************************************/
+    AlternateUnit.on("input", function () {
+        let inputValue = $(this).val();
+        inputValue = inputValue.toUpperCase();
+        $(this).val(inputValue);
+    });
+    UnitQty.on("input", function () {
+        var inputValue = $(this).val().replace(/[^0-9.]/g, '')
+        $(this).val(inputValue);
+    });
+    $('.btn-alternateunit-create').on('focus', function () {
+        $(this).css('background-color', 'black');
+    });
+    $('.btn-alternateunit-create').on('blur', function () {
+        $(this).css('background-color', '');
+    });
+    /********************************************************************************************************/
     LoadProducts();
     function LoadProducts() {
         ProductId.empty();
