@@ -605,9 +605,9 @@ namespace FMS.Service.Admin
         }
         #endregion
         #region Group
-        public async Task<GroupViewModel> GetAllGroups()
+        public async Task<ProductGroupViewModel> GetAllGroups()
         {
-            GroupViewModel Obj;
+            ProductGroupViewModel Obj;
             var Result = await _adminRepo.GetAllGroups();
             if (Result.IsSuccess)
             {
@@ -617,7 +617,7 @@ namespace FMS.Service.Admin
                     {
                         ResponseStatus = Result.Response,
                         ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
-                        Groups = Result.CollectionObjData,
+                        ProductGroups = Result.CollectionObjData,
                     };
                 }
                 else
@@ -642,9 +642,9 @@ namespace FMS.Service.Admin
             }
             return Obj;
         }
-        public async Task<GroupViewModel> GetAllGroups(Guid ProdutTypeId)
+        public async Task<ProductGroupViewModel> GetAllGroups(Guid ProdutTypeId)
         {
-            GroupViewModel Obj;
+            ProductGroupViewModel Obj;
             var Result = await _adminRepo.GetAllGroups(ProdutTypeId);
             if (Result.IsSuccess)
             {
@@ -654,7 +654,7 @@ namespace FMS.Service.Admin
                     {
                         ResponseStatus = Result.Response,
                         ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
-                        Groups = Result.CollectionObjData,
+                        ProductGroups = Result.CollectionObjData,
                     };
                 }
                 else
@@ -810,9 +810,9 @@ namespace FMS.Service.Admin
         }
         #endregion
         #region SubGroup
-        public async Task<SubGroupViewModel> GetSubGroups(Guid GroupId)
+        public async Task<ProductSubGroupViewModel> GetSubGroups(Guid GroupId)
         {
-            SubGroupViewModel Obj;
+            ProductSubGroupViewModel Obj;
             var Result = await _adminRepo.GetSubGroups(GroupId);
             if (Result.IsSuccess)
             {
@@ -822,7 +822,7 @@ namespace FMS.Service.Admin
                     {
                         ResponseStatus = Result.Response,
                         ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
-                        SubGroups = Result.CollectionObjData,
+                        ProductSubGroups = Result.CollectionObjData,
                     };
                 }
                 else
@@ -1158,7 +1158,7 @@ namespace FMS.Service.Admin
                     {
                         ResponseStatus = Result.Response,
                         ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
-                        products = Result.CollectionObjData,
+                        Products = Result.CollectionObjData,
                     };
                 }
                 else
@@ -1195,7 +1195,7 @@ namespace FMS.Service.Admin
                     {
                         ResponseStatus = Result.Response,
                         ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
-                        product = Result.SingleObjData,
+                        Product = Result.SingleObjData,
                     };
                 }
                 else
@@ -1232,7 +1232,7 @@ namespace FMS.Service.Admin
                     {
                         ResponseStatus = Result.Response,
                         ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
-                        products = Result.CollectionObjData,
+                        Products = Result.CollectionObjData,
                     };
                 }
                 else
@@ -1269,7 +1269,7 @@ namespace FMS.Service.Admin
                     {
                         ResponseStatus = Result.Response,
                         ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
-                        product = Result.SingleObjData,
+                        Product = Result.SingleObjData,
                     };
                 }
                 else
@@ -1681,7 +1681,7 @@ namespace FMS.Service.Admin
                     {
                         ResponseStatus = result.Response,
                         ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
-                        products = result.CollectionObjData,
+                        Products = result.CollectionObjData,
                     };
                 }
                 else
@@ -1718,7 +1718,7 @@ namespace FMS.Service.Admin
                     {
                         ResponseStatus = result.Response,
                         ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
-                        products = result.CollectionObjData,
+                        Products = result.CollectionObjData,
                     };
                 }
                 else
@@ -1755,7 +1755,7 @@ namespace FMS.Service.Admin
                     {
                         ResponseStatus = result.Response,
                         ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
-                        product = result.SingleObjData,
+                        Product = result.SingleObjData,
                     };
                 }
                 else

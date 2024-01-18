@@ -6,11 +6,11 @@ namespace FMS.Model.ViewModel
     {
         public ProductViewModel()
         {
-            products = new List<ProductModel>();
-            product = new ProductModel();
+            Products = new List<ProductModel>();
+            Product = new ProductModel();
         }
 
-        public List<ProductModel> products { get; set; }
-        public ProductModel product { get; set; }
+        public List<ProductModel> Products { get; set; }
+        public ProductModel Product { get; set; }
     }
 }

@@ -35,14 +35,14 @@ namespace FMS.Service.Admin
         Task<ProductTypeViewModel> GetProductTypes();
         #endregion
         #region Group
-        Task<GroupViewModel> GetAllGroups();
-        Task<GroupViewModel> GetAllGroups(Guid ProdutTypeId);
+        Task<ProductGroupViewModel> GetAllGroups();
+        Task<ProductGroupViewModel> GetAllGroups(Guid ProdutTypeId);
         Task<Base> CreateGroup(ProductGroupModel data);
         Task<Base> UpdateGroup(ProductGroupModel data);
         Task<Base> DeleteGroup(Guid Id);
         #endregion
         #region SubGroup
-        Task<SubGroupViewModel> GetSubGroups(Guid GroupId);
+        Task<ProductSubGroupViewModel> GetSubGroups(Guid GroupId);
         Task<Base> CreateSubGroup(ProductSubGroupModel data);
         Task<Base> UpdateSubGroup(ProductSubGroupModel data);
         Task<Base> DeleteSubGroup(Guid Id);

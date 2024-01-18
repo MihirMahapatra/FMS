@@ -252,8 +252,8 @@
             dataType: "json",
             success: function (result) {
                 if (result.ResponseCode == 302) {
-                    $.each(result.Groups, function (key, item) {
-                        var option = $('<option></option>').val(item.GroupId).text(item.GroupName);
+                    $.each(result.ProductGroups, function (key, item) {
+                        var option = $('<option></option>').val(item.ProductGroupId).text(item.ProductGroupName);
                         groupId.append(option);
                     });
                 }
@@ -274,7 +274,7 @@
         }
         else {
             const data = {
-                GroupName: $('input[name="mdlGroupAdd"]').val(),
+                ProductGroupName: $('input[name="mdlGroupAdd"]').val(),
                 Fk_ProductTypeId: productTypeId.val()
             }
             $.ajax({
@@ -319,8 +319,8 @@
     $('.groupUpdate').on('click', GroupUpdate);
     function GroupUpdate() {
         const data = {
-            GroupId: $('input[name="mdlGroupId"]').val(),
-            GroupName: $('input[name="mdlGroupEdit"]').val(),
+            ProductGroupId: $('input[name="mdlGroupId"]').val(),
+            ProductGroupName: $('input[name="mdlGroupEdit"]').val(),
             Fk_ProductTypeId: productTypeId.val()
         }
         $.ajax({
@@ -411,8 +411,8 @@
             dataType: "json",
             success: function (result) {
                 if (result.ResponseCode == 302) {
-                    $.each(result.SubGroups, function (key, item) {
-                        var option = $('<option></option>').val(item.SubGroupId).text(item.SubGroupName);
+                    $.each(result.ProductSubGroups, function (key, item) {
+                        var option = $('<option></option>').val(item.ProductSubGroupId).text(item.ProductSubGroupName);
                         subGroupId.append(option);
                     });
                 }
@@ -433,8 +433,8 @@
         }
         else {
             const data = {
-                Fk_GroupId: groupId.val(),
-                SubGroupName: $('input[name="mdlSubGroupAdd"]').val(),
+                Fk_ProductGroupId: groupId.val(),
+                ProductSubGroupName: $('input[name="mdlSubGroupAdd"]').val(),
             }
             $.ajax({
                 type: "POST",
@@ -477,9 +477,9 @@
     $('.subGroupUpdate').on('click', UpdateSubGroup);
     function UpdateSubGroup () {
         const data = {
-            SubGroupId: $('input[name="mdlSubGroupId"]').val(),
-            SubGroupName: $('input[name="mdlSubGroupEdit"]').val(),
-            Fk_GroupId: groupId.find('option:selected').val()
+            ProductSubGroupId: $('input[name="mdlSubGroupId"]').val(),
+            ProductSubGroupName: $('input[name="mdlSubGroupEdit"]').val(),
+            Fk_ProductGroupId: groupId.find('option:selected').val()
         }
         $.ajax({
             type: "POST",
@@ -600,16 +600,16 @@
                 html += '</tr>'
                 html += '</thead>'
                 html += '<tbody>';
-                if (result.products !== null) {
-                    $.each(result.products, function (key, item) {
+                if (result.Products !== null) {
+                    $.each(result.Products, function (key, item) {
                         html += '<tr>';
                         html += '<td hidden>' + item.ProductId + '</td>';
                         html += '<td>' + item.ProductName + '</td>';
                         html += '<td>' + item.ProductType.Product_Type + '</td>';
                         html += '<td>' + item.Unit.UnitName + '</td>';
-                        html += '<td>' + item.Group.GroupName + '</td>';
-                        if (item.SubGroup !== null) {
-                            html += '<td>' + item.SubGroup.SubGroupName + '</td>';
+                        html += '<td>' + item.ProductGroup.ProductGroupName + '</td>';
+                        if (item.ProductSubGroup !== null) {
+                            html += '<td>' + item.ProductSubGroup.ProductSubGroupName + '</td>';
                         }
                         else {
                             html += '<td> - </td>';
@@ -693,13 +693,12 @@
                 ProductName: ProductName.val(),
                 Fk_ProductTypeId: productTypeId.val(),
                 Fk_UnitId: unitId.val(),
-                Fk_GroupId: groupId.val(),
-                Fk_SubGroupId: subGroupId.val(),
+                Fk_ProductGroupId: groupId.val(),
+                Fk_ProductSubGroupId: subGroupId.val(),
                 Price: Price.val(),
                 WholeSalePrice: WholeSalePrice.val(),
                 GST: GST.val()
             }
-
             $.ajax({
                 type: "POST",
                 url: '/Admin/CreateProduct',
@@ -715,7 +714,9 @@
                         toastr.error(Response.ErrorMsg);
                     }
                     ProductName.val('');
-                    Price.val('');
+                    Price.val('0');
+                    WholeSalePrice.val('0');
+                    GST.val('0')
                 },
                 error: function (error) {
                     console.log(error);
@@ -810,11 +811,11 @@
             dataType: "json",
             success: function (result) {
                 if (result.ResponseCode == 302) {
-                    $.each(result.Groups, function (key, item) {
-                        var option = $('<option></option>').val(item.GroupId).text(item.GroupName);
-                        if (item.GroupName === groupName) {
+                    $.each(result.ProductGroups, function (key, item) {
+                        var option = $('<option></option>').val(item.ProductGroupId).text(item.ProductGroupName);
+                        if (item.ProductGroupName === groupName) {
                             option.attr('selected', 'selected');
-                            getSubGroup(item.GroupId, SubGroupName)
+                            getSubGroup(item.ProductGroupId, SubGroupName)
                         }
                         selectGroupElement.append(option);
                     });
@@ -841,9 +842,9 @@
             dataType: "json",
             success: function (result) {
                 if (result.ResponseCode == 302) {
-                    $.each(result.SubGroups, function (key, item) {
-                        var option = $('<option></option>').val(item.SubGroupId).text(item.SubGroupName);
-                        if (item.SubGroupName === SubGroupName) {
+                    $.each(result.ProductSubGroups, function (key, item) {
+                        var option = $('<option></option>').val(item.ProductSubGroupId).text(item.ProductSubGroupName);
+                        if (item.ProductSubGroupName === SubGroupName) {
                             option.attr('selected', 'selected');
                         }
                         selectSubGroupElement.append(option);
@@ -885,8 +886,8 @@
                 ProductName: mdlProductName.val(),
                 Fk_ProductTypeId: mdlProductType.val(),
                 Fk_UnitId: mdlUnit.val(),
-                Fk_GroupId: mdlGroup.val(),
-                Fk_SubGroupId: mdlSubGroup.val(),
+                Fk_ProductGroupId: mdlGroup.val(),
+                Fk_ProductSubGroupId: mdlSubGroup.val(),
                 Price: mdlPrice.val(),
                 WholeSalePrice: MdlWholeSalePrice.val(),
                 GST: mdlGst.val()

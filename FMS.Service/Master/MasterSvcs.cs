@@ -65,7 +65,7 @@ namespace FMS.Service.Master
                     {
                         ResponseStatus = Result.Response,
                         ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
-                        products = Result.CollectionObjData,
+                        Products = Result.CollectionObjData,
                     };
                 }
                 else
