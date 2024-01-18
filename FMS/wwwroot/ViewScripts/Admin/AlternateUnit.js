@@ -21,7 +21,7 @@
             dataType: "json",
             success: function (result) {
                 if (result.ResponseCode == 302) {
-                    $.each(result.products, function (key, item) {
+                    $.each(result.Products, function (key, item) {
                         var option = $('<option></option>').val(item.ProductId).text(item.ProductName);
                         ProductId.append(option);
                     });
@@ -128,8 +128,8 @@
             success: function (result) {
                 console.log(result);
                 if (result.ResponseCode == 302) {
-                    UnitName.text(result.product.Unit.UnitName);
-                    HdnUnitId.val(result.product.Unit.UnitId);
+                    UnitName.text(result.Product.Unit.UnitName);
+                    HdnUnitId.val(result.Product.Unit.UnitId);
                 }
             },
             error: function (errormessage) {
