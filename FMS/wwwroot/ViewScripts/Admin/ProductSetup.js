@@ -451,7 +451,7 @@
                     else {
                         toastr.error(Response.ErrorMsg);
                     }
-                    loadSubGroups(data.Fk_GroupId);
+                    loadSubGroups(data.Fk_ProductGroupId);
                 },
                 error: function (error) {
                     console.log(error);
