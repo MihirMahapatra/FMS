@@ -4,7 +4,7 @@
     {
         public Guid PartyId { get; set; }
         public Guid Fk_PartyType { get; set; }
-        public Guid? Fk_SubledgerId { get; set; }
+        public Guid Fk_SubledgerId { get; set; }
         public Guid Fk_StateId { get; set; }
         public Guid Fk_CityId { get; set; }
         public string PartyName { get; set; }

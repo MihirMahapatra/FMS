@@ -1351,7 +1351,7 @@ namespace FMS.Repository.Transaction
                                    where Production.Fk_FinishedGoodId == ProductId
                                    select new ProductionModel
                                    {
-                                       RawMaterialId = Production.Fk_RawMaterialId,
+                                       Fk_RawMaterialId = Production.Fk_RawMaterialId,
                                        ProductName = product.ProductName,
                                        Quantity = Production.Quantity,
                                        Unit = Production.Unit

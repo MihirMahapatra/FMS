@@ -12,7 +12,7 @@ namespace FMS.Db.DbEntityConfig
             builder.HasKey(e => e.ProductGroupId);
             builder.Property(e => e.ProductGroupId).HasDefaultValueSql("(newid())");   
             builder.Property(e => e.ProductGroupName).HasMaxLength(500).IsRequired(true);
-            builder.Property(e => e.Fk_ProductTypeId).IsRequired(false);
+            builder.Property(e => e.Fk_ProductTypeId).IsRequired(true);
             builder.HasOne(p => p.ProductType).WithMany(po => po.ProductGroups).HasForeignKey(po => po.Fk_ProductTypeId).OnDelete(DeleteBehavior.Restrict);
         }
     }

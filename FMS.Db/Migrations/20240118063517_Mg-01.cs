@@ -388,7 +388,7 @@ namespace FMS.Db.Migrations
                 {
                     ProductGroupId = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "(newid())"),
                     ProductGroupName = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
-                    Fk_ProductTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    Fk_ProductTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -534,7 +534,7 @@ namespace FMS.Db.Migrations
                 columns: table => new
                 {
                     ProductSubGroupId = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "(newid())"),
-                    Fk_ProductGroupId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    Fk_ProductGroupId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ProductSubGroupName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false)
                 },
                 constraints: table =>
@@ -762,7 +762,7 @@ namespace FMS.Db.Migrations
                     ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "(newid())"),
                     ProductName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false, defaultValue: 0m),
-                    WholeSalePrice = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    WholeSalePrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false, defaultValue: 0m),
                     GST = table.Column<decimal>(type: "decimal(18,2)", nullable: false, defaultValue: 0m),
                     Fk_ProductTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Fk_UnitId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -915,7 +915,7 @@ namespace FMS.Db.Migrations
                 {
                     PartyId = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "(newid())"),
                     Fk_PartyType = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Fk_SubledgerId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    Fk_SubledgerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Fk_StateId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Fk_CityId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     PartyName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
@@ -982,7 +982,7 @@ namespace FMS.Db.Migrations
                     Fk_SubLedgerId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     Fk_BranchId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Fk_FinancialYearId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    narration = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    Narration = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
                     Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false, defaultValue: 0m),
                     DrCr = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
                     LedgerId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
@@ -1149,7 +1149,7 @@ namespace FMS.Db.Migrations
                     Fk_BranchId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Fk_FinancialYearId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     TransactionNo = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
-                    narration = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    Narration = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
                     Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false, defaultValue: 0m),
                     DrCr = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
                     LedgerId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
@@ -1841,7 +1841,7 @@ namespace FMS.Db.Migrations
                     PurchaseId = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NEWID()"),
                     Fk_PurchaseOrderId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     TransactionNo = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    TransactionDate = table.Column<DateTime>(type: "datetime", nullable: true),
+                    TransactionDate = table.Column<DateTime>(type: "datetime", nullable: false),
                     Fk_ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Fk_BranchId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Fk_FinancialYearId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),

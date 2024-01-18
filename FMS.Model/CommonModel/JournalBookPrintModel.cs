@@ -8,7 +8,7 @@ namespace FMS.Model.CommonModel
 {
     public class JournalBookPrintModel
     {
-        public CompanyDetailsModel Cmopany { get; set; }
+        public CompanyModel Cmopany { get; set; }
         public JournalBookModel JournalBook { get; set; }
     }
 }

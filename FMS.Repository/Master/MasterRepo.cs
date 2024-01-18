@@ -851,7 +851,7 @@ namespace FMS.Repository.Master
                         Guid LedgerBalanceId = Guid.Empty;
                         if (isledgerBalanceExist != null)
                         {
-                            isledgerBalanceExist.RunningBalance += data.BalanceType == "Dr" ? data.OpeningBalance : -data.OpeningBalance;
+                            isledgerBalanceExist.RunningBalance += data.BalanceType == "Dr" ? data.OpeningBal : -data.OpeningBal;
                             isledgerBalanceExist.RunningBalanceType = isledgerBalanceExist.RunningBalance > 0 ? "Dr" : "Cr";
                             await _appDbContext.SaveChangesAsync();
                         }
@@ -860,9 +860,9 @@ namespace FMS.Repository.Master
                             var newLedgerBalance = new LedgerBalance
                             {
                                 Fk_LedgerId = data.Fk_PartyType,
-                                OpeningBalance = data.BalanceType == "Dr" ? data.OpeningBalance : -data.OpeningBalance,
+                                OpeningBalance = data.BalanceType == "Dr" ? data.OpeningBal : -data.OpeningBal,
                                 OpeningBalanceType = data.BalanceType,
-                                RunningBalance = data.BalanceType == "Dr" ? data.OpeningBalance : -data.OpeningBalance,
+                                RunningBalance = data.BalanceType == "Dr" ? data.OpeningBal : -data.OpeningBal,
                                 RunningBalanceType = data.BalanceType,
                                 Fk_FinancialYear = FinancialYear
                             };
@@ -878,9 +878,9 @@ namespace FMS.Repository.Master
                             Fk_LedgerBalanceId = (isledgerBalanceExist != null) ? isledgerBalanceExist.LedgerBalanceId : LedgerBalanceId,
                             Fk_SubLedgerId = newSubLedger.SubLedgerId,
                             OpeningBalanceType = data.BalanceType,
-                            OpeningBalance = data.BalanceType == "Dr" ? data.OpeningBalance : -data.OpeningBalance,
+                            OpeningBalance = data.BalanceType == "Dr" ? data.OpeningBal : -data.OpeningBal,
                             RunningBalanceType = data.BalanceType,
-                            RunningBalance = data.BalanceType == "Dr" ? data.OpeningBalance : -data.OpeningBalance,
+                            RunningBalance = data.BalanceType == "Dr" ? data.OpeningBal : -data.OpeningBal,
                             Fk_FinancialYearId = FinancialYear
                         };
                         await _appDbContext.SubLedgerBalances.AddAsync(newSubLedgerBalance);

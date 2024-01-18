@@ -6,10 +6,10 @@ namespace FMS.Model.ViewModel
     {
         public GroupViewModel()
         {
-            Groups = new List<GroupModel>();
-            Group = new GroupModel();
+            Groups = new List<ProductGroupModel>();
+            Group = new ProductGroupModel();
         }
-        public List<GroupModel> Groups { get; set; }
-        public GroupModel Group { get; set; }
+        public List<ProductGroupModel> Groups { get; set; }
+        public ProductGroupModel Group { get; set; }
     }
 }

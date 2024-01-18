@@ -23,7 +23,7 @@ namespace FMS.Db.DbEntityConfig
             builder.Property(e => e.Fk_BranchId).IsRequired(true);
             builder.Property(e => e.Fk_FinancialYearId).IsRequired(true);
             builder.Property(e => e.TransactionNo).HasMaxLength(100).IsRequired(false);
-            builder.Property(e => e.narration).HasMaxLength(500).IsRequired(false);
+            builder.Property(e => e.Narration).HasMaxLength(500).IsRequired(false);
             builder.Property(e => e.Amount).HasColumnType("decimal(18, 2)").HasDefaultValue(0);
             builder.Property(e => e.DrCr).HasMaxLength(10).IsRequired(true);
             builder.HasOne(e => e.LedgerGroup).WithMany(s => s.Receipts).HasForeignKey(e => e.Fk_LedgerGroupId).OnDelete(DeleteBehavior.Restrict);

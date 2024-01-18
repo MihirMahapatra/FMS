@@ -10,8 +10,8 @@ namespace FMS.Db.DbEntity
         public string Adress { get; set; }
         public string Email { get; set; }
         public string Phone { get; set; }
-        public string GSTIN { get; set; }
-        public Branch Branch { get; set; }
+        public string GSTIN { get; set; }  
         public string Logo { get; set; }
+        public Branch Branch { get; set; }
     }
 }

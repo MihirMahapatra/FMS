@@ -12,7 +12,7 @@ namespace FMS.Db.DbEntityConfig
             builder.HasKey(e => e.PartyId);
             builder.Property(e => e.PartyId).HasDefaultValueSql("(newid())");
             builder.Property(e => e.Fk_PartyType).IsRequired(true);
-            builder.Property(e => e.Fk_SubledgerId).IsRequired(false);
+            builder.Property(e => e.Fk_SubledgerId).IsRequired(true);
             builder.Property(e => e.Fk_StateId).IsRequired(true);
             builder.Property(e => e.Fk_CityId).IsRequired(true);
             builder.Property(e => e.PartyName).HasMaxLength(200).IsRequired(true);

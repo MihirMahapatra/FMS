@@ -21,7 +21,7 @@
         public decimal GrandTotal { get; set; }
         public SubLedgerModel SubLedger { get; set; }
         public BranchModel Branch { get; set; }
-        public BranchFinancialYearModel FinancialYear { get; set; }
+        public FinancialYearModel FinancialYear { get; set; }
         public List<PurchaseReturnTransactionModel> PurchaseReturnTransactions { get; set; } 
     }
 }

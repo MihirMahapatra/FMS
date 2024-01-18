@@ -5,7 +5,7 @@
         public Guid PurchaseOrderId { get; set; }
         public string TransactionNo { get; set; }
         public Guid Fk_SubLedgerId { get; set; }
-        public string PartyName { get; set; }
+   
         public Guid Fk_BranchId { get; set; }
         public Guid Fk_FinancialYearId { get; set; }
         public DateTime TransactionDate { get; set; }
@@ -22,7 +22,9 @@
         public string ReceivingPerson { get; set; } = null;
         public SubLedgerModel SubLedger { get; set; }
         public BranchModel Branch { get; set; }
-        public BranchFinancialYearModel FinancialYear { get; set; }
-        public List<PurchaseTransactionModel> PurchaseTransactions { get; set; } 
+        public FinancialYearModel FinancialYear { get; set; }
+        public List<PurchaseTransactionModel> PurchaseTransactions { get; set; }
+        //Others
+        public string PartyName { get; set; }
     }
 }

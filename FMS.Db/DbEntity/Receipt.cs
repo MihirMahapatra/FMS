@@ -15,7 +15,7 @@
         public Guid Fk_BranchId { get; set; }
         public Guid Fk_FinancialYearId { get; set; }
         public string TransactionNo { get; set; }
-        public string narration { get; set; }
+        public string Narration { get; set; }
         public decimal Amount { get; set; }
         public string DrCr { get; set; }
         public LedgerGroup LedgerGroup { get; set; }

@@ -23,7 +23,7 @@ namespace FMS.Db.DbEntityConfig
             builder.Property(e => e.GSTIN).IsRequired(true);
             builder.Property(e => e.Email).IsRequired(true);
             builder.Property(e => e.Phone).IsRequired(true);
-            builder.HasOne(s => s.Branch).WithMany(e => e.CompanyDetails).HasForeignKey(e => e.Fk_BranchId);
+            builder.HasOne(s => s.Branch).WithMany(e => e.Companies).HasForeignKey(e => e.Fk_BranchId);
         }
     }
 }

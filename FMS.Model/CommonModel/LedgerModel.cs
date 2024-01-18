@@ -5,6 +5,7 @@
         public Guid LedgerId { get; set; }
         public string LedgerName { get; set; }
         public string LedgerType { get; set; }
+        public string HasSubLedger { get; set; }
         public Guid Fk_LedgerGroupId { get; set; }
         public Guid? Fk_LedgerSubGroupId { get; set; }
         public LedgerGroupModel LedgerGroup { get; set; } 
@@ -15,6 +16,6 @@
         public List<JournalModel> Journals { get; set; }
         public List<PaymentModel> Payments { get; set; }
         public List<ReceiptModel> Receipts { get; set; }
-        public string HasSubLedger { get; set; }
+
     }
 }

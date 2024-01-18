@@ -13,7 +13,7 @@ namespace FMS.Db.DbEntityConfig
             builder.Property(e => e.PurchaseId).ValueGeneratedOnAdd().HasDefaultValueSql("NEWID()");
             builder.Property(e => e.Fk_PurchaseOrderId).IsRequired(true);
             builder.Property(e => e.TransactionNo).IsRequired(true);
-            builder.Property(e => e.TransactionDate).HasColumnType("datetime").IsRequired(false);
+            builder.Property(e => e.TransactionDate).HasColumnType("datetime").IsRequired(true);
             builder.Property(e => e.Fk_ProductId).IsRequired(true);
             builder.Property(e => e.Fk_BranchId).IsRequired(true);
             builder.Property(e => e.Fk_FinancialYearId).IsRequired(true);

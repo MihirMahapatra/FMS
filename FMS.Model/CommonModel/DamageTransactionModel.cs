@@ -15,6 +15,6 @@
         public DamageOrderModel DamageOrder { get; set; }
         public ProductModel Product { get; set; }
         public BranchModel Branch { get; set; }
-        public BranchFinancialYearModel FinancialYear { get; set; }
+        public FinancialYearModel FinancialYear { get; set; }
     }
 }

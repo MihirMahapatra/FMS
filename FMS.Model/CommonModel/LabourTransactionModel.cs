@@ -12,7 +12,7 @@
         public decimal Quantity { get; set; }
         public LabourOrderModel LabourOrder { get; set; }
         public ProductModel Product { get; set; }
-        public BranchFinancialYearModel FinancialYear { get; set; }
+        public FinancialYearModel FinancialYear { get; set; }
         public BranchModel Branch { get; set; }
     }
 }

@@ -8,7 +8,7 @@ namespace FMS.Model.CommonModel
 {
     public class BankBookPrintModel
     {
-        public CompanyDetailsModel Cmopany { get; set; }
+        public CompanyModel Cmopany { get; set; }
         public BankBookModal bankbook { get; set; }
     }
 }

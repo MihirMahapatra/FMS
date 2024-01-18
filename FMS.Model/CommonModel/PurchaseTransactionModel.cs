@@ -7,9 +7,8 @@ namespace FMS.Model.CommonModel
         public Guid PurchaseId { get; set; }
         public Guid Fk_PurchaseOrderId { get; set; }
         public string TransactionNo { get; set; }
-        public DateTime? TransactionDate { get; set; }
+        public DateTime TransactionDate { get; set; }
         public Guid Fk_ProductId { get; set; }
-        public string ProductName { get; set; }
         public Guid Fk_BranchId { get; set; }
         public Guid Fk_FinancialYearId { get; set; }
         public decimal AlternateQuantity { get; set; }
@@ -23,9 +22,12 @@ namespace FMS.Model.CommonModel
         public decimal Gst { get; set; }
         public decimal Amount { get; set; }
         public BranchModel Branch { get; set; }
-        public BranchFinancialYearModel FinancialYear { get; set; }
+        public FinancialYearModel FinancialYear { get; set; }
         public PurchaseOrderModel PurchaseOrder { get; set; } 
         public ProductModel Product { get; set; }
         public AlternateUnitModel AlternateUnit { get; set; }
+
+        //Others
+        public string ProductName { get; set; }
     }
 }

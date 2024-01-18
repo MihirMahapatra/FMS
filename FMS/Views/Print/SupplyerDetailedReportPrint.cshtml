@@ -134,16 +134,16 @@
                                                 </tr>
                                             }
                                         }
-                                        if (report.payments != null)
+                                        if (report.Payments != null)
                                         {
-                                            foreach (var item in report.payments)
+                                            foreach (var item in report.Payments)
                                             {
 
                                                 Balance -= item.Amount;
                                                 <tr class="small-row">
                                                     <td>@item.VoucherDate.ToString("dd/MM/yyyy")</td>
                                                     <td>@item.VouvherNo</td>
-                                                    <td>@item.narration</td>
+                                                    <td>@item.Narration</td>
                                                     <td>-</td>
                                                     <td>@item.Amount</td>
                                                     <td>@Math.Abs(@Balance).ToString("0.00")</td>

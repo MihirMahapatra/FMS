@@ -8,7 +8,6 @@
         public DateTime TransactionDate { get; set; }
         public string TransactionType { get; set; }
         public Guid Fk_ProductId { get; set; }
-        public string ProductName { get; set; }
         public Guid Fk_BranchId { get; set; }
         public Guid Fk_FinancialYearId { get; set; }
         public decimal Quantity { get; set; }
@@ -21,6 +20,9 @@
         public SalesReturnOrderModel SalesReturnOrder { get; set; }
         public ProductModel Product { get; set; }
         public BranchModel Branch { get; set; }
-        public BranchFinancialYearModel FinancialYear { get; set; }
+        public FinancialYearModel FinancialYear { get; set; }
+
+        //Others
+        public string ProductName { get; set; }
     }
 }

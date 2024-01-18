@@ -218,7 +218,7 @@ namespace FMS.Controllers.Admin
             return PartialView();
         }
         [HttpPost]
-        public async Task<IActionResult> CreateCompany([FromBody] CompanyDetailsModel data)
+        public async Task<IActionResult> CreateCompany([FromBody] CompanyModel data)
         {
             if (ModelState.IsValid)
             {
@@ -231,7 +231,7 @@ namespace FMS.Controllers.Admin
             }
         }
         [HttpPost]
-        public async Task<IActionResult> UpdateCompany([FromBody] CompanyDetailsModel model)
+        public async Task<IActionResult> UpdateCompany([FromBody] CompanyModel model)
         {
             if (ModelState.IsValid)
             {
@@ -310,7 +310,7 @@ namespace FMS.Controllers.Admin
             return new JsonResult(Groups);
         }
         [HttpPost, Authorize(Policy = "Create")]
-        public async Task<IActionResult> CreateGroup([FromBody] GroupModel model)
+        public async Task<IActionResult> CreateGroup([FromBody] ProductGroupModel model)
         {
             if (ModelState.IsValid)
             {
@@ -323,7 +323,7 @@ namespace FMS.Controllers.Admin
             }
         }
         [HttpPost, Authorize(Policy = "Edit")]
-        public async Task<IActionResult> UpdateGroup([FromBody] GroupModel model)
+        public async Task<IActionResult> UpdateGroup([FromBody] Model.CommonModel.ProductGroupModel model)
         {
             if (ModelState.IsValid)
             {
@@ -351,7 +351,7 @@ namespace FMS.Controllers.Admin
             return new JsonResult(SubGroups);
         }
         [HttpPost, Authorize(Policy = "Create")]
-        public async Task<IActionResult> CreateSubGroup([FromBody] SubGroupModel model)
+        public async Task<IActionResult> CreateSubGroup([FromBody] ProductSubGroupModel model)
         {
             if (ModelState.IsValid)
             {
@@ -364,7 +364,7 @@ namespace FMS.Controllers.Admin
             }
         }
         [HttpPost, Authorize(Policy = "Edit")]
-        public async Task<IActionResult> UpdateSubGroup([FromBody] SubGroupModel model)
+        public async Task<IActionResult> UpdateSubGroup([FromBody] ProductSubGroupModel model)
         {
             if (ModelState.IsValid)
             {

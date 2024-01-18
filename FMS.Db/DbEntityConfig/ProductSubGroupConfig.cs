@@ -11,7 +11,7 @@ namespace FMS.Db.DbEntityConfig
             builder.ToTable("ProductSubGroups", "dbo");
             builder.HasKey(e => e.ProductSubGroupId);
             builder.Property(e => e.ProductSubGroupId).HasDefaultValueSql("(newid())");
-            builder.Property(e => e.Fk_ProductGroupId).IsRequired(false);
+            builder.Property(e => e.Fk_ProductGroupId).IsRequired(true);
             builder.Property(e => e.ProductSubGroupName).HasMaxLength(200).IsRequired(true);
             builder.HasOne(s => s.ProductGroup).WithMany(t => t.ProductSubGroups).HasForeignKey(s => s.Fk_ProductGroupId).OnDelete(DeleteBehavior.Restrict);
         }

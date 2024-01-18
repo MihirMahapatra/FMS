@@ -10,7 +10,7 @@ namespace FMS.Model.ViewModel
 {
     public class DaysheetPrintModel
     {
-        public CompanyDetailsModel Cmopany { get; set; }
+        public CompanyModel Cmopany { get; set; }
         public DaySheetModel daySheet { get; set; }
     }
 }

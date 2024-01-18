@@ -66,7 +66,7 @@ namespace FMS.Service.Admin
         }
         #endregion
         #region Company Details
-        public async Task<Base> CreateCompany(CompanyDetailsModel data)
+        public async Task<Base> CreateCompany(CompanyModel data)
         {
             Base Obj;
             var result = await _adminRepo.CreateCompany(data);
@@ -113,7 +113,7 @@ namespace FMS.Service.Admin
             return Obj;
 
         }
-        public async Task<Base> UpdateCompany(CompanyDetailsModel model)
+        public async Task<Base> UpdateCompany(CompanyModel model)
         {
             var result = await _adminRepo.UpdateCompany(model);
             Base Obj;
@@ -679,7 +679,7 @@ namespace FMS.Service.Admin
             }
             return Obj;
         }
-        public async Task<Base> CreateGroup(GroupModel data)
+        public async Task<Base> CreateGroup(Model.CommonModel.ProductGroupModel data)
         {
             Base Obj;
             var Result = await _adminRepo.CreateGroup(data);
@@ -725,7 +725,7 @@ namespace FMS.Service.Admin
             }
             return Obj;
         }
-        public async Task<Base> UpdateGroup(GroupModel data)
+        public async Task<Base> UpdateGroup(Model.CommonModel.ProductGroupModel data)
         {
             var Result = await _adminRepo.UpdateGroup(data);
             Base Obj;
@@ -847,7 +847,7 @@ namespace FMS.Service.Admin
             }
             return Obj;
         }
-        public async Task<Base> CreateSubGroup(SubGroupModel data)
+        public async Task<Base> CreateSubGroup(ProductSubGroupModel data)
         {
             Base Obj;
             var Result = await _adminRepo.CreateSubGroup(data);
@@ -893,7 +893,7 @@ namespace FMS.Service.Admin
             }
             return Obj;
         }
-        public async Task<Base> UpdateSubGroup(SubGroupModel data)
+        public async Task<Base> UpdateSubGroup(ProductSubGroupModel data)
         {
             var Result = await _adminRepo.UpdateSubGroup(data);
             Base Obj;

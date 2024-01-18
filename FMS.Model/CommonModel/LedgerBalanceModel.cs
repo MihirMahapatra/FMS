@@ -13,7 +13,7 @@ namespace FMS.Model.CommonModel
         public string RunningBalanceType { get; set; }
         public LedgerModel Ledger { get; set; }
         public BranchModel Branch { get; set; }
-        public BranchFinancialYearModel FinancialYear { get; set; }
+        public FinancialYearModel FinancialYear { get; set; }
         public List<SubLedgerBalanceModel> SubLedgerBalances { get; set; }
         
     }

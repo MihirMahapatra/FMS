@@ -11,8 +11,8 @@
         public ICollection<UserBranch> UserBranch { get; set; }
         public ICollection<Labour> Labours { get; set; }
         public ICollection<Stock> Stocks { get; set; }
-        public ICollection<LedgerSubGroup> SubGroups { get; set; }
-        public ICollection<LedgerSubGroupDev> SubGroupDevs { get; set; }
+        public ICollection<LedgerSubGroup> LedgerSubGroup { get; set; }
+        public ICollection<LedgerSubGroupDev> LedgerSubGroupDev { get; set; }
         public ICollection<LedgerBalance> LedgerBalances { get; set; }
         public ICollection<SubLedger> SubLedgers { get; set; }
         public ICollection<SubLedgerBalance> SubLedgerBalances { get; set; }
@@ -37,7 +37,7 @@
         public ICollection<OutwardSupplyTransaction> OutwardSupplyTransactions { get; set; }
         public ICollection<DamageOrder> DamageOrders { get; set; }
         public ICollection<DamageTransaction> DamageTransactions { get; set; }
-        public ICollection<Company> CompanyDetails { get; set; }
+        public ICollection<Company> Companies { get; set; }
         public ICollection<LabourRate> LabourRates { get; set; }
     }
 }

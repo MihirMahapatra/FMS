@@ -13,10 +13,10 @@ namespace FMS.Model.AutoMapper
             CreateMap<BranchFinancialYear, BranchFinancialYearModel>();
             CreateMap<ProductType, ProductTypeModel>();
             CreateMap<ProductTypeModel, ProductType>();
-            CreateMap<ProductGroup, GroupModel>();
-            CreateMap<GroupModel, ProductGroup>();
-            CreateMap<ProductSubGroup, SubGroupModel>();
-            CreateMap<SubGroupModel, ProductSubGroup>();
+            CreateMap<ProductGroup, ProductGroupModel>();
+            CreateMap<ProductGroupModel, ProductGroup>();
+            CreateMap<ProductSubGroup, ProductSubGroupModel>();
+            CreateMap<ProductSubGroupModel, ProductSubGroup>();
             CreateMap<Unit, UnitModel>();
             CreateMap<UnitModel, Unit>();
             CreateMap<AlternateUnit, AlternateUnitModel>();

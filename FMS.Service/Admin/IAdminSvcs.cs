@@ -20,8 +20,8 @@ namespace FMS.Service.Admin
         Task<Base> UpdateUserwithClaimsForRole(RoleModel model, IdentityRole role);
         #endregion
         #region Company Details
-        Task<Base> CreateCompany(CompanyDetailsModel data);
-        Task<Base> UpdateCompany(CompanyDetailsModel model);
+        Task<Base> CreateCompany(CompanyModel data);
+        Task<Base> UpdateCompany(CompanyModel model);
         Task<CompanyDetailsViewModel> GetCompany();
         #endregion
         #region User Branch Allocation
@@ -37,14 +37,14 @@ namespace FMS.Service.Admin
         #region Group
         Task<GroupViewModel> GetAllGroups();
         Task<GroupViewModel> GetAllGroups(Guid ProdutTypeId);
-        Task<Base> CreateGroup(GroupModel data);
-        Task<Base> UpdateGroup(GroupModel data);
+        Task<Base> CreateGroup(ProductGroupModel data);
+        Task<Base> UpdateGroup(ProductGroupModel data);
         Task<Base> DeleteGroup(Guid Id);
         #endregion
         #region SubGroup
         Task<SubGroupViewModel> GetSubGroups(Guid GroupId);
-        Task<Base> CreateSubGroup(SubGroupModel data);
-        Task<Base> UpdateSubGroup(SubGroupModel data);
+        Task<Base> CreateSubGroup(ProductSubGroupModel data);
+        Task<Base> UpdateSubGroup(ProductSubGroupModel data);
         Task<Base> DeleteSubGroup(Guid Id);
         #endregion
         #region Unit

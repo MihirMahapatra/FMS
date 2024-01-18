@@ -15,14 +15,15 @@
         public Guid Fk_BranchId { get; set; }
         public Guid Fk_FinancialYearId { get; set; }
         public string TransactionNo { get; set; }
-        public string narration { get; set; }
+        public string Narration { get; set; }
         public decimal Amount { get; set; }
         public string DrCr { get; set; }
         public LedgerGroupModel LedgerGroup { get; set; }
         public LedgerModel Ledger { get; set; }
         public SubLedgerModel SubLedger { get; set; }
         public BranchModel Branch { get; set; } 
-        public BranchFinancialYearModel FinancialYear { get; set; }
+        public FinancialYearModel FinancialYear { get; set; }
+        //Others
         public string FromAcc { get; set; }
         public string LedgerDevName { get; set; }
         public string LedgerName { get; set; }

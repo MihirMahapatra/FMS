@@ -78,7 +78,7 @@ namespace FMS.Repository.Accounting
                                        LedgerDevName = _appDbContext.LedgersDev.Where(l => l.LedgerId == s.Fk_LedgerId).Select(l => l.LedgerName).SingleOrDefault(),
                                        LedgerName = _appDbContext.Ledgers.Where(l => l.LedgerId == s.Fk_LedgerId).Select(l => l.LedgerName).SingleOrDefault(),
                                        SubLedgerName = s.SubLedger != null ? s.SubLedger.SubLedgerName : "-",
-                                       narration = s.Narration,
+                                       Narration = s.Narration,
                                        Amount = s.Amount,
                                        DrCr = s.DrCr
                                    }).ToListAsync();
@@ -120,7 +120,7 @@ namespace FMS.Repository.Accounting
                                        LedgerDevName = _appDbContext.LedgersDev.Where(l => l.LedgerId == s.Fk_LedgerId).Select(l => l.LedgerName).SingleOrDefault(),
                                        LedgerName = _appDbContext.Ledgers.Where(l => l.LedgerId == s.Fk_LedgerId).Select(l => l.LedgerName).SingleOrDefault(),
                                        SubLedgerName = s.SubLedger != null ? s.SubLedger.SubLedgerName : "-",
-                                       narration = s.Narration,
+                                       Narration = s.Narration,
                                        Amount = s.Amount,
                                        DrCr = s.DrCr
                                    }).ToListAsync();
@@ -375,7 +375,7 @@ namespace FMS.Repository.Accounting
                                        LedgerDevName = _appDbContext.LedgersDev.Where(l => l.LedgerId == s.Fk_LedgerId).Select(l => l.LedgerName).SingleOrDefault(),
                                        LedgerName = _appDbContext.Ledgers.Where(l => l.LedgerId == s.Fk_LedgerId).Select(l => l.LedgerName).SingleOrDefault(),
                                        SubLedgerName = s.SubLedger != null ? s.SubLedger.SubLedgerName : "-",
-                                       narration = s.narration,
+                                       Narration = s.Narration,
                                        Amount = s.Amount,
                                        DrCr = s.DrCr
                                    }).ToListAsync();
@@ -416,7 +416,7 @@ namespace FMS.Repository.Accounting
                                        LedgerDevName = _appDbContext.LedgersDev.Where(l => l.LedgerId == s.Fk_LedgerId).Select(l => l.LedgerName).SingleOrDefault(),
                                        LedgerName = _appDbContext.Ledgers.Where(l => l.LedgerId == s.Fk_LedgerId).Select(l => l.LedgerName).SingleOrDefault(),
                                        SubLedgerName = s.SubLedger != null ? s.SubLedger.SubLedgerName : "-",
-                                       narration = s.narration,
+                                       Narration = s.Narration,
                                        Amount = s.Amount,
                                        DrCr = s.DrCr
                                    }).ToListAsync();
@@ -540,7 +540,7 @@ namespace FMS.Repository.Accounting
                                             VoucherDate = convertedVoucherDate,
                                             ChequeNo = requestData.ChqNo,
                                             ChequeDate = convertedChqDate,
-                                            narration = requestData.Narration,
+                                            Narration = requestData.Narration,
                                             DrCr = "Dr",
                                             Fk_LedgerId = Guid.Parse(item.ddlLedgerId),
                                             Fk_LedgerGroupId = ledDev != Guid.Empty ? ledDev : led,
@@ -583,7 +583,7 @@ namespace FMS.Repository.Accounting
                                     VoucherDate = convertedVoucherDate,
                                     ChequeNo = requestData.ChqNo,
                                     ChequeDate = convertedChqDate,
-                                    narration = requestData.Narration,
+                                    Narration = requestData.Narration,
                                     DrCr = "Dr",
                                     Fk_LedgerId = Guid.Parse(item.ddlLedgerId),
                                     Fk_LedgerGroupId = MappingLedgerGroup.CashBankBalance,
@@ -758,7 +758,7 @@ namespace FMS.Repository.Accounting
                                        LedgerDevName = _appDbContext.LedgersDev.Where(l => l.LedgerId == s.Fk_LedgerId).Select(l => l.LedgerName).SingleOrDefault(),
                                        LedgerName = _appDbContext.Ledgers.Where(l => l.LedgerId == s.Fk_LedgerId).Select(l => l.LedgerName).SingleOrDefault(),
                                        SubLedgerName = s.SubLedger != null ? s.SubLedger.SubLedgerName : "-",
-                                       narration = s.narration,
+                                       Narration = s.Narration,
                                        Amount = s.Amount,
                                        DrCr = s.DrCr
                                    }).ToListAsync();
@@ -798,7 +798,7 @@ namespace FMS.Repository.Accounting
                                        VouvherNo = s.VouvherNo,
                                        VoucherDate = s.VoucherDate,
                                        SubLedgerName = s.SubLedger != null ? s.SubLedger.SubLedgerName : "-",
-                                       narration = s.narration,
+                                       Narration = s.Narration,
                                        Amount = s.Amount,
                                        DrCr = s.DrCr
                                    }).ToListAsync();
@@ -895,7 +895,7 @@ namespace FMS.Repository.Accounting
                                             VoucherDate = convertedVoucherDate,
                                             ChequeNo = requestData.ChqNo,
                                             ChequeDate = convertedChqDate,
-                                            narration = requestData.Narration,
+                                            Narration = requestData.Narration,
                                             DrCr = "Cr",
                                             Fk_LedgerId = Guid.Parse(item.ddlLedgerId),
                                             Fk_LedgerGroupId = ledDev != Guid.Empty ? ledDev : led,
@@ -938,7 +938,7 @@ namespace FMS.Repository.Accounting
                                         VoucherDate = convertedVoucherDate,
                                         ChequeNo = requestData.ChqNo,
                                         ChequeDate = convertedChqDate,
-                                        narration = requestData.Narration,
+                                        Narration = requestData.Narration,
                                         DrCr = "Dr",
                                         Fk_LedgerId = Guid.Parse(item.ddlLedgerId),
                                         Fk_LedgerGroupId = MappingLedgerGroup.CashBankBalance,

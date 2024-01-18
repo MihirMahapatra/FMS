@@ -8,7 +8,7 @@ namespace FMS.Model.CommonModel
 {
     public class TrialBalancePrintModel
     {
-            public CompanyDetailsModel Cmopany { get; set; }
+            public CompanyModel Cmopany { get; set; }
             public TrailBalancesModel Balances { get; set; }
         
     }

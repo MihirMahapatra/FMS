@@ -8,7 +8,7 @@ namespace FMS.Model.CommonModel
 {
     public class LabourDetailedReportModal
     {
-        public CompanyDetailsModel Cmopany { get; set; }
+        public CompanyModel Cmopany { get; set; }
         public LabourDetailsModal LabourDetails { get; set; }
     }
 }

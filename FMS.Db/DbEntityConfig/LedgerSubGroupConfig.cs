@@ -15,7 +15,7 @@ namespace FMS.Db.DbEntityConfig
             builder.Property(e => e.Fk_BranchId).IsRequired(true);
             builder.Property(e => e.SubGroupName).IsRequired(true).HasMaxLength(200);
             builder.HasOne(sg => sg.LedgerGroup).WithMany(g => g.LedgerSubGroups).HasForeignKey(sg => sg.Fk_LedgerGroupId).OnDelete(DeleteBehavior.Restrict);
-            builder.HasOne(sg => sg.Branch).WithMany(g => g.SubGroups).HasForeignKey(sg => sg.Fk_BranchId).OnDelete(DeleteBehavior.Restrict);
+            builder.HasOne(sg => sg.Branch).WithMany(g => g.LedgerSubGroup).HasForeignKey(sg => sg.Fk_BranchId).OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

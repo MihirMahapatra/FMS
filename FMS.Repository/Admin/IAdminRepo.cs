@@ -12,9 +12,9 @@ namespace FMS.Repository.Admin
         Task<Result<bool>> CreateToken(string token);
         #endregion
         #region Company Details
-        Task<Result<bool>> CreateCompany(CompanyDetailsModel data);
-        Task<Result<bool>> UpdateCompany(CompanyDetailsModel model);
-        Task<Result<CompanyDetailsModel>> GetCompany();
+        Task<Result<bool>> CreateCompany(CompanyModel data);
+        Task<Result<bool>> UpdateCompany(CompanyModel model);
+        Task<Result<CompanyModel>> GetCompany();
         #endregion
         #region Role & Claims 
         Task<Result<IdentityRole>> UserRoles();
@@ -37,16 +37,16 @@ namespace FMS.Repository.Admin
         Task<Result<ProductTypeModel>> GetProductTypes();
         #endregion
         #region Group
-        Task<Result<GroupModel>> GetAllGroups();
-        Task<Result<GroupModel>> GetAllGroups(Guid ProdutTypeId);
-        Task<Result<bool>> CreateGroup(GroupModel data);
-        Task<Result<bool>> UpdateGroup(GroupModel data);
+        Task<Result<ProductGroupModel>> GetAllGroups();
+        Task<Result<ProductGroupModel>> GetAllGroups(Guid ProdutTypeId);
+        Task<Result<bool>> CreateGroup(ProductGroupModel data);
+        Task<Result<bool>> UpdateGroup(ProductGroupModel data);
         Task<Result<bool>> DeleteGroup(Guid Id, IDbContextTransaction transaction, bool IsCallBack);
         #endregion
         #region SubGroup
-        Task<Result<SubGroupModel>> GetSubGroups(Guid GroupId);
-        Task<Result<bool>> CreateSubGroup(SubGroupModel data);
-        Task<Result<bool>> UpdateSubGroup(SubGroupModel data);
+        Task<Result<ProductSubGroupModel>> GetSubGroups(Guid GroupId);
+        Task<Result<bool>> CreateSubGroup(ProductSubGroupModel data);
+        Task<Result<bool>> UpdateSubGroup(ProductSubGroupModel data);
         Task<Result<bool>> DeleteSubGroup(Guid Id, IDbContextTransaction transaction, bool IsCallBack);
         #endregion
         #region Unit

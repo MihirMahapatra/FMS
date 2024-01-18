@@ -13,16 +13,17 @@
         public Guid Fk_FinancialYearId { get; set; }
         public string OrderNo { get; set; }
         public DateTime OrderDate { get; set; }
-        public string TranspoterName { get; set; }
-        public string VehicleNo { get; set; } = null;
-        public string ReceivingPerson { get; set; } = null;
         public decimal SubTotal { get; set; }
         public decimal Discount { get; set; }
         public decimal Gst { get; set; }
         public decimal GrandTotal { get; set; }
+        public string TranspoterName { get; set; }
+        public string VehicleNo { get; set; } = null;
+        public string ReceivingPerson { get; set; } = null;
+     
         public SubLedgerModel SubLedger { get; set; }
         public BranchModel Branch { get; set; } 
-        public BranchFinancialYearModel FinancialYear { get; set; }
+        public FinancialYearModel FinancialYear { get; set; }
         public List<SalesReturnTransactionModel> SalesReturnTransactions { get; set; } 
     }
 }

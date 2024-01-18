@@ -12,8 +12,8 @@ namespace FMS.Model.ViewModel
     {
         public CompanyDetailsViewModel()
         {
-            GetCompany = new CompanyDetailsModel();
+            GetCompany = new CompanyModel();
         }
-        public CompanyDetailsModel GetCompany { get; set; }
+        public CompanyModel GetCompany { get; set; }
     }
 }

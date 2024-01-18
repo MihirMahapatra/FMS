@@ -92,9 +92,9 @@
                                         <td style="text-align:center">@OpeningStock</td>
                                     </tr>
                                     decimal Stock = 0;
-                                    if (Model.StockReports.Product.ProductionEntries != null)
+                                    if (Model.StockReports.Product.LabourOrders != null)
                                     {
-                                        foreach (var item in Model.StockReports.Product.ProductionEntries)
+                                        foreach (var item in Model.StockReports.Product.LabourOrders)
                                         {
 
                                             Stock += @item.Quantity;
@@ -108,9 +108,9 @@
                                             </tr>
                                         }
                                     }
-                                    if (Model.StockReports.Product.ProductionEntryTransactions != null)
+                                    if (Model.StockReports.Product.LabourTransactions != null)
                                     {
-                                        foreach (var item in Model.StockReports.Product.ProductionEntryTransactions)
+                                        foreach (var item in Model.StockReports.Product.LabourTransactions)
                                         {
 
                                             Stock -= @item.Quantity;

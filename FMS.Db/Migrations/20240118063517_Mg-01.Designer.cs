@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FMS.Db.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240117143948_Mg-01")]
+    [Migration("20240118063517_Mg-01")]
     partial class Mg01
     {
         /// <inheritdoc />
@@ -1251,7 +1251,7 @@ namespace FMS.Db.Migrations
                     b.Property<Guid>("Fk_StateId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("Fk_SubledgerId")
+                    b.Property<Guid>("Fk_SubledgerId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("GstNo")
@@ -1339,6 +1339,10 @@ namespace FMS.Db.Migrations
                     b.Property<Guid?>("LedgerId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("Narration")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
                     b.Property<DateTime>("VoucherDate")
                         .HasColumnType("datetime");
 
@@ -1346,10 +1350,6 @@ namespace FMS.Db.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("narration")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
 
                     b.HasKey("PaymentId");
 
@@ -1402,8 +1402,10 @@ namespace FMS.Db.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
-                    b.Property<decimal?>("WholeSalePrice")
-                        .HasColumnType("decimal(18, 2)");
+                    b.Property<decimal>("WholeSalePrice")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("decimal(18, 2)")
+                        .HasDefaultValue(0m);
 
                     b.HasKey("ProductId");
 
@@ -1425,7 +1427,7 @@ namespace FMS.Db.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasDefaultValueSql("(newid())");
 
-                    b.Property<Guid?>("Fk_ProductTypeId")
+                    b.Property<Guid>("Fk_ProductTypeId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ProductGroupName")
@@ -1447,7 +1449,7 @@ namespace FMS.Db.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasDefaultValueSql("(newid())");
 
-                    b.Property<Guid?>("Fk_ProductGroupId")
+                    b.Property<Guid>("Fk_ProductGroupId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ProductSubGroupName")
@@ -1811,7 +1813,7 @@ namespace FMS.Db.Migrations
                     b.Property<decimal>("Rate")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<DateTime?>("TransactionDate")
+                    b.Property<DateTime>("TransactionDate")
                         .HasColumnType("datetime");
 
                     b.Property<string>("TransactionNo")
@@ -1888,6 +1890,10 @@ namespace FMS.Db.Migrations
                     b.Property<Guid?>("LedgerId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("Narration")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
                     b.Property<string>("TransactionNo")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
@@ -1899,10 +1905,6 @@ namespace FMS.Db.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("narration")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
 
                     b.HasKey("ReceiptId");
 
@@ -2655,7 +2657,7 @@ namespace FMS.Db.Migrations
             modelBuilder.Entity("FMS.Db.DbEntity.Company", b =>
                 {
                     b.HasOne("FMS.Db.DbEntity.Branch", "Branch")
-                        .WithMany("CompanyDetails")
+                        .WithMany("Companies")
                         .HasForeignKey("Fk_BranchId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -3039,7 +3041,7 @@ namespace FMS.Db.Migrations
             modelBuilder.Entity("FMS.Db.DbEntity.LedgerSubGroup", b =>
                 {
                     b.HasOne("FMS.Db.DbEntity.Branch", "Branch")
-                        .WithMany("SubGroups")
+                        .WithMany("LedgerSubGroup")
                         .HasForeignKey("Fk_BranchId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -3058,7 +3060,7 @@ namespace FMS.Db.Migrations
             modelBuilder.Entity("FMS.Db.DbEntity.LedgerSubGroupDev", b =>
                 {
                     b.HasOne("FMS.Db.DbEntity.Branch", "Branch")
-                        .WithMany("SubGroupDevs")
+                        .WithMany("LedgerSubGroupDev")
                         .HasForeignKey("Fk_BranchId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -3159,7 +3161,8 @@ namespace FMS.Db.Migrations
                     b.HasOne("FMS.Db.DbEntity.SubLedger", "SubLedger")
                         .WithMany("Parties")
                         .HasForeignKey("Fk_SubledgerId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("FMS.Db.DbEntity.Ledger", null)
                         .WithMany("Parties")
@@ -3259,7 +3262,8 @@ namespace FMS.Db.Migrations
                     b.HasOne("FMS.Db.DbEntity.ProductType", "ProductType")
                         .WithMany("ProductGroups")
                         .HasForeignKey("Fk_ProductTypeId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("ProductType");
                 });
@@ -3269,7 +3273,8 @@ namespace FMS.Db.Migrations
                     b.HasOne("FMS.Db.DbEntity.ProductGroup", "ProductGroup")
                         .WithMany("ProductSubGroups")
                         .HasForeignKey("Fk_ProductGroupId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("ProductGroup");
                 });
@@ -3763,7 +3768,7 @@ namespace FMS.Db.Migrations
 
                     b.Navigation("Cities");
 
-                    b.Navigation("CompanyDetails");
+                    b.Navigation("Companies");
 
                     b.Navigation("DamageOrders");
 
@@ -3784,6 +3789,10 @@ namespace FMS.Db.Migrations
                     b.Navigation("Labours");
 
                     b.Navigation("LedgerBalances");
+
+                    b.Navigation("LedgerSubGroup");
+
+                    b.Navigation("LedgerSubGroupDev");
 
                     b.Navigation("OutwardSupplyOrders");
 
@@ -3812,10 +3821,6 @@ namespace FMS.Db.Migrations
                     b.Navigation("States");
 
                     b.Navigation("Stocks");
-
-                    b.Navigation("SubGroupDevs");
-
-                    b.Navigation("SubGroups");
 
                     b.Navigation("SubLedgerBalances");
 

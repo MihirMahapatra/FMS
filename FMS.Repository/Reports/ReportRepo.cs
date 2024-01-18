@@ -144,8 +144,8 @@ namespace FMS.Repository.Reports
                              SalesReturnTransactions = s.SalesReturnTransactions.Where(d => d.Fk_FinancialYearId == FinancialYear && d.TransactionDate >= convertedFromDate && d.TransactionDate <= convertedToDate).Select(sr => new SalesReturnTransactionModel { TransactionDate = sr.TransactionDate, TransactionNo = sr.TransactionNo, Quantity = sr.Quantity }).ToList(),
                              PurchaseTransactions = s.PurchaseTransactions.Where(d => d.Fk_FinancialYearId == FinancialYear && d.TransactionDate >= convertedFromDate && d.TransactionDate <= convertedToDate).Select(p => new PurchaseTransactionModel { TransactionDate = p.TransactionDate, TransactionNo = p.TransactionNo, AlternateQuantity = p.AlternateQuantity * p.AlternateUnit.UnitQuantity }).ToList(),
                              PurchaseReturnTransactions = s.PurchaseReturnTransactions.Where(d => d.Fk_FinancialYearId == FinancialYear && d.TransactionDate >= convertedFromDate && d.TransactionDate <= convertedToDate).Select(pr => new PurchaseReturnTransactionModel { TransactionDate = pr.TransactionDate, TransactionNo = pr.TransactionNo, Quantity = pr.Quantity * pr.AlternateUnit.UnitQuantity }).ToList(),
-                             ProductionEntryTransactions = s.LabourTransactions.Where(d => d.Fk_FinancialYearId == FinancialYear && d.TransactionDate >= convertedFromDate && d.TransactionDate <= convertedToDate).Select(pet => new LabourTransactionModel { TransactionDate = pet.TransactionDate, TransactionNo = pet.TransactionNo, Quantity = pet.Quantity }).ToList(),
-                             ProductionEntries = s.LabourOrders.Where(d => d.Fk_FinancialYearId == FinancialYear && d.TransactionDate >= convertedFromDate && d.TransactionDate <= convertedToDate).Select(pe => new LabourOrderModel { TransactionDate = pe.TransactionDate, TransactionNo = pe.TransactionNo, Quantity = pe.Quantity }).ToList(),
+                             LabourTransactions = s.LabourTransactions.Where(d => d.Fk_FinancialYearId == FinancialYear && d.TransactionDate >= convertedFromDate && d.TransactionDate <= convertedToDate).Select(pet => new LabourTransactionModel { TransactionDate = pet.TransactionDate, TransactionNo = pet.TransactionNo, Quantity = pet.Quantity }).ToList(),
+                             LabourOrders = s.LabourOrders.Where(d => d.Fk_FinancialYearId == FinancialYear && d.TransactionDate >= convertedFromDate && d.TransactionDate <= convertedToDate).Select(pe => new LabourOrderModel { TransactionDate = pe.TransactionDate, TransactionNo = pe.TransactionNo, Quantity = pe.Quantity }).ToList(),
                              OpeningQty =
                              s.Stocks.Where(x => x.Fk_ProductId == s.ProductId && x.Fk_BranchId == BranchId && x.Fk_FinancialYear == FinancialYear).Sum(i => i.OpeningStock)
                              + s.PurchaseTransactions.Where(d => d.Fk_FinancialYearId == FinancialYear && d.TransactionDate <= convertedFromDate).Sum(p => p.AlternateQuantity * p.AlternateUnit.UnitQuantity)
@@ -180,8 +180,8 @@ namespace FMS.Repository.Reports
                             SalesReturnTransactions = s.SalesReturnTransactions.Where(o => ListFinancialYearId.Contains(o.Fk_FinancialYearId) && o.TransactionDate >= convertedFromDate && o.TransactionDate <= convertedToDate).Select(sr => new SalesReturnTransactionModel { TransactionDate = sr.TransactionDate, TransactionNo = sr.TransactionNo, Quantity = sr.Quantity }).ToList(),
                             PurchaseTransactions = s.PurchaseTransactions.Where(o => ListFinancialYearId.Contains(o.Fk_FinancialYearId) && o.TransactionDate >= convertedFromDate && o.TransactionDate <= convertedToDate).Select(p => new PurchaseTransactionModel { TransactionDate = p.TransactionDate, TransactionNo = p.TransactionNo, AlternateQuantity = p.AlternateQuantity * p.AlternateUnit.UnitQuantity }).ToList(),
                             PurchaseReturnTransactions = s.PurchaseReturnTransactions.Where(o => ListFinancialYearId.Contains(o.Fk_FinancialYearId) && o.TransactionDate >= convertedFromDate && o.TransactionDate <= convertedToDate).Select(pr => new PurchaseReturnTransactionModel { TransactionDate = pr.TransactionDate, TransactionNo = pr.TransactionNo, Quantity = pr.Quantity * pr.AlternateUnit.UnitQuantity }).ToList(),
-                            ProductionEntryTransactions = s.LabourTransactions.Where(o => ListFinancialYearId.Contains(o.Fk_FinancialYearId) && o.TransactionDate >= convertedFromDate && o.TransactionDate <= convertedToDate).Select(pet => new LabourTransactionModel { TransactionDate = pet.TransactionDate, TransactionNo = pet.TransactionNo, Quantity = pet.Quantity }).ToList(),
-                            ProductionEntries = s.LabourOrders.Where(o => ListFinancialYearId.Contains(o.Fk_FinancialYearId) && o.TransactionDate >= convertedFromDate && o.TransactionDate <= convertedToDate).Select(pe => new LabourOrderModel { TransactionDate = pe.TransactionDate, TransactionNo = pe.TransactionNo, Quantity = pe.Quantity }).ToList(),
+                            LabourTransactions = s.LabourTransactions.Where(o => ListFinancialYearId.Contains(o.Fk_FinancialYearId) && o.TransactionDate >= convertedFromDate && o.TransactionDate <= convertedToDate).Select(pet => new LabourTransactionModel { TransactionDate = pet.TransactionDate, TransactionNo = pet.TransactionNo, Quantity = pet.Quantity }).ToList(),
+                            LabourOrders = s.LabourOrders.Where(o => ListFinancialYearId.Contains(o.Fk_FinancialYearId) && o.TransactionDate >= convertedFromDate && o.TransactionDate <= convertedToDate).Select(pe => new LabourOrderModel { TransactionDate = pe.TransactionDate, TransactionNo = pe.TransactionNo, Quantity = pe.Quantity }).ToList(),
                             OpeningQty =
                              s.Stocks.Where(x => x.Fk_ProductId == s.ProductId && ListFinancialYearId.Contains(x.Fk_FinancialYear)).Sum(i => i.OpeningStock)
                              + s.PurchaseTransactions.Where(o => ListFinancialYearId.Contains(o.Fk_FinancialYearId) && o.TransactionDate <= convertedFromDate).Sum(p => p.AlternateQuantity * p.AlternateUnit.UnitQuantity)
@@ -430,7 +430,7 @@ namespace FMS.Repository.Reports
                             OpeningBalType = (_appDbContext.SalesOrders.Where(p => p.Fk_FinancialYearId == FinancialYearId && p.Fk_BranchId == BranchId && p.TransactionDate < convertedFromDate && p.Fk_SubLedgerId == s.Fk_SubledgerId).Select(t => t.GrandTotal).Sum() - _appDbContext.SalesReturnOrders.Where(so => so.Fk_FinancialYearId == FinancialYearId && so.Fk_BranchId == BranchId && so.TransactionDate < convertedFromDate && so.Fk_SubLedgerId == s.Fk_SubledgerId).Select(t => t.GrandTotal).Sum() - _appDbContext.Receipts.Where(r => r.Fk_FinancialYearId == FinancialYearId && r.Fk_BranchId == BranchId && r.VoucherDate < convertedFromDate && r.Fk_SubLedgerId == s.Fk_SubledgerId).Select(t => t.Amount).Sum()) > 0 ? "DR" : "CR",
                             SalesOrders = _appDbContext.SalesOrders.Where(p => p.Fk_FinancialYearId == FinancialYearId && p.Fk_BranchId == BranchId && p.TransactionDate >= convertedFromDate && p.TransactionDate <= convertedToDate && p.Fk_SubLedgerId == s.Fk_SubledgerId).OrderBy(t => t.TransactionNo).Select(t => new SalesOrderModel { TransactionDate = t.TransactionDate, TransactionNo = t.TransactionNo, TransactionType = t.TransactionType, GrandTotal = t.GrandTotal }).ToList(),
                             SalesReturns = _appDbContext.SalesReturnOrders.Where(p => p.Fk_FinancialYearId == FinancialYearId && p.Fk_BranchId == BranchId && p.TransactionDate >= convertedFromDate && p.TransactionDate <= convertedToDate && p.Fk_SubLedgerId == s.Fk_SubledgerId).OrderBy(t => t.TransactionNo).Select(t => new SalesReturnOrderModel { TransactionDate = t.TransactionDate, TransactionNo = t.TransactionNo, TransactionType = t.TransactionType, GrandTotal = t.GrandTotal }).ToList(),
-                            Receipts = _appDbContext.Receipts.Where(r => r.Fk_FinancialYearId == FinancialYearId && r.Fk_BranchId == BranchId && r.VoucherDate >= convertedFromDate && r.VoucherDate <= convertedToDate && r.Fk_SubLedgerId == s.Fk_SubledgerId).OrderBy(t => t.VouvherNo).Select(t => new ReceiptModel { VoucherDate = t.VoucherDate, VouvherNo = t.VouvherNo, narration = t.narration, Amount = t.Amount }).ToList(),
+                            Receipts = _appDbContext.Receipts.Where(r => r.Fk_FinancialYearId == FinancialYearId && r.Fk_BranchId == BranchId && r.VoucherDate >= convertedFromDate && r.VoucherDate <= convertedToDate && r.Fk_SubLedgerId == s.Fk_SubledgerId).OrderBy(t => t.VouvherNo).Select(t => new ReceiptModel { VoucherDate = t.VoucherDate, VouvherNo = t.VouvherNo, Narration = t.Narration, Amount = t.Amount }).ToList(),
                         }).SingleOrDefaultAsync();
                     }
                     else
@@ -443,7 +443,7 @@ namespace FMS.Repository.Reports
                             OpeningBalType = (_appDbContext.SalesOrders.Where(p => ListFinancialYearId.Contains(p.Fk_FinancialYearId) && p.TransactionDate < convertedFromDate && p.Fk_SubLedgerId == s.Fk_SubledgerId).Select(t => t.GrandTotal).Sum() - _appDbContext.SalesReturnOrders.Where(so => ListFinancialYearId.Contains(so.Fk_FinancialYearId) && so.TransactionDate < convertedFromDate && so.Fk_SubLedgerId == s.Fk_SubledgerId).Select(t => t.GrandTotal).Sum() - _appDbContext.Receipts.Where(r => ListFinancialYearId.Contains(r.Fk_FinancialYearId) && r.VoucherDate < convertedFromDate && r.Fk_SubLedgerId == s.Fk_SubledgerId).Select(t => t.Amount).Sum()) > 0 ? "DR" : "CR",
                             SalesOrders = _appDbContext.SalesOrders.Where(p => ListFinancialYearId.Contains(p.Fk_FinancialYearId) && p.TransactionDate >= convertedFromDate && p.TransactionDate <= convertedToDate && p.Fk_SubLedgerId == s.Fk_SubledgerId).OrderBy(t => t.TransactionNo).Select(t => new SalesOrderModel { TransactionDate = t.TransactionDate, TransactionNo = t.TransactionNo, TransactionType = t.TransactionType, GrandTotal = t.GrandTotal }).ToList(),
                             SalesReturns = _appDbContext.SalesReturnOrders.Where(p => ListFinancialYearId.Contains(p.Fk_FinancialYearId) && p.TransactionDate >= convertedFromDate && p.TransactionDate <= convertedToDate && p.Fk_SubLedgerId == s.Fk_SubledgerId).OrderBy(t => t.TransactionNo).Select(t => new SalesReturnOrderModel { TransactionDate = t.TransactionDate, TransactionNo = t.TransactionNo, TransactionType = t.TransactionType, GrandTotal = t.GrandTotal }).ToList(),
-                            Receipts = _appDbContext.Receipts.Where(r => ListFinancialYearId.Contains(r.Fk_FinancialYearId) && r.VoucherDate >= convertedFromDate && r.VoucherDate <= convertedToDate && r.Fk_SubLedgerId == s.Fk_SubledgerId).OrderBy(t => t.VouvherNo).Select(t => new ReceiptModel { VoucherDate = t.VoucherDate, VouvherNo = t.VouvherNo, narration = t.narration, Amount = t.Amount }).ToList(),
+                            Receipts = _appDbContext.Receipts.Where(r => ListFinancialYearId.Contains(r.Fk_FinancialYearId) && r.VoucherDate >= convertedFromDate && r.VoucherDate <= convertedToDate && r.Fk_SubLedgerId == s.Fk_SubledgerId).OrderBy(t => t.VouvherNo).Select(t => new ReceiptModel { VoucherDate = t.VoucherDate, VouvherNo = t.VouvherNo, Narration = t.Narration, Amount = t.Amount }).ToList(),
                         }).SingleOrDefaultAsync();
                     }
                     if (Models != null)
@@ -611,7 +611,7 @@ namespace FMS.Repository.Reports
                             OpeningBalType = (_appDbContext.PurchaseOrders.Where(p => p.Fk_FinancialYearId == FinancialYearId && p.Fk_BranchId == BranchId && p.TransactionDate < convertedFromDate && p.Fk_SubLedgerId == s.Fk_SubledgerId).Select(t => t.GrandTotal).Sum() - _appDbContext.PurchaseReturnOrders.Where(p => p.Fk_FinancialYearId == FinancialYearId && p.Fk_BranchId == BranchId && p.TransactionDate < convertedFromDate && p.Fk_SubLedgerId == s.Fk_SubledgerId).Select(t => t.GrandTotal).Sum() - _appDbContext.Payments.Where(r => r.Fk_FinancialYearId == FinancialYearId && r.Fk_BranchId == BranchId && r.VoucherDate < convertedFromDate && r.Fk_SubLedgerId == s.Fk_SubledgerId).Select(t => t.Amount).Sum()) >= 0 ? "Cr" : "Dr",
                             PurchaseOrders = _appDbContext.PurchaseOrders.Where(p => p.Fk_FinancialYearId == FinancialYearId && p.Fk_BranchId == BranchId && p.TransactionDate >= convertedFromDate && p.TransactionDate <= convertedToDate && p.Fk_SubLedgerId == s.Fk_SubledgerId).OrderBy(t => t.TransactionNo).Select(t => new PurchaseOrderModel { TransactionDate = t.TransactionDate, TransactionNo = t.TransactionNo, GrandTotal = t.GrandTotal }).ToList(),
                             PurchaseReturns = _appDbContext.PurchaseReturnOrders.Where(p => p.Fk_FinancialYearId == FinancialYearId && p.Fk_BranchId == BranchId && p.TransactionDate >= convertedFromDate && p.TransactionDate <= convertedToDate && p.Fk_SubLedgerId == s.Fk_SubledgerId).OrderBy(t => t.TransactionNo).Select(t => new PurchaseReturnOrderModel { TransactionDate = t.TransactionDate, TransactionNo = t.TransactionNo, GrandTotal = t.GrandTotal }).ToList(),
-                            payments = _appDbContext.Payments.Where(r => r.Fk_FinancialYearId == FinancialYearId && r.Fk_BranchId == BranchId && r.VoucherDate >= convertedFromDate && r.VoucherDate <= convertedToDate && r.Fk_SubLedgerId == s.Fk_SubledgerId).OrderBy(t => t.VouvherNo).Select(t => new PaymentModel { VoucherDate = t.VoucherDate, VouvherNo = t.VouvherNo, narration = t.narration, Amount = t.Amount }).ToList(),
+                            Payments = _appDbContext.Payments.Where(r => r.Fk_FinancialYearId == FinancialYearId && r.Fk_BranchId == BranchId && r.VoucherDate >= convertedFromDate && r.VoucherDate <= convertedToDate && r.Fk_SubLedgerId == s.Fk_SubledgerId).OrderBy(t => t.VouvherNo).Select(t => new PaymentModel { VoucherDate = t.VoucherDate, VouvherNo = t.VouvherNo, Narration = t.Narration, Amount = t.Amount }).ToList(),
                         }).SingleOrDefaultAsync();
                     }
                     else
@@ -623,7 +623,7 @@ namespace FMS.Repository.Reports
                             OpeningBalType = (_appDbContext.PurchaseOrders.Where(p => ListFinancialYearId.Contains(p.Fk_FinancialYearId) && p.TransactionDate < convertedFromDate && p.Fk_SubLedgerId == s.Fk_SubledgerId).Select(t => t.GrandTotal).Sum() - _appDbContext.PurchaseReturnOrders.Where(p => ListFinancialYearId.Contains(p.Fk_FinancialYearId) && p.TransactionDate < convertedFromDate && p.Fk_SubLedgerId == s.Fk_SubledgerId).Select(t => t.GrandTotal).Sum() - _appDbContext.Payments.Where(r => ListFinancialYearId.Contains(r.Fk_FinancialYearId) && r.VoucherDate < convertedFromDate && r.Fk_SubLedgerId == s.Fk_SubledgerId).Select(t => t.Amount).Sum()) >= 0 ? "Cr" : "Dr",
                             PurchaseOrders = _appDbContext.PurchaseOrders.Where(p => ListFinancialYearId.Contains(p.Fk_FinancialYearId) && p.TransactionDate >= convertedFromDate && p.TransactionDate <= convertedToDate && p.Fk_SubLedgerId == s.Fk_SubledgerId).OrderBy(t => t.TransactionNo).Select(t => new PurchaseOrderModel { TransactionDate = t.TransactionDate, TransactionNo = t.TransactionNo, GrandTotal = t.GrandTotal }).ToList(),
                             PurchaseReturns = _appDbContext.PurchaseReturnOrders.Where(p => ListFinancialYearId.Contains(p.Fk_FinancialYearId) && p.TransactionDate >= convertedFromDate && p.TransactionDate <= convertedToDate && p.Fk_SubLedgerId == s.Fk_SubledgerId).OrderBy(t => t.TransactionNo).Select(t => new PurchaseReturnOrderModel { TransactionDate = t.TransactionDate, TransactionNo = t.TransactionNo, GrandTotal = t.GrandTotal }).ToList(),
-                            payments = _appDbContext.Payments.Where(r => ListFinancialYearId.Contains(r.Fk_FinancialYearId) && r.VoucherDate >= convertedFromDate && r.VoucherDate <= convertedToDate && r.Fk_SubLedgerId == s.Fk_SubledgerId).OrderBy(t => t.VouvherNo).Select(t => new PaymentModel { VoucherDate = t.VoucherDate, VouvherNo = t.VouvherNo, narration = t.narration, Amount = t.Amount }).ToList(),
+                            Payments = _appDbContext.Payments.Where(r => ListFinancialYearId.Contains(r.Fk_FinancialYearId) && r.VoucherDate >= convertedFromDate && r.VoucherDate <= convertedToDate && r.Fk_SubLedgerId == s.Fk_SubledgerId).OrderBy(t => t.VouvherNo).Select(t => new PaymentModel { VoucherDate = t.VoucherDate, VouvherNo = t.VouvherNo, Narration = t.Narration, Amount = t.Amount }).ToList(),
                         }).SingleOrDefaultAsync();
                     }
                     if (Model != null)
@@ -698,7 +698,7 @@ namespace FMS.Repository.Reports
                         {
                             VouvherNo = s.VouvherNo,
                             CashBank = s.CashBank,
-                            narration = s.narration,
+                            Narration = s.Narration,
                             FromAcc = _appDbContext.Parties.Where(p => p.Fk_SubledgerId == s.Fk_SubLedgerId).Select(p => p.PartyName).SingleOrDefault(),
                             Amount = s.Amount
                         }).ToListAsync();
@@ -706,7 +706,7 @@ namespace FMS.Repository.Reports
                         {
                             VouvherNo = s.VouvherNo,
                             CashBank = s.CashBank,
-                            narration = s.narration,
+                            Narration = s.Narration,
                             ToAcc = _appDbContext.Parties.Where(p => p.Fk_SubledgerId == s.Fk_SubLedgerId).Select(p => p.PartyName).SingleOrDefault(),
                             Amount = s.Amount
                         }).ToListAsync();
@@ -775,7 +775,7 @@ namespace FMS.Repository.Reports
                         {
                             VouvherNo = s.VouvherNo,
                             CashBank = s.CashBank,
-                            narration = s.narration,
+                            Narration = s.Narration,
                             FromAcc = _appDbContext.Parties.Where(p => p.Fk_SubledgerId == s.Fk_SubLedgerId).Select(p => p.PartyName).SingleOrDefault(),
                             Amount = s.Amount
                         }).ToListAsync();
@@ -783,7 +783,7 @@ namespace FMS.Repository.Reports
                         {
                             VouvherNo = s.VouvherNo,
                             CashBank = s.CashBank,
-                            narration = s.narration,
+                            Narration = s.Narration,
                             ToAcc = _appDbContext.Parties.Where(p => p.Fk_SubledgerId == s.Fk_SubLedgerId).Select(p => p.PartyName).SingleOrDefault(),
                             Amount = s.Amount
                         }).ToListAsync();
@@ -842,7 +842,7 @@ namespace FMS.Repository.Reports
                             VoucherDate = s.VoucherDate,
                             CashBank = s.CashBank,
                             DrCr = s.DrCr,
-                            narration = s.narration,
+                            Narration = s.Narration,
                             FromAcc = _appDbContext.Parties.Where(p => p.Fk_SubledgerId == s.Fk_SubLedgerId).Select(p => p.PartyName).SingleOrDefault(),
                             Amount = s.Amount
 
@@ -852,7 +852,7 @@ namespace FMS.Repository.Reports
                             VouvherNo = s.VouvherNo,
                             VoucherDate = s.VoucherDate,
                             CashBank = s.CashBank,
-                            narration = s.narration,
+                            Narration = s.Narration,
                             DrCr = s.DrCr,
                             ToAcc = _appDbContext.Parties.Where(p => p.Fk_SubledgerId == s.Fk_SubLedgerId).Select(p => p.PartyName).SingleOrDefault(),
                             Amount = s.Amount
@@ -861,7 +861,7 @@ namespace FMS.Repository.Reports
                         {
                             VouvherNo = s.VouvherNo,
                             VoucherDate = s.VoucherDate,
-                            narration = s.Narration,
+                            Narration = s.Narration,
                             DrCr = s.DrCr,
                             Amount = s.Amount
                         }).ToListAsync();
@@ -913,7 +913,7 @@ namespace FMS.Repository.Reports
                         {
                             VouvherNo = s.VouvherNo,
                             CashBank = s.CashBank,
-                            narration = s.narration,
+                            Narration = s.Narration,
                             TransactionNo = s.TransactionNo,
                             FromAcc = _appDbContext.Parties.Where(p => p.Fk_SubledgerId == s.Fk_SubLedgerId).Select(p => p.PartyName).SingleOrDefault(),
                             Amount = s.Amount
@@ -922,7 +922,7 @@ namespace FMS.Repository.Reports
                         {
                             VouvherNo = s.VouvherNo,
                             CashBank = s.CashBank,
-                            narration = s.narration,
+                            Narration = s.Narration,
                             ToAcc = _appDbContext.Parties.Where(p => p.Fk_SubledgerId == s.Fk_SubLedgerId).Select(p => p.PartyName).SingleOrDefault(),
                             Amount = s.Amount
                         }).ToListAsync();
@@ -930,7 +930,7 @@ namespace FMS.Repository.Reports
                         var Journals = await _appDbContext.Journals.Where(s => s.VoucherDate >= convertedFromDate && s.VoucherDate <= convertedToDate && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYearId && s.Fk_LedgerId == requestData.BankId).Select(s => new PaymentModel
                         {
                             VouvherNo = s.VouvherNo,
-                            narration = s.Narration,
+                            Narration = s.Narration,
                             ToAcc = _appDbContext.Parties.Where(p => p.Fk_SubledgerId == s.Fk_SubLedgerId).Select(p => p.PartyName).SingleOrDefault(),
                             Amount = s.Amount
                         }).ToListAsync();
@@ -985,7 +985,7 @@ namespace FMS.Repository.Reports
                             CashBank = s.CashBank,
                             LedgerName = _appDbContext.Ledgers.Where(l => l.LedgerId == s.Fk_LedgerId).Select(l => l.LedgerName).SingleOrDefault() ?? _appDbContext.LedgersDev.Where(l => l.LedgerId == s.Fk_LedgerId).Select(l => l.LedgerName).SingleOrDefault(),
                             DrCr = s.DrCr,
-                            narration = s.narration,
+                            Narration = s.Narration,
                             Amount = s.Amount
 
                         }).ToListAsync();
@@ -995,7 +995,7 @@ namespace FMS.Repository.Reports
                             VoucherDate = s.VoucherDate,
                             LedgerName = _appDbContext.Ledgers.Where(l => l.LedgerId == s.Fk_LedgerId).Select(l => l.LedgerName).SingleOrDefault() ?? _appDbContext.LedgersDev.Where(l => l.LedgerId == s.Fk_LedgerId).Select(l => l.LedgerName).SingleOrDefault(),
                             CashBank = s.CashBank,
-                            narration = s.narration,
+                            Narration = s.Narration,
                             DrCr = s.DrCr,
                             Amount = s.Amount
                         }).ToListAsync();
@@ -1003,7 +1003,7 @@ namespace FMS.Repository.Reports
                         {
                             VouvherNo = s.VouvherNo,
                             VoucherDate = s.VoucherDate,
-                            narration = s.Narration,
+                            Narration = s.Narration,
                             LedgerName = _appDbContext.Ledgers.Where(l => l.LedgerId == s.Fk_LedgerId).Select(l => l.LedgerName).SingleOrDefault() ?? _appDbContext.LedgersDev.Where(l => l.LedgerId == s.Fk_LedgerId).Select(l => l.LedgerName).SingleOrDefault(),
                             DrCr = s.DrCr,
                             Amount = s.Amount
@@ -1119,7 +1119,7 @@ namespace FMS.Repository.Reports
                                        LedgerDevName = _appDbContext.LedgersDev.Where(l => l.LedgerId == s.Fk_LedgerId).Select(l => l.LedgerName).SingleOrDefault(),
                                        LedgerName = _appDbContext.Ledgers.Where(l => l.LedgerId == s.Fk_LedgerId).Select(l => l.LedgerName).SingleOrDefault(),
                                        SubLedgerName = s.SubLedger != null ? s.SubLedger.SubLedgerName : "-",
-                                       narration = s.Narration,
+                                       Narration = s.Narration,
                                        Amount = s.Amount,
                                        DrCr = s.DrCr
                                    }).ToListAsync();

@@ -8,7 +8,7 @@ namespace FMS.Model.CommonModel
 {
     public class CustomerReportDataModel
     {
-        public CompanyDetailsModel Cmopany { get; set; }
+        public CompanyModel Cmopany { get; set; }
         public CustomerSummarizedModel Customers { get; set; }
     }
 }

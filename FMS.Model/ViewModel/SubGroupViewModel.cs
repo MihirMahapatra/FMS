@@ -6,10 +6,10 @@ namespace FMS.Model.ViewModel
     {
         public SubGroupViewModel()
         {
-            SubGroups = new List<SubGroupModel>();
-            SubGroup = new SubGroupModel();
+            SubGroups = new List<ProductSubGroupModel>();
+            SubGroup = new ProductSubGroupModel();
         }
-        public List<SubGroupModel> SubGroups { get; set; }
-        public SubGroupModel SubGroup { get; set; }
+        public List<ProductSubGroupModel> SubGroups { get; set; }
+        public ProductSubGroupModel SubGroup { get; set; }
     }
 }
