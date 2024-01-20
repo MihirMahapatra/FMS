@@ -13,7 +13,7 @@ namespace FMS.Db.DbEntityConfig
             builder.Property(e => e.SubLedgerBalanceId).HasDefaultValueSql("(newid())");
             builder.Property(e => e.Fk_LedgerBalanceId).IsRequired(true);
             builder.Property(e => e.Fk_SubLedgerId).IsRequired(true);
-            builder.Property(e => e.Fk_BranchId).IsRequired(false);
+            builder.Property(e => e.Fk_BranchId).IsRequired(true);
             builder.Property(e => e.Fk_FinancialYearId).IsRequired(true);
             builder.Property(e => e.OpeningBalance).HasColumnType("decimal(18, 2)").HasDefaultValue(0);
             builder.Property(e => e.OpeningBalanceType).HasMaxLength(10).IsRequired(true);

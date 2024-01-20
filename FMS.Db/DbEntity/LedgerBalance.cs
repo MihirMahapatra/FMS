@@ -4,7 +4,7 @@
     {
         public Guid LedgerBalanceId { get; set; }
         public Guid Fk_LedgerId { get; set; }
-        public Guid? Fk_BranchId { get; set; }
+        public Guid Fk_BranchId { get; set; }
         public Guid Fk_FinancialYear { get; set; }
         public decimal OpeningBalance { get; set; }
         public string OpeningBalanceType { get; set; }

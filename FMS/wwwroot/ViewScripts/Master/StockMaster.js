@@ -87,8 +87,8 @@ $(function () {
             dataType: "json",
             success: function (result) {
                 if (result.ResponseCode == 302) {
-                    $.each(result.Groups, function (key, item) {
-                        var option = $('<option></option>').val(item.GroupId).text(item.GroupName);
+                    $.each(result.ProductGroups, function (key, item) {
+                        var option = $('<option></option>').val(item.ProductGroupId).text(item.ProductGroupName);
                         groupId.append(option);
                     });
                 }
@@ -119,8 +119,8 @@ $(function () {
             dataType: "json",
             success: function (result) {
                 if (result.ResponseCode == 302) {
-                    $.each(result.SubGroups, function (key, item) {
-                        var option = $('<option></option>').val(item.SubGroupId).text(item.SubGroupName);
+                    $.each(result.ProductSubGroups, function (key, item) {
+                        var option = $('<option></option>').val(item.ProductSubGroupId).text(item.ProductSubGroupName);
                         subGroupId.append(option);
                     });
                 }
@@ -154,7 +154,7 @@ $(function () {
             contentType: "application/json;charset=utf-8",
             dataType: "json",
             success: function (result) {
-                $.each(result.products, function (key, item) {
+                $.each(result.Products, function (key, item) {
                     var option = $('<option></option>').val(item.ProductId).text(item.ProductName);
                     productId.append(option);
                 });
@@ -345,7 +345,7 @@ $(function () {
                 var selectElement = $('select[name="mdlProductId"]');
                 if (result.ResponseCode == 302) {
                     selectElement.empty();
-                    $.each(result.products, function (key, item) {
+                    $.each(result.Products, function (key, item) {
                         var option = $('<option></option>').val(item.ProductId).text(item.ProductName);
                         if (item.ProductName === productName) {
                             option.attr('selected', 'selected');

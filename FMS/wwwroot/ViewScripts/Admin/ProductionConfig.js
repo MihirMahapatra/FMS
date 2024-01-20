@@ -28,7 +28,7 @@ $(function () {
                     ddlFinishedGood.empty();
                     var defaultOption = $('<option></option>').val('').text('--Select Option--');
                     ddlFinishedGood.append(defaultOption);
-                    $.each(result.products, function (key, item) {
+                    $.each(result.Products, function (key, item) {
                         var option = $('<option></option>').val(item.ProductId).text(item.ProductName);
                         ddlFinishedGood.append(option);
                     });
@@ -39,6 +39,52 @@ $(function () {
             }
         });
     }
+    GetRawMaterials()
+    function GetRawMaterials() {
+        $.ajax({
+            url: "/Admin/GetRawMaterials",
+            type: "GET",
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            success: function (result) {
+                if (result.ResponseCode == 302) {
+
+                    ddlRawMateria.empty();
+                    var defaultOption = $('<option></option>').val('').text('--Select Option--');
+                    ddlRawMateria.append(defaultOption);
+                    $.each(result.Products, function (key, item) {
+                        var option = $('<option></option>').val(item.ProductId).text(item.ProductName);
+                        ddlRawMateria.append(option);
+                    });
+                }
+            },
+            error: function (errormessage) {
+                console.log(errormessage)
+            }
+        });
+    }
+    $(document).on('change', '.rawMaterial', function () {
+        var selectElement = $(this);
+        var row = selectElement.closest('tr');
+        var selectedProductId = selectElement.val();
+        if (selectedProductId) {
+            $.ajax({
+                url: '/Admin/GetProductUnit?ProductId=' + selectedProductId,
+                type: 'GET',
+                contentType: 'application/json;charset=utf-8',
+                dataType: 'json',
+                success: function (result) {
+                    if (result.ResponseCode == 302) {
+                        var inputField = row.find('input[type="text"]').eq(1);
+                        inputField.val(result.Product.Unit.UnitName);
+                    }
+                },
+                error: function (errormessage) {
+                    console.log(errormessage);
+                }
+            });
+        }
+    });
     $(document).on('click', '.addBtn', function () {
         var uniqueId = 'ddlitem' + new Date().getTime();
         var html = '<tr>';
@@ -62,7 +108,7 @@ $(function () {
                     selectElement.empty();
                     var defaultOption = $('<option></option>').val('').text('--Select Option--');
                     selectElement.append(defaultOption);
-                    $.each(result.products, function (key, item) {
+                    $.each(result.Products, function (key, item) {
                         var option = $('<option></option>').val(item.ProductId).text(item.ProductName);
                         selectElement.append(option);
                     });
@@ -79,51 +125,7 @@ $(function () {
     $(document).on('click', '.deleteBtn', function () {
         $(this).closest('tr').remove();
     });
-    GetRawMaterials()
-    function GetRawMaterials() {
-        $.ajax({
-            url: "/Admin/GetRawMaterials",
-            type: "GET",
-            contentType: "application/json;charset=utf-8",
-            dataType: "json",
-            success: function (result) {
-                if (result.ResponseCode == 302) {
 
-                    ddlRawMateria.empty();
-                    var defaultOption = $('<option></option>').val('').text('--Select Option--');
-                    ddlRawMateria.append(defaultOption);
-                    $.each(result.products, function (key, item) {
-                        var option = $('<option></option>').val(item.ProductId).text(item.ProductName);
-                        ddlRawMateria.append(option);
-                    });
-                }
-            },
-            error: function (errormessage) {
-                console.log(errormessage)
-            }
-        });
-    }
-    $(document).on('change', '.rawMaterial', function () {
-        var selectElement = $(this);
-        var selectedProductId = selectElement.val();
-        if (selectedProductId) {
-            $.ajax({
-                url: '/Admin/GetProductUnit?ProductId=' + selectedProductId,
-                type: 'GET',
-                contentType: 'application/json;charset=utf-8',
-                dataType: 'json',
-                success: function (result) {
-                    if (result.ResponseCode == 302) {
-                        var inputField = selectElement.closest('tr').find('input[type="text"]').eq(1);
-                        inputField.val(result.product.Unit.UnitName);
-                    }
-                },
-                error: function (errormessage) {
-                    console.log(errormessage);
-                }
-            });
-        }
-    });
     $('#btnSave').on('click', function () {
         $('#loader').show();
         var rowData = [];
@@ -240,6 +242,7 @@ $(function () {
         const value = $(event.currentTarget).data('id');
         EditProductionConfig(value);
     });
+    
     function EditProductionConfig(Id) {
         var $tr = $('#btnProductionConfigEdit_' + Id + '').closest('tr');
         var finishedGood = $tr.find('td:eq(1)').text().trim();
@@ -247,6 +250,7 @@ $(function () {
         var quantity = $tr.find('td:eq(3)').text().trim();
         var unit = $tr.find('td:eq(4)').text().trim();
         $tr.find('td:eq(3)').html('<div class="form-group"><input type="text" class="form-control" value="' + quantity + '"></div>');
+        $tr.find('td:eq(4)').html('<div class="form-group"><input type="text" class="form-control" value="' + unit + '" disabled></div>');
         var html = '';
         $.ajax({
             url: "/Admin/GetFinishedGoods",
@@ -258,7 +262,7 @@ $(function () {
                     var html = '';
                     html += '<div class="form-group">';
                     html += '<select class="form-control select2bs4" style="width: 100%;" name="FinishedGoodId">';
-                    $.each(result.products, function (key, item) {
+                    $.each(result.Products, function (key, item) {
                         if (item.ProductName === finishedGood) {
                             html += '<option value="' + item.ProductId + '" selected>' + item.ProductName + '</option>';
                         } else {
@@ -286,8 +290,8 @@ $(function () {
                 if (result.ResponseCode == 302) {
                     var html = '';
                     html += '<div class="form-group">';
-                    html += '<select class="form-control select2bs4" style="width: 100%;" name="RawMaterialId">';
-                    $.each(result.products, function (key, item) {
+                    html += '<select class="form-control select2bs4 rawMaterial" style="width: 100%;">';
+                    $.each(result.Products, function (key, item) {
                         if (item.ProductName === RawMaterial) {
                             html += '<option value="' + item.ProductId + '" selected>' + item.ProductName + '</option>';
                         } else {
@@ -354,9 +358,10 @@ $(function () {
         var $tr = $('#btnProductionConfigUpdate_' + Id + '').closest('tr');
         const data = {
             ProductionId: Id,
-            FinishedGoodId: $tr.find('Select').eq(0).find('option:selected').val(),
-            RawMaterialId: $tr.find('Select').eq(1).find('option:selected').val(),
+            Fk_FinishedGoodId: $tr.find('Select').eq(0).find('option:selected').val(),
+            Fk_RawMaterialId: $tr.find('Select').eq(1).find('option:selected').val(),
             Quantity: $tr.find('input[type="text"]').eq(0).val(),
+            Unit:$tr.find('input[type="text"]').eq(1).val(),
         }
         $.ajax({
             type: "POST",

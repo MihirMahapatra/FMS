@@ -24,157 +24,6 @@ namespace FMS.Controllers.Master
             _adminSvcs = adminSvcs;
             _HttpContextAccessor = httpContextAccessor;
         }
-        #region Account Master
-        [HttpGet]
-        public IActionResult AccountMaster()
-        {
-            string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
-            string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
-            ViewBag.BranchName = branchName;
-            ViewBag.FinancialYear = FinancialYear;
-            return PartialView();
-        }
-        #region LedgerBalance
-        [HttpGet]
-        public async Task<IActionResult> GetLedgersHasNoSubLedger()
-        {
-            var result = await _adminSvcs.GetLedgersHasNoSubLedger();
-            return new JsonResult(result);
-        }
-        [HttpGet]
-        public async Task<IActionResult> GetLedgerBalances()
-        {
-            var result = await _masterSvcs.GetLedgerBalances();
-            return new JsonResult(result);
-        }
-        [HttpGet]
-        public async Task<IActionResult> GetSubLedgersByBranch(Guid LedgerId)
-        {
-            var result = await _masterSvcs.GetSubLedgersByBranch(LedgerId);
-            return new JsonResult(result);
-        }
-        [HttpPost, Authorize(Policy = "Create")]
-        public async Task<IActionResult> CreateLedgerBalance([FromBody] LedgerBalanceRequest data)
-        {
-            if (ModelState.IsValid)
-            {
-                var result = await _masterSvcs.CreateLedgerBalance(data);
-                return new JsonResult(result);
-            }
-            else
-            {
-                return BadRequest();
-            }
-        }
-        [HttpPost, Authorize(Policy = "Edit")]
-        public async Task<IActionResult> UpdateLedgerBalance([FromBody] LedgerBalanceModel data)
-        {
-            if (ModelState.IsValid)
-            {
-                var result = await _masterSvcs.UpdateLedgerBalance(data);
-                return new JsonResult(result);
-            }
-            else
-            {
-                return BadRequest();
-            }
-        }
-        [HttpPost, Authorize(Policy = "Delete")]
-        public async Task<IActionResult> DeleteLedgerBalance([FromQuery] string id)
-        {
-            Guid Id = Guid.Parse(id);
-            var result = await _masterSvcs.DeleteLedgerBalance(Id);
-            return new JsonResult(result);
-        }
-        #endregion
-        #region SubLedger
-        [HttpGet]
-        public IActionResult SubLedger()
-        {
-            return PartialView();
-        }
-        [HttpGet]
-        public async Task<IActionResult> GetLedgersHasSubLedger()
-        {
-            var result = await _adminSvcs.GetLedgersHasSubLedger();
-            return new JsonResult(result);
-        }
-
-        [HttpPost, Authorize(Policy = "Create")]
-        public async Task<IActionResult> CreateSubLedgers([FromBody] SubLedgerDataRequest requestData)
-        {
-            if (ModelState.IsValid)
-            {
-                var result = await _masterSvcs.CreateSubLedger(requestData);
-                return new JsonResult(result);
-            }
-            else
-            {
-                return BadRequest();
-            }
-        }
-        [HttpGet]
-        public async Task<IActionResult> GetSubLedgers()
-        {
-            var result = await _masterSvcs.GetSubLedgers();
-            return new JsonResult(result);
-        }
-        [HttpGet]
-        public async Task<IActionResult> GetSubLedgersById(Guid LedgerId)
-        {
-            var result = await _masterSvcs.GetSubLedgersById(LedgerId);
-            return new JsonResult(result);
-        }
-        [HttpPost, Authorize(Policy = "Edit")]
-        public async Task<IActionResult> UpdateSubLedger([FromBody] SubLedgerModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                var result = await _masterSvcs.UpdateSubLedger(model);
-                return new JsonResult(result);
-            }
-            else
-            {
-                return BadRequest();
-            }
-        }
-        [HttpPost, Authorize(Policy = "Delete")]
-        public async Task<IActionResult> DeleteSubLedger([FromQuery] string id)
-        {
-            Guid Id = Guid.Parse(id);
-            var result = await _masterSvcs.DeleteSubLedger(Id);
-            return new JsonResult(result);
-        }
-        #endregion
-        #region SubLedger Balance
-        [HttpGet]
-        public async Task<IActionResult> GetSubLedgerBalances()
-        {
-            var result = await _masterSvcs.GetSubLedgerBalances();
-            return new JsonResult(result);
-        }
-        [HttpPost, Authorize(Policy = "Edit")]
-        public async Task<IActionResult> UpdateSubLedgerBalance([FromBody] SubLedgerBalanceModel data)
-        {
-            if (ModelState.IsValid)
-            {
-                var result = await _masterSvcs.UpdateSubLedgerBalance(data);
-                return new JsonResult(result);
-            }
-            else
-            {
-                return BadRequest();
-            }
-        }
-        [HttpPost, Authorize(Policy = "Delete")]
-        public async Task<IActionResult> DeleteSubLedgerBalance([FromQuery] string id)
-        {
-            Guid Id = Guid.Parse(id);
-            var result = await _masterSvcs.DeleteSubLedgerBalance(Id);
-            return new JsonResult(result);
-        }
-        #endregion
-        #endregion
         #region Stock Master  
         [HttpGet]
         public IActionResult StockMaster()
@@ -450,5 +299,156 @@ namespace FMS.Controllers.Master
         }
         #endregion
         #endregion          
+        #region Account Master
+        [HttpGet]
+        public IActionResult AccountMaster()
+        {
+            string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
+            string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
+            ViewBag.BranchName = branchName;
+            ViewBag.FinancialYear = FinancialYear;
+            return PartialView();
+        }
+        #region LedgerBalance
+        [HttpGet]
+        public async Task<IActionResult> GetLedgersHasNoSubLedger()
+        {
+            var result = await _adminSvcs.GetLedgersHasNoSubLedger();
+            return new JsonResult(result);
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetLedgerBalances()
+        {
+            var result = await _masterSvcs.GetLedgerBalances();
+            return new JsonResult(result);
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetSubLedgersByBranch(Guid LedgerId)
+        {
+            var result = await _masterSvcs.GetSubLedgersByBranch(LedgerId);
+            return new JsonResult(result);
+        }
+        [HttpPost, Authorize(Policy = "Create")]
+        public async Task<IActionResult> CreateLedgerBalance([FromBody] LedgerBalanceRequest data)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _masterSvcs.CreateLedgerBalance(data);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
+        [HttpPost, Authorize(Policy = "Edit")]
+        public async Task<IActionResult> UpdateLedgerBalance([FromBody] LedgerBalanceModel data)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _masterSvcs.UpdateLedgerBalance(data);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
+        [HttpPost, Authorize(Policy = "Delete")]
+        public async Task<IActionResult> DeleteLedgerBalance([FromQuery] string id)
+        {
+            Guid Id = Guid.Parse(id);
+            var result = await _masterSvcs.DeleteLedgerBalance(Id);
+            return new JsonResult(result);
+        }
+        #endregion
+        #region SubLedger
+        [HttpGet]
+        public IActionResult SubLedger()
+        {
+            return PartialView();
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetLedgersHasSubLedger()
+        {
+            var result = await _adminSvcs.GetLedgersHasSubLedger();
+            return new JsonResult(result);
+        }
+
+        [HttpPost, Authorize(Policy = "Create")]
+        public async Task<IActionResult> CreateSubLedgers([FromBody] SubLedgerDataRequest requestData)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _masterSvcs.CreateSubLedger(requestData);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetSubLedgers()
+        {
+            var result = await _masterSvcs.GetSubLedgers();
+            return new JsonResult(result);
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetSubLedgersById(Guid LedgerId)
+        {
+            var result = await _masterSvcs.GetSubLedgersById(LedgerId);
+            return new JsonResult(result);
+        }
+        [HttpPost, Authorize(Policy = "Edit")]
+        public async Task<IActionResult> UpdateSubLedger([FromBody] SubLedgerModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _masterSvcs.UpdateSubLedger(model);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
+        [HttpPost, Authorize(Policy = "Delete")]
+        public async Task<IActionResult> DeleteSubLedger([FromQuery] string id)
+        {
+            Guid Id = Guid.Parse(id);
+            var result = await _masterSvcs.DeleteSubLedger(Id);
+            return new JsonResult(result);
+        }
+        #endregion
+        #region SubLedger Balance
+        [HttpGet]
+        public async Task<IActionResult> GetSubLedgerBalances()
+        {
+            var result = await _masterSvcs.GetSubLedgerBalances();
+            return new JsonResult(result);
+        }
+        [HttpPost, Authorize(Policy = "Edit")]
+        public async Task<IActionResult> UpdateSubLedgerBalance([FromBody] SubLedgerBalanceModel data)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _masterSvcs.UpdateSubLedgerBalance(data);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
+        [HttpPost, Authorize(Policy = "Delete")]
+        public async Task<IActionResult> DeleteSubLedgerBalance([FromQuery] string id)
+        {
+            Guid Id = Guid.Parse(id);
+            var result = await _masterSvcs.DeleteSubLedgerBalance(Id);
+            return new JsonResult(result);
+        }
+        #endregion
+        #endregion
     }
 }

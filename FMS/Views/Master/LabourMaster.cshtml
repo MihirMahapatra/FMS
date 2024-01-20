@@ -32,61 +32,43 @@
                 </div>
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <div class="form-group">
                                 <label for="">Labour Type</label>
                                 <select class="form-control  select2bs4" style="width: 100%;" name="LabourTypeId" tabindex="1">
                                 </select>
                             </div>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <div class="form-group">
                                 <label for="">Labour Name</label>
                                 <input type="text" class="form-control" id="txtLabourName" tabindex="2">
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="">Address</label>
-                                <input type="text" class="form-control" id="txtAddress" tabindex="3">
-                            </div>
-                        </div>
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <div class="form-group">
                                 <label for="">Phone No</label>
                                 <input type="text" class="form-control" id="txtPhone" tabindex="4">
                             </div>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="">Address</label>
+                                <input type="text" class="form-control" id="txtAddress" tabindex="3">
+                            </div>
+                        </div>
+                        <div class="col-md-2">
                             <div class="form-group">
                                 <label for="">Reference</label>
                                 <input type="text" class="form-control" id="txtReference" tabindex="5">
                             </div>
                         </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label>Opening Balance</label>
-                                <input type="text" class="form-control" id="txtOpeningBalance" name="OpeningBalance" value="0" tabindex="6">
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label>Balance Type:</label>
-                                <select class="form-control select2bs4" style="width: 100%;" name="ddnBalanceType" tabindex="7">
-                                    <option value="Dr" selected>Dr</option>
-                                    <option value="Cr">Cr</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-6"></div>
-                        <div class="col-md-10"></div>
-                        <div class="col-md-2">
-                            <div class="form-group">
-                                <label></label>
-                                <button type="button" tabindex="8" class="btn btn-block btn-outline-primary btn-labourdetail-create "><b>Submit</b></button>
-                            </div>
-                        </div>
                         <div class="col-md-12">
+                            <button type="button" tabindex="8" class="btn btn-primary btn-labourdetail-create " style="float:right">Submit</button>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-12 ">
                             <button class="btn btn-primary btn-link cust-btn" id="btnRefresh" style="float:right;border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-arrows-rotate"></i>Refresh</button>
                             <div id="loader" style="display:none;"></div>
                             <div class="tblLabourDetail">

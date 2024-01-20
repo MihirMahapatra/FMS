@@ -12,7 +12,6 @@
         public string Phone { get; set; }
         public string Email { get; set; }
         public string GstNo { get; set; }
-        public int CreditLimit { get; set; }
         public State State { get; set; }
         public City City { get; set; }
         public LedgerDev LedgerDev { get; set; }

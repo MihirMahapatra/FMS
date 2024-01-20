@@ -1428,6 +1428,7 @@ namespace FMS.Repository.Admin
                 if (Query != null)
                 {
                     Query.Quantity = data.Quantity;
+                    Query.Unit = data.Unit;
                     Query.Fk_FinishedGoodId = data.Fk_FinishedGoodId;
                     Query.Fk_RawMaterialId = data.Fk_RawMaterialId;
                     int count = await _appDbContext.SaveChangesAsync();

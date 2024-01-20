@@ -12,7 +12,6 @@
         public string Phone { get; set; }
         public string Email { get; set; }
         public string GstNo { get; set; }
-        public int CreditLimit { get; set; }
         public PartyTypeModel PartyType { get; set; }
         public StateModel State { get; set; }
         public CityModel City { get; set; }
@@ -26,10 +25,7 @@
         public List<SalesTransactionModel> SalesTransactions { get; set; }
         public List<ReceiptModel> Receipts { get; set; }
         public List<PaymentModel> Payments { get; set; }
-
-        //Others
         public decimal OpeningBal { get; set; }
-        public string OpeningBalType {  get; set; }
-        public string BalanceType { get; set; }
+        public string OpeningBalType { get; set; }
     }
 }

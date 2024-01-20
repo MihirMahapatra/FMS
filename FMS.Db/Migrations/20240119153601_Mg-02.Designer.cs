@@ -4,6 +4,7 @@ using FMS.Db.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FMS.Db.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240119153601_Mg-02")]
+    partial class Mg02
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -754,18 +757,6 @@ namespace FMS.Db.Migrations
                     b.HasKey("LabourTypeId");
 
                     b.ToTable("LabourTypes", "dbo");
-
-                    b.HasData(
-                        new
-                        {
-                            LabourTypeId = new Guid("6c2758a2-79b5-43a6-8851-c6f975433b0f"),
-                            Labour_Type = "SERVICE"
-                        },
-                        new
-                        {
-                            LabourTypeId = new Guid("5e514855-55a0-459c-8b8b-def7696d9ad0"),
-                            Labour_Type = "PRODUCTION"
-                        });
                 });
 
             modelBuilder.Entity("FMS.Db.DbEntity.Ledger", b =>

@@ -33,14 +33,11 @@ $(function () {
 
     //-------------------------------Tab------------------------------------------//
     $(document).ready(function () {
-        const elements = $('input, select, button').toArray(); // Select all input, select, and button elements
+        const elements = $('input, select, button').toArray(); 
         $(document).on('keydown', 'input, select, button', function (e) {
             if (e.key === 'Tab') {
-                e.preventDefault(); // Prevent default tab behavior
-
-                const currentIndex = elements.indexOf(this); // Get index of current element
-
-                // Move focus to the next element in the sequence
+                e.preventDefault();
+                const currentIndex = elements.indexOf(this);
                 if (currentIndex > -1) {
                     const nextIndex = (currentIndex + 1) % elements.length;
                     elements[nextIndex].focus();
@@ -48,8 +45,8 @@ $(function () {
             } else if (e.key === 'Enter') {
                 // Simulate Enter behavior for buttons
                 if ($(this).is('button')) {
-                    e.preventDefault(); // Prevent default Enter behavior
-                    $(this).click(); // Trigger the click event for the button
+                    e.preventDefault(); 
+                    $(this).click();
                 }
             }
         });
@@ -287,7 +284,6 @@ $(function () {
         UpdateLedgerBalance(value);
     });
     function UpdateLedgerBalance(id) {
-
         var $tr = $('#btnLedgerBalanceUpdate_' + id + '').closest('tr');
         const data = {
             LedgerBalanceId: id,
@@ -472,18 +468,17 @@ $(function () {
         var runningBalType = $tr.find('td:eq(6)').text().trim();
         $tr.find('td:eq(3)').html('<div class="form-group"><input type="text" class="form-control" value="' + openingBal + '"/></div>');
         if (openingBalType === "Cr") {
-            $tr.find('td:eq(4)').html('<div class="form-group"> <div class= "form-group"><select class="form-control select2bs4" style="width: 100%;"><option value="Dr" selected>Dr</option><option value="Cr">Cr</option></select> </div></div> ');
-        }
-        else {
             $tr.find('td:eq(4)').html('<div class="form-group"> <div class= "form-group"><select class="form-control select2bs4" style="width: 100%;"><option value="Dr">Dr</option><option value="Cr" selected>Cr</option></select> </div></div> ');
         }
-        $tr.find('td:eq(4)').html('<div class="form-group"> <div class= "form-group"><select class="form-control select2bs4" style="width: 100%;"><option value="Dr">Dr</option><option value="Cr">Cr</option></select> </div></div> ');
+        else {
+            $tr.find('td:eq(4)').html('<div class="form-group"> <div class= "form-group"><select class="form-control select2bs4" style="width: 100%;"><option value="Dr" selected>Dr</option><option value="Cr" >Cr</option></select> </div></div> ');
+        }
         $tr.find('td:eq(5)').html('<div class="form-group"><input type="text" class="form-control" disabled  value="' + runningBal + '"/></div>');
         if (runningBalType === "Cr") {
-            $tr.find('td:eq(6)').html('<div class="form-group"> <div class= "form-group"><select disabled class="form-control select2bs4" style="width: 100%;"><option value="Dr" selected>Dr</option><option value="Cr">Cr</option></select> </div></div> ');
+            $tr.find('td:eq(6)').html('<div class="form-group"> <div class= "form-group"><select disabled class="form-control select2bs4" style="width: 100%;"><option value="Dr">Dr</option><option value="Cr" selected>Cr</option></select> </div></div> ');
         }
         else {
-            $tr.find('td:eq(6)').html('<div class="form-group"> <div class= "form-group"><select disabled class="form-control select2bs4" style="width: 100%;"><option value="Dr">Dr</option><option value="Cr" selected>Cr</option></select> </div></div> ');
+            $tr.find('td:eq(6)').html('<div class="form-group"> <div class= "form-group"><select disabled class="form-control select2bs4" style="width: 100%;"><option value="Dr" selected>Dr</option><option value="Cr" >Cr</option></select> </div></div> ');
         }
 
         $tr.find('.select2bs4').select2({

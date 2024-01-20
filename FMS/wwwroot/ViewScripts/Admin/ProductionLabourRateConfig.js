@@ -157,7 +157,7 @@
             dataType: "json",
             success: function (result) {
                 if (result.ResponseCode == 302) {
-                    $.each(result.products, function (key, item) {
+                    $.each(result.Products, function (key, item) {
                         var option = $('<option></option>').val(item.ProductId).text(item.ProductName);
                         itemId.append(option);
                     });
@@ -240,67 +240,6 @@
         $('#datepicker_' + id).datetimepicker({
             format: 'DD/MM/YYYY',
         });
-        //$.ajax({
-        //    url: "/Admin/GetAllProductTypesForLabour",
-        //    type: "GET",
-        //    contentType: "application/json;charset=utf-8",
-        //    dataType: "json",
-        //    success: function (result) {
-        //        var ProductTypeId;
-        //        if (result.ResponseCode == 302) {
-        //            var html = '';
-        //            html += '<div class="form-group">';
-        //            html += '<select class="form-control select2bs4" style="width: 100%;" name="ProductTypeId">';
-        //            $.each(result.ProductTypes, function (key, item) {
-        //                if (item.Product_Type === ProductType) {
-        //                    html += '<option value="' + item.ProductTypeId + '" selected>' + item.Product_Type + '</option>';
-        //                    ProductTypeId = item.ProductTypeId;
-
-        //                } else {
-        //                    html += '<option value="' + item.ProductTypeId + '">' + item.Product_Type + '</option>';
-        //                }
-        //            });
-        //            html += '</select>';
-        //            html += '</div>';
-        //            $tr.find('td:eq(2)').html(html);
-        //            $tr.find('.select2bs4').select2({
-        //                theme: 'bootstrap4'
-        //            });
-        //            $.ajax({
-        //                url: '/Admin/GetProductByType?ProductType=' + ProductTypeId + '',
-        //                type: "GET",
-        //                contentType: "application/json;charset=utf-8",
-        //                dataType: "json",
-        //                success: function (result) {
-        //                    var html = '';
-        //                    if (result.ResponseCode == 302) {
-        //                        html += '<div class="form-group">';
-        //                        html += '<select class="form-control select2bs4" style="width: 100%;" name="ItemId">';
-        //                        $.each(result.products, function (key, item) {
-        //                            if (item.ProductName === ProductName) {
-        //                                html += '<option value="' + item.ProductId + '" selected>' + item.ProductName + '</option>';
-        //                            } else {
-        //                                html += '<option value="' + item.ProductId + '">' + item.ProductName + '</option>';
-        //                            }
-        //                        });
-        //                        html += '</select>';
-        //                        html += '</div>';
-        //                        $tr.find('td:eq(3)').html(html);
-        //                        $tr.find('.select2bs4').select2({
-        //                            theme: 'bootstrap4'
-        //                        });
-        //                    }
-        //                },
-        //                error: function (errormessage) {
-        //                    console.log(errormessage)
-        //                }
-        //            });
-        //        }
-        //    },
-        //    error: function (errormessage) {
-        //        console.log(errormessage)
-        //    }
-        //});
         $tr.find('td:eq(4)').html('<div class="form-group"><input type="text" class="form-control" value="' + rate + '"></div>');
         $tr.find('#btnLabourRateEdit_' + id + ', #btnLabourRateDelete_' + id + '').hide();
         $tr.find('#btnLabourRateUpdate_' + id + ',#btnLabourRateCancel_' + id + '').show();

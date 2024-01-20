@@ -14,21 +14,15 @@ $(function () {
                 html += '<table class="table table-bordered table-hover text-center mt-1 PartyTable" style="width:100%">';
                 html += '<thead>'
                 html += '<tr>'
-                html += '<th></th>'
                 html += '<th hidden>Party Id</th>'
                 html += '<th>Party Name</th>'
                 html += '<th>Party Type</th>'
-                html += '<th hidden>State</th>'
-                html += '<th hidden>City</th>'
-                html += '<th hidden>Phone No</th>'
-                html += '<th hidden>Email</th>'
-                html += '<th hidden>Address</th>'
+                html += '<th>State</th>'
+                html += '<th>City</th>'
+                html += '<th>Phone No</th>'
+                html += '<th>Email</th>'
+                html += '<th>Address</th>'
                 html += '<th>GST No</th>'
-                html += '<th>Credit Limit</th>'
-                html += '<th>Op Bal</th>'
-                html += '<th>Op Bal.Type</th>'
-                html += '<th>Running Bal</th>'
-                html += '<th>Running Bal.Type</th>'
                 html += '<th>Action</th>'
                 html += '</tr>'
                 html += '</thead>'
@@ -36,39 +30,15 @@ $(function () {
                 if (result.ResponseCode == 302) {
                     $.each(result.Parties, function (key, item) {
                         html += '<tr>';
-                        html += '<td><button  class="btn btn-primary btn-sm toggleColumnsBtn" id="btn-info-' + item.PartyId + '"  data-id="' + item.PartyId + '" style=" border-radius: 50%;" ><i class="fa-solid fa-circle-info"></i></button></td>'
                         html += '<td hidden>' + item.PartyId + '</td>';
                         html += '<td>' + item.PartyName + '</td>';
-                        if (item.Ledger !== null) {
-                            html += '<td>' + item.Ledger.LedgerName + '</td>';
-                        }
-                        else {
-                            html += '<td> - </td>';
-                        }
-                        html += '<td hidden>' + item.State.StateName + '</td>';
-                        html += '<td hidden>' + item.City.CityName + '</td>';
-                        html += '<td hidden>' + item.Phone + '</td>';
-                        html += '<td hidden>' + item.Email + '</td>';
-                        html += '<td hidden>' + item.Address + '</td>';
+                        html += '<td>' + item.Ledger.LedgerName + '</td>';
+                        html += '<td>' + item.State.StateName + '</td>';
+                        html += '<td>' + item.City.CityName + '</td>';
+                        html += '<td >' + item.Phone + '</td>';
+                        html += '<td>' + item.Email + '</td>';
+                        html += '<td>' + item.Address + '</td>';
                         html += '<td>' + item.GstNo + '</td>';
-                        html += '<td>' + item.CreditLimit + '</td>';
-                        if (item.SubLedgerBalance !== null) {
-                            html += '<td>' + Math.abs(item.SubLedgerBalance.OpeningBalance) + '</td>';
-                            html += '<td>' + item.SubLedgerBalance.OpeningBalanceType + '</td>';
-                            if (item.SubLedgerBalance.RunningBalance > item.CreditLimit) {
-                                html += '<td class="bg-danger text-white">' + Math.abs(item.SubLedgerBalance.RunningBalance) + '</td>';
-                            }
-                            else {
-                                html += '<td>' + Math.abs(item.SubLedgerBalance.RunningBalance) + '</td>';
-                            }
-                            html += '<td>' + item.SubLedgerBalance.RunningBalanceType + '</td>';
-                        }
-                        else {
-                            html += '<td> - </td>';
-                            html += '<td> - </td>';
-                            html += '<td> - </td>';
-                            html += '<td> - </td>';
-                        }
                         html += '<td style="background-color:#ffe6e6;">';
                         html += '<button class="btn btn-primary btn-link btn-sm btn-party-edit"   id="btnPartyEdit_' + item.PartyId + '"     data-id="' + item.PartyId + '" data-toggle="modal" data-target="#modal-party-edit" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-edit"></i></button>';
                         html += ' <button class="btn btn-primary btn-link btn-sm btn-party-delete" id="btnPartyDelete_' + item.PartyId + '"   data-id="' + item.PartyId + '" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button>';
@@ -109,39 +79,20 @@ $(function () {
             }
         });
     }
-    $(document).on('mouseenter', '.toggleColumnsBtn', (event) => {
-        const value = $(event.currentTarget).data('id');
-        var $tr = $('#btn-info-' + value + '').closest('tr');
-        var StateName = $tr.find('td:eq(4)').text().trim();
-        var CityName = $tr.find('td:eq(5)').text().trim();
-        var Phone = $tr.find('td:eq(6)').text().trim();
-        var Email = $tr.find('td:eq(7)').text().trim();
-        var Address = $tr.find('td:eq(8)').text().trim();
-        $('#lblStateName').text(StateName);
-        $('#lblCityName').text(CityName);
-        $('#lblPhone').text(Phone);
-        $('#lblEmail').text(Email);
-        $('#lblAddress').text(Address);
-        $('#modal-party-info').modal('show');
-    });
-    $(document).on('mouseleave', '.toggleColumnsBtn', (event) => {
-        $('#modal-party-info').modal('hide');
-    });
     $(document).on('click', '.btn-party-edit', (event) => {
         const value = $(event.currentTarget).data('id');
         EditParty(value);
     });
     function EditParty(Id) {
         var $tr = $('#btnPartyEdit_' + Id + '').closest('tr');
-        var PartyName = $tr.find('td:eq(2)').text().trim();
-        var PartyType = $tr.find('td:eq(3)').text().trim();
-        var State = $tr.find('td:eq(4)').text().trim();
-        var City = $tr.find('td:eq(5)').text().trim();
-        var PhoneNo = $tr.find('td:eq(6)').text().trim();
-        var Email = $tr.find('td:eq(7)').text().trim();
-        var Address = $tr.find('td:eq(8)').text().trim();
-        var GSTNo = $tr.find('td:eq(9)').text().trim();
-        var CreditLimit = $tr.find('td:eq(10)').text().trim();
+        var PartyName = $tr.find('td:eq(1)').text().trim();
+        var PartyType = $tr.find('td:eq(2)').text().trim();
+        var State = $tr.find('td:eq(3)').text().trim();
+        var City = $tr.find('td:eq(4)').text().trim();
+        var PhoneNo = $tr.find('td:eq(5)').text().trim();
+        var Email = $tr.find('td:eq(6)').text().trim();
+        var Address = $tr.find('td:eq(7)').text().trim();
+        var GSTNo = $tr.find('td:eq(8)').text().trim();
         //fill Modal
         $('input[name="mdlPartyId"]').val(Id);
         $('select[name="ddnPartyTypeId"]').val(PartyType);
@@ -152,15 +103,12 @@ $(function () {
         $('input[name="Mail"]').val(Email);
         $('input[name="Address"]').val(Address);
         $('input[name="GstNo"]').val(GSTNo);
-        $('input[name="CreditLimit"]').val(CreditLimit);
-
         $.ajax({
             url: "/Master/GetPartyTypes",
             type: "GET",
             contentType: "application/json;charset=utf-8",
             dataType: "json",
             success: function (result) {
-                console.log(result);
                 var ddlPartyType = $('select[name="ddnPartyTypeId"]');
                 ddlPartyType.empty();
                 var defaultOption = $('<option></option>').val('').text('--Select Option--');
@@ -254,7 +202,6 @@ $(function () {
             Phone: $('input[name="PhoneNo"]').val(),
             Email: $('input[name="Mail"]').val(),
             GstNo: $('input[name="GstNo"]').val(),
-            CreditLimit: $('input[name="CreditLimit"]').val(),
         }
         $.ajax({
             type: "POST",

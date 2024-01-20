@@ -9,8 +9,6 @@ $(function () {
     const address = $('#txtAddress');
     const Phone = $('#txtPhone');
     const Reference = $('#txtReference');
-    const openingBalance = $('input[name="OpeningBalance"]');
-    const balanceType = $('select[name="ddnBalanceType"]');
     /***************************************Validation Section***********************************************************/
     labourName.on("input", function () {
         let inputValue = $(this).val();
@@ -32,10 +30,6 @@ $(function () {
     Reference.on("input", function () {
         let inputValue = $(this).val();
         inputValue = inputValue.toUpperCase();
-        $(this).val(inputValue);
-    });
-    openingBalance.on("input", function () {
-        var inputValue = $(this).val().replace(/[^0-9.]/g, '')     
         $(this).val(inputValue);
     });
     /***************************************Contorl Foucous Of Element Labour Details***********************************************************/
@@ -70,18 +64,7 @@ $(function () {
     Reference.on('blur', function () {
         $(this).css('border-color', '');
     });
-    openingBalance.on('focus', function () {
-        $(this).css('border-color', 'red');
-    });
-    openingBalance.on('blur', function () {
-        $(this).css('border-color', '');
-    });
-    balanceType.on('focus', function () {
-        $(this).css('border-color', 'red');
-    });
-    balanceType.on('blur', function () {
-        $(this).css('border-color', '');
-    });
+    
     $('.btn-labourdetail-create').on('focus', function () {
         $(this).css('background-color', 'black');
     });
@@ -119,6 +102,7 @@ $(function () {
         });
     }
     loadLabourDetails();
+    $(document).on('click', '#btnRefresh', loadLabourDetails);  
     function loadLabourDetails() {
         $('#loader').show();
         $('.tblLabourDetail').empty();
@@ -208,7 +192,7 @@ $(function () {
             }
         });
     }
-    $(document).on('click', '#btnRefresh', loadLabourDetails);  
+
     $(document).on('click', '.btn-labourdetail-create', CreateLabourDetail);
     function CreateLabourDetail() {
         if (!labourTypeId.val()) {
@@ -236,11 +220,6 @@ $(function () {
             Reference.focus();
             return;
         }
-        if (!balanceType.val()) {
-            toastr.error('Balance Type Is Required');
-            balanceType.focus();
-            return;
-        }
         $('#loder').show();
         const data = {
             Fk_Labour_TypeId: labourTypeId.val(),
@@ -248,8 +227,6 @@ $(function () {
             Address: address.val(),
             Phone: Phone.val(),
             Reference: Reference.val(),
-            OpeningBalance: openingBalance.val(),
-            BalanceType: balanceType.val()
         }
         $.ajax({
             type: "POST",
@@ -266,7 +243,6 @@ $(function () {
                     address.val('');
                     Phone.val('');
                     Reference.val('');
-                    openingBalance.val('0'); 
                 }
                 else {
                     toastr.error(Response.ErrorMsg);
@@ -297,10 +273,6 @@ $(function () {
             contentType: "application/json;charset=utf-8",
             dataType: "json",
             success: function (result) {
-                console.log(result);
-                if (result.ResponseCode == 404) {
-
-                }
                 if (result.ResponseCode == 302) {
                     /*******************select Input***************************/
                     html += '<div class="form-group">';
@@ -361,8 +333,6 @@ $(function () {
                     address.val('');
                     Phone.val('');
                     Reference.val('');
-                    openingBalance.val('0');
-                    balanceType.val('');
                 }
                 else {
                     toastr.error(Response.ErrorMsg);

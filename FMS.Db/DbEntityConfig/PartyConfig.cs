@@ -20,7 +20,6 @@ namespace FMS.Db.DbEntityConfig
             builder.Property(e => e.Phone).HasMaxLength(20).IsRequired(true);
             builder.Property(e => e.Email).HasMaxLength(200).IsRequired(true);
             builder.Property(e => e.GstNo).HasMaxLength(200).IsRequired(false);
-            builder.Property(e => e.CreditLimit).HasDefaultValue(0);
             builder.HasOne(p => p.LedgerDev).WithMany(s => s.Parties).HasForeignKey(p => p.Fk_PartyType).OnDelete(DeleteBehavior.Restrict);
             builder.HasOne(p => p.SubLedger).WithMany(s => s.Parties).HasForeignKey(p => p.Fk_SubledgerId).OnDelete(DeleteBehavior.Restrict);
             builder.HasOne(p => p.State).WithMany(s => s.Parties).HasForeignKey(p => p.Fk_StateId).OnDelete(DeleteBehavior.Restrict);

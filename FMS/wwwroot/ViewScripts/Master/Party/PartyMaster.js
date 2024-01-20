@@ -11,9 +11,6 @@ $(function () {
     const email = $('input[name="Mail"]');
     const address = $('input[name="Address"]');
     const gstNo = $('input[name="GstNo"]');
-    const creditLimit = $('input[name="CreditLimit"]');
-    const openingBalance = $('input[name="OpeningBalance"]');
-    const balanceType = $('select[name="ddnBalanceType"]');
     const ddlPartyType = $('select[name="ddnPartyTypeId"]');
     const ddlState = $('select[name="ddnStateId"]');
     const ddlCity = $('select[name="ddnCityId"]');
@@ -49,18 +46,7 @@ $(function () {
     gstNo.on('blur', function () {
         $(this).css('border-color', ''); // Reset background color on blur
     });
-    creditLimit.on('focus', function () {
-        $(this).css('border-color', 'red');
-    });
-    creditLimit.on('blur', function () {
-        $(this).css('border-color', ''); // Reset background color on blur
-    });
-    openingBalance.on('focus', function () {
-        $(this).css('border-color', 'red');
-    });
-    openingBalance.on('blur', function () {
-        $(this).css('border-color', ''); // Reset background color on blur
-    });
+
    
     $('.btn-primary').on('keydown', function (e) {
         if (e.key === 'Enter' || e.keyCode === 12) {
@@ -73,15 +59,15 @@ $(function () {
     $('.btn-primary').on('blur', function () {
         $(this).css('background-color', '');
     });
-    $('.btn - party - create').on('keydown', function (e) {
+    $('.btn-party-create').on('keydown', function (e) {
         if (e.key === 'Enter' || e.keyCode === 12) {
             $('.btn - party - create').click();
         }
     });
-    $('.btn - party - create').on('focus', function () {
+    $('.btn-party-create').on('focus', function () {
         $(this).css('background-color', 'black');
     });
-    $('.btn - party - create').on('blur', function () {
+    $('.btn-party-create').on('blur', function () {
         $(this).css('background-color', '');
     }); 
 
@@ -115,16 +101,7 @@ $(function () {
         inputValue = inputValue.toUpperCase();
         $(this).val(inputValue);
     });
-    creditLimit.on("input", function () {
-        var inputValue = $(this).val().replace(/[^0-9.]/g, '');
-        $(this).val(inputValue);
-    });
-    openingBalance.on("input", function () {
-        var inputValue = $(this).val().replace(/[^0-9.]/g, '');
-        $(this).val(inputValue);
-    });
-    //**************************************Party Type*************************************//
-   
+    //**************************************Party Type*************************************//  
     LoadPartyType()
     function LoadPartyType() {
         $.ajax({
@@ -132,7 +109,6 @@ $(function () {
             type: "GET",
             contentType: "application/json;charset=utf-8",
             dataType: "json",
-
             success: function (result) {
                 ddlPartyType.empty();
                 var defaultOption = $('<option></option>').val('').text('--Select Option--');
@@ -147,8 +123,7 @@ $(function () {
             }
         });
     }
-    //**************************************State*************************************//
-   
+    //**************************************State*************************************// 
     LoadState()
     function LoadState() {
         $.ajax({
@@ -501,16 +476,6 @@ $(function () {
             gstNo.focus();
             return;
         }
-        else if (!openingBalance.val()) {
-            toastr.error("openingBalance is required.");
-            openingBalance.focus();
-            return;
-        }
-        else if (!creditLimit.val()) {
-            toastr.error("creditLimit is required.");
-            creditLimit.focus();
-            return;
-        }
         else {
             $('#loader').show();
             const data = {
@@ -522,11 +487,7 @@ $(function () {
                 Phone: phoneNo.val(),
                 Email: email.val(),
                 GstNo: gstNo.val(),
-                CreditLimit: creditLimit.val(),
-                OpeningBalance: openingBalance.val(),
-                BalanceType: balanceType.val()
             }
-        
             $.ajax({
                 type: "POST",
                 url: '/Master/CreateParty',
@@ -535,7 +496,6 @@ $(function () {
                 contentType: "application/json;charset=utf-8",
                 success: function (Response) {
                     $('#loader').hide();
-                    console.log(Response)
                     if (Response.ResponseCode == 201) {
                         toastr.success(Response.SuccessMsg);
                     }

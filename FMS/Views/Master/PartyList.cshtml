@@ -54,128 +54,63 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-
             <div class="modal-body">
+                <input type="hidden" name="mdlPartyId" />
                 <div class="row">
-                    <input type="hidden" name="mdlPartyId" />
-                    <div class="bs-stepper">
-                        <div class="bs-stepper-header" role="tablist">
-                            <!-- your steps here -->
-                            <div class="step" data-target="#part1">
-                                <button type="button" class="step-trigger" role="tab" aria-controls="logins-part" id="logins-part-trigger">
-                                    <span class="bs-stepper-circle">1</span>
-                                    <span class="bs-stepper-label"></span>
-                                </button>
-                            </div>
-                            <div class="line"></div>
-                            <div class="step" data-target="#part2">
-                                <button type="button" class="step-trigger" role="tab" aria-controls="information-part" id="information-part-trigger">
-                                    <span class="bs-stepper-circle">2</span>
-                                    <span class="bs-stepper-label"></span>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="bs-stepper-content">
-                            <!-- your steps content here -->
-                            <div id="part1" class="content" role="tabpanel" aria-labelledby="part1-trigger">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Party Type</label>
-                                            <select class="form-control select2bs4" style="width: 100%;" name="ddnPartyTypeId">
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="">Party Name</label>
-                                            <input type="text" class="form-control" id="txtPartyName" name="PartyName">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>State</label>
-                                            <select class="form-control select2bs4" style="width: 100%;" id="stateId" name="ddnStateId">
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>City</label>
-                                            <select class="form-control select2bs4" style="width: 100%;" id="cityId" name="ddnCityId">
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="">Phone No</label>
-                                            <input type="text" class="form-control" id="txtPhoneNo" name="PhoneNo">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="">Email</label>
-                                            <input type="text" class="form-control" id="txtMail" name="Mail">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-12">
-                                        <div class="form-group">
-                                            <label for="">Address</label>
-                                            <input type="text" class="form-control" id="txtAdress" name="Address">
-                                        </div>
-                                    </div>
-                                </div>
-                                <button class="btn btn-primary" onclick="stepper.next()" style="Float:right">Next</button>
-                            </div>
-                            <div id="part2" class="content" role="tabpanel" aria-labelledby="part2-trigger">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="">GST No</label>
-                                            <input type="text" class="form-control" id="txtGstNo" name="GstNo">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="">Credit Limit</label>
-                                            <input type="text" class="form-control" id="txtCreditLimit" name="CreditLimit">
-                                        </div>
-                                    </div>
-                                </div>
-                                <button class="btn btn-primary" onclick="stepper.previous()">Previous</button>
-                                <button type="button" class="btn btn-primary btn-party-update" style="float:right">Submit</button>
-                            </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Party Type</label>
+                            <select class="form-control select2bs4" style="width: 100%;" name="ddnPartyTypeId">
+                            </select>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-        <!-- /.modal-content -->
-    </div>
-    <!-- /.modal-dialog -->
-</div>
-<!--.END MODAL-->
-<!--MODAL Info-->
-<div class="modal fade" id="modal-party-info">
-    <div class="modal-dialog  modal-sm">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h6 class="modal-title">Party Personal Info</h6>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="col-12">
-                    <ul class="ml-4 mb-0 fa-ul text-muted">
-                        <li class="small" id="lblStateName"></li>
-                        <li class="small" id="lblCityName"></li>
-                        <li class="small" id="lblPhone"></li>
-                        <li class="small" id="lblEmail"></li>
-                        <li class="small" id="lblAddress"></li>
-                    </ul>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="">Party Name</label>
+                            <input type="text" class="form-control" id="txtPartyName" name="PartyName">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>State</label>
+                            <select class="form-control select2bs4" style="width: 100%;" id="stateId" name="ddnStateId">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>City</label>
+                            <select class="form-control select2bs4" style="width: 100%;" id="cityId" name="ddnCityId">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="">Phone No</label>
+                            <input type="text" class="form-control" id="txtPhoneNo" name="PhoneNo">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="">Email</label>
+                            <input type="text" class="form-control" id="txtMail" name="Mail">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="">Address</label>
+                            <input type="text" class="form-control" id="txtAdress" name="Address">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="">GST No</label>
+                            <input type="text" class="form-control" id="txtGstNo" name="GstNo">
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <button type="button" class="btn btn-primary btn-party-update" style="float:right">Update</button>
+                    </div>
                 </div>
             </div>
         </div>
