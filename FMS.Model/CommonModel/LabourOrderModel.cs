@@ -25,6 +25,7 @@ namespace FMS.Model.CommonModel
 
         //Others
         public string Date { get; set; }
+        public string Labourtype { get; set; }
     }
 }
   

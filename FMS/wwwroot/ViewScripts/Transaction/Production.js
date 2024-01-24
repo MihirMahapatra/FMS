@@ -182,7 +182,6 @@ $(function () {
                 dataType: 'json',
                 success: function (result) {
                     if (result.ResponseCode == 302) {
-                        console.log(result);
                         var html = '';
                         $.each(result.Productions, function (key, item) {
                             html += '<tr>';
@@ -266,7 +265,6 @@ $(function () {
                 LabourType: LabourType.val(),
                 rowData: rowData
             };
-            console.log(requestData)
             $.ajax({
                 type: "POST",
                 url: '/Transaction/CreateProductionEntry',
@@ -328,12 +326,11 @@ $(function () {
                 html += '</thead>'
                 html += '<tbody>';
                 if (result.ResponseCode == 302) {
-
-                    $.each(result.ProductionEntries, function (key, item) {
+                    $.each(result.LabourOrders, function (key, item) {
                         html += '<tr>';
-                        html += '<td hidden>' + item.ProductionEntryId + '</td>';
-                        html += '<td>' + item.ProductionNo + '</td>';
-                        const ModifyDate = item.ProductionDate;
+                        html += '<td hidden>' + item.LabourOrderId + '</td>';
+                        html += '<td>' + item.TransactionNo + '</td>';
+                        const ModifyDate = item.TransactionDate;
                         var formattedDate = '';
                         if (ModifyDate) {
                             const dateObject = new Date(ModifyDate);
@@ -357,14 +354,18 @@ $(function () {
                         else {
                             html += '<td>' - '</td>';
                         }
-
-                        html += '<td>' + item.LabourType + '</td>';
+                        if (item.LabourType !== null) {
+                            html += '<td>' + item.LabourType.Labour_Type + '</td>';
+                        }
+                        else {
+                            html += '<td>' - '</td>';
+                        }
                         html += '<td>' + item.Quantity + '</td>';
                         html += '<td>' + item.Rate + '</td>';
                         html += '<td>' + item.Amount + '</td>';
                         html += '<td style="background-color:#ffe6e6;">';
-                        html += '<button class="btn btn-primary btn-link btn-sm btn-productionentry-edit"   id="btnProductionEntryEdit_' + item.ProductionEntryId + '"     data-id="' + item.ProductionEntryId + '" data-toggle="modal" data-target="#modal-edit-production-entry" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-edit"></i></button>';
-                        html += ' <button class="btn btn-primary btn-link btn-sm btn-productionentry-delete" id="btnProductionEntryDelete_' + item.ProductionEntryId + '"   data-id="' + item.ProductionEntryId + '" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button>';
+                        html += '<button class="btn btn-primary btn-link btn-sm btn-productionentry-edit"   id="btnProductionEntryEdit_' + item.LabourOrderId + '"     data-id="' + item.LabourOrderId + '" data-toggle="modal" data-target="#modal-edit-production-entry" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-edit"></i></button>';
+                        html += ' <button class="btn btn-primary btn-link btn-sm btn-productionentry-delete" id="btnProductionEntryDelete_' + item.LabourOrderId + '"   data-id="' + item.LabourOrderId + '" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button>';
                         html += '</td>';
                         html += '</tr >';
                     });
@@ -434,7 +435,7 @@ $(function () {
                     selectElement.empty();
                     var defaultOption = $('<option></option>').val('').text('--Select Option--');
                     selectElement.append(defaultOption);
-                    $.each(result.products, function (key, item) {
+                    $.each(result.Products, function (key, item) {
                         var option = $('<option></option>').val(item.ProductId).text(item.ProductName);
                         if (item.ProductName === productId) {
                             option.attr('selected', 'selected');
@@ -504,9 +505,11 @@ $(function () {
             contentType: 'application/json;charset=utf-8',
             dataType: 'json',
             success: function (result) {
-                console.log(result)
                 if (result.ResponseCode == 302) {
                     $('input[name="mdlLabourType"]').val(result.Labour.LabourType.Labour_Type);
+                }
+                else {
+                    $('input[name="mdlLabourType"]').val('N/A');
                 }
             },
             error: function (errormessage) {
@@ -523,18 +526,17 @@ $(function () {
     //Update
     $('#modal-edit-production-entry').on('click', '.btnUpdate', (event) => {
         const data = {
-            ProductionEntryId: $('input[name="mdlProductionEntryId"]').val(),
-            ProductionNo: $('input[name="mdlProductionNo"]').val(),
+            LabourOrderId: $('input[name="mdlProductionEntryId"]').val(),
+            TransactionNo: $('input[name="mdlProductionNo"]').val(),
             Date: $('input[name="mdlProductionDate"]').val(),
             Fk_ProductId: $('select[name="mdlProductId"]').val(),
             Fk_LabourId: $('select[name="mdlLabourId"]').val(),
-            LabourType: $('input[name="mdlLabourType"]').val(),
+            Labourtype: $('input[name="mdlLabourType"]').val(),
             Quantity: $('input[name="mdlQuantity"]').val(),
             Rate: $('input[name="mdlRate"]').val(),
             Amount: $('input[name="mdlAmount"]').val(),
-            LedgerId: $('input[name="mdlLedgerId"]').val(),
         }
-
+        console.log(data);
         $.ajax({
             type: "POST",
             url: '/Transaction/UpdateProductionEntry',

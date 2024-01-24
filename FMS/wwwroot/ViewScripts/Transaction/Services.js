@@ -20,7 +20,6 @@
         lengthMenu: [5, 10, 25, 50], // Set the available page lengths
         pageLength: 5 // Set the default page length to 5
     });
-    
     var ServiceEntryTable = $('#tblServiceEntry').DataTable({
         "paging": false,
         "lengthChange": false,
@@ -37,7 +36,7 @@
     ServiceDate.val(todayDate);
     const ddlServicesGood = $('select[name="ddlServiceGoodId"]');
     const ddlLabour = $('select[name="ddlLabourId"]');
-
+    const LabourType = $('input[name="LabourType"]');
     //----------------------------------------Production Screen-----------------------------------------//
     GetLastServiceNo();
     function GetLastServiceNo() {
@@ -66,7 +65,7 @@
                     ddlServicesGood.empty();
                     var defaultOption = $('<option></option>').val('').text('--Select Option--');
                     ddlServicesGood.append(defaultOption);
-                    $.each(result.products, function (key, item) {
+                    $.each(result.Products, function (key, item) {
                         var option = $('<option></option>').val(item.ProductId).text(item.ProductName);
                         ddlServicesGood.append(option);
                     });
@@ -104,8 +103,6 @@
         var uniqueId = 'ddlitem' + new Date().getTime();
         var html = '<tr>';
         html += '<td><div class="form-group"><select required class="form-control form-control-sm select2bs4 ServiceGood ServiceGood_' + uniqueId + '" style="width: 100%;" id="' + uniqueId + '"></select></div></td>';
-        html += '<td> <div class="form-group"><select required class=" form-control select2bs4 labour_' + uniqueId + ' labour" style="width: 100%;"></select></div></td>';
-        html += ' <td><div class="form-group"><input type="text" class=" form-control" disabled></div></td>';
         html += '<td>' +
             '<div class="form-group">' +
             '<div class="input-group">' +
@@ -136,7 +133,7 @@
                     selectElement.empty();
                     var defaultOption = $('<option></option>').val('').text('--Select Option--');
                     selectElement.append(defaultOption);
-                    $.each(result.products, function (key, item) {
+                    $.each(result.Products, function (key, item) {
                         var option = $('<option></option>').val(item.ProductId).text(item.ProductName);
                         selectElement.append(option);
                     });
@@ -144,27 +141,6 @@
             },
             error: function (errormessage) {
                 console.log(errormessage)
-            }
-        });
-        $.ajax({
-            url: "/Transaction/GetServiceLabours",
-            type: "GET",
-            contentType: "application/json;charset=utf-8",
-            dataType: "json",
-            success: function (result) {
-                if (result.ResponseCode == 302) {
-                    var selectElement = $('.labour_' + uniqueId + '');
-                    selectElement.empty();
-                    var defaultOption = $('<option></option>').val('').text('--Select Option--');
-                    selectElement.append(defaultOption);
-                    $.each(result.Labours, function (key, item) {
-                        var option = $('<option></option>').val(item.LabourId).text(item.LabourName);
-                        selectElement.append(option);
-                    });
-                }
-            },
-            error: function (errormessage) {
-                console.log(errormessage);
             }
         });
         $('#tblServiceEntry tbody').find('.select2bs4').select2({
@@ -179,8 +155,7 @@
         var selectedProductId = selectElement.val();
         var tableBody = $('#tblRawMaterialDetails tbody');
         tableBody.empty();
-        if (selectedProductId) {
-          
+        if (selectedProductId) {     
             $.ajax({
                 url: '/Transaction/GetProductLabourRate?ProductId=' + selectedProductId,
                 type: 'GET',
@@ -189,7 +164,7 @@
                 success: function (result) {
                     if (result.ResponseCode == 302) {
                         if (result.LabourRate !== null) {
-                            var inputField = selectElement.closest('tr').find('input[type="text"]').eq(2);
+                            var inputField = selectElement.closest('tr').find('input[type="text"]').eq(1);
                             inputField.val(result.LabourRate.Rate);
                             var span = selectElement.closest('tr').find('span#Unit');
                             var Texthas = result.LabourRate.Product.Unit.UnitName;
@@ -219,8 +194,10 @@
                 success: function (result) {
                     console.log(result)
                     if (result.ResponseCode == 302) {
-                        var inputField = selectElement.closest('tr').find('input[type="text"]').eq(0);
-                        inputField.val(result.Labour.LabourType.Labour_Type);
+                        LabourType.val(result.Labour.LabourType.Labour_Type);
+                    }
+                    else {
+                        LabourType.val('N/A');
                     }
                 },
                 error: function (errormessage) {
@@ -231,17 +208,21 @@
     });
     $('#tblServiceEntry tbody').on('change', 'input[type="text"]', function () {
         var row = $(this).closest('tr');
-        var quantity = parseFloat(row.find('input:eq(1)').val());
-        var rate = parseFloat(row.find('input:eq(2)').val());
-        var otamount = parseFloat(row.find('input:eq(3)').val());
+        var quantity = parseFloat(row.find('input:eq(0)').val());
+        var rate = parseFloat(row.find('input:eq(1)').val());
+        var otamount = parseFloat(row.find('input:eq(2)').val());
         var amount = (quantity * rate) + otamount;
-        row.find('input:eq(4)').val(amount.toFixed(2));
+        row.find('input:eq(3)').val(amount.toFixed(2));
     });
     $('#btnSave').on('click', function () {
         if (!ServiceDate.val()) {
             toastr.error('Services Date  Is Required.');
             return;
-        } else {
+        } else if (!ddlLabour.val() || ddlLabour.val() === '--Select Option--') {
+            toastr.error('Labour Name  Is Required.');
+            return;
+        }
+        else {
             $('#loader').show();
             var rowData = [];
             $('#tblServiceEntry tbody tr').each(function () {
@@ -259,9 +240,10 @@
             var requestData = {
                 ProductionNo: TransactionNo.val(),
                 ProductionDate: ServiceDate.val(),
+                Fk_LabourId: ddlLabour.val(),
+                LabourType: LabourType.val(),
                 rowData: rowData
             };
-            console.log(requestData)
             $.ajax({
                 type: "POST",
                 url: '/Transaction/CreateServiceEntry',
@@ -319,20 +301,20 @@
                 html += '<th>Product Name</th>'
                 html += '<th>Labour Name</th>'
                 html += '<th>Labour Type</th>'
-                html += '<th>Quantity</th>'
+                html += '<th>Qty</th>'
                 html += '<th>Rate</th>'
-                html += '<th>OTAmount</th>'
-                html += '<th>Amount</th>'
+                html += '<th>Oth. Amt</th>'
+                html += '<th>Amt</th>'
                 html += '<th>Action</th>'
                 html += '</tr>'
                 html += '</thead>'
                 html += '<tbody>';
                 if (result.ResponseCode == 302) {
-                    $.each(result.ProductionEntries, function (key, item) {
+                    $.each(result.LabourOrders, function (key, item) {
                         html += '<tr>';
-                        html += '<td hidden>' + item.ProductionEntryId + '</td>';
-                        html += '<td>' + item.ProductionNo + '</td>';
-                        const ModifyDate = item.ProductionDate;
+                        html += '<td hidden>' + item.LabourOrderId + '</td>';
+                        html += '<td>' + item.TransactionNo + '</td>';
+                        const ModifyDate = item.TransactionDate;
                         var formattedDate = '';
                         if (ModifyDate) {
                             const dateObject = new Date(ModifyDate);
@@ -356,15 +338,19 @@
                         else {
                             html += '<td>' - '</td>';
                         }
-
-                        html += '<td>' + item.LabourType + '</td>';
+                        if (item.LabourType !== null) {
+                            html += '<td>' + item.LabourType.Labour_Type + '</td>';
+                        }
+                        else {
+                            html += '<td>' - '</td>';
+                        }
                         html += '<td>' + item.Quantity + '</td>';
                         html += '<td>' + item.Rate + '</td>';
                         html += '<td>' + item.OTAmount + '</td>';
                         html += '<td>' + item.Amount + '</td>';
                         html += '<td style="background-color:#ffe6e6;">';
-                        html += '<button class="btn btn-primary btn-link btn-sm btn-serviceEntry-edit"   id="btnServicesEntryEdit_' + item.ProductionEntryId + '"     data-id="' + item.ProductionEntryId + '" data-toggle="modal" data-target="#modal-edit-service-entry" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-edit"></i></button>';
-                        html += ' <button class="btn btn-primary btn-link btn-sm btn-serviceEntry-delete" id="btnServicesEntryDelete_' + item.ProductionEntryId + '"   data-id="' + item.ProductionEntryId + '" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button>';
+                        html += '<button class="btn btn-primary btn-link btn-sm btn-serviceEntry-edit"   id="btnServicesEntryEdit_' + item.LabourOrderId + '"     data-id="' + item.LabourOrderId + '" data-toggle="modal" data-target="#modal-edit-service-entry" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-edit"></i></button>';
+                        html += ' <button class="btn btn-primary btn-link btn-sm btn-serviceEntry-delete" id="btnServicesEntryDelete_' + item.LabourOrderId + '"   data-id="' + item.LabourOrderId + '" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button>';
                         html += '</td>';
                         html += '</tr >';
                     });
@@ -437,7 +423,7 @@
                     selectElement.empty();
                     var defaultOption = $('<option></option>').val('').text('--Select Option--');
                     selectElement.append(defaultOption);
-                    $.each(result.products, function (key, item) {
+                    $.each(result.Products, function (key, item) {
                         var option = $('<option></option>').val(item.ProductId).text(item.ProductName);
                         if (item.ProductName === productId) {
                             option.attr('selected', 'selected');
@@ -483,9 +469,8 @@
             contentType: 'application/json;charset=utf-8',
             dataType: 'json',
             success: function (result) {
-                console.log(result)
                 if (result.ResponseCode == 302) {
-                    $('input[name="mdlRate"]').val(result.Data);
+                    $('input[name="mdlRate"]').val(result.LabourRate.Rate);
                     if ($('input[name="mdlQuantity"]') !== '') {
                         var quantity = $('input[name="mdlQuantity"]').val();
                         var rate = $('input[name="mdlRate"]').val();
@@ -511,6 +496,9 @@
                 if (result.ResponseCode == 302) {
                     $('input[name="mdlLabourType"]').val(result.Labour.LabourType.Labour_Type);
                 }
+                else {
+                    $('input[name="mdlLabourType"]').val('N/A');
+                }
             },
             error: function (errormessage) {
                 console.log(errormessage);
@@ -533,17 +521,16 @@
     //Update
     $('#modal-edit-service-entry').on('click', '.btnUpdate', (event) => {
         const data = {
-            ProductionEntryId: $('input[name="mdlServiceEntryId"]').val(),
-            ProductionNo: $('input[name="mdlTransactionNo"]').val(),
+            LabourOrderId: $('input[name="mdlServiceEntryId"]').val(),
+            TransactionNo: $('input[name="mdlTransactionNo"]').val(),
             Date: $('input[name="mdlTransactionDate"]').val(),
             Fk_ProductId: $('select[name="mdlProductId"]').val(),
             Fk_LabourId: $('select[name="mdlLabourId"]').val(),
-            LabourType: $('input[name="mdlLabourType"]').val(),
+            Labourtype: $('input[name="mdlLabourType"]').val(),
             Quantity: $('input[name="mdlQuantity"]').val(),
             Rate: $('input[name="mdlRate"]').val(),
             OTAmount: $('input[name="mdlOtAmount"]').val(),
             Amount: $('input[name="mdlAmount"]').val(),
-            LedgerId: $('input[name="mdlLedgerId"]').val(),
         }
 
         $.ajax({

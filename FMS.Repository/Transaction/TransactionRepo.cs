@@ -1433,7 +1433,7 @@ namespace FMS.Repository.Transaction
                 Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
                 Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
                 _Result.IsSuccess = false;
-                var lastProduction = await _appDbContext.LabourOrders.Where(s => s.FK_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear && s.Fk_LabourTypeId== MappingLabourType.Production).OrderByDescending(s => s.TransactionNo).Select(s => new { s.TransactionNo }).FirstOrDefaultAsync();
+                var lastProduction = await _appDbContext.LabourOrders.Where(s => s.FK_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear && s.Fk_LabourTypeId == MappingLabourType.Production).OrderByDescending(s => s.TransactionNo).Select(s => new { s.TransactionNo }).FirstOrDefaultAsync();
                 if (lastProduction != null)
                 {
                     var lastProductionNo = lastProduction.TransactionNo;
@@ -1505,7 +1505,7 @@ namespace FMS.Repository.Transaction
                     TransactionDate = s.TransactionDate,
                     Product = s.Product != null ? new ProductModel { ProductName = s.Product.ProductName } : null,
                     Labour = s.Labour != null ? new LabourModel { LabourName = s.Labour.LabourName } : null,
-                    LabourType = s.LabourType != null ? new LabourTypeModel { Labour_Type = s.LabourType.Labour_Type} : null,
+                    LabourType = s.LabourType != null ? new LabourTypeModel { Labour_Type = s.LabourType.Labour_Type } : null,
                     Quantity = s.Quantity,
                     Rate = s.Rate,
                     Amount = s.Amount
@@ -1575,6 +1575,7 @@ namespace FMS.Repository.Transaction
                                     AvilableStock = newProductionEntry.Quantity
                                 };
                                 await _appDbContext.Stocks.AddAsync(AddNewFinishedGoodStock);
+                                await _appDbContext.SaveChangesAsync();
                             }
                             //update Rawmterial Stock
                             var getFinishedGoodRawmaterial = await _appDbContext.Productions.Where(s => s.Fk_FinishedGoodId == newProductionEntry.Fk_ProductId).ToListAsync();
@@ -1615,26 +1616,63 @@ namespace FMS.Repository.Transaction
                             #endregion
                             #region SubLedgerBalance & Ledger Balance
                             // @Labour A/c------Cr
+                            var LedgerBalanceId = Guid.Empty;
                             var getLabourSubLedger = await _appDbContext.Labours.Where(s => s.LabourId == newProductionEntry.Fk_LabourId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                             if (getLabourSubLedger != null)
                             {
+                                var updateLaourLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.LabourAccount && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                if (updateLaourLedgerBalance != null)
+                                {
+                                    updateLaourLedgerBalance.RunningBalance -= newProductionEntry.Amount;
+                                    updateLaourLedgerBalance.RunningBalanceType = (updateLaourLedgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
+                                    await _appDbContext.SaveChangesAsync();
+                                    LedgerBalanceId = updateLaourLedgerBalance.LedgerBalanceId;
+                                }
+                                else
+                                {
+                                    var newLedgerBalance = new LedgerBalance
+                                    {
+                                        Fk_LedgerId = MappingLedgers.LabourAccount,
+                                        OpeningBalance = 0,
+                                        OpeningBalanceType = "Cr",
+                                        RunningBalance = -newProductionEntry.Amount,
+                                        RunningBalanceType = "Cr",
+                                        Fk_BranchId = BranchId,
+                                        Fk_FinancialYear = FinancialYear
+                                    };
+                                    await _appDbContext.LedgerBalances.AddAsync(newLedgerBalance);
+                                    await _appDbContext.SaveChangesAsync();
+                                    LedgerBalanceId = newLedgerBalance.LedgerBalanceId;
+                                }
                                 var updateLaourSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == getLabourSubLedger.Fk_SubLedgerId && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).SingleOrDefaultAsync();
                                 if (updateLaourSubledgerBalance != null)
                                 {
                                     updateLaourSubledgerBalance.RunningBalance -= newProductionEntry.Amount;
                                     updateLaourSubledgerBalance.RunningBalanceType = (updateLaourSubledgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
-                                    var updateLaourLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.LedgerBalanceId == updateLaourSubledgerBalance.Fk_LedgerBalanceId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
-                                    if (updateLaourLedgerBalance != null)
-                                    {
-                                        updateLaourLedgerBalance.RunningBalance -= newProductionEntry.Amount;
-                                        updateLaourLedgerBalance.RunningBalanceType = (updateLaourLedgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
-                                    }
                                     await _appDbContext.SaveChangesAsync();
                                 }
                                 else
                                 {
-
+                                    var getSubledgerId = await _appDbContext.Labours.Where(s => s.LabourId == data.Fk_LabourId && s.Fk_BranchId == BranchId).Select(s => s.Fk_SubLedgerId).SingleOrDefaultAsync();
+                                    var newSubLedgerBalance = new SubLedgerBalance
+                                    {
+                                        Fk_LedgerBalanceId = LedgerBalanceId,
+                                        Fk_SubLedgerId = getSubledgerId,
+                                        OpeningBalanceType = "Cr",
+                                        OpeningBalance = 0,
+                                        RunningBalanceType = "Cr",
+                                        RunningBalance = -newProductionEntry.Amount,
+                                        Fk_FinancialYearId = FinancialYear,
+                                        Fk_BranchId = BranchId
+                                    };
+                                    await _appDbContext.SubLedgerBalances.AddAsync(newSubLedgerBalance);
+                                    await _appDbContext.SaveChangesAsync();
                                 }
+                            }
+                            else
+                            {
+                                _Result.WarningMessage = "Labour Not Found";
+                                return _Result;
                             }
                             // @labourCharges A/c--------Dr
                             var updatelabourChargesLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.LabourCharges && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
@@ -1642,6 +1680,21 @@ namespace FMS.Repository.Transaction
                             {
                                 updatelabourChargesLedgerBalance.RunningBalance += newProductionEntry.Amount;
                                 updatelabourChargesLedgerBalance.RunningBalanceType = (updatelabourChargesLedgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
+                                await _appDbContext.SaveChangesAsync();
+                            }
+                            else
+                            {
+                                var newLedgerBalance = new LedgerBalance
+                                {
+                                    Fk_LedgerId = MappingLedgers.LabourCharges,
+                                    OpeningBalance = 0,
+                                    OpeningBalanceType = "Dr",
+                                    RunningBalance = newProductionEntry.Amount,
+                                    RunningBalanceType = "Dr",
+                                    Fk_BranchId = BranchId,
+                                    Fk_FinancialYear = FinancialYear
+                                };
+                                await _appDbContext.LedgerBalances.AddAsync(newLedgerBalance);
                                 await _appDbContext.SaveChangesAsync();
                             }
                             #endregion
@@ -1677,12 +1730,11 @@ namespace FMS.Repository.Transaction
                 {
                     if (DateTime.TryParseExact(data.Date, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedProductionDate))
                     {
-                        var UpdateProductionEntry = await (from s in _appDbContext.LabourOrders where s.LabourOrderId == data.LabourOrderId && s.FK_BranchId == BranchId select s).SingleOrDefaultAsync();
+                        var UpdateProductionEntry = await (from s in _appDbContext.LabourOrders where s.LabourOrderId == data.LabourOrderId && s.FK_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear select s).SingleOrDefaultAsync();
                         if (UpdateProductionEntry != null)
                         {
                             var getFinishedGoodRawmaterial = await _appDbContext.Productions.Where(s => s.Fk_FinishedGoodId == data.Fk_ProductId).ToListAsync();
                             var UpdateFinishedGoodStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == data.Fk_ProductId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
-
                             if (data.Fk_ProductId == UpdateProductionEntry.Fk_ProductId)
                             {
                                 #region Update Stock
@@ -1803,30 +1855,47 @@ namespace FMS.Repository.Transaction
                             var getLabourSubLedger = await _appDbContext.Labours.Where(s => s.LabourId == UpdateProductionEntry.Fk_LabourId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                             if (getLabourSubLedger != null)
                             {
-                                var updateSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == getLabourSubLedger.Fk_SubLedgerId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
+                                var updateSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == getLabourSubLedger.Fk_SubLedgerId && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).SingleOrDefaultAsync();
                                 if (updateSubledgerBalance != null)
                                 {
-                                    if (data.Fk_LabourId == getLabourSubLedger.LabourId)
+                                    updateSubledgerBalance.RunningBalance -= difference;
+                                    updateSubledgerBalance.RunningBalanceType = (updateSubledgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
+                                    var updateLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.LabourAccount && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                    if (updateLedgerBalance != null)
                                     {
-                                        updateSubledgerBalance.RunningBalance -= difference;
-                                        updateSubledgerBalance.RunningBalanceType = (updateSubledgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
-                                        var updateLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.LedgerBalanceId == updateSubledgerBalance.Fk_LedgerBalanceId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
-                                        if (updateLedgerBalance != null)
-                                        {
-                                            updateLedgerBalance.RunningBalance -= difference;
-                                            updateLedgerBalance.RunningBalanceType = (updateLedgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
-                                        }
-                                        await _appDbContext.SaveChangesAsync();
+                                        updateLedgerBalance.RunningBalance -= difference;
+                                        updateLedgerBalance.RunningBalanceType = (updateLedgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
                                     }
+                                    else
+                                    {
+                                        _Result.WarningMessage = "SubLedger Balance Not Exist";
+                                        return _Result;
+                                    }
+                                    await _appDbContext.SaveChangesAsync();
+                                }
+                                else
+                                {
+                                    _Result.WarningMessage = "Ledger Balance Not Exist";
+                                    return _Result;
                                 }
                             }
+                            else
+                            {
+                                _Result.WarningMessage = "Labour Not Exist";
+                                return _Result;
+                            }
                             // @labourCharges A/c--------Dr
-                            var updatelabourChargesLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.LabourCharges && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
+                            var updatelabourChargesLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.LabourCharges && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
                             if (updatelabourChargesLedgerBalance != null)
                             {
                                 updatelabourChargesLedgerBalance.RunningBalance += difference;
                                 updatelabourChargesLedgerBalance.RunningBalanceType = (updatelabourChargesLedgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
                                 await _appDbContext.SaveChangesAsync();
+                            }
+                            else
+                            {
+                                _Result.WarningMessage = "Ledger Balance Not Exist";
+                                return _Result;
                             }
                             #endregion
                             #region Update Production Entry
@@ -1871,11 +1940,11 @@ namespace FMS.Repository.Transaction
                 {
                     if (Id != Guid.Empty)
                     {
-                        var DeleteProductionEntry = await (from s in _appDbContext.LabourOrders where s.LabourOrderId == Id && s.FK_BranchId == BranchId select s).SingleOrDefaultAsync();
+                        var DeleteProductionEntry = await (from s in _appDbContext.LabourOrders where s.LabourOrderId == Id && s.FK_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear select s).SingleOrDefaultAsync();
                         if (DeleteProductionEntry != null)
                         {
                             #region Production Entry Transaction 
-                            var DeleteProductionEntryTransacion = await (from s in _appDbContext.LabourTransactions where s.Fk_LabourOdrId == Id && s.Fk_BranchId == BranchId select s).ToListAsync();
+                            var DeleteProductionEntryTransacion = await (from s in _appDbContext.LabourTransactions where s.Fk_LabourOdrId == Id && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear select s).ToListAsync();
                             if (DeleteProductionEntryTransacion != null)
                             {
                                 foreach (var item in DeleteProductionEntryTransacion)
@@ -1908,14 +1977,14 @@ namespace FMS.Repository.Transaction
                             var getLabourSubLedger = await _appDbContext.Labours.Where(s => s.LabourId == DeleteProductionEntry.Fk_LabourId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                             if (getLabourSubLedger != null)
                             {
-                                var updateLabourSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == getLabourSubLedger.Fk_SubLedgerId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
+                                var updateLabourSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == getLabourSubLedger.Fk_SubLedgerId && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).SingleOrDefaultAsync();
                                 if (updateLabourSubledgerBalance != null)
                                 {
                                     if (DeleteProductionEntry.Fk_LabourId == getLabourSubLedger.LabourId)
                                     {
                                         updateLabourSubledgerBalance.RunningBalance += DeleteProductionEntry.Amount;
                                         updateLabourSubledgerBalance.RunningBalanceType = (updateLabourSubledgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
-                                        var updateLabourLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.LedgerBalanceId == updateLabourSubledgerBalance.Fk_LedgerBalanceId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
+                                        var updateLabourLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.LedgerBalanceId == updateLabourSubledgerBalance.Fk_LedgerBalanceId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
                                         if (updateLabourLedgerBalance != null)
                                         {
                                             updateLabourLedgerBalance.RunningBalance += DeleteProductionEntry.Amount;
@@ -1926,7 +1995,7 @@ namespace FMS.Repository.Transaction
                                 }
                             }
                             // @labourCharges A/c--------Dr
-                            var updatelabourChargesLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.LabourCharges && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
+                            var updatelabourChargesLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.LabourCharges && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
                             if (updatelabourChargesLedgerBalance != null)
                             {
                                 updatelabourChargesLedgerBalance.RunningBalance -= DeleteProductionEntry.Amount;
@@ -1939,7 +2008,7 @@ namespace FMS.Repository.Transaction
                             await _appDbContext.SaveChangesAsync();
                         }
                         _Result.IsSuccess = true;
-                        if (IsCallback == false) localTransaction.Commit();
+                        localTransaction.Commit();
                         _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Deleted);
                     }
                 }
@@ -1948,7 +2017,6 @@ namespace FMS.Repository.Transaction
                     localTransaction.Rollback();
                     throw;
                 }
-
             }
             catch (Exception _Exception)
             {
@@ -1965,8 +2033,9 @@ namespace FMS.Repository.Transaction
             try
             {
                 Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
+                Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
                 _Result.IsSuccess = false;
-                var lastService = await _appDbContext.LabourOrders.Where(s => s.FK_BranchId == BranchId && s.Fk_LabourTypeId == MappingLabourType.Service).OrderByDescending(s => s.TransactionNo).Select(s => new { s.TransactionNo }).FirstOrDefaultAsync();
+                var lastService = await _appDbContext.LabourOrders.Where(s => s.FK_BranchId == BranchId && s.Fk_LabourTypeId == MappingLabourType.Service && s.Fk_FinancialYearId == FinancialYear).OrderByDescending(s => s.TransactionNo).Select(s => new { s.TransactionNo }).FirstOrDefaultAsync();
                 if (lastService != null)
                 {
                     var lastServicnNo = lastService.TransactionNo;
@@ -1998,7 +2067,7 @@ namespace FMS.Repository.Transaction
             {
                 Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
                 Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
-                var Query = await _appDbContext.LabourOrders.Where(s => s.Fk_FinancialYearId == FinancialYear && s.FK_BranchId == BranchId && s.Fk_LabourTypeId==MappingLabourType.Service).Select(s => new LabourOrderModel
+                var Query = await _appDbContext.LabourOrders.Where(s => s.Fk_FinancialYearId == FinancialYear && s.FK_BranchId == BranchId && s.Fk_LabourTypeId == MappingLabourType.Service).Select(s => new LabourOrderModel
                 {
                     LabourOrderId = s.LabourOrderId,
                     TransactionNo = s.TransactionNo,
@@ -2061,22 +2130,63 @@ namespace FMS.Repository.Transaction
                             #endregion
                             #region SubLedgerBalance & Ledger Balance
                             // @Labour A/c------Cr
+                            var LedgerBalanceId = Guid.Empty;
                             var getLabourSubLedger = await _appDbContext.Labours.Where(s => s.LabourId == newProductionEntry.Fk_LabourId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                             if (getLabourSubLedger != null)
                             {
-                                var updateLaourSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == getLabourSubLedger.Fk_SubLedgerId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
+                                var updateLaourLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.LabourAccount && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                if (updateLaourLedgerBalance != null)
+                                {
+                                    updateLaourLedgerBalance.RunningBalance -= newProductionEntry.Amount;
+                                    updateLaourLedgerBalance.RunningBalanceType = (updateLaourLedgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
+                                    await _appDbContext.SaveChangesAsync();
+                                    LedgerBalanceId = updateLaourLedgerBalance.LedgerBalanceId;
+                                }
+                                else
+                                {
+                                    var newLedgerBalance = new LedgerBalance
+                                    {
+                                        Fk_LedgerId = MappingLedgers.LabourAccount,
+                                        OpeningBalance = 0,
+                                        OpeningBalanceType = "Cr",
+                                        RunningBalance = -newProductionEntry.Amount,
+                                        RunningBalanceType = "Cr",
+                                        Fk_BranchId = BranchId,
+                                        Fk_FinancialYear = FinancialYear
+                                    };
+                                    await _appDbContext.LedgerBalances.AddAsync(newLedgerBalance);
+                                    await _appDbContext.SaveChangesAsync();
+                                    LedgerBalanceId = newLedgerBalance.LedgerBalanceId;
+                                }
+                                var updateLaourSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == getLabourSubLedger.Fk_SubLedgerId && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).SingleOrDefaultAsync();
                                 if (updateLaourSubledgerBalance != null)
                                 {
                                     updateLaourSubledgerBalance.RunningBalance -= newProductionEntry.Amount;
                                     updateLaourSubledgerBalance.RunningBalanceType = (updateLaourSubledgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
-                                    var updateLaourLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.LedgerBalanceId == updateLaourSubledgerBalance.Fk_LedgerBalanceId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
-                                    if (updateLaourLedgerBalance != null)
-                                    {
-                                        updateLaourLedgerBalance.RunningBalance -= newProductionEntry.Amount;
-                                        updateLaourLedgerBalance.RunningBalanceType = (updateLaourLedgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
-                                    }
                                     await _appDbContext.SaveChangesAsync();
                                 }
+                                else
+                                {
+                                    var getSubledgerId = await _appDbContext.Labours.Where(s => s.LabourId == data.Fk_LabourId && s.Fk_BranchId == BranchId).Select(s => s.Fk_SubLedgerId).SingleOrDefaultAsync();
+                                    var newSubLedgerBalance = new SubLedgerBalance
+                                    {
+                                        Fk_LedgerBalanceId = LedgerBalanceId,
+                                        Fk_SubLedgerId = getSubledgerId,
+                                        OpeningBalanceType = "Cr",
+                                        OpeningBalance = 0,
+                                        RunningBalanceType = "Cr",
+                                        RunningBalance = -newProductionEntry.Amount,
+                                        Fk_FinancialYearId = FinancialYear,
+                                        Fk_BranchId = BranchId
+                                    };
+                                    await _appDbContext.SubLedgerBalances.AddAsync(newSubLedgerBalance);
+                                    await _appDbContext.SaveChangesAsync();
+                                }
+                            }
+                            else
+                            {
+                                _Result.WarningMessage = "Labour Not Found";
+                                return _Result;
                             }
                             // @labourCharges A/c--------Dr
                             var updatelabourChargesLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.LabourCharges && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
@@ -2084,6 +2194,21 @@ namespace FMS.Repository.Transaction
                             {
                                 updatelabourChargesLedgerBalance.RunningBalance += newProductionEntry.Amount;
                                 updatelabourChargesLedgerBalance.RunningBalanceType = (updatelabourChargesLedgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
+                                await _appDbContext.SaveChangesAsync();
+                            }
+                            else
+                            {
+                                var newLedgerBalance = new LedgerBalance
+                                {
+                                    Fk_LedgerId = MappingLedgers.LabourCharges,
+                                    OpeningBalance = 0,
+                                    OpeningBalanceType = "Dr",
+                                    RunningBalance = newProductionEntry.Amount,
+                                    RunningBalanceType = "Dr",
+                                    Fk_BranchId = BranchId,
+                                    Fk_FinancialYear = FinancialYear
+                                };
+                                await _appDbContext.LedgerBalances.AddAsync(newLedgerBalance);
                                 await _appDbContext.SaveChangesAsync();
                             }
                             #endregion
@@ -2119,7 +2244,7 @@ namespace FMS.Repository.Transaction
                 {
                     if (DateTime.TryParseExact(data.Date, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedProductionDate))
                     {
-                        var UpdateProductionEntry = await (from s in _appDbContext.LabourOrders where s.LabourOrderId == data.LabourOrderId && s.FK_BranchId == BranchId select s).SingleOrDefaultAsync();
+                        var UpdateProductionEntry = await (from s in _appDbContext.LabourOrders where s.LabourOrderId == data.LabourOrderId && s.FK_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear select s).SingleOrDefaultAsync();
                         if (UpdateProductionEntry != null)
                         {
                             #region Ledger & SubLedger Balance
@@ -2128,30 +2253,48 @@ namespace FMS.Repository.Transaction
                             var getLabourSubLedger = await _appDbContext.Labours.Where(s => s.LabourId == UpdateProductionEntry.Fk_LabourId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                             if (getLabourSubLedger != null)
                             {
-                                var updateSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == getLabourSubLedger.Fk_SubLedgerId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
+                                var updateSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == getLabourSubLedger.Fk_SubLedgerId && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).SingleOrDefaultAsync();
                                 if (updateSubledgerBalance != null)
                                 {
-                                    if (data.Fk_LabourId == getLabourSubLedger.LabourId)
+                                    updateSubledgerBalance.RunningBalance -= difference;
+                                    updateSubledgerBalance.RunningBalanceType = (updateSubledgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
+                                    var updateLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.LabourAccount && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                    if (updateLedgerBalance != null)
                                     {
-                                        updateSubledgerBalance.RunningBalance -= difference;
-                                        updateSubledgerBalance.RunningBalanceType = (updateSubledgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
-                                        var updateLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.LedgerBalanceId == updateSubledgerBalance.Fk_LedgerBalanceId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
-                                        if (updateLedgerBalance != null)
-                                        {
-                                            updateLedgerBalance.RunningBalance -= difference;
-                                            updateLedgerBalance.RunningBalanceType = (updateLedgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
-                                        }
-                                        await _appDbContext.SaveChangesAsync();
+                                        updateLedgerBalance.RunningBalance -= difference;
+                                        updateLedgerBalance.RunningBalanceType = (updateLedgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
                                     }
+                                    else
+                                    {
+                                        _Result.WarningMessage = "SubLedger Balance Not Exist";
+                                        return _Result;
+                                    }
+                                    await _appDbContext.SaveChangesAsync();
+
+                                }
+                                else
+                                {
+                                    _Result.WarningMessage = "Ledger Balance Not Exist";
+                                    return _Result;
                                 }
                             }
+                            else
+                            {
+                                _Result.WarningMessage = "Labour Not Exist";
+                                return _Result;
+                            }
                             // @labourCharges A/c--------Dr
-                            var updatelabourChargesLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.LabourCharges && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
+                            var updatelabourChargesLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.LabourCharges && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
                             if (updatelabourChargesLedgerBalance != null)
                             {
                                 updatelabourChargesLedgerBalance.RunningBalance += difference;
                                 updatelabourChargesLedgerBalance.RunningBalanceType = (updatelabourChargesLedgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
                                 await _appDbContext.SaveChangesAsync();
+                            }
+                            else
+                            {
+                                _Result.WarningMessage = "Ledger Balance Not Exist";
+                                return _Result;
                             }
                             #endregion
                             #region Update Production Entry
@@ -2197,11 +2340,11 @@ namespace FMS.Repository.Transaction
                 {
                     if (Id != Guid.Empty)
                     {
-                        var DeleteProductionEntry = await (from s in _appDbContext.LabourOrders where s.LabourOrderId == Id && s.FK_BranchId == BranchId select s).SingleOrDefaultAsync();
+                        var DeleteProductionEntry = await (from s in _appDbContext.LabourOrders where s.LabourOrderId == Id && s.FK_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear select s).SingleOrDefaultAsync();
                         if (DeleteProductionEntry != null)
                         {
                             #region Production Entry Transaction 
-                            var DeleteProductionEntryTransacion = await (from s in _appDbContext.LabourTransactions where s.Fk_LabourOdrId == Id && s.Fk_BranchId == BranchId select s).ToListAsync();
+                            var DeleteProductionEntryTransacion = await (from s in _appDbContext.LabourTransactions where s.Fk_LabourOdrId == Id && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear select s).ToListAsync();
                             if (DeleteProductionEntryTransacion != null)
                             {
                                 _appDbContext.LabourTransactions.RemoveRange(DeleteProductionEntryTransacion);
@@ -2213,14 +2356,14 @@ namespace FMS.Repository.Transaction
                             var getLabourSubLedger = await _appDbContext.Labours.Where(s => s.LabourId == DeleteProductionEntry.Fk_LabourId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                             if (getLabourSubLedger != null)
                             {
-                                var updateLabourSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == getLabourSubLedger.Fk_SubLedgerId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
+                                var updateLabourSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == getLabourSubLedger.Fk_SubLedgerId && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).SingleOrDefaultAsync();
                                 if (updateLabourSubledgerBalance != null)
                                 {
                                     if (DeleteProductionEntry.Fk_LabourId == getLabourSubLedger.LabourId)
                                     {
                                         updateLabourSubledgerBalance.RunningBalance += DeleteProductionEntry.Amount;
                                         updateLabourSubledgerBalance.RunningBalanceType = (updateLabourSubledgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
-                                        var updateLabourLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.LedgerBalanceId == updateLabourSubledgerBalance.Fk_LedgerBalanceId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
+                                        var updateLabourLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.LedgerBalanceId == updateLabourSubledgerBalance.Fk_LedgerBalanceId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
                                         if (updateLabourLedgerBalance != null)
                                         {
                                             updateLabourLedgerBalance.RunningBalance += DeleteProductionEntry.Amount;
@@ -2231,7 +2374,7 @@ namespace FMS.Repository.Transaction
                                 }
                             }
                             // @labourCharges A/c--------Dr
-                            var updatelabourChargesLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.LabourCharges && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
+                            var updatelabourChargesLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.LabourCharges && s.Fk_BranchId == BranchId && s.Fk_FinancialYear==FinancialYear).SingleOrDefaultAsync();
                             if (updatelabourChargesLedgerBalance != null)
                             {
                                 updatelabourChargesLedgerBalance.RunningBalance -= DeleteProductionEntry.Amount;
@@ -2244,7 +2387,7 @@ namespace FMS.Repository.Transaction
                             await _appDbContext.SaveChangesAsync();
                         }
                         _Result.IsSuccess = true;
-                        if (IsCallback == false) localTransaction.Commit();
+                       localTransaction.Commit();
                         _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Deleted);
                     }
                 }

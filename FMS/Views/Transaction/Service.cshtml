@@ -54,11 +54,23 @@
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                                <div class="col-md-6"></div>
                                                                 <div class="col-md-3">
-                                                                    <div class="form-group row mt-1 float-right">
+                                                                    <div class="form-group">
                                                                         <label class="pt-2">Transaction No</label>
                                                                         <input type="text" class="form-control" disabled name="TransactionNo">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    <label class="pt-2">Labour Name</label>
+                                                                    <div class="form-group">
+                                                                        <select class="form-control select2bs4 labour" style="width: 100%;" name="ddlLabourId">
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    <label class="pt-2">Labour Type</label>
+                                                                    <div class="form-group">
+                                                                        <input type="text" class="form-control" disabled name="LabourType" value="N/A">
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-md-12">
@@ -66,12 +78,10 @@
                                                                     <table id="tblServiceEntry" class="table table-bordered table-hover">
                                                                         <thead>
                                                                             <tr>
-                                                                                <th style="width:15%">Service Good</th>
-                                                                                <th style="width:15%">Labour Name</th>
-                                                                                <th style="width:13%">Labour Type</th>
-                                                                                <th style="width:17%">Quantity</th>
-                                                                                <th style="width:10%">Rate</th>
-                                                                                <th style="width:10%">OtherCharges</th>
+                                                                                <th style="width:30%">Service Good</th>
+                                                                                <th style="width:20%">Quantity</th>
+                                                                                <th style="width:15%">Rate</th>
+                                                                                <th style="width:15%">Other Charges</th>
                                                                                 <th style="width:10%">Amount</th>
                                                                                 <th style="width:10%">Action</th>
                                                                             </tr>
@@ -79,8 +89,6 @@
                                                                         <tbody>
                                                                             <tr>
                                                                                 <td> <div class="form-group"><select class="form-control select2bs4 ServiceGood" style="width: 100%;" name="ddlServiceGoodId"></select></div></td>
-                                                                                <td> <div class="form-group"><select class="form-control select2bs4 labour" style="width: 100%;" name="ddlLabourId"></select></div></td>
-                                                                                <td><div class="form-group"><input type="text" class="form-control" disabled></div></td>
                                                                                 <td>
                                                                                     <div class="form-group">
                                                                                         <div class="input-group">
@@ -183,7 +191,7 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label>Labour Type</label>
-                            <input type="text" class="form-control" id="" name="mdlLabourType" disabled>
+                            <input type="text" class="form-control" id="" name="mdlLabourType" disabled value="N/A">
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -225,28 +233,28 @@
 <!--.END MODAL-->
 <!--Script Section -->
 @section additionalScripts {
-<script src="~/scripts/FormScript.js"></script>
-    <script src="~/viewscripts/Transaction/servicestransations.js"></script>
-@if (TempData["SuccessMsg"] != null)
-{
+    <script src="~/scripts/FormScript.js"></script>
+    <script src="~/viewscripts/Transaction/services.js"></script>
+    @if (TempData["SuccessMsg"] != null)
+    {
+        <script>
+            toastr.success('@TempData["SuccessMsg"]');
+        </script>
+    }
+    @if (TempData["ErrorMsg"] != null)
+    {
+        <script>
+            toastr.error('@TempData["ErrorMsg"]');
+        </script>
+    }
     <script>
-        toastr.success('@TempData["SuccessMsg"]');
+        $('#reservationdate').datetimepicker({
+            format: 'DD/MM/YYYY'
+        });
+        $('#reservationdate1').datetimepicker({
+            format: 'DD/MM/YYYY'
+        });
     </script>
-}
-@if (TempData["ErrorMsg"] != null)
-{
-    <script>
-        toastr.error('@TempData["ErrorMsg"]');
-    </script>
-}
-<script>
-    $('#reservationdate').datetimepicker({
-        format: 'DD/MM/YYYY'
-    });
-    $('#reservationdate1').datetimepicker({
-        format: 'DD/MM/YYYY'
-    });
-</script>
 }
 
 
