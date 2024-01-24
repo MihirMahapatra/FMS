@@ -5,5 +5,6 @@
         public Guid LabourTypeId { get; set; }
         public string Labour_Type { get; set; }
         public ICollection<Labour> Labours { get; set; }
+        public ICollection<LabourOrder> LabourOrders { get; set; }
     }
 }

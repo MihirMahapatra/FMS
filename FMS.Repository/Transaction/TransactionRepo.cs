@@ -34,24 +34,23 @@ namespace FMS.Repository.Transaction
             try
             {
                 _Result.IsSuccess = false;
-                if (_HttpContextAccessor.HttpContext.Session.GetString("BranchId") != "All")
-                {
-                    Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
-                    Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
-                 
-                    _Result.CollectionObjData = await (from s in _appDbContext.SubLedgers where s.Fk_LedgerId == PartyTypeId 
-                                       select new SubLedgerModel
-                                       {
-                                           SubLedgerId = s.SubLedgerId,
-                                           SubLedgerName = s.SubLedgerName,
-                                       }).ToListAsync();
-                }               
-                    
+                _Result.CollectionObjData = await (from s in _appDbContext.SubLedgers
+                                                   where s.Fk_LedgerId == PartyTypeId
+                                                   select new SubLedgerModel
+                                                   {
+                                                       SubLedgerId = s.SubLedgerId,
+                                                       SubLedgerName = s.SubLedgerName,
+                                                   }).ToListAsync();
+
                 if (_Result.CollectionObjData.Count > 0)
                 {
                     _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
+                    _Result.IsSuccess = true;
                 }
-                _Result.IsSuccess = true;
+                else
+                {
+                    _Result.IsSuccess = true;
+                }
             }
             catch (Exception _Exception)
             {
@@ -67,8 +66,9 @@ namespace FMS.Repository.Transaction
             try
             {
                 Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
+                Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
                 _Result.IsSuccess = false;
-                var lastPurchaseOrder = await _appDbContext.PurchaseOrders.Where(s => s.Fk_BranchId == BranchId).OrderByDescending(s => s.TransactionNo).Select(s => new { s.TransactionNo }).FirstOrDefaultAsync();
+                var lastPurchaseOrder = await _appDbContext.PurchaseOrders.Where(s => s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).OrderByDescending(s => s.TransactionNo).Select(s => new { s.TransactionNo }).FirstOrDefaultAsync();
                 if (lastPurchaseOrder != null)
                 {
                     var lastTransactionId = lastPurchaseOrder.TransactionNo;
@@ -151,7 +151,7 @@ namespace FMS.Repository.Transaction
                     SubTotal = s.SubTotal,
                     Gst = s.Gst,
                     GrandTotal = s.GrandTotal,
-                    PurchaseTransactions = _appDbContext.PurchaseTransactions.Where(x => x.Fk_PurchaseOrderId == s.PurchaseOrderId).Select(x => new PurchaseTransactionModel
+                    PurchaseTransactions = _appDbContext.PurchaseTransactions.Where(x => x.Fk_PurchaseOrderId == s.PurchaseOrderId && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).Select(x => new PurchaseTransactionModel
                     {
                         PurchaseId = x.PurchaseId,
                         AlternateQuantity = x.AlternateQuantity,
@@ -168,7 +168,7 @@ namespace FMS.Repository.Transaction
                         Fk_ProductId = x.Fk_ProductId,
                         Product = x.Product != null ? new ProductModel { ProductName = x.Product.ProductName } : null,
                     }).ToList(),
-                }).FirstOrDefaultAsync();
+                }).SingleOrDefaultAsync();
                 if (Query != null)
                 {
                     var Order = Query;
@@ -222,7 +222,7 @@ namespace FMS.Repository.Transaction
                         #endregion
                         #region Ledger & Sub Ledger
                         // @ Purchase A/c --------------- Dr
-                        var updatePurchaseledgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.PurchaseAccount).FirstOrDefaultAsync();
+                        var updatePurchaseledgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.PurchaseAccount && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
                         if (updatePurchaseledgerBalance != null)
                         {
                             updatePurchaseledgerBalance.RunningBalance += newPurchaseOrder.GrandTotal;
@@ -245,22 +245,58 @@ namespace FMS.Repository.Transaction
                             await _appDbContext.SaveChangesAsync();
                         }
                         // @SundryCreditor A/c ------------ Cr
-                        var updateSundryCreditorSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == newPurchaseOrder.Fk_SubLedgerId).FirstOrDefaultAsync();
+                        var LedgerBalanceId = Guid.Empty;
+                        var updateSundryCreditorLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.SundryCreditors && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                        if (updateSundryCreditorLedgerBalance != null)
+                        {
+                            updateSundryCreditorLedgerBalance.RunningBalance -= newPurchaseOrder.GrandTotal;
+                            updateSundryCreditorLedgerBalance.RunningBalanceType = (updateSundryCreditorLedgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
+                            await _appDbContext.SaveChangesAsync();
+                            LedgerBalanceId = updateSundryCreditorLedgerBalance.LedgerBalanceId;
+                        }
+                        else
+                        {
+                            var newLedgerBalance = new LedgerBalance
+                            {
+                                Fk_LedgerId = MappingLedgers.SundryCreditors,
+                                OpeningBalance = 0,
+                                OpeningBalanceType = "Cr",
+                                RunningBalance = -data.GrandTotal,
+                                RunningBalanceType = "Cr",
+                                Fk_BranchId = BranchId,
+                                Fk_FinancialYear = FinancialYear
+                            };
+                            await _appDbContext.LedgerBalances.AddAsync(newLedgerBalance);
+                            await _appDbContext.SaveChangesAsync();
+                            LedgerBalanceId = newLedgerBalance.LedgerBalanceId;
+                        }
+                        var updateSundryCreditorSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == newPurchaseOrder.Fk_SubLedgerId && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).SingleOrDefaultAsync();
                         if (updateSundryCreditorSubledgerBalance != null)
                         {
                             updateSundryCreditorSubledgerBalance.RunningBalance -= newPurchaseOrder.GrandTotal;
                             updateSundryCreditorSubledgerBalance.RunningBalanceType = (updateSundryCreditorSubledgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
-                            var updateSundryCreditorLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.LedgerBalanceId == updateSundryCreditorSubledgerBalance.Fk_LedgerBalanceId).FirstOrDefaultAsync();
-                            if (updateSundryCreditorLedgerBalance != null)
+                            await _appDbContext.SaveChangesAsync();
+                        }
+                        else
+                        {
+
+                            var newSubLedgerBalance = new SubLedgerBalance
                             {
-                                updateSundryCreditorLedgerBalance.RunningBalance -= newPurchaseOrder.GrandTotal;
-                                updateSundryCreditorLedgerBalance.RunningBalanceType = (updateSundryCreditorLedgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
-                            }
+                                Fk_LedgerBalanceId = LedgerBalanceId,
+                                Fk_SubLedgerId = data.Fk_SubLedgerId,
+                                OpeningBalanceType = "Cr",
+                                OpeningBalance = 0,
+                                RunningBalanceType = "Cr",
+                                RunningBalance = -data.GrandTotal,
+                                Fk_FinancialYearId = FinancialYear,
+                                Fk_BranchId = BranchId
+                            };
+                            await _appDbContext.SubLedgerBalances.AddAsync(newSubLedgerBalance);
                             await _appDbContext.SaveChangesAsync();
                         }
                         #endregion
                         #region Journal
-                        var JournalVoucherNo = await _appDbContext.Journals.Select(s => new { s.VouvherNo }).OrderByDescending(s => s.VouvherNo).FirstOrDefaultAsync();
+                        var JournalVoucherNo = await _appDbContext.Journals.Where(s => s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).Select(s => new { s.VouvherNo }).OrderByDescending(s => s.VouvherNo).FirstOrDefaultAsync();
                         string VoucherNo = "";
                         if (JournalVoucherNo != null)
                         {
@@ -335,10 +371,11 @@ namespace FMS.Repository.Transaction
                             await _appDbContext.SaveChangesAsync();
                             #endregion
                             #region Update Stock
-                            var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == newPurchaseTransaction.Fk_ProductId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).FirstOrDefaultAsync();
+                            var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == newPurchaseTransaction.Fk_ProductId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
                             if (UpdateStock != null)
                             {
                                 UpdateStock.AvilableStock += newPurchaseTransaction.UnitQuantity;
+                                await _appDbContext.SaveChangesAsync();
                             }
                             else
                             {
@@ -351,7 +388,6 @@ namespace FMS.Repository.Transaction
                                 };
                                 await _appDbContext.Stocks.AddAsync(AddNewStock);
                             }
-                            await _appDbContext.SaveChangesAsync();
                             #endregion
                         }
                         _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Created);
@@ -385,7 +421,7 @@ namespace FMS.Repository.Transaction
                 {
                     if (DateTime.TryParseExact(data.InvoiceDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedInvoiceDate) && DateTime.TryParseExact(data.OrderDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedOrderDate) && DateTime.TryParseExact(data.TransactionDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedTransactionDate))
                     {
-                        var UpdatePurchaseOrder = await _appDbContext.PurchaseOrders.Where(s => s.PurchaseOrderId == data.PurchaseOrderId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
+                        var UpdatePurchaseOrder = await _appDbContext.PurchaseOrders.Where(s => s.PurchaseOrderId == data.PurchaseOrderId && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).SingleOrDefaultAsync();
                         if (UpdatePurchaseOrder != null)
                         {
                             if (UpdatePurchaseOrder.Fk_SubLedgerId == data.Fk_SubLedgerId)
@@ -394,8 +430,21 @@ namespace FMS.Repository.Transaction
                                 if (UpdatePurchaseOrder.GrandTotal != data.GrandTotal)
                                 {
                                     var difference = data.GrandTotal - UpdatePurchaseOrder.GrandTotal;
+                                    // @ Purchase A/c --------------- Dr
+                                    var updatePurchaseledgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.PurchaseAccount && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                    if (updatePurchaseledgerBalance != null)
+                                    {
+                                        updatePurchaseledgerBalance.RunningBalance += difference;
+                                        updatePurchaseledgerBalance.RunningBalanceType = (updatePurchaseledgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
+                                        await _appDbContext.SaveChangesAsync();
+                                    }
+                                    else
+                                    {
+                                        _Result.WarningMessage = "Ledger Balance Not Exist";
+                                        return _Result;
+                                    }
                                     // @SundryCreditor A/c ------------ Cr
-                                    var updateSundryCreditorSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == UpdatePurchaseOrder.Fk_SubLedgerId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
+                                    var updateSundryCreditorSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == UpdatePurchaseOrder.Fk_SubLedgerId && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).SingleOrDefaultAsync();
                                     if (updateSundryCreditorSubledgerBalance != null)
                                     {
                                         updateSundryCreditorSubledgerBalance.RunningBalance -= difference;
@@ -406,25 +455,32 @@ namespace FMS.Repository.Transaction
                                             updateLedgerBalance.RunningBalance -= difference;
                                             updateLedgerBalance.RunningBalanceType = (updateLedgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
                                         }
+                                        else
+                                        {
+                                            _Result.WarningMessage = "Ledger Balance Not Exist";
+                                            return _Result;
+                                        }
                                         await _appDbContext.SaveChangesAsync();
                                     }
-                                    // @ Purchase A/c --------------- Dr
-                                    var updatePurchaseledgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.PurchaseAccount && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
-                                    if (updatePurchaseledgerBalance != null)
+                                    else
                                     {
-                                        updatePurchaseledgerBalance.RunningBalance += difference;
-                                        updatePurchaseledgerBalance.RunningBalanceType = (updatePurchaseledgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
-                                        await _appDbContext.SaveChangesAsync();
+                                        _Result.WarningMessage = "SubLedger Balance Not Exist";
+                                        return _Result;
                                     }
                                 }
                                 #endregion
                                 #region Journal
-                                var UpdateOrderJournal = await _appDbContext.Journals.Where(s => s.TransactionId == UpdatePurchaseOrder.PurchaseOrderId && s.Fk_SubLedgerId == UpdatePurchaseOrder.Fk_SubLedgerId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
+                                var UpdateOrderJournal = await _appDbContext.Journals.Where(s => s.TransactionId == UpdatePurchaseOrder.PurchaseOrderId && s.Fk_SubLedgerId == UpdatePurchaseOrder.Fk_SubLedgerId && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).SingleOrDefaultAsync();
                                 if (UpdateOrderJournal != null)
                                 {
                                     UpdateOrderJournal.Amount = data.GrandTotal;
                                     UpdateOrderJournal.VoucherDate = convertedTransactionDate;
                                     await _appDbContext.SaveChangesAsync();
+                                }
+                                else
+                                {
+                                    _Result.WarningMessage = "Journal Entry Not Exist";
+                                    return _Result;
                                 }
                                 #endregion
                                 #region Purchase Odr
@@ -448,21 +504,19 @@ namespace FMS.Repository.Transaction
                                     Guid PurchaseId = Guid.TryParse(item[0], out var parsedGuid) ? parsedGuid : Guid.Empty;
                                     if (PurchaseId != Guid.Empty)
                                     {
-                                        var UpdatePurchaseTransaction = await _appDbContext.PurchaseTransactions.Where(s => s.PurchaseId == PurchaseId).FirstOrDefaultAsync();
+                                        var UpdatePurchaseTransaction = await _appDbContext.PurchaseTransactions.Where(s => s.PurchaseId == PurchaseId && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).FirstOrDefaultAsync();
                                         #region Update Stock
                                         var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == UpdatePurchaseTransaction.Fk_ProductId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
-                                        var ModifyAlternateUnitToActualUnit = await _appDbContext.AlternateUnits.Where(s => s.FK_ProductId == UpdatePurchaseTransaction.Fk_ProductId && s.AlternateUnitId == UpdatePurchaseTransaction.Fk_AlternateUnitId).SingleOrDefaultAsync();
                                         if (UpdateStock != null)
                                         {
                                             if (UpdatePurchaseTransaction.Fk_ProductId != Guid.Parse(item[1]))
                                             {
-                                                UpdateStock.AvilableStock -= (UpdatePurchaseTransaction.AlternateQuantity * ModifyAlternateUnitToActualUnit.UnitQuantity);
+                                                UpdateStock.AvilableStock -= UpdatePurchaseTransaction.UnitQuantity;
                                                 await _appDbContext.SaveChangesAsync();
                                                 var UpdateNewStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == Guid.Parse(item[1]) && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
-                                                var AlternateUnitToActualUnit = await _appDbContext.AlternateUnits.Where(s => s.FK_ProductId == Guid.Parse(item[1]) && s.AlternateUnitId == Guid.Parse(item[3])).SingleOrDefaultAsync();
                                                 if (UpdateNewStock != null)
                                                 {
-                                                    UpdateNewStock.AvilableStock += (Convert.ToDecimal(item[2]) * AlternateUnitToActualUnit.UnitQuantity);
+                                                    UpdateNewStock.AvilableStock += Convert.ToDecimal(item[4]);
                                                     await _appDbContext.SaveChangesAsync();
                                                 }
                                                 else
@@ -472,27 +526,35 @@ namespace FMS.Repository.Transaction
                                                         Fk_BranchId = BranchId,
                                                         Fk_FinancialYear = FinancialYear,
                                                         Fk_ProductId = Guid.Parse(item[1]),
-                                                        AvilableStock = (Convert.ToDecimal(item[2]) * AlternateUnitToActualUnit.UnitQuantity)
+                                                        AvilableStock = Convert.ToDecimal(item[4])
                                                     };
                                                     await _appDbContext.Stocks.AddAsync(newStock);
                                                     await _appDbContext.SaveChangesAsync();
                                                 }
                                             }
-                                            if (UpdatePurchaseTransaction.AlternateQuantity != Convert.ToDecimal(item[2]))
+                                            else if (UpdatePurchaseTransaction.UnitQuantity != Convert.ToDecimal(item[4]))
                                             {
-                                                var quantityDifference = UpdatePurchaseTransaction.AlternateQuantity - Convert.ToDecimal(item[2]);
-                                                UpdateStock.AvilableStock -= (quantityDifference * ModifyAlternateUnitToActualUnit.UnitQuantity);
+                                                UpdateStock.AvilableStock -= (UpdatePurchaseTransaction.UnitQuantity - Convert.ToDecimal(item[4]));
                                                 await _appDbContext.SaveChangesAsync();
+                                            }
+                                            else
+                                            {
+                                                continue;
                                             }
                                         }
                                         #endregion
                                         #region Update Journal
-                                        var UpdateTransactionJournal = await _appDbContext.Journals.Where(s => s.TransactionId == UpdatePurchaseTransaction.PurchaseId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
+                                        var UpdateTransactionJournal = await _appDbContext.Journals.Where(s => s.TransactionId == UpdatePurchaseTransaction.PurchaseId && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).SingleOrDefaultAsync();
                                         if (UpdateTransactionJournal != null)
                                         {
-                                            UpdateTransactionJournal.Amount = Convert.ToDecimal(item[8]);
+                                            UpdateTransactionJournal.Amount = Convert.ToDecimal(item[10]);
                                             UpdateTransactionJournal.VoucherDate = convertedTransactionDate;
                                             await _appDbContext.SaveChangesAsync();
+                                        }
+                                        else
+                                        {
+                                            _Result.WarningMessage = "Journal Entry Not Exist";
+                                            return _Result;
                                         }
                                         #endregion
                                         #region Update Purchase Trn
@@ -500,12 +562,13 @@ namespace FMS.Repository.Transaction
                                         UpdatePurchaseTransaction.Fk_ProductId = Guid.Parse(item[1]);
                                         UpdatePurchaseTransaction.AlternateQuantity = Convert.ToDecimal(item[2]);
                                         UpdatePurchaseTransaction.Fk_AlternateUnitId = Guid.Parse(item[3]);
-                                        UpdatePurchaseTransaction.Rate = Convert.ToDecimal(item[4]);
-                                        UpdatePurchaseTransaction.Discount = Convert.ToDecimal(item[5]);
-                                        UpdatePurchaseTransaction.DiscountAmount = Convert.ToDecimal(item[6]);
-                                        UpdatePurchaseTransaction.Gst = Convert.ToDecimal(item[7]);
-                                        UpdatePurchaseTransaction.GstAmount = Convert.ToDecimal(item[8]);
-                                        UpdatePurchaseTransaction.Amount = Convert.ToDecimal(item[9]);
+                                        UpdatePurchaseTransaction.UnitQuantity = Convert.ToDecimal(item[4]);
+                                        UpdatePurchaseTransaction.Rate = Convert.ToDecimal(item[5]);
+                                        UpdatePurchaseTransaction.Discount = Convert.ToDecimal(item[6]);
+                                        UpdatePurchaseTransaction.DiscountAmount = Convert.ToDecimal(item[7]);
+                                        UpdatePurchaseTransaction.Gst = Convert.ToDecimal(item[8]);
+                                        UpdatePurchaseTransaction.GstAmount = Convert.ToDecimal(item[9]);
+                                        UpdatePurchaseTransaction.Amount = Convert.ToDecimal(item[10]);
                                         await _appDbContext.SaveChangesAsync();
                                         #endregion
                                     }
@@ -521,12 +584,13 @@ namespace FMS.Repository.Transaction
                                             Fk_ProductId = Guid.Parse(item[1]),
                                             AlternateQuantity = Convert.ToDecimal(item[2]),
                                             Fk_AlternateUnitId = Guid.Parse(item[3]),
-                                            Rate = Convert.ToDecimal(item[4]),
-                                            Discount = Convert.ToDecimal(item[5]),
-                                            DiscountAmount = Convert.ToDecimal(item[6]),
-                                            Gst = Convert.ToDecimal(item[7]),
-                                            GstAmount = Convert.ToDecimal(item[8]),
-                                            Amount = Convert.ToDecimal(item[9])
+                                            UnitQuantity = Convert.ToDecimal(item[4]),
+                                            Rate = Convert.ToDecimal(item[5]),
+                                            Discount = Convert.ToDecimal(item[6]),
+                                            DiscountAmount = Convert.ToDecimal(item[7]),
+                                            Gst = Convert.ToDecimal(item[8]),
+                                            GstAmount = Convert.ToDecimal(item[9]),
+                                            Amount = Convert.ToDecimal(item[10])
                                         };
                                         await _appDbContext.PurchaseTransactions.AddAsync(newPurchaseTransaction);
                                         await _appDbContext.SaveChangesAsync();
@@ -551,10 +615,10 @@ namespace FMS.Repository.Transaction
                                         #endregion
                                         #region Update Stock
                                         var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == newPurchaseTransaction.Fk_ProductId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
-                                        var ModifyAlternateUnitToActualUnit = await _appDbContext.AlternateUnits.Where(s => s.FK_ProductId == newPurchaseTransaction.Fk_ProductId && s.AlternateUnitId == newPurchaseTransaction.Fk_AlternateUnitId).SingleOrDefaultAsync();
                                         if (UpdateStock != null)
                                         {
-                                            UpdateStock.AvilableStock += (newPurchaseTransaction.AlternateQuantity * ModifyAlternateUnitToActualUnit.UnitQuantity);
+                                            UpdateStock.AvilableStock += newPurchaseTransaction.UnitQuantity;
+                                            await _appDbContext.SaveChangesAsync();
                                         }
                                         else
                                         {
@@ -563,11 +627,10 @@ namespace FMS.Repository.Transaction
                                                 Fk_BranchId = BranchId,
                                                 Fk_ProductId = newPurchaseTransaction.Fk_ProductId,
                                                 Fk_FinancialYear = FinancialYear,
-                                                AvilableStock = (newPurchaseTransaction.AlternateQuantity * ModifyAlternateUnitToActualUnit.UnitQuantity)
+                                                AvilableStock = newPurchaseTransaction.UnitQuantity
                                             };
                                             await _appDbContext.Stocks.AddAsync(AddNewStock);
                                         }
-                                        await _appDbContext.SaveChangesAsync();
                                         #endregion
                                     }
                                 }
@@ -577,11 +640,10 @@ namespace FMS.Repository.Transaction
                             }
                             else
                             {
-                                _Result.WarningMessage = "If Your Intension To Update Party Name Plz Delate It And Then Crate It";
+                                _Result.WarningMessage = "If Your Intension To Update Party Name Plz Delate This Record And Then Crate It";
                                 return _Result;
                             }
                         }
-
                     }
                 }
                 catch (DbUpdateException ex)
@@ -615,7 +677,7 @@ namespace FMS.Repository.Transaction
                     if (Id != Guid.Empty)
                     {
                         //*****************************Delete PurchaseTransactions**************************************//
-                        var deletePurchaseTransaction = await _appDbContext.PurchaseTransactions.Where(s => s.Fk_PurchaseOrderId == Id).ToListAsync();
+                        var deletePurchaseTransaction = await _appDbContext.PurchaseTransactions.Where(s => s.Fk_PurchaseOrderId == Id && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).ToListAsync();
                         if (deletePurchaseTransaction.Count > 0)
                         {
                             foreach (var item in deletePurchaseTransaction)
@@ -627,47 +689,66 @@ namespace FMS.Repository.Transaction
                                     UpdateStock.AvilableStock -= item.UnitQuantity;
                                     await _appDbContext.SaveChangesAsync();
                                 }
+                                else
+                                {
+                                    continue;
+                                }
                                 #endregion
-                                _appDbContext.PurchaseTransactions.Remove(item);
-                                await _appDbContext.SaveChangesAsync();
                             }
+                            _appDbContext.PurchaseTransactions.RemoveRange(deletePurchaseTransaction);
+                            await _appDbContext.SaveChangesAsync();
                         }
                         //*******************************Delete PurchaseOrders***************************************//
-                        var deletePurchaseOrders = await _appDbContext.PurchaseOrders.SingleOrDefaultAsync(x => x.PurchaseOrderId == Id && x.Fk_BranchId == BranchId);
+                        var deletePurchaseOrders = await _appDbContext.PurchaseOrders.SingleOrDefaultAsync(x => x.PurchaseOrderId == Id && x.Fk_BranchId == BranchId && x.Fk_FinancialYearId == FinancialYear);
                         if (deletePurchaseOrders != null)
                         {
                             #region Journal
-                            var DeleteJournal = await _appDbContext.Journals.Where(s => s.TransactionNo == deletePurchaseOrders.TransactionNo && s.Fk_BranchId == BranchId).ToListAsync();
+                            var DeleteJournal = await _appDbContext.Journals.Where(s => s.TransactionNo == deletePurchaseOrders.TransactionNo && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).ToListAsync();
                             _appDbContext.Journals.RemoveRange(DeleteJournal);
                             await _appDbContext.SaveChangesAsync();
                             #endregion
                             #region Ledger & SubLedger
-                            var updateSundryCreditorSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == deletePurchaseOrders.Fk_SubLedgerId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
+                            var updateSundryCreditorSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == deletePurchaseOrders.Fk_SubLedgerId && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).SingleOrDefaultAsync();
                             if (updateSundryCreditorSubledgerBalance != null)
                             {
                                 updateSundryCreditorSubledgerBalance.RunningBalance += deletePurchaseOrders.GrandTotal;
                                 await _appDbContext.SaveChangesAsync();
-                                var updateSundryCreditorLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.LedgerBalanceId == updateSundryCreditorSubledgerBalance.Fk_LedgerBalanceId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
+                                var updateSundryCreditorLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.LedgerBalanceId == updateSundryCreditorSubledgerBalance.Fk_LedgerBalanceId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
                                 if (updateSundryCreditorLedgerBalance != null)
                                 {
                                     updateSundryCreditorLedgerBalance.RunningBalance += deletePurchaseOrders.GrandTotal;
                                     updateSundryCreditorLedgerBalance.RunningBalanceType = updateSundryCreditorLedgerBalance.RunningBalance > 0 ? "Dr" : "Cr";
                                     await _appDbContext.SaveChangesAsync();
                                 }
+                                else
+                                {
+                                    _Result.WarningMessage = "Ledger Balance Not Exist";
+                                    return _Result;
+                                }
                             }
-                            var updatePurchaseedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.PurchaseAccount && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
+                            else
+                            {
+                                _Result.WarningMessage = "SubLedger Balance Not Exist";
+                                return _Result;
+                            }
+                            var updatePurchaseedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.PurchaseAccount && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
                             if (updatePurchaseedgerBalance != null)
                             {
                                 updatePurchaseedgerBalance.RunningBalance -= deletePurchaseOrders.GrandTotal;
                                 updatePurchaseedgerBalance.RunningBalanceType = updatePurchaseedgerBalance.RunningBalance > 0 ? "Dr" : "Cr";
                                 await _appDbContext.SaveChangesAsync();
                             }
+                            else
+                            {
+                                _Result.WarningMessage = "Ledger Balance Not Exist";
+                                return _Result;
+                            }
                             #endregion
                             _appDbContext.PurchaseOrders.Remove(deletePurchaseOrders);
                             await _appDbContext.SaveChangesAsync();
                         }
                         _Result.IsSuccess = true;
-                        if (IsCallback == false) localTransaction.Commit();
+                        localTransaction.Commit();
                         _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Deleted);
                     }
                 }
@@ -692,8 +773,9 @@ namespace FMS.Repository.Transaction
             try
             {
                 Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
+                Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
                 _Result.IsSuccess = false;
-                var lastPurchaseReturnOrder = await _appDbContext.PurchaseReturnOrders.Where(s => s.Fk_BranchId == BranchId).OrderByDescending(s => s.TransactionNo).Select(s => new { s.TransactionNo }).FirstOrDefaultAsync();
+                var lastPurchaseReturnOrder = await _appDbContext.PurchaseReturnOrders.Where(s => s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).OrderByDescending(s => s.TransactionNo).Select(s => new { s.TransactionNo }).FirstOrDefaultAsync();
                 if (lastPurchaseReturnOrder != null)
                 {
                     var lastTransactionId = lastPurchaseReturnOrder.TransactionNo;
@@ -758,7 +840,8 @@ namespace FMS.Repository.Transaction
             {
                 _Result.IsSuccess = false;
                 Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
-                var Query = await _appDbContext.PurchaseReturnOrders.Where(s => s.Fk_BranchId == BranchId && s.PurchaseReturnOrderId == Id).Select(s => new PurchaseReturnOrderModel
+                Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
+                var Query = await _appDbContext.PurchaseReturnOrders.Where(s => s.PurchaseReturnOrderId == Id && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).Select(s => new PurchaseReturnOrderModel
                 {
                     PurchaseReturnOrderId = s.PurchaseReturnOrderId,
                     Fk_SubLedgerId = s.Fk_SubLedgerId,
@@ -775,10 +858,10 @@ namespace FMS.Repository.Transaction
                     Gst = s.Gst,
                     SubTotal = s.SubTotal,
                     GrandTotal = s.GrandTotal,
-                    PurchaseReturnTransactions = _appDbContext.PurchaseReturnTransactions.Where(x => x.Fk_PurchaseReturnOrderId == s.PurchaseReturnOrderId).Select(x => new PurchaseReturnTransactionModel
+                    PurchaseReturnTransactions = _appDbContext.PurchaseReturnTransactions.Where(x => x.Fk_PurchaseReturnOrderId == s.PurchaseReturnOrderId && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).Select(x => new PurchaseReturnTransactionModel
                     {
                         PurchaseReturnId = x.PurchaseReturnId,
-                        Quantity = x.Quantity,
+                        Quantity = x.AlternateQuantity,
                         Fk_AlternateUnitId = x.Fk_AlternateUnitId,
                         AlternateUnit = x.AlternateUnit != null ? new AlternateUnitModel { AlternateUnitName = x.AlternateUnit.AlternateUnitName } : null,
                         Rate = x.Rate,
@@ -790,7 +873,7 @@ namespace FMS.Repository.Transaction
                         Fk_ProductId = x.Fk_ProductId,
                         Product = x.Product != null ? new ProductModel { ProductName = x.Product.ProductName } : null,
                     }).ToList(),
-                }).FirstOrDefaultAsync();
+                }).SingleOrDefaultAsync();
                 if (Query != null)
                 {
                     var Order = Query;
@@ -843,22 +926,8 @@ namespace FMS.Repository.Transaction
                         await _appDbContext.SaveChangesAsync();
                         #endregion
                         #region Ledger & Sub Ledger
-                        // @SundryCreditor A/c ------------ Dr
-                        var updateSundryCreditorSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == newPurchaseReturnOrder.Fk_SubLedgerId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
-                        if (updateSundryCreditorSubledgerBalance != null)
-                        {
-                            updateSundryCreditorSubledgerBalance.RunningBalance += newPurchaseReturnOrder.GrandTotal;
-                            updateSundryCreditorSubledgerBalance.RunningBalanceType = (updateSundryCreditorSubledgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
-                            var updateSundryCreditorLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.LedgerBalanceId == updateSundryCreditorSubledgerBalance.Fk_LedgerBalanceId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
-                            if (updateSundryCreditorLedgerBalance != null)
-                            {
-                                updateSundryCreditorLedgerBalance.RunningBalance += newPurchaseReturnOrder.GrandTotal;
-                                updateSundryCreditorLedgerBalance.RunningBalanceType = (updateSundryCreditorLedgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
-                            }
-                            await _appDbContext.SaveChangesAsync();
-                        }
                         // @ PurchaseReturn A/c --------- Cr
-                        var updatePurchaseReturnledgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.PurchaseReturnAccount && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
+                        var updatePurchaseReturnledgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.PurchaseReturnAccount && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
                         if (updatePurchaseReturnledgerBalance != null)
                         {
                             updatePurchaseReturnledgerBalance.RunningBalance -= newPurchaseReturnOrder.GrandTotal;
@@ -880,9 +949,58 @@ namespace FMS.Repository.Transaction
                             await _appDbContext.LedgerBalances.AddAsync(newLedgerBalance);
                             await _appDbContext.SaveChangesAsync();
                         }
+                        // @SundryCreditor A/c ------------ Dr
+                        var LedgerBalanceId = Guid.Empty;
+                        var updateSundryCreditorLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.SundryCreditors && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                        if (updateSundryCreditorLedgerBalance != null)
+                        {
+                            updateSundryCreditorLedgerBalance.RunningBalance += newPurchaseReturnOrder.GrandTotal;
+                            updateSundryCreditorLedgerBalance.RunningBalanceType = (updateSundryCreditorLedgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
+                            await _appDbContext.SaveChangesAsync();
+                            LedgerBalanceId = updateSundryCreditorLedgerBalance.LedgerBalanceId;
+                        }
+                        else
+                        {
+                            var newLedgerBalance = new LedgerBalance
+                            {
+                                Fk_LedgerId = MappingLedgers.SundryCreditors,
+                                OpeningBalance = 0,
+                                OpeningBalanceType = "Dr",
+                                RunningBalance = data.GrandTotal,
+                                RunningBalanceType = "Dr",
+                                Fk_BranchId = BranchId,
+                                Fk_FinancialYear = FinancialYear
+                            };
+                            await _appDbContext.LedgerBalances.AddAsync(newLedgerBalance);
+                            await _appDbContext.SaveChangesAsync();
+                            LedgerBalanceId = newLedgerBalance.LedgerBalanceId;
+                        }
+                        var updateSundryCreditorSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == newPurchaseReturnOrder.Fk_SubLedgerId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
+                        if (updateSundryCreditorSubledgerBalance != null)
+                        {
+                            updateSundryCreditorSubledgerBalance.RunningBalance += newPurchaseReturnOrder.GrandTotal;
+                            updateSundryCreditorSubledgerBalance.RunningBalanceType = (updateSundryCreditorSubledgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
+                            await _appDbContext.SaveChangesAsync();
+                        }
+                        else
+                        {
+                            var newSubLedgerBalance = new SubLedgerBalance
+                            {
+                                Fk_LedgerBalanceId = LedgerBalanceId,
+                                Fk_SubLedgerId = data.Fk_SubLedgerId,
+                                OpeningBalanceType = "Dr",
+                                OpeningBalance = 0,
+                                RunningBalanceType = "Dr",
+                                RunningBalance = data.GrandTotal,
+                                Fk_FinancialYearId = FinancialYear,
+                                Fk_BranchId = BranchId
+                            };
+                            await _appDbContext.SubLedgerBalances.AddAsync(newSubLedgerBalance);
+                            await _appDbContext.SaveChangesAsync();
+                        }
                         #endregion
                         #region Journal
-                        var JournalVoucherNo = await _appDbContext.Journals.Where(s => s.Fk_BranchId == BranchId).Select(s => new { s.VouvherNo }).OrderByDescending(s => s.VouvherNo).FirstOrDefaultAsync();
+                        var JournalVoucherNo = await _appDbContext.Journals.Where(s => s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).Select(s => new { s.VouvherNo }).OrderByDescending(s => s.VouvherNo).FirstOrDefaultAsync();
                         string VoucherNo = "";
                         if (JournalVoucherNo != null)
                         {
@@ -925,14 +1043,15 @@ namespace FMS.Repository.Transaction
                                 Fk_BranchId = BranchId,
                                 Fk_FinancialYearId = FinancialYear,
                                 Fk_ProductId = Guid.Parse(item[1]),
-                                Quantity = Convert.ToDecimal(item[2]),
+                                AlternateQuantity = Convert.ToDecimal(item[2]),
                                 Fk_AlternateUnitId = Guid.Parse(item[3]),
-                                Rate = Convert.ToDecimal(item[4]),
-                                Discount = Convert.ToDecimal(item[5]),
-                                DiscountAmount = Convert.ToDecimal(item[6]),
-                                Gst = Convert.ToDecimal(item[7]),
-                                GstAmount = Convert.ToDecimal(item[8]),
-                                Amount = Convert.ToDecimal(item[9])
+                                UnitQuantity = Convert.ToDecimal(item[4]),
+                                Rate = Convert.ToDecimal(item[5]),
+                                Discount = Convert.ToDecimal(item[6]),
+                                DiscountAmount = Convert.ToDecimal(item[7]),
+                                Gst = Convert.ToDecimal(item[8]),
+                                GstAmount = Convert.ToDecimal(item[9]),
+                                Amount = Convert.ToDecimal(item[10])
                             };
                             await _appDbContext.PurchaseReturnTransactions.AddAsync(newPurchaseReturnTransaction);
                             await _appDbContext.SaveChangesAsync();
@@ -956,22 +1075,21 @@ namespace FMS.Repository.Transaction
                             await _appDbContext.SaveChangesAsync();
                             #endregion
                             #region Stock
-                            var ModifyAlternateUnitToActualUnit = await _appDbContext.AlternateUnits.Where(s => s.FK_ProductId == newPurchaseReturnTransaction.Fk_ProductId && s.AlternateUnitId == newPurchaseReturnTransaction.Fk_AlternateUnitId).SingleOrDefaultAsync();
                             var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == newPurchaseReturnTransaction.Fk_ProductId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
                             if (UpdateStock != null)
                             {
-                                UpdateStock.AvilableStock -= (newPurchaseReturnTransaction.Quantity * ModifyAlternateUnitToActualUnit.UnitQuantity);
-                                if (UpdateStock.AvilableStock < 0)
-                                {
-                                    _Result.WarningMessage = "Negative Stock";
-                                    return _Result;
-                                }
+                                UpdateStock.AvilableStock -= newPurchaseReturnTransaction.UnitQuantity;
                                 await _appDbContext.SaveChangesAsync();
                             }
                             else
                             {
-                                _Result.WarningMessage = "Stock Not Avilable";
-                                return _Result;
+                                var AddNewStock = new Stock
+                                {
+                                    Fk_ProductId = newPurchaseReturnTransaction.Fk_ProductId,
+                                    Fk_BranchId = BranchId,
+                                    Fk_FinancialYear = FinancialYear,
+                                    AvilableStock = -newPurchaseReturnTransaction.UnitQuantity
+                                };
                             }
                             #endregion
                         }
@@ -1007,7 +1125,7 @@ namespace FMS.Repository.Transaction
                     if (DateTime.TryParseExact(data.InvoiceDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedInvoiceDate) && DateTime.TryParseExact(data.OrderDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedOrderDate) && DateTime.TryParseExact(data.TransactionDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedTransactionDate))
                     {
                         //************************************************************purchase Return Order*************************************************************//
-                        var UpdatePurchaseReturnOrder = await _appDbContext.PurchaseReturnOrders.Where(s => s.PurchaseReturnOrderId == data.PurchaseOrderId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
+                        var UpdatePurchaseReturnOrder = await _appDbContext.PurchaseReturnOrders.Where(s => s.PurchaseReturnOrderId == data.PurchaseOrderId && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).SingleOrDefaultAsync();
                         if (UpdatePurchaseReturnOrder != null)
                         {
                             if (UpdatePurchaseReturnOrder.Fk_SubLedgerId == data.Fk_SubLedgerId)
@@ -1016,8 +1134,16 @@ namespace FMS.Repository.Transaction
                                 {
                                     var difference = data.GrandTotal - UpdatePurchaseReturnOrder.GrandTotal;
                                     #region Ledger & Sub Ledger
+                                    // @ PurchaseReturn A/c --------- Cr
+                                    var updatePurchaseReturnledgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.PurchaseReturnAccount && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                    if (updatePurchaseReturnledgerBalance != null)
+                                    {
+                                        updatePurchaseReturnledgerBalance.RunningBalance -= difference;
+                                        updatePurchaseReturnledgerBalance.RunningBalanceType = (updatePurchaseReturnledgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
+                                        await _appDbContext.SaveChangesAsync();
+                                    }
                                     // @SundryCreditor A/c ------------ Dr
-                                    var updateSundryCreditorSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == UpdatePurchaseReturnOrder.Fk_SubLedgerId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
+                                    var updateSundryCreditorSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == UpdatePurchaseReturnOrder.Fk_SubLedgerId && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).SingleOrDefaultAsync();
                                     if (updateSundryCreditorSubledgerBalance != null)
                                     {
                                         updateSundryCreditorSubledgerBalance.RunningBalance += difference;
@@ -1030,18 +1156,10 @@ namespace FMS.Repository.Transaction
                                         }
                                         await _appDbContext.SaveChangesAsync();
                                     }
-                                    // @ PurchaseReturn A/c --------- Cr
-                                    var updatePurchaseReturnledgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.PurchaseReturnAccount && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
-                                    if (updatePurchaseReturnledgerBalance != null)
-                                    {
-                                        updatePurchaseReturnledgerBalance.RunningBalance -= difference;
-                                        updatePurchaseReturnledgerBalance.RunningBalanceType = (updatePurchaseReturnledgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
-                                        await _appDbContext.SaveChangesAsync();
-                                    }
                                     #endregion
                                 }
                                 #region Journal
-                                var UpdateOrderJournal = await _appDbContext.Journals.Where(s => s.TransactionId == UpdatePurchaseReturnOrder.PurchaseReturnOrderId && s.Fk_SubLedgerId == UpdatePurchaseReturnOrder.Fk_SubLedgerId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
+                                var UpdateOrderJournal = await _appDbContext.Journals.Where(s => s.TransactionId == UpdatePurchaseReturnOrder.PurchaseReturnOrderId && s.Fk_SubLedgerId == UpdatePurchaseReturnOrder.Fk_SubLedgerId && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).SingleOrDefaultAsync();
                                 if (UpdateOrderJournal != null)
                                 {
                                     UpdateOrderJournal.Amount = data.GrandTotal;
@@ -1070,43 +1188,37 @@ namespace FMS.Repository.Transaction
                                     Guid PurchaseReturnId = Guid.TryParse(item[0], out var parsedGuid) ? parsedGuid : Guid.Empty;
                                     if (PurchaseReturnId != Guid.Empty)
                                     {
-                                        var UpdatePurchaseReturnTransaction = await _appDbContext.PurchaseReturnTransactions.Where(s => s.PurchaseReturnId == PurchaseReturnId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
+                                        var UpdatePurchaseReturnTransaction = await _appDbContext.PurchaseReturnTransactions.Where(s => s.PurchaseReturnId == PurchaseReturnId && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).SingleOrDefaultAsync();
                                         #region Stock
                                         var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == UpdatePurchaseReturnTransaction.Fk_ProductId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
-                                        var ModifyAlternateUnitToActualUnit = await _appDbContext.AlternateUnits.Where(s => s.FK_ProductId == UpdatePurchaseReturnTransaction.Fk_ProductId && s.AlternateUnitId == UpdatePurchaseReturnTransaction.Fk_AlternateUnitId).SingleOrDefaultAsync();
                                         if (UpdateStock != null)
                                         {
                                             if (UpdatePurchaseReturnTransaction.Fk_ProductId != Guid.Parse(item[1]))
                                             {
-                                                UpdateStock.AvilableStock -= UpdatePurchaseReturnTransaction.Quantity;
+                                                UpdateStock.AvilableStock -= UpdatePurchaseReturnTransaction.UnitQuantity;
                                                 await _appDbContext.SaveChangesAsync();
                                                 var UpdateNewStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == Guid.Parse(item[1]) && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
-                                                var AlternateUnitToActualUnit = await _appDbContext.AlternateUnits.Where(s => s.FK_ProductId == Guid.Parse(item[1]) && s.AlternateUnitId == Guid.Parse(item[3])).SingleOrDefaultAsync();
                                                 if (UpdateNewStock != null)
                                                 {
-                                                    UpdateNewStock.AvilableStock -= (UpdatePurchaseReturnTransaction.Quantity * AlternateUnitToActualUnit.UnitQuantity);
-                                                    if (UpdateNewStock.AvilableStock < 0)
-                                                    {
-                                                        _Result.WarningMessage = "Negative Stock";
-                                                        return _Result;
-                                                    }
+                                                    UpdateNewStock.AvilableStock -= Convert.ToDecimal(item[4]);
                                                     await _appDbContext.SaveChangesAsync();
                                                 }
                                                 else
                                                 {
-                                                    _Result.WarningMessage = "Stock Not Avilable";
-                                                    return _Result;
+                                                    var newStock = new Stock
+                                                    {
+                                                        Fk_BranchId = BranchId,
+                                                        Fk_FinancialYear = FinancialYear,
+                                                        Fk_ProductId = Guid.Parse(item[1]),
+                                                        AvilableStock = Convert.ToDecimal(item[4])
+                                                    };
+                                                    await _appDbContext.Stocks.AddAsync(newStock);
+                                                    await _appDbContext.SaveChangesAsync();
                                                 }
                                             }
-                                            if (UpdatePurchaseReturnTransaction.Quantity != Convert.ToDecimal(item[2]))
+                                            if (UpdatePurchaseReturnTransaction.UnitQuantity != Convert.ToDecimal(item[4]))
                                             {
-                                                var quantityDifference = UpdatePurchaseReturnTransaction.Quantity - Convert.ToDecimal(item[2]);
-                                                UpdateStock.AvilableStock += (quantityDifference * ModifyAlternateUnitToActualUnit.UnitQuantity);
-                                                if (UpdateStock.AvilableStock < 0)
-                                                {
-                                                    _Result.WarningMessage = "Negative Stock";
-                                                    return _Result;
-                                                }
+                                                UpdateStock.AvilableStock += UpdatePurchaseReturnTransaction.UnitQuantity - Convert.ToDecimal(item[4]);
                                                 await _appDbContext.SaveChangesAsync();
                                             }
                                         }
@@ -1122,7 +1234,7 @@ namespace FMS.Repository.Transaction
                                         #endregion
                                         #region PurchaseReturn Trn
                                         UpdatePurchaseReturnTransaction.Fk_ProductId = Guid.Parse(item[1]);
-                                        UpdatePurchaseReturnTransaction.Quantity = Convert.ToDecimal(item[2]);
+                                        UpdatePurchaseReturnTransaction.AlternateQuantity = Convert.ToDecimal(item[2]);
                                         UpdatePurchaseReturnTransaction.Fk_AlternateUnitId = Guid.Parse(item[3]);
                                         UpdatePurchaseReturnTransaction.Rate = Convert.ToDecimal(item[4]);
                                         UpdatePurchaseReturnTransaction.Discount = Convert.ToDecimal(item[5]);
@@ -1145,7 +1257,7 @@ namespace FMS.Repository.Transaction
                                             Fk_BranchId = BranchId,
                                             Fk_FinancialYearId = FinancialYear,
                                             Fk_ProductId = Guid.Parse(item[1]),
-                                            Quantity = Convert.ToDecimal(item[2]),
+                                            AlternateQuantity = Convert.ToDecimal(item[2]),
                                             Fk_AlternateUnitId = Guid.Parse(item[3]),
                                             Rate = Convert.ToDecimal(item[4]),
                                             Discount = Convert.ToDecimal(item[5]),
@@ -1178,17 +1290,23 @@ namespace FMS.Repository.Transaction
                                         #endregion
                                         #region Stock
                                         var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == newPurchaseReturnTransaction.Fk_ProductId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
-                                        var ModifyAlternateUnitToActualUnit = await _appDbContext.AlternateUnits.Where(s => s.FK_ProductId == newPurchaseReturnTransaction.Fk_ProductId && s.AlternateUnitId == newPurchaseReturnTransaction.Fk_AlternateUnitId).SingleOrDefaultAsync();
                                         if (UpdateStock != null)
                                         {
-                                            UpdateStock.AvilableStock -= (newPurchaseReturnTransaction.Quantity * ModifyAlternateUnitToActualUnit.UnitQuantity);
+                                            UpdateStock.AvilableStock -= newPurchaseReturnTransaction.UnitQuantity;
+                                            await _appDbContext.SaveChangesAsync();
                                         }
                                         else
                                         {
-                                            _Result.WarningMessage = "Stock Not Avilable";
-                                            return _Result;
+                                            var newStock = new Stock
+                                            {
+                                                Fk_BranchId = BranchId,
+                                                Fk_FinancialYear = FinancialYear,
+                                                Fk_ProductId = Guid.Parse(item[1]),
+                                                AvilableStock = Convert.ToDecimal(item[4])
+                                            };
+                                            await _appDbContext.Stocks.AddAsync(newStock);
+                                            await _appDbContext.SaveChangesAsync();
                                         }
-                                        await _appDbContext.SaveChangesAsync();
                                         #endregion
                                     }
                                 }
@@ -1235,7 +1353,7 @@ namespace FMS.Repository.Transaction
                     if (Id != Guid.Empty)
                     {
                         //*****************************Delete PurchaseTransactions**************************************//
-                        var deletePurchaseReturnTransaction = await _appDbContext.PurchaseReturnTransactions.Where(s => s.Fk_PurchaseReturnOrderId == Id && s.Fk_BranchId == BranchId).ToListAsync();
+                        var deletePurchaseReturnTransaction = await _appDbContext.PurchaseReturnTransactions.Where(s => s.Fk_PurchaseReturnOrderId == Id && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).ToListAsync();
                         if (deletePurchaseReturnTransaction.Count > 0)
                         {
                             foreach (var item in deletePurchaseReturnTransaction)
@@ -1244,8 +1362,7 @@ namespace FMS.Repository.Transaction
                                 var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == item.Fk_ProductId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
                                 if (UpdateStock != null)
                                 {
-                                    var ModifyAlternateUnitToActualUnit = await _appDbContext.AlternateUnits.Where(s => s.FK_ProductId == item.Fk_ProductId && s.AlternateUnitId == item.Fk_AlternateUnitId).SingleOrDefaultAsync();
-                                    UpdateStock.AvilableStock += (item.Quantity * ModifyAlternateUnitToActualUnit.UnitQuantity);
+                                    UpdateStock.AvilableStock += item.UnitQuantity;
                                     await _appDbContext.SaveChangesAsync();
                                 }
                                 #endregion
@@ -1254,7 +1371,7 @@ namespace FMS.Repository.Transaction
                             }
                         }
                         //*******************************Delete PurchaseOrders***************************************//
-                        var deletePurchaseReturnsOrders = await _appDbContext.PurchaseReturnOrders.SingleOrDefaultAsync(x => x.PurchaseReturnOrderId == Id && x.Fk_BranchId == BranchId);
+                        var deletePurchaseReturnsOrders = await _appDbContext.PurchaseReturnOrders.SingleOrDefaultAsync(x => x.PurchaseReturnOrderId == Id && x.Fk_BranchId == BranchId && x.Fk_FinancialYearId == FinancialYear);
                         if (deletePurchaseReturnsOrders != null)
                         {
                             #region Journal
@@ -1314,8 +1431,9 @@ namespace FMS.Repository.Transaction
             try
             {
                 Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
+                Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
                 _Result.IsSuccess = false;
-                var lastProduction = await _appDbContext.LabourOrders.Where(s => s.FK_BranchId == BranchId && s.LabourType.ToLower() == "production").OrderByDescending(s => s.TransactionNo).Select(s => new { s.TransactionNo }).FirstOrDefaultAsync();
+                var lastProduction = await _appDbContext.LabourOrders.Where(s => s.FK_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear && s.Fk_LabourTypeId== MappingLabourType.Production).OrderByDescending(s => s.TransactionNo).Select(s => new { s.TransactionNo }).FirstOrDefaultAsync();
                 if (lastProduction != null)
                 {
                     var lastProductionNo = lastProduction.TransactionNo;
@@ -1380,18 +1498,17 @@ namespace FMS.Repository.Transaction
             {
                 Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
                 Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
-                var Query = await _appDbContext.LabourOrders.Where(s => s.LabourType.ToLower() == "production" && s.Fk_FinancialYearId == FinancialYear && s.FK_BranchId == BranchId).Select(s => new LabourOrderModel
+                var Query = await _appDbContext.LabourOrders.Where(s => s.Fk_LabourTypeId == MappingLabourType.Production && s.Fk_FinancialYearId == FinancialYear && s.FK_BranchId == BranchId).Select(s => new LabourOrderModel
                 {
                     LabourOrderId = s.LabourOrderId,
                     TransactionNo = s.TransactionNo,
                     TransactionDate = s.TransactionDate,
                     Product = s.Product != null ? new ProductModel { ProductName = s.Product.ProductName } : null,
                     Labour = s.Labour != null ? new LabourModel { LabourName = s.Labour.LabourName } : null,
-                    LabourType = s.LabourType,
+                    LabourType = s.LabourType != null ? new LabourTypeModel { Labour_Type = s.LabourType.Labour_Type} : null,
                     Quantity = s.Quantity,
                     Rate = s.Rate,
                     Amount = s.Amount
-
                 }).ToListAsync();
                 if (Query.Count > 0)
                 {
@@ -1431,11 +1548,11 @@ namespace FMS.Repository.Transaction
                                 FK_BranchId = BranchId,
                                 Fk_FinancialYearId = FinancialYear,
                                 Fk_ProductId = Guid.Parse(item[0]),
-                                Fk_LabourId = Guid.Parse(item[1]),
-                                LabourType = item[2],
-                                Quantity = Convert.ToDecimal(item[3]),
-                                Rate = Convert.ToDecimal(item[4]),
-                                Amount = Convert.ToDecimal(item[5])
+                                Fk_LabourId = data.Fk_LabourId,
+                                Fk_LabourTypeId = MappingLabourType.Production,
+                                Quantity = Convert.ToDecimal(item[1]),
+                                Rate = Convert.ToDecimal(item[2]),
+                                Amount = Convert.ToDecimal(item[3])
                             };
                             await _appDbContext.LabourOrders.AddAsync(newProductionEntry);
                             await _appDbContext.SaveChangesAsync();
@@ -1501,18 +1618,22 @@ namespace FMS.Repository.Transaction
                             var getLabourSubLedger = await _appDbContext.Labours.Where(s => s.LabourId == newProductionEntry.Fk_LabourId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                             if (getLabourSubLedger != null)
                             {
-                                var updateLaourSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == getLabourSubLedger.Fk_SubLedgerId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
+                                var updateLaourSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == getLabourSubLedger.Fk_SubLedgerId && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).SingleOrDefaultAsync();
                                 if (updateLaourSubledgerBalance != null)
                                 {
                                     updateLaourSubledgerBalance.RunningBalance -= newProductionEntry.Amount;
                                     updateLaourSubledgerBalance.RunningBalanceType = (updateLaourSubledgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
-                                    var updateLaourLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.LedgerBalanceId == updateLaourSubledgerBalance.Fk_LedgerBalanceId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
+                                    var updateLaourLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.LedgerBalanceId == updateLaourSubledgerBalance.Fk_LedgerBalanceId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
                                     if (updateLaourLedgerBalance != null)
                                     {
                                         updateLaourLedgerBalance.RunningBalance -= newProductionEntry.Amount;
                                         updateLaourLedgerBalance.RunningBalanceType = (updateLaourLedgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
                                     }
                                     await _appDbContext.SaveChangesAsync();
+                                }
+                                else
+                                {
+
                                 }
                             }
                             // @labourCharges A/c--------Dr
@@ -1712,7 +1833,7 @@ namespace FMS.Repository.Transaction
                             UpdateProductionEntry.TransactionDate = convertedProductionDate;
                             UpdateProductionEntry.Fk_ProductId = data.Fk_ProductId;
                             UpdateProductionEntry.Fk_LabourId = data.Fk_LabourId;
-                            UpdateProductionEntry.LabourType = data.LabourType;
+                            UpdateProductionEntry.Fk_LabourTypeId = MappingLabourType.Production;
                             UpdateProductionEntry.Quantity = data.Quantity;
                             UpdateProductionEntry.Rate = data.Rate;
                             UpdateProductionEntry.Amount = data.Amount;
@@ -1845,7 +1966,7 @@ namespace FMS.Repository.Transaction
             {
                 Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
                 _Result.IsSuccess = false;
-                var lastService = await _appDbContext.LabourOrders.Where(s => s.FK_BranchId == BranchId && s.LabourType.ToLower() == "service").OrderByDescending(s => s.TransactionNo).Select(s => new { s.TransactionNo }).FirstOrDefaultAsync();
+                var lastService = await _appDbContext.LabourOrders.Where(s => s.FK_BranchId == BranchId && s.Fk_LabourTypeId == MappingLabourType.Service).OrderByDescending(s => s.TransactionNo).Select(s => new { s.TransactionNo }).FirstOrDefaultAsync();
                 if (lastService != null)
                 {
                     var lastServicnNo = lastService.TransactionNo;
@@ -1877,19 +1998,18 @@ namespace FMS.Repository.Transaction
             {
                 Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
                 Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
-                var Query = await _appDbContext.LabourOrders.Where(s => s.Fk_FinancialYearId == FinancialYear && s.FK_BranchId == BranchId && s.LabourType.ToLower() == "service").Select(s => new LabourOrderModel
+                var Query = await _appDbContext.LabourOrders.Where(s => s.Fk_FinancialYearId == FinancialYear && s.FK_BranchId == BranchId && s.Fk_LabourTypeId==MappingLabourType.Service).Select(s => new LabourOrderModel
                 {
                     LabourOrderId = s.LabourOrderId,
                     TransactionNo = s.TransactionNo,
                     TransactionDate = s.TransactionDate,
                     Product = s.Product != null ? new ProductModel { ProductName = s.Product.ProductName } : null,
                     Labour = s.Labour != null ? new LabourModel { LabourName = s.Labour.LabourName } : null,
-                    LabourType = s.LabourType,
+                    LabourType = s.LabourType != null ? new LabourTypeModel { Labour_Type = s.LabourType.Labour_Type } : null,
                     Quantity = s.Quantity,
                     Rate = s.Rate,
                     OTAmount = s.OTAmount,
                     Amount = s.Amount
-
                 }).ToListAsync();
                 if (Query.Count > 0)
                 {
@@ -1929,12 +2049,12 @@ namespace FMS.Repository.Transaction
                                 FK_BranchId = BranchId,
                                 Fk_FinancialYearId = FinancialYear,
                                 Fk_ProductId = Guid.Parse(item[0]),
-                                Fk_LabourId = Guid.Parse(item[1]),
-                                LabourType = item[2],
-                                Quantity = Convert.ToDecimal(item[3]),
-                                Rate = Convert.ToDecimal(item[4]),
-                                OTAmount = Convert.ToDecimal(item[5]),
-                                Amount = Convert.ToDecimal(item[6])
+                                Fk_LabourId = data.Fk_LabourId,
+                                Fk_LabourTypeId = MappingLabourType.Service,
+                                Quantity = Convert.ToDecimal(item[1]),
+                                Rate = Convert.ToDecimal(item[2]),
+                                OTAmount = Convert.ToDecimal(item[3]),
+                                Amount = Convert.ToDecimal(item[4])
                             };
                             await _appDbContext.LabourOrders.AddAsync(newProductionEntry);
                             await _appDbContext.SaveChangesAsync();
@@ -2038,7 +2158,7 @@ namespace FMS.Repository.Transaction
                             UpdateProductionEntry.TransactionDate = convertedProductionDate;
                             UpdateProductionEntry.Fk_ProductId = data.Fk_ProductId;
                             UpdateProductionEntry.Fk_LabourId = data.Fk_LabourId;
-                            UpdateProductionEntry.LabourType = data.LabourType;
+                            UpdateProductionEntry.Fk_LabourTypeId = MappingLabourType.Service;
                             UpdateProductionEntry.Quantity = data.Quantity;
                             UpdateProductionEntry.Rate = data.Rate;
                             UpdateProductionEntry.Amount = data.Amount;
@@ -2150,18 +2270,22 @@ namespace FMS.Repository.Transaction
             try
             {
                 _Result.IsSuccess = false;
-                var Query = await (from s in _appDbContext.SubLedgers where s.Fk_LedgerId == PartyTypeId
-                                   select new SubLedgerModel
-                                   {
-                                       SubLedgerId = s.SubLedgerId,
-                                       SubLedgerName = s.SubLedgerName,
-                                   }).ToListAsync();
-                if (Query.Count > 0)
+                _Result.CollectionObjData = await (from s in _appDbContext.SubLedgers
+                                                   where s.Fk_LedgerId == PartyTypeId
+                                                   select new SubLedgerModel
+                                                   {
+                                                       SubLedgerId = s.SubLedgerId,
+                                                       SubLedgerName = s.SubLedgerName,
+                                                   }).ToListAsync();
+                if (_Result.CollectionObjData.Count > 0)
                 {
-                    _Result.CollectionObjData = Query;
                     _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
+                    _Result.IsSuccess = true;
                 }
-                _Result.IsSuccess = true;
+                else
+                {
+                    _Result.IsSuccess = true;
+                }
             }
             catch (Exception _Exception)
             {

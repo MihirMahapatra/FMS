@@ -65,6 +65,7 @@ namespace FMS.Repository.Master
         #endregion
         #region SubLedger Balance
         Task<Result<SubLedgerBalanceModel>> GetSubLedgerBalances();
+        Task<Result<bool>> CreateSubLedgerBalance(SubLedgerBalanceModel data);
         Task<Result<bool>> UpdateSubLedgerBalance(SubLedgerBalanceModel data);
         Task<Result<bool>> DeleteSubLedgerBalance(Guid Id, IDbContextTransaction transaction, bool IsCallBack);
         #endregion

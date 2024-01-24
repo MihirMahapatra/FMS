@@ -403,7 +403,7 @@ $(function () {
                     selectElement.empty();
                     var defaultOption = $('<option></option>').val('').text('--Select Option--');
                     selectElement.append(defaultOption);
-                    $.each(result.products, function (key, item) {
+                    $.each(result.Products, function (key, item) {
                         var option = $('<option></option>').val(item.ProductId).text(item.ProductName);
                         selectElement.append(option);
                     });
@@ -418,9 +418,6 @@ $(function () {
             theme: 'bootstrap4'
         });
         });
-    $(document).on('click', '.deleteBtn', function () {
-        $(this).closest('tr').remove();
-    });
     $(document).on('change','.Rawmaterial',function () {
         var selectElement = $(this);
         var selectedProductId = selectElement.val();
@@ -472,6 +469,12 @@ $(function () {
             });
         }
     });
+    $(document).on('change', '#txtAlternateQty', function () {
+        var row = $(this).closest('tr');
+        var alternateQty = $(this).val();
+        var alternateUnitDropDown = row.find('select:eq(1)');
+        parseFloat(alternateQty) !== 0 ? alternateUnitDropDown.prop('disabled', false) : alternateUnitDropDown.prop('disabled', true);
+    });
     $(document).on('change', '.selectedUnit', function () {
         var row = $(this).closest('tr');
         var SelectedAlternateUnitId = $(this).val();
@@ -495,19 +498,12 @@ $(function () {
             });
         }
     });
-    $(document).on('change', '#txtAlternateQty', function () {
-        var row = $(this).closest('tr');
-        var alternateQty = $(this).val();
-        var alternateUnitDropDown = row.find('select:eq(1)');
-        parseFloat(alternateQty) !== 0 ? alternateUnitDropDown.prop('disabled', false) : alternateUnitDropDown.prop('disabled', true);
-        /*When Quantity change if alternateUnitDropDown option not select option*/
-        //if(!alternateUnitDropDown.val('')) {
-        //    console.log(alternateUnitDropDown.text());`   
-        //}
+    $(document).on('click', '.deleteBtn', function () {
+        $(this).closest('tr').remove();
     });
     $('#tblPurchase tbody').on('change', 'input[type="text"]', function () {
         var row = $(this).closest('tr');
-        var quantity = parseFloat(row.find('input:eq(2)').val());
+        var quantity = parseFloat(row.find('input:eq(1)').val());
         var rate = parseFloat(row.find('input:eq(3)').val());
         var discountPercentage = parseFloat(row.find('input:eq(4)').val());
         var GstPercentage = parseFloat(row.find('input:eq(6)').val());
@@ -560,7 +556,6 @@ $(function () {
             gstDifferenceBody.append(row);
         }
     });
-
     $('#btnSave').on('click', CreatePurchase);
     function CreatePurchase() {
         if (!transactionDate.val()) {
@@ -770,15 +765,12 @@ $(function () {
         $('#btnUpdate').show();
     });
     function GetPurchaseById(Id) {
-        debugger
-
         $.ajax({
             url: '/Transaction/GetPurchaseById?Id=' + Id + '',
             type: "GET",
             contentType: "application/json;charset=utf-8",
             dataType: "json",
             success: function (result) {
-               debugger
                 purchaseOrderId.val(result.purchaseOrder.PurchaseOrderId)
                 const ModifytransactionDate = result.purchaseOrder.TransactionDate;
                 if (ModifytransactionDate) {
@@ -865,7 +857,7 @@ $(function () {
                     html += '<td style="width:8%"><div class="form-group"><input type="text" id="txtAlternateQty" class="form-control" value=' + item.AlternateQuantity + '></div></td>';
                     html += '<td style="width:12%">' +
                         '<div class="form-group">' +
-                        '<select class="form-control form-control select2bs4 selectedUnit" style="width:100%" id="ddnUnit_' + item.PurchaseId + '"></select>' +
+                        '<select class="form-control form-control select2bs4 selectedUnit" style="width:100%" id="ddnUnit_' + item.PurchaseId + '" disabled></select>' +
                         '</div>' +
                         '</td>';
                     html += '<td>' +
@@ -899,7 +891,7 @@ $(function () {
                         dataType: "json",
                         success: function (result) {
                             if (result.ResponseCode == 302) {
-                                $.each(result.products, function (key, item1) {
+                                $.each(result.Products, function (key, item1) {
                                     var productoption = $('<option></option>').val(item1.ProductId).text(item1.ProductName);
                                     if (item.Fk_ProductId === item1.ProductId) {
                                         productoption.attr('selected', 'selected');
@@ -1172,7 +1164,7 @@ $(function () {
         html += '<td style="width:8%"><div class="form-group"><input type="text" class="form-control" id="Qtyrt" value="0"></div></td>';
         html += '<td style="width:12%">' +
             '<div class="form-group">' +
-            '<select class="form-control form-control select2bs4 selectedUnitRTN" style="width:100%"></select>' +
+            '<select class="form-control form-control select2bs4 selectedUnitRtn" style="width:100%" disabled></select>' +
             '</div>' +
             '</td>';
         html += '<td>' +
@@ -1205,7 +1197,7 @@ $(function () {
                     selectElement.empty();
                     var defaultOption = $('<option></option>').val('').text('--Select Option--');
                     selectElement.append(defaultOption);
-                    $.each(result.products, function (key, item) {
+                    $.each(result.Products, function (key, item) {
                         var option = $('<option></option>').val(item.ProductId).text(item.ProductName);
                         selectElement.append(option);
                     });
@@ -1219,7 +1211,13 @@ $(function () {
             theme: 'bootstrap4'
         });
     }
-    $(document).on('change', '.selectedUnitRTN', function () {
+    $(document).on('change', '#Qtyrt', function () {
+        var row = $(this).closest('tr');
+        var alternateQty = $(this).val();
+        var alternateUnitDropDown = row.find('select:eq(1)');
+        parseFloat(alternateQty) !== 0 ? alternateUnitDropDown.prop('disabled', false) : alternateUnitDropDown.prop('disabled', true);
+    });
+    $(document).on('change', '.selectedUnitRtn', function () {
         var selectElement = $(this);
         var SelectedAlternateUnitId = selectElement.val();
         if (SelectedAlternateUnitId) {

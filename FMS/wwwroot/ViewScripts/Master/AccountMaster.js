@@ -3,19 +3,24 @@ $(function () {
     $("#AccountMasterLink").addClass("active");
     $("#AccountMasterLink i.far.fa-circle").removeClass("far fa-circle").addClass("far fa-dot-circle");
     //*------------------------------Variable Declaration------------------------------*//
-    const ddlLedger = $('select[name="ddnLedgerId"]');
-    const ledgerOpeningBal = $('input[name="ledgerOpeningBal"]');
-    const ddlBalanceType = $('select[name="BalanceType"]');
     const ddnSubLedgerLedger = $('select[name="ddnSubLedgerLedgerId"]');
     const SubledgerOpeningBal = $('input[name="SubledgerOpeningBal"]');
     const SubledgerName = $('input[name="SubledgerName"]');
     const SubLedgerBalanceType = $('select[name="SubLedgerBalanceType"]');
+
+    const ddlLedger = $('select[name="ddnLedgerId"]');
+    const ledgerbal_OpeningBal = $('input[name="ledgerbal_OpeningBal"]');
+    const Ledgerbal_BalanceType = $('select[name="LedgerBalanceType"]');
+
+    const ddnSubLedger = $('select[name="ddnSubLedgerId"]');
+    const Subledgerbal_OpeningBal = $('input[name="Subledgerbal_OpeningBal"]');
+    const SubLedgerbal_BalanceType = $('select[name="SubLedgerbal_BalanceType"]');
+
+ 
     //------------------------------Validation Section-----------------------------//
-    ledgerOpeningBal.on("input", function () {
-        var inputValue = $(this).val().replace(/[^0-9.]/g, '');
-        if (inputValue.length > 10) {
-            inputValue = inputValue.substr(0, 10);
-        }   
+    SubledgerName.on("input", function () {
+        let inputValue = $(this).val();
+        inputValue = inputValue.toUpperCase();
         $(this).val(inputValue);
     });
     SubledgerOpeningBal.on("input", function () {
@@ -25,93 +30,21 @@ $(function () {
         }
         $(this).val(inputValue);
     });
-    SubledgerName.on("input", function () {
-        let inputValue = $(this).val();
-        inputValue = inputValue.toUpperCase();
+    ledgerbal_OpeningBal.on("input", function () {
+        var inputValue = $(this).val().replace(/[^0-9.]/g, '');
+        if (inputValue.length > 10) {
+            inputValue = inputValue.substr(0, 10);
+        }   
         $(this).val(inputValue);
     });
-
-    //-------------------------------Tab------------------------------------------//
-    $(document).ready(function () {
-        const elements = $('input, select, button').toArray(); 
-        $(document).on('keydown', 'input, select, button', function (e) {
-            if (e.key === 'Tab') {
-                e.preventDefault();
-                const currentIndex = elements.indexOf(this);
-                if (currentIndex > -1) {
-                    const nextIndex = (currentIndex + 1) % elements.length;
-                    elements[nextIndex].focus();
-                }
-            } else if (e.key === 'Enter') {
-                // Simulate Enter behavior for buttons
-                if ($(this).is('button')) {
-                    e.preventDefault(); 
-                    $(this).click();
-                }
-            }
-        });
+    Subledgerbal_OpeningBal.on("input", function () {
+        var inputValue = $(this).val().replace(/[^0-9.]/g, '');
+        if (inputValue.length > 10) {
+            inputValue = inputValue.substr(0, 10);
+        }
+        $(this).val(inputValue);
     });
-    //*------------------------------Ledger  Balance------------------------------*//
-    GetLedgersHasNoSubLedger()
-    function GetLedgersHasNoSubLedger() {
-        $.ajax({
-            url: "/Master/GetLedgersHasNoSubLedger",
-            type: "GET",
-            contentType: "application/json;charset=utf-8",
-            dataType: "json",
-            success: function (result) {
-                if (result.ResponseCode == 302) {
-                    ddlLedger.empty();
-                    var defaultOption = $('<option></option>').val('').text('--Select Option--');
-                    ddlLedger.append(defaultOption);
-                    $.each(result.Ledgers, function (key, item) {
-                        var option = $('<option></option>').val(item.LedgerId).text(item.LedgerName);
-                        ddlLedger.append(option);
-                    });
-                }
-            },
-            error: function (errormessage) {
-                console.log(errormessage)
-            }
-        });
-    }
-    $('#btnLedgerSubmit').on('click', LedgerSubmit);
-    function LedgerSubmit() {
-        if (!ledgerOpeningBal.val()) {
-            toastr.error('OpeningBal  Is Required.');
-            return;
-        } else if (!ddlLedger.val() || ddlLedger.val() === '--Select Option--') {
-            toastr.error('Ledger Type Is Required.');
-            return;
-        }
-        else {
-            var requestData = {
-                Fk_LedgerId: ddlLedger.val(),
-                OpeningBalance: ledgerOpeningBal.val(),
-                OpeningBalanceType: ddlBalanceType.val(),
-            }
-            $.ajax({
-                type: "POST",
-                url: '/Master/CreateLedgerBalance',
-                dataType: 'json',
-                data: JSON.stringify(requestData),
-                contentType: "application/json;charset=utf-8",
-                success: function (Response) {
-                    if (Response.ResponseCode == 201) {
-                        toastr.success(Response.SuccessMsg);
-                        ledgerOpeningBal.val('0')
-                    }
-                    else {
-                        toastr.error(Response.ErrorMsg);
-                    }
-                },
-                error: function (error) {
-                    console.log(error);
-                }
-            });
-        }
-    }
-    //*------------------------------SubLedger Balance------------------------------*//
+    //*------------------------------SubLedger------------------------------*//
     GetLedgersHasSubLedger();
     function GetLedgersHasSubLedger() {
         $.ajax({
@@ -162,6 +95,126 @@ $(function () {
                 console.log(error);
             }
         });
+    }
+    //*------------------------------Ledger  Balance------------------------------*//
+    GetLedgersHasNoSubLedger()
+    function GetLedgersHasNoSubLedger() {
+        $.ajax({
+            url: "/Master/GetLedgersHasNoSubLedger",
+            type: "GET",
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            success: function (result) {
+                if (result.ResponseCode == 302) {
+                    ddlLedger.empty();
+                    var defaultOption = $('<option></option>').val('').text('--Select Option--');
+                    ddlLedger.append(defaultOption);
+                    $.each(result.Ledgers, function (key, item) {
+                        var option = $('<option></option>').val(item.LedgerId).text(item.LedgerName);
+                        ddlLedger.append(option);
+                    });
+                }
+            },
+            error: function (errormessage) {
+                console.log(errormessage)
+            }
+        });
+    }
+    $('#btnLedgerBalSubmit').on('click', LedgerBalanceSubmit);
+    function LedgerBalanceSubmit() {
+        if (!ledgerbal_OpeningBal.val()) {
+            toastr.error('OpeningBal  Is Required.');
+            return;
+        } else if (!ddlLedger.val() || ddlLedger.val() === '--Select Option--') {
+            toastr.error('Ledger Type Is Required.');
+            return;
+        }
+        else {
+            var requestData = {
+                Fk_LedgerId: ddlLedger.val(),
+                OpeningBalance: ledgerbal_OpeningBal.val(),
+                OpeningBalanceType: Ledgerbal_BalanceType.val(),
+            }
+            $.ajax({
+                type: "POST",
+                url: '/Master/CreateLedgerBalance',
+                dataType: 'json',
+                data: JSON.stringify(requestData),
+                contentType: "application/json;charset=utf-8",
+                success: function (Response) {
+                    if (Response.ResponseCode == 201) {
+                        toastr.success(Response.SuccessMsg);
+                        ledgerbal_OpeningBal.val('0')
+                    }
+                    else {
+                        toastr.error(Response.ErrorMsg);
+                    }
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        }
+    }
+    //*------------------------------Subledger  Balance------------------------------*//
+    GetSubLedgers()
+    function GetSubLedgers() {
+        $.ajax({
+            url: "/Master/GetSubLedgers",
+            type: "GET",
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            success: function (result) {
+                if (result.ResponseCode == 302) {
+                    ddnSubLedger.empty();
+                    var defaultOption = $('<option></option>').val('').text('--Select Option--');
+                    ddnSubLedger.append(defaultOption);
+                    $.each(result.SubLedgers, function (key, item) {
+                        var option = $('<option></option>').val(item.SubLedgerId).text(item.SubLedgerName);
+                        ddnSubLedger.append(option);
+                    });
+                }
+            },
+            error: function (errormessage) {
+                console.log(errormessage)
+            }
+        });
+    }
+    $('#btnSubLedgerBalSubmit').on('click', SubLedgerBalanceSubmit);
+    function SubLedgerBalanceSubmit() {
+        if (!Subledgerbal_OpeningBal.val()) {
+            toastr.error('OpeningBal  Is Required.');
+            return;
+        } else if (!ddnSubLedger.val() || ddnSubLedger.val() === '--Select Option--') {
+            toastr.error('SubLedger Field Required.');
+            return;
+        }
+        else {
+            var requestData = {
+                Fk_SubLedgerId: ddnSubLedger.val(),
+                OpeningBalance: Subledgerbal_OpeningBal.val(),
+                OpeningBalanceType: SubLedgerbal_BalanceType.val(),
+            } 
+            $.ajax({
+                type: "POST",
+                url: '/Master/CreateSubLedgerBalance',
+                dataType: 'json',
+                data: JSON.stringify(requestData),
+                contentType: "application/json;charset=utf-8",
+                success: function (Response) {
+                    if (Response.ResponseCode == 201) {
+                        toastr.success(Response.SuccessMsg);
+                        Subledgerbal_OpeningBal.val('0')
+                    }
+                    else {
+                        toastr.error(Response.ErrorMsg);
+                    }
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        }
     }
     //*------------------------------Ledger Balance List------------------------------*//
     $('a[href="#LedgerBalanceList"]').on('click', function () {

@@ -55,7 +55,7 @@ namespace FMS.Controllers.Master
             return new JsonResult(result);
         }
         [HttpGet]
-        public async Task<IActionResult> GetProductsWhichNotInStock(Guid GroupId,Guid SubGroupId)
+        public async Task<IActionResult> GetProductsWhichNotInStock(Guid GroupId, Guid SubGroupId)
         {
             var result = await _masterSvcs.GetProductsWhichNotInStock(GroupId, SubGroupId);
             return new JsonResult(result);
@@ -93,8 +93,8 @@ namespace FMS.Controllers.Master
             var result = await _masterSvcs.DeleteStock(Id);
             return new JsonResult(result);
         }
-      
-        #endregion       
+
+        #endregion
         #region PartyMaster
         [HttpGet]
         public IActionResult PartyMaster()
@@ -427,6 +427,19 @@ namespace FMS.Controllers.Master
         {
             var result = await _masterSvcs.GetSubLedgerBalances();
             return new JsonResult(result);
+        }
+        [HttpPost, Authorize(Policy = "Create")]
+        public async Task<IActionResult> CreateSubLedgerBalance([FromBody] SubLedgerBalanceModel data)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _masterSvcs.CreateSubLedgerBalance(data);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
         [HttpPost, Authorize(Policy = "Edit")]
         public async Task<IActionResult> UpdateSubLedgerBalance([FromBody] SubLedgerBalanceModel data)

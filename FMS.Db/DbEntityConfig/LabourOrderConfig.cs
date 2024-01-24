@@ -15,7 +15,7 @@ namespace FMS.Db.DbEntityConfig
             builder.Property(e => e.TransactionNo).IsRequired(true);
             builder.Property(e => e.Fk_ProductId).IsRequired(true);
             builder.Property(e => e.Fk_LabourId).IsRequired(true);
-            builder.Property(e => e.LabourType).IsRequired(true);
+            builder.Property(e => e.Fk_LabourTypeId).IsRequired(true);
             builder.Property(e => e.Fk_FinancialYearId).IsRequired(true);
             builder.Property(e => e.FK_BranchId).IsRequired(true);
             builder.Property(e => e.TransactionDate).HasColumnType("datetime");
@@ -26,7 +26,8 @@ namespace FMS.Db.DbEntityConfig
             builder.HasOne(p=> p.Product).WithMany(pe=>pe.LabourOrders).HasForeignKey(e=> e.Fk_ProductId).OnDelete(DeleteBehavior.Restrict); 
             builder.HasOne(l => l.Labour).WithMany(pe => pe.LabourOrders).HasForeignKey(e => e.Fk_LabourId).OnDelete(DeleteBehavior.Restrict); 
             builder.HasOne(f => f.FinancialYear).WithMany(pe => pe.LabourOrders).HasForeignKey(e => e.Fk_FinancialYearId).OnDelete(DeleteBehavior.Restrict); 
-            builder.HasOne(p => p.Branch).WithMany(pe => pe.LabourOrders).HasForeignKey(e => e.FK_BranchId).OnDelete(DeleteBehavior.Restrict); 
+            builder.HasOne(p => p.Branch).WithMany(pe => pe.LabourOrders).HasForeignKey(e => e.FK_BranchId).OnDelete(DeleteBehavior.Restrict);
+            builder.HasOne(p => p.LabourType).WithMany(pe => pe.LabourOrders).HasForeignKey(e => e.Fk_LabourTypeId).OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

@@ -34,189 +34,6 @@ namespace FMS.Repository.Master
             _transactionRepo = transactionRepo;
         }
         #region Account Master
-        #region LedgerBalance
-        public async Task<Result<LedgerBalanceModel>> GetLedgerBalances()
-        {
-            Result<LedgerBalanceModel> _Result = new();
-            try
-            {
-                _Result.IsSuccess = false;
-                Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
-                var Query = await _appDbContext.LedgerBalances.Where(s => s.Fk_BranchId == BranchId).Select(s => new LedgerBalanceModel
-                {
-                    LedgerBalanceId = s.LedgerBalanceId,
-                    Ledger = _appDbContext.Ledgers.Any(l => l.LedgerId == s.Fk_LedgerId)
-                        ? _appDbContext.Ledgers.Where(l => l.LedgerId == s.Fk_LedgerId).Select(l => new LedgerModel
-                        {
-                            LedgerName = l.LedgerName,
-                            LedgerGroup = new LedgerGroupModel { GroupName = l.LedgerGroup.GroupName }
-                        }).SingleOrDefault()
-                        : _appDbContext.LedgersDev.Where(l => l.LedgerId == s.Fk_LedgerId).Select(l => new LedgerModel
-                        {
-                            LedgerName = l.LedgerName,
-                            LedgerGroup = new LedgerGroupModel { GroupName = l.LedgerGroup.GroupName }
-                        }).SingleOrDefault(),
-                    OpeningBalance = s.OpeningBalance,
-                    OpeningBalanceType = s.OpeningBalanceType,
-                    RunningBalance = s.RunningBalance,
-                    RunningBalanceType = s.RunningBalanceType,
-                }).ToListAsync();
-                if (Query.Count > 0)
-                {
-                    _Result.CollectionObjData = Query;
-                    _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
-                }
-                _Result.IsSuccess = true;
-            }
-            catch (Exception _Exception)
-            {
-                _Result.Exception = _Exception;
-                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/GetLedgerBalances : {_Exception.Message}");
-            }
-            return _Result;
-        }
-        public async Task<Result<SubLedgerModel>> GetSubLedgersByBranch(Guid LedgerId)
-        {
-            Result<SubLedgerModel> _Result = new();
-            try
-            {
-                _Result.IsSuccess = false;
-                Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
-                Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
-                var Query = await (from sl in _appDbContext.SubLedgers
-                                   where sl.Fk_LedgerId == LedgerId && sl.Fk_BranchId == BranchId
-                                   && !_appDbContext.SubLedgerBalances.Any(sb => sb.Fk_SubLedgerId == sl.SubLedgerId && sb.Fk_BranchId == BranchId && sb.Fk_FinancialYearId == FinancialYear)
-                                   select new SubLedgerModel()
-                                   {
-                                       SubLedgerId = sl.SubLedgerId,
-                                       SubLedgerName = sl.SubLedgerName,
-                                   }).ToListAsync();
-                if (Query.Count > 0)
-                {
-                    _Result.CollectionObjData = Query;
-                    _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
-                }
-                _Result.IsSuccess = true;
-            }
-            catch (Exception _Exception)
-            {
-                _Result.Exception = _Exception;
-                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/GetSubLedgersByBranch : {_Exception.Message}");
-            }
-            return _Result;
-        }
-        public async Task<Result<bool>> CreateLedgerBalance(LedgerBalanceRequest data)
-        {
-            Result<bool> _Result = new();
-            try
-            {
-                Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
-                Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
-                _Result.IsSuccess = false;
-                using var transaction = await _appDbContext.Database.BeginTransactionAsync();
-                try
-                {
-                    var Query = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == data.Fk_LedgerId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
-                    if (Query == null)
-                    {
-                        var newLedgerBalance = new LedgerBalance
-                        {
-                            Fk_LedgerId = data.Fk_LedgerId,
-                            OpeningBalanceType = data.OpeningBalanceType,
-                            OpeningBalance = data.OpeningBalanceType == "Dr" ? data.OpeningBalance : -data.OpeningBalance,
-                            RunningBalanceType = data.OpeningBalanceType,
-                            RunningBalance = data.OpeningBalanceType == "Dr" ? data.OpeningBalance : -data.OpeningBalance,
-                            Fk_BranchId = BranchId,
-                            Fk_FinancialYear = FinancialYear
-                        };
-                        await _appDbContext.LedgerBalances.AddAsync(newLedgerBalance);
-                        await _appDbContext.SaveChangesAsync();
-                        _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Created);
-                        transaction.Commit();
-                        _Result.IsSuccess = true;
-                    }
-                }
-                catch
-                {
-                    transaction.Rollback();
-                    throw;
-                }
-
-            }
-            catch (Exception _Exception)
-            {
-                _Result.Exception = _Exception;
-                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/CreateLedgerBalance : {_Exception.Message}");
-            }
-            return _Result;
-        }
-        public async Task<Result<bool>> UpdateLedgerBalance(LedgerBalanceModel data)
-        {
-            Result<bool> _Result = new();
-            try
-            {
-                Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
-                Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
-                _Result.IsSuccess = false;
-                var Query = await _appDbContext.LedgerBalances.Where(s => s.LedgerBalanceId == data.LedgerBalanceId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
-                if (Query != null)
-                {
-                    Query.OpeningBalanceType = data.OpeningBalanceType;
-                    Query.OpeningBalance = data.OpeningBalanceType == "Dr" ? data.OpeningBalance : -data.OpeningBalance;
-                    Query.RunningBalanceType = data.RunningBalanceType;
-                    Query.RunningBalance = data.RunningBalanceType == "Dr" ? data.RunningBalance : -data.RunningBalance;
-
-                    int count = await _appDbContext.SaveChangesAsync();
-                    _Result.Response = (count > 0) ? ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Modified) : ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Error);
-                }
-                _Result.IsSuccess = true;
-            }
-            catch (Exception _Exception)
-            {
-                _Result.Exception = _Exception;
-                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/UpdateLedgerBalance : {_Exception.Message}");
-            }
-            return _Result;
-        }
-        public async Task<Result<bool>> DeleteLedgerBalance(Guid Id, IDbContextTransaction transaction, bool IsCallBack)
-        {
-            Result<bool> _Result = new();
-            try
-            {
-                _Result.IsSuccess = false;
-                Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
-                Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
-                using var localTransaction = transaction ?? await _appDbContext.Database.BeginTransactionAsync();
-                try
-                {
-                    if (Id != Guid.Empty)
-                    {
-                        var Query = await _appDbContext.LedgerBalances.SingleOrDefaultAsync(x => x.LedgerBalanceId == Id && x.Fk_BranchId == BranchId);
-                        if (Query != null)
-                        {
-                            _appDbContext.LedgerBalances.Remove(Query);
-                            int count = await _appDbContext.SaveChangesAsync();
-                            _Result.Response = (count > 0) ? ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Deleted) : ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Error);
-                        }
-                        _Result.IsSuccess = true;
-                        if (IsCallBack == false) localTransaction.Commit();
-                    }
-                }
-                catch
-                {
-                    localTransaction.Rollback();
-                    throw;
-                }
-            }
-            catch (Exception _Exception)
-            {
-                _Result.Exception = _Exception;
-                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/DeleteLedgerBalance : {_Exception.Message}");
-            }
-
-            return _Result;
-        }
-        #endregion
         #region SubLedger
         public async Task<Result<SubLedgerModel>> GetSubLedgers()
         {
@@ -455,6 +272,193 @@ namespace FMS.Repository.Master
             return _Result;
         }
         #endregion
+        #region LedgerBalance
+        public async Task<Result<LedgerBalanceModel>> GetLedgerBalances()
+        {
+            Result<LedgerBalanceModel> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
+                var Query = await _appDbContext.LedgerBalances.Where(s => s.Fk_BranchId == BranchId).Select(s => new LedgerBalanceModel
+                {
+                    LedgerBalanceId = s.LedgerBalanceId,
+                    Ledger = _appDbContext.Ledgers.Any(l => l.LedgerId == s.Fk_LedgerId)
+                        ? _appDbContext.Ledgers.Where(l => l.LedgerId == s.Fk_LedgerId).Select(l => new LedgerModel
+                        {
+                            LedgerName = l.LedgerName,
+                            LedgerGroup = new LedgerGroupModel { GroupName = l.LedgerGroup.GroupName }
+                        }).SingleOrDefault()
+                        : _appDbContext.LedgersDev.Where(l => l.LedgerId == s.Fk_LedgerId).Select(l => new LedgerModel
+                        {
+                            LedgerName = l.LedgerName,
+                            LedgerGroup = new LedgerGroupModel { GroupName = l.LedgerGroup.GroupName }
+                        }).SingleOrDefault(),
+                    OpeningBalance = s.OpeningBalance,
+                    OpeningBalanceType = s.OpeningBalanceType,
+                    RunningBalance = s.RunningBalance,
+                    RunningBalanceType = s.RunningBalanceType,
+                }).ToListAsync();
+                if (Query.Count > 0)
+                {
+                    _Result.CollectionObjData = Query;
+                    _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
+                }
+                _Result.IsSuccess = true;
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/GetLedgerBalances : {_Exception.Message}");
+            }
+            return _Result;
+        }
+        public async Task<Result<SubLedgerModel>> GetSubLedgersByBranch(Guid LedgerId)
+        {
+            Result<SubLedgerModel> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
+                Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
+                var Query = await (from sl in _appDbContext.SubLedgers
+                                   where sl.Fk_LedgerId == LedgerId && sl.Fk_BranchId == BranchId
+                                   && !_appDbContext.SubLedgerBalances.Any(sb => sb.Fk_SubLedgerId == sl.SubLedgerId && sb.Fk_BranchId == BranchId && sb.Fk_FinancialYearId == FinancialYear)
+                                   select new SubLedgerModel()
+                                   {
+                                       SubLedgerId = sl.SubLedgerId,
+                                       SubLedgerName = sl.SubLedgerName,
+                                   }).ToListAsync();
+                if (Query.Count > 0)
+                {
+                    _Result.CollectionObjData = Query;
+                    _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
+                }
+                _Result.IsSuccess = true;
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/GetSubLedgersByBranch : {_Exception.Message}");
+            }
+            return _Result;
+        }
+        public async Task<Result<bool>> CreateLedgerBalance(LedgerBalanceRequest data)
+        {
+            Result<bool> _Result = new();
+            try
+            {
+                Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
+                Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
+                _Result.IsSuccess = false;
+                using var transaction = await _appDbContext.Database.BeginTransactionAsync();
+                try
+                {
+                    var Query = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == data.Fk_LedgerId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                    if (Query == null)
+                    {
+                        var newLedgerBalance = new LedgerBalance
+                        {
+                            Fk_LedgerId = data.Fk_LedgerId,
+                            OpeningBalanceType = data.OpeningBalanceType,
+                            OpeningBalance = data.OpeningBalanceType == "Dr" ? data.OpeningBalance : -data.OpeningBalance,
+                            RunningBalanceType = data.OpeningBalanceType,
+                            RunningBalance = data.OpeningBalanceType == "Dr" ? data.OpeningBalance : -data.OpeningBalance,
+                            Fk_BranchId = BranchId,
+                            Fk_FinancialYear = FinancialYear
+                        };
+                        await _appDbContext.LedgerBalances.AddAsync(newLedgerBalance);
+                        await _appDbContext.SaveChangesAsync();
+                        _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Created);
+                        transaction.Commit();
+                        _Result.IsSuccess = true;
+                    }
+                    else
+                    {
+                        _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Error);
+                    }
+                }
+                catch
+                {
+                    transaction.Rollback();
+                    throw;
+                }
+
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/CreateLedgerBalance : {_Exception.Message}");
+            }
+            return _Result;
+        }
+        public async Task<Result<bool>> UpdateLedgerBalance(LedgerBalanceModel data)
+        {
+            Result<bool> _Result = new();
+            try
+            {
+                Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
+                Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
+                _Result.IsSuccess = false;
+                var Query = await _appDbContext.LedgerBalances.Where(s => s.LedgerBalanceId == data.LedgerBalanceId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                if (Query != null)
+                {
+                    Query.OpeningBalanceType = data.OpeningBalanceType;
+                    Query.OpeningBalance = data.OpeningBalanceType == "Dr" ? data.OpeningBalance : -data.OpeningBalance;
+                    Query.RunningBalanceType = data.RunningBalanceType;
+                    Query.RunningBalance = data.RunningBalanceType == "Dr" ? data.RunningBalance : -data.RunningBalance;
+
+                    int count = await _appDbContext.SaveChangesAsync();
+                    _Result.Response = (count > 0) ? ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Modified) : ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Error);
+                }
+                _Result.IsSuccess = true;
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/UpdateLedgerBalance : {_Exception.Message}");
+            }
+            return _Result;
+        }
+        public async Task<Result<bool>> DeleteLedgerBalance(Guid Id, IDbContextTransaction transaction, bool IsCallBack)
+        {
+            Result<bool> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
+                Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
+                using var localTransaction = transaction ?? await _appDbContext.Database.BeginTransactionAsync();
+                try
+                {
+                    if (Id != Guid.Empty)
+                    {
+                        var Query = await _appDbContext.LedgerBalances.SingleOrDefaultAsync(x => x.LedgerBalanceId == Id && x.Fk_BranchId == BranchId && x.Fk_FinancialYear==FinancialYear);
+                        if (Query != null)
+                        {
+                            _appDbContext.LedgerBalances.Remove(Query);
+                            int count = await _appDbContext.SaveChangesAsync();
+                            _Result.Response = (count > 0) ? ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Deleted) : ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Error);
+                        }
+                        _Result.IsSuccess = true;
+                        if (IsCallBack == false) localTransaction.Commit();
+                    }
+                }
+                catch
+                {
+                    localTransaction.Rollback();
+                    throw;
+                }
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/DeleteLedgerBalance : {_Exception.Message}");
+            }
+
+            return _Result;
+        }
+        #endregion
         #region SubLedger Balance
         public async Task<Result<SubLedgerBalanceModel>> GetSubLedgerBalances()
         {
@@ -498,6 +502,78 @@ namespace FMS.Repository.Master
             }
             return _Result;
         }
+        public async Task<Result<bool>> CreateSubLedgerBalance(SubLedgerBalanceModel data)
+        {
+            Result<bool> _Result = new();
+            Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
+            Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
+            using var transaction = await _appDbContext.Database.BeginTransactionAsync();
+            _Result.IsSuccess = false;
+            try
+            {
+                var isSubLedgerBalanceExist = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == data.Fk_SubLedgerId && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).SingleOrDefaultAsync();
+                if (isSubLedgerBalanceExist == null)
+                {
+                    Guid LedgerBalanceId = Guid.Empty;
+                    var GetLedgerId = await _appDbContext.SubLedgers.Where(s => s.SubLedgerId == data.Fk_SubLedgerId && s.Fk_BranchId == BranchId || s.Fk_BranchId == null).Select(s => s.Fk_LedgerId).SingleOrDefaultAsync();
+                    var GetLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == GetLedgerId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                    if (GetLedgerBalance == null)
+                    {
+                        var newLedgerBalance = new LedgerBalance
+                        {
+                            Fk_LedgerId = GetLedgerId,
+                            OpeningBalanceType = data.OpeningBalanceType,
+                            OpeningBalance = data.OpeningBalanceType == "Dr" ? data.OpeningBalance : -data.OpeningBalance,
+                            RunningBalanceType = data.OpeningBalanceType,
+                            RunningBalance = data.OpeningBalanceType == "Dr" ? data.OpeningBalance : -data.OpeningBalance,
+                            Fk_BranchId = BranchId,
+                            Fk_FinancialYear = FinancialYear
+                        };
+                        await _appDbContext.LedgerBalances.AddAsync(newLedgerBalance);
+                        await _appDbContext.SaveChangesAsync();
+                        LedgerBalanceId = newLedgerBalance.LedgerBalanceId;
+                    }
+                    else
+                    {
+                        GetLedgerBalance.OpeningBalance += data.OpeningBalanceType == "Dr" ? data.OpeningBalance : -data.OpeningBalance;
+                        GetLedgerBalance.OpeningBalanceType = GetLedgerBalance.OpeningBalance > 0 ? "Dr" : "Cr";
+                        GetLedgerBalance.RunningBalance += data.OpeningBalanceType == "Dr" ? data.OpeningBalance : -data.OpeningBalance;
+                        GetLedgerBalance.RunningBalanceType = GetLedgerBalance.OpeningBalance > 0 ? "Dr" : "Cr";
+                        await _appDbContext.SaveChangesAsync();
+                        LedgerBalanceId = GetLedgerBalance.LedgerBalanceId;
+                    }
+                    var newSubLedgerBalance = new SubLedgerBalance
+                    {
+                        Fk_LedgerBalanceId = LedgerBalanceId,
+                        Fk_SubLedgerId = data.Fk_SubLedgerId,
+                        OpeningBalanceType = data.OpeningBalanceType,
+                        OpeningBalance = data.OpeningBalanceType == "Dr" ? data.OpeningBalance : -data.OpeningBalance,
+                        RunningBalanceType = data.OpeningBalanceType,
+                        RunningBalance = data.OpeningBalanceType == "Dr" ? data.OpeningBalance : -data.OpeningBalance,
+                        Fk_BranchId = BranchId,
+                        Fk_FinancialYearId = FinancialYear
+                    };
+                    await _appDbContext.SubLedgerBalances.AddAsync(newSubLedgerBalance);
+                    int count = await _appDbContext.SaveChangesAsync();
+                    _Result.Response = count > 0 ? ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Created) : null;
+                    transaction.Commit();
+                    _Result.IsSuccess = true;
+                }
+                else
+                {
+                    _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Found);
+                    _Result.IsSuccess = true;
+                }
+                return _Result;
+            }
+            catch (Exception _Exception)
+            {
+                transaction.Rollback();
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/CreateSubLedgerBalance : {_Exception.Message}");
+            }
+            return _Result;
+        }
         public async Task<Result<bool>> UpdateSubLedgerBalance(SubLedgerBalanceModel data)
         {
             Result<bool> _Result = new();
@@ -510,45 +586,23 @@ namespace FMS.Repository.Master
                 var isSubLedgerBalanceExist = await _appDbContext.SubLedgerBalances.Where(s => s.SubLedgerBalanceId == data.SubLedgerBalanceId && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).SingleOrDefaultAsync();
                 if (isSubLedgerBalanceExist != null)
                 {
-                    decimal difference = 0;
-                    //var difference = (data.OpeningBalanceType == "Dr" ? data.OpeningBalance : -data.OpeningBalance) -
-                    //                 (isSubLedgerBalanceExist.OpeningBalanceType == "Dr"
-                    //                     ? isSubLedgerBalanceExist.OpeningBalance
-                    //                     : isSubLedgerBalanceExist.OpeningBalanceType == "Cr"
-                    //                         ? -isSubLedgerBalanceExist.OpeningBalance
-                    //                         : isSubLedgerBalanceExist.OpeningBalance);
-                    if (data.OpeningBalanceType == isSubLedgerBalanceExist.OpeningBalanceType)
-                    {
-                        if (data.OpeningBalance > isSubLedgerBalanceExist.OpeningBalance)
-                        {
-                            difference = (data.OpeningBalanceType == "Dr" ? 1 : -1) * data.OpeningBalance - (isSubLedgerBalanceExist.OpeningBalanceType == "Dr" ? 1 : -1) * isSubLedgerBalanceExist.OpeningBalance;
-                        }
-                        else
-                        {
-                            difference = (data.OpeningBalanceType == "Dr" ? 1 : -1) * data.OpeningBalance - (isSubLedgerBalanceExist.OpeningBalanceType == "Dr" ? 1 : -1) * isSubLedgerBalanceExist.OpeningBalance;
-
-                        }
-                    }
-                    else
-                    {
-                        difference = (data.OpeningBalanceType == "Dr" ? 1 : -1) * data.OpeningBalance + (isSubLedgerBalanceExist.OpeningBalanceType == "Dr" ? 1 : -1) * isSubLedgerBalanceExist.OpeningBalance;
-                    }
+                    decimal oldOpb = isSubLedgerBalanceExist.OpeningBalance;
+                    decimal newOpb = data.OpeningBalanceType == "Dr" ? data.OpeningBalance : -data.OpeningBalance;
+                    decimal difference = (oldOpb > newOpb) ? -(oldOpb - newOpb) : newOpb - oldOpb;
+                    #region Update SubLedger Balance &&  Ledger Balances
                     var isLedgerBalanceExist = await _appDbContext.LedgerBalances.Where(s => s.LedgerBalanceId == isSubLedgerBalanceExist.Fk_LedgerBalanceId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
                     if (isLedgerBalanceExist != null)
                     {
-                        isLedgerBalanceExist.OpeningBalance += data.OpeningBalance > isSubLedgerBalanceExist.OpeningBalance ? (data.OpeningBalance - difference) :(difference-data.OpeningBalance);
+                        isLedgerBalanceExist.OpeningBalance += difference;
                         isLedgerBalanceExist.OpeningBalanceType = isLedgerBalanceExist.OpeningBalance > 0 ? "Dr" : "Cr";
                         isLedgerBalanceExist.RunningBalance += difference;
                         isLedgerBalanceExist.RunningBalanceType = isLedgerBalanceExist.RunningBalance > 0 ? "Dr" : "Cr";
                     }
-                    #region Update SubLedger Balance &&  Ledger Balances
-                    isSubLedgerBalanceExist.OpeningBalance = data.OpeningBalance;
+
+                    isSubLedgerBalanceExist.OpeningBalance = newOpb;
                     isSubLedgerBalanceExist.OpeningBalanceType = data.OpeningBalanceType;
                     isSubLedgerBalanceExist.RunningBalance += difference;
                     isSubLedgerBalanceExist.RunningBalanceType = isSubLedgerBalanceExist.RunningBalance > 0 ? "Dr" : "Cr";
-
-
-
                     await _appDbContext.SaveChangesAsync();
                     #endregion
                     _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Modified);
@@ -980,80 +1034,20 @@ namespace FMS.Repository.Master
             try
             {
                 _Result.IsSuccess = false;
-                Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
-                Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
                 using var localTransaction = transaction ?? await _appDbContext.Database.BeginTransactionAsync();
                 try
                 {
                     if (Id != Guid.Empty)
                     {
-                        var Query = await _appDbContext.Parties.FirstOrDefaultAsync(x => x.PartyId == Id);
+                        var Query = await _appDbContext.Parties.SingleOrDefaultAsync(x => x.PartyId == Id);
                         if (Query != null)
                         {
-                            if (Query.Fk_PartyType == MappingLedgers.SundryCreditors)
-                            {
-                                var PurchaseOdr = await _appDbContext.PurchaseOrders.Where(x => x.Fk_SubLedgerId == Query.Fk_SubledgerId).ToListAsync();
-                                if (PurchaseOdr.Count > 0)
-                                {
-                                    foreach (var item in PurchaseOdr)
-                                    {
-                                        IsCallBack = true;
-                                        var IsSuccess = await _transactionRepo.DeletePurchase(item.PurchaseOrderId, localTransaction, IsCallBack);
-                                        if (IsSuccess.IsSuccess) IsCallBack = false;
-                                    }
-                                }
-                                var PurchaseReturnOdr = await _appDbContext.PurchaseReturnOrders.Where(x => x.Fk_SubLedgerId == Query.Fk_SubledgerId).ToListAsync();
-                                if (PurchaseReturnOdr.Count > 0)
-                                {
-                                    foreach (var item in PurchaseReturnOdr)
-                                    {
-                                        IsCallBack = true;
-                                        var IsSuccess = await _transactionRepo.DeletetPurchaseReturn(item.PurchaseReturnOrderId, localTransaction, IsCallBack);
-                                        if (IsSuccess.IsSuccess) IsCallBack = false;
-                                    }
-                                }
-                                var deletePayments = await _appDbContext.Payments.Where(x => x.Fk_SubLedgerId == Query.Fk_SubledgerId).ToListAsync();
-                                if (deletePayments.Count > 0) _appDbContext.Payments.RemoveRange(deletePayments);
-                                await _appDbContext.SaveChangesAsync();
-                            }
-                            if (Query.Fk_PartyType == MappingLedgers.SundryDebtors)
-                            {
-                                var SalesOdr = await _appDbContext.SalesOrders.Where(x => x.Fk_SubLedgerId == Query.Fk_SubledgerId).ToListAsync();
-                                if (SalesOdr.Count > 0)
-                                {
-                                    foreach (var item in SalesOdr)
-                                    {
-                                        IsCallBack = true;
-                                        var IsSuccess = await _transactionRepo.DeleteSales(item.SalesOrderId, localTransaction, IsCallBack);
-                                        if (IsSuccess.IsSuccess) IsCallBack = false;
-                                    }
-                                }
-                                //var SalesReturnOdr = await _appDbContext.SalesReturnOrders.Where(x => x.Fk_SubLedgerId == Query.Fk_SubledgerId).ToListAsync();
-                                //if (SalesReturnOdr.Count > 0)
-                                //{
-                                //    foreach (var item in SalesReturnOdr)
-                                //    {
-                                //        IsCallBack = true;
-                                //        var IsSuccess = await _transactionRepo.DeleteSalesReturn(item.SalesReturnOrderId, localTransaction, IsCallBack);
-                                //        if (IsSuccess.IsSuccess) IsCallBack = false;
-                                //    }
-                                //}
-                                var deleteRecipts = await _appDbContext.Receipts.Where(x => x.Fk_SubLedgerId == Query.Fk_SubledgerId).ToListAsync();
-                                if (deleteRecipts.Count > 0) _appDbContext.Receipts.RemoveRange(deleteRecipts);
-                                await _appDbContext.SaveChangesAsync();
-                            }
-                            var deleteSubLederBalance = await _appDbContext.SubLedgerBalances.Where(x => x.Fk_SubLedgerId == Query.Fk_SubledgerId).FirstOrDefaultAsync();
-                            if (deleteSubLederBalance != null) _appDbContext.SubLedgerBalances.Remove(deleteSubLederBalance);
-                            await _appDbContext.SaveChangesAsync();
                             _appDbContext.Parties.Remove(Query);
-                            await _appDbContext.SaveChangesAsync();
-                            var deleteSubLeder = await _appDbContext.SubLedgers.Where(x => x.SubLedgerId == Query.Fk_SubledgerId).FirstOrDefaultAsync();
-                            if (deleteSubLeder != null) _appDbContext.SubLedgers.Remove(deleteSubLeder);
                             int count = await _appDbContext.SaveChangesAsync();
                             _Result.Response = (count > 0) ? ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Deleted) : ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Error);
+                            _Result.IsSuccess = true;
+                            localTransaction.Commit();
                         }
-                        _Result.IsSuccess = true;
-                        if (IsCallBack == false) localTransaction.Commit();
                     }
                 }
                 catch

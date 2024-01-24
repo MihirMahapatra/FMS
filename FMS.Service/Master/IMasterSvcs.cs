@@ -63,6 +63,7 @@ namespace FMS.Service.Master
         #endregion
         #region SubLedger Balance
         Task<SubLedgerBalanceViewModel> GetSubLedgerBalances();
+        Task<Base> CreateSubLedgerBalance(SubLedgerBalanceModel data);
         Task<Base> UpdateSubLedgerBalance(SubLedgerBalanceModel data);
         Task<Base> DeleteSubLedgerBalance(Guid Id);
         #endregion

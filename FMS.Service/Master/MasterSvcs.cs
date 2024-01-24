@@ -3,6 +3,7 @@ using FMS.Model.CommonModel;
 using FMS.Model.ViewModel;
 using FMS.Repository.Master;
 using FMS.Utility;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 
 namespace FMS.Service.Master
@@ -1456,6 +1457,52 @@ namespace FMS.Service.Master
                     ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
                     Exception = Result.Exception,
                     Message = "Some Eroor Occoured"
+                };
+            }
+            return Obj;
+        }
+        public async Task<Base> CreateSubLedgerBalance(SubLedgerBalanceModel data)
+        {
+            Base Obj;
+            var result = await _masterRepo.CreateSubLedgerBalance(data);
+            if (result.IsSuccess)
+            {
+                if (result.Response == "created")
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.Created),
+                        SuccessMsg = "Data Saved SuccessFully"
+                    };
+                }
+                else
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                        ErrorMsg = "Data Already Exist"
+                    };
+                }
+            }
+            else if (result.WarningMessage != null)
+            {
+                Obj = new()
+                {
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = result.Exception,
+                    ErrorMsg = result.WarningMessage,
+                };
+            }
+            else
+            {
+                Obj = new()
+                {
+                    ResponseStatus = result.Response,
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = result.Exception,
+                    ErrorMsg = "Some Error Occourd Try To Contact Your App Devloper"
                 };
             }
             return Obj;

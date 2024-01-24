@@ -7,7 +7,7 @@
         public DateTime TransactionDate { get; set; }
         public Guid Fk_ProductId { get; set; }
         public Guid Fk_LabourId { get; set; }
-        public string LabourType { get; set; }
+        public Guid Fk_LabourTypeId { get; set; }
         public Guid Fk_FinancialYearId { get; set; }
         public Guid FK_BranchId { get; set; }
         public decimal Quantity { get; set; }
@@ -18,6 +18,7 @@
         public Labour Labour { get; set; }
         public FinancialYear FinancialYear { get; set; }
         public Branch Branch { get; set; }
+        public LabourType LabourType { get; set; }
         public ICollection<LabourTransaction> LabourTransactions { get; set; }
     }
 }
