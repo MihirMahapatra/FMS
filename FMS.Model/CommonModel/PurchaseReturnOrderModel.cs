@@ -3,6 +3,7 @@
     public class PurchaseReturnOrderModel
     {
         public Guid PurchaseReturnOrderId { get; set; }
+        public Guid Fk_ProductTypeId { get; set; }
         public string TransactionNo { get; set; }
         public Guid Fk_SubLedgerId { get; set; }
         public Guid Fk_BranchId { get; set; }
@@ -22,6 +23,7 @@
         public SubLedgerModel SubLedger { get; set; }
         public BranchModel Branch { get; set; }
         public FinancialYearModel FinancialYear { get; set; }
+        public ProductTypeModel ProductType { get; set; }
         public List<PurchaseReturnTransactionModel> PurchaseReturnTransactions { get; set; } 
     }
 }

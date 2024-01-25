@@ -197,7 +197,7 @@
                                     {
                                         foreach (var item in Model.StockReports.Product.PurchaseReturnTransactions)
                                         {
-                                            Stock -= @item.Quantity;
+                                            Stock -= @item.UnitQuantity;
                                             <tr class="small-row">
                                                 @if (DateTime.TryParse(item.TransactionDate.ToString(), out DateTime transactionDate))
                                                 {
@@ -206,7 +206,7 @@
                                                 <td>@item.TransactionNo</td>
                                                 <td>Purchase Return</td>
                                                 <td>-</td>
-                                                <td>@item.Quantity</td>
+                                                <td>@item.UnitQuantity</td>
                                                 <td style="text-align:center">@Stock</td>
                                             </tr>
                                         }

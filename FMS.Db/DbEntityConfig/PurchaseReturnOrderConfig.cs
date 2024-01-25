@@ -11,6 +11,7 @@ namespace FMS.Db.DbEntityConfig
             builder.ToTable("PurchaseReturnOrders", "dbo");
             builder.HasKey(e => e.PurchaseReturnOrderId);
             builder.Property(e => e.PurchaseReturnOrderId).HasDefaultValueSql("(newid())");
+            builder.Property(e => e.Fk_ProductTypeId).IsRequired(true);
             builder.Property(e => e.Fk_SubLedgerId).IsRequired(true);
             builder.Property(e => e.Fk_BranchId).IsRequired(true);
             builder.Property(e => e.Fk_FinancialYearId).IsRequired(true);
@@ -28,6 +29,7 @@ namespace FMS.Db.DbEntityConfig
             builder.Property(e => e.Gst).HasColumnType("decimal(18, 2)").HasDefaultValue(0);
             builder.Property(e => e.GrandTotal).HasColumnType("decimal(18, 2)").HasDefaultValue(0);
             builder.HasOne(e => e.SubLedger).WithMany(s => s.PurchaseReturnOrders).HasForeignKey(e => e.Fk_SubLedgerId).OnDelete(DeleteBehavior.Restrict);
+            builder.HasOne(e => e.ProductType).WithMany(s => s.PurchaseReturnOrders).HasForeignKey(e => e.Fk_ProductTypeId).OnDelete(DeleteBehavior.Restrict);
             builder.HasOne(e => e.Branch).WithMany(s => s.PurchaseReturnOrders).HasForeignKey(e => e.Fk_BranchId).OnDelete(DeleteBehavior.Restrict);
             builder.HasOne(e => e.FinancialYear).WithMany(s => s.PurchaseReturnOrders).HasForeignKey(e => e.Fk_FinancialYearId).OnDelete(DeleteBehavior.Restrict);
         }

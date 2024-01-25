@@ -60,7 +60,14 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-6"></div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label class="pt-2">Product  Type</label>
+                                                <select class="form-control select2bs4" style="width: 100%" name="ddlProductType" tabindex="1">
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3"></div>
                                         <div class="col-md-3">
                                             <div class="form-group row mt-1 float-right">
                                                 <label class="pt-2">Transaction No</label>
@@ -245,7 +252,14 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-6"></div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label class="pt-2">Product  Type</label>
+                                                <select class="form-control select2bs4" style="width: 100%" name="Pr_ddlProductType" tabindex="1">
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3"></div>
                                         <div class="col-md-3">
                                             <div class="form-group row mt-1 float-right">
                                                 <label class="pt-2">Transaction No</label>
@@ -271,13 +285,13 @@
                                                 </div>
                                                 <div class="col-md-2">
                                                     <div class="form-group">
-                                                        <label>Invoice No</label>
+                                                        <label>Mat. Recive No</label>
                                                         <input type="text" class="form-control" id="" name="Pr_InvoiceNo" tabindex="13">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-2">
                                                     <div class="form-group">
-                                                        <label for="">Invoice Date</label>
+                                                        <label for="">Mat. Recive date</label>
                                                         <div class="input-group  date" id="reservationdate5" data-target-input="nearest">
                                                             <input type="text" class="form-control  datetimepicker-input" data-target="#reservationdate5" name="Pr_InvoiceDate" tabindex="14" />
                                                             <div class="input-group-append" data-target="#reservationdate5" data-toggle="datetimepicker">
@@ -359,7 +373,7 @@
                                                 <div class="col-md-6">
                                                     <div class="row">
                                                         <div class="col-md-12">
-                                                            <table id="tblPrGstdifference" class="table">                
+                                                            <table id="tblPrGstdifference" class="table">
                                                                 <tbody>
                                                                 </tbody>
                                                             </table>
@@ -421,26 +435,26 @@
     <!-- /.content -->
 </div>
 @section additionalScripts {
-<script src="~/scripts/FormScript.js"></script>
-<script src="~/viewscripts/transaction/purchasetransaction.js"></script>
-<script>
-    $('#reservationdate1').datetimepicker({
-        format: 'DD/MM/YYYY'
-    });
-    $('#reservationdate2').datetimepicker({
-        format: 'DD/MM/YYYY'
-    });
-    $('#reservationdate3').datetimepicker({
-        format: 'DD/MM/YYYY'
-    });
-    $('#reservationdate4').datetimepicker({
-        format: 'DD/MM/YYYY'
-    });
-    $('#reservationdate5').datetimepicker({
-        format: 'DD/MM/YYYY'
-    });
-    $('#reservationdate6').datetimepicker({
-        format: 'DD/MM/YYYY'
-    });
-</script>
+    <script src="~/scripts/FormScript.js"></script>
+    <script src="~/viewscripts/transaction/purchasetransaction.js"></script>
+    <script>
+        $('#reservationdate1').datetimepicker({
+            format: 'DD/MM/YYYY'
+        });
+        $('#reservationdate2').datetimepicker({
+            format: 'DD/MM/YYYY'
+        });
+        $('#reservationdate3').datetimepicker({
+            format: 'DD/MM/YYYY'
+        });
+        $('#reservationdate4').datetimepicker({
+            format: 'DD/MM/YYYY'
+        });
+        $('#reservationdate5').datetimepicker({
+            format: 'DD/MM/YYYY'
+        });
+        $('#reservationdate6').datetimepicker({
+            format: 'DD/MM/YYYY'
+        });
+    </script>
 }

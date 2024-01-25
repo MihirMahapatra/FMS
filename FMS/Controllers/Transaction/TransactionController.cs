@@ -40,12 +40,24 @@ namespace FMS.Controllers.Transaction
             return new JsonResult(result);
         }
         [HttpGet]
-        public async Task<IActionResult> GetProductRawMaterial()
+        public async Task<IActionResult> GetProductTypes()
         {
-            Guid ProductType = MappingProductType.RawMaterial;
-            var result = await _adminSvcs.GetProductByTypeId(ProductType);
+            var result = await _adminSvcs.GetProductTypes();
+            var elementToRemove = result.ProductTypes.Where(x => x.ProductTypeId == MappingProductType.ServiceGoods || x.ProductTypeId == MappingProductType.FinishedGood).ToList();
+            if (elementToRemove.Count > 0)
+            {
+                result.ProductTypes.RemoveAll(x => elementToRemove.Contains(x));
+            }
             return new JsonResult(result);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetProductByType(Guid ProductTypeId)
+        {
+            var result = await _adminSvcs.GetProductByTypeId(ProductTypeId);
+            return new JsonResult(result);
+        }
+
         #region Purchase
         [HttpGet]
         public async Task<IActionResult> GetLastPurchaseTransaction()

@@ -4,6 +4,7 @@
     {
         public Guid PurchaseOrderId { get; set; }
         public string TransactionNo { get; set; }
+        public Guid Fk_ProductTypeId { get; set; }
         public Guid Fk_SubLedgerId { get; set; }
         public Guid Fk_BranchId { get; set; }
         public Guid Fk_FinancialYearId { get; set; }
@@ -22,6 +23,7 @@
         public SubLedger SubLedger { get; set; }
         public Branch Branch { get; set; }
         public FinancialYear FinancialYear { get; set; }
+        public ProductType ProductType { get; set; }
         public ICollection<PurchaseTransaction> PurchaseTransactions { get; set; }
     }
 }

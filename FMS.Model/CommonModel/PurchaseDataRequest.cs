@@ -3,6 +3,7 @@
     public class PurchaseDataRequest
     {
         public Guid PurchaseOrderId { get; set; }
+        public Guid Fk_ProductTypeId { get; set; }
         public Guid Fk_SubLedgerId { get; set; }
         public string TransactionNo { get; set; }
         public string TransactionDate { get; set; }

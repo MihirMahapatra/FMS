@@ -13,6 +13,7 @@ $(function () {
     //purchase
     const purchaseOrderId = $('input[name="hdnPurchaseOrderId"]');
     const transactionDate = $('input[name="TransactionDate"]');
+    const ddlProductType = $('select[name="ddlProductType"]');
     const transactionNo = $('input[name="TransactionNo"]');
     const ddlSupplyer = $('select[name="ddlSupplyerId"]');
     const invoiceNo = $('input[name="InvoiceNo"]');
@@ -93,7 +94,7 @@ $(function () {
             if (!chkPage) {
                 e.preventDefault();
                 $('#addPurchaseRowBtn').click();
-            }        
+            }
         }
     });
     $('#addPurchaseRowBtn').on('focus', function () {
@@ -166,6 +167,7 @@ $(function () {
     const purchaseReturnOrderId = $('input[name="hdnPurchaseReturnOrderId"]');
     const Pr_transactionDate = $('input[name="Pr_TransactionDate"]');
     const Pr_transactionNo = $('input[name="Pr_TransactionNo"]');
+    const Pr_ddlProductType = $('select[name="Pr_ddlProductType"]');
     const Pr_ddlSupplyer = $('select[name="Pr_ddlSupplyerId"]');
     const Pr_invoiceNo = $('input[name="Pr_InvoiceNo"]');
     const Pr_invoiceDate = $('input[name="Pr_InvoiceDate"]');
@@ -244,7 +246,7 @@ $(function () {
             if (chkPage) {
                 e.preventDefault();
                 $('#addPurchaseReturnRowBtn').click();
-            } 
+            }
         }
     });
     $('#addPurchaseReturnRowBtn').on('focus', function () {
@@ -315,6 +317,34 @@ $(function () {
     });
     //-------------------------------------------------------------Purchase Screen --------------------------------------------------------//
     //Insert Operation  
+    GetProductTypes();
+    function GetProductTypes() {
+        $.ajax({
+            url: "/Transaction/GetProductTypes",
+            type: "GET",
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            success: function (result) {
+                if (result.ResponseCode == 302) {
+                    ddlProductType.empty();
+                    var defaultOption = $('<option></option>').val('').text('--Select Option--');
+                    ddlProductType.append(defaultOption);
+                    $.each(result.ProductTypes, function (key, item) {
+                        var option = $('<option></option>').val(item.ProductTypeId).text(item.Product_Type);
+                        ddlProductType.append(option);
+                    });
+                }
+                else {
+                    ddlProductType.empty();
+                    var defaultOption = $('<option></option>').val('').text('--Select Option--');
+                    ddlProductType.append(defaultOption);
+                }
+            },
+            error: function (errormessage) {
+                console.log(errormessage)
+            }
+        });
+    }
     GetSundryCreditors();
     function GetSundryCreditors() {
         $.ajax({
@@ -358,67 +388,74 @@ $(function () {
             }
         });
     }
-    $(document).on('click', '#addPurchaseRowBtn',function () {
-        var uniqueId = 'ddlitem' + new Date().getTime();
-        var html = '<tr>';
-        html += '<td hidden><input type="hidden" class="form-control" value="0"></td>';
-        html += '<td>' +
-            '<div class="form-group">' +
-            '    <select class="form-control form-control-sm select2bs4 Rawmaterial" style="width: 100%;" id="' + uniqueId + '"></select>' +
-            '</div>' +
-            '</td>';
-        html += '<td style="width:8%"><div class="form-group"><input type="text" id="txtAlternateQty" class="form-control" value="0"></div></td>';
-        html += '<td style="width:12%">' +
-            '<div class="form-group">' +
-            '<select class="form-control form-control select2bs4 selectedUnit" style="width:100%" disabled></select>' +
-            '</div>' +
-            '</td>';
-        html += '<td>' +
-            '<div class="form-group">' +
-            '<div class="input-group">' +
-            '<input type="text" class="form-control" value="0">' +
-            ' <div class="input-group-append">' +
-            ' <span class="input-group-text" id="Unit">N/A</span>' +
-            '</div>' +
-            '</div>' +
-            '</div>' +
-            '</td>';
-        html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
-        html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
-        html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
-        html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
-        html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
-        html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
-        html += '<td><button class="btn btn-primary btn-link deleteBtn" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button></td>';
-        html += '</tr>';
-        var newRow = PurchaseTable.row.add($(html)).draw(false).node();
-        $.ajax({
-            url: "/Transaction/GetProductRawMaterial",
-            type: "GET",
-            contentType: "application/json;charset=utf-8",
-            dataType: "json",
-            success: function (result) {
-                if (result.ResponseCode == 302) {
-                    var selectElement = $('#' + uniqueId);
-                    selectElement.empty();
-                    var defaultOption = $('<option></option>').val('').text('--Select Option--');
-                    selectElement.append(defaultOption);
-                    $.each(result.Products, function (key, item) {
-                        var option = $('<option></option>').val(item.ProductId).text(item.ProductName);
-                        selectElement.append(option);
-                    });
-                    selectElement.focus();
+    $(document).on('click', '#addPurchaseRowBtn', function () {
+        if (!ddlProductType.val() || ddlProductType.val() === '--Select Option--') {
+            toastr.error('Plz Select Product Type First');
+            ddlProductType.focus();
+            return;
+        }
+        else {
+            var uniqueId = 'ddlitem' + new Date().getTime();
+            var html = '<tr>';
+            html += '<td hidden><input type="hidden" class="form-control" value="0"></td>';
+            html += '<td>' +
+                '<div class="form-group">' +
+                '    <select class="form-control form-control-sm select2bs4 Rawmaterial" style="width: 100%;" id="' + uniqueId + '"></select>' +
+                '</div>' +
+                '</td>';
+            html += '<td style="width:8%"><div class="form-group"><input type="text" id="txtAlternateQty" class="form-control" value="0"></div></td>';
+            html += '<td style="width:12%">' +
+                '<div class="form-group">' +
+                '<select class="form-control form-control select2bs4 selectedUnit" style="width:100%" disabled></select>' +
+                '</div>' +
+                '</td>';
+            html += '<td>' +
+                '<div class="form-group">' +
+                '<div class="input-group">' +
+                '<input type="text" class="form-control" value="0">' +
+                ' <div class="input-group-append">' +
+                ' <span class="input-group-text" id="Unit">N/A</span>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '</td>';
+            html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
+            html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
+            html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
+            html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
+            html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
+            html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
+            html += '<td><button class="btn btn-primary btn-link deleteBtn" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button></td>';
+            html += '</tr>';
+            var newRow = PurchaseTable.row.add($(html)).draw(false).node();
+            $.ajax({
+                url: '/Transaction/GetProductByType?ProductTypeId=' + ddlProductType.val() + '',
+                type: "GET",
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    if (result.ResponseCode == 302) {
+                        var selectElement = $('#' + uniqueId);
+                        selectElement.empty();
+                        var defaultOption = $('<option></option>').val('').text('--Select Option--');
+                        selectElement.append(defaultOption);
+                        $.each(result.Products, function (key, item) {
+                            var option = $('<option></option>').val(item.ProductId).text(item.ProductName);
+                            selectElement.append(option);
+                        });
+                        selectElement.focus();
+                    }
+                },
+                error: function (errormessage) {
+                    console.log(errormessage)
                 }
-            },
-            error: function (errormessage) {
-                console.log(errormessage)
-            }
-        });
-        $('#tblPurchase tbody').find('.select2bs4').select2({
-            theme: 'bootstrap4'
-        });
-        });
-    $(document).on('change','.Rawmaterial',function () {
+            });
+            $('#tblPurchase tbody').find('.select2bs4').select2({
+                theme: 'bootstrap4'
+            });
+        }
+    });
+    $(document).on('change', '.Rawmaterial', function () {
         var selectElement = $(this);
         var selectedProductId = selectElement.val();
         if (selectedProductId) {
@@ -433,7 +470,7 @@ $(function () {
                         for (var i = 0; i < 7; i++) {
                             Textbox.eq(i).val('0');
                         }
-                      /*  Textbox.eq(2).val(result.product.Price);*/
+                        /*  Textbox.eq(2).val(result.product.Price);*/
                         Textbox.eq(5).val(result.product.GST);
                     }
                 },
@@ -562,6 +599,11 @@ $(function () {
             toastr.error('TransactionDate Is Required.');
             return;
         }
+        else if (!ddlProductType.val() || ddlProductType.val() === '--Select Option--') {
+            toastr.error('Product Type Is Required.');
+            Pr_ddlProductType.focus();
+            return;
+        }
         else if (!ddlSupplyer.val() || ddlSupplyer.val() === '--Select Option--') {
             toastr.error('Supplyer Name Is Required.');
             ddlSupplyer.focus();
@@ -610,6 +652,7 @@ $(function () {
             });
 
             var requestData = {
+                Fk_ProductTypeId: ddlProductType.val(),
                 Fk_SubLedgerId: ddlSupplyer.val(),
                 TransactionDate: transactionDate.val(),
                 TransactionNo: transactionNo.val(),
@@ -785,12 +828,40 @@ $(function () {
                 }
                 transactionNo.val(result.purchaseOrder.TransactionNo)
                 $.ajax({
+                    url: "/Transaction/GetProductTypes",
+                    type: "GET",
+                    contentType: "application/json;charset=utf-8",
+                    dataType: "json",
+                    success: function (result0) {
+                        if (result0.ResponseCode == 302) {
+                            ddlProductType.empty();
+                            var defaultOption = $('<option></option>').val('').text('--Select Option--');
+                            ddlProductType.append(defaultOption);
+                            $.each(result0.ProductTypes, function (key, item) {
+                                var option = $('<option></option>').val(item.ProductTypeId).text(item.Product_Type);
+                                if (item.ProductTypeId === result.purchaseOrder.Fk_ProductTypeId) {
+                                    option.attr('selected', 'selected');
+                                }
+                                ddlProductType.append(option);
+                            });
+                        }
+                        else {
+                            ddlProductType.empty();
+                            var defaultOption = $('<option></option>').val('').text('--Select Option--');
+                            ddlProductType.append(defaultOption);
+                        }
+                    },
+                    error: function (errormessage) {
+                        console.log(errormessage)
+                    }
+                });
+                $.ajax({
                     url: "/Transaction/GetSundryCreditors",
                     type: "GET",
                     contentType: "application/json;charset=utf-8",
                     dataType: "json",
                     success: function (result1) {
-                      
+
                         if (result1.ResponseCode == 302) {
                             ddlSupplyer.empty();
                             var defaultOption = $('<option></option>').val('').text('--Select Option--');
@@ -865,7 +936,7 @@ $(function () {
                         '<div class="input-group">' +
                         '<input type="text" class="form-control" value=' + item.UnitQuantity + '>' +
                         ' <div class="input-group-append">' +
-                        ' <span class="input-group-text" id="Unit">' + item.UnitName+'</span>' +
+                        ' <span class="input-group-text" id="Unit">' + item.UnitName + '</span>' +
                         '</div>' +
                         '</div>' +
                         '</div>' +
@@ -879,13 +950,13 @@ $(function () {
                     html += '<td><button class="btn btn-primary btn-link deleteBtn" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button></td>';
                     html += '</tr>';
 
-                   PurchaseTable.row.add($(html)).draw(false).node();
+                    PurchaseTable.row.add($(html)).draw(false).node();
                     var selectProductElement = $('#ddnProduct_' + item.PurchaseId);
                     selectProductElement.empty();
                     var defaultProductOption = $('<option></option>').val('').text('--Select Option--');
                     selectProductElement.append(defaultProductOption);
                     $.ajax({
-                        url: "/Transaction/GetProductRawMaterial",
+                        url: '/Transaction/GetProductByType?ProductTypeId=' + result.purchaseOrder.Fk_ProductTypeId +'',
                         type: "GET",
                         contentType: "application/json;charset=utf-8",
                         dataType: "json",
@@ -934,8 +1005,8 @@ $(function () {
                 });
                 const gstDifferences = {};
                 $('#tblPurchase tbody tr').each(function () {
-                    const gstRate = parseFloat($(this).find('input:eq(5)').val()); 
-                    const amount = parseFloat($(this).find('input:eq(7)').val()); 
+                    const gstRate = parseFloat($(this).find('input:eq(5)').val());
+                    const amount = parseFloat($(this).find('input:eq(7)').val());
 
                     if (!isNaN(gstRate) && !isNaN(amount)) {
                         if (gstRate in gstDifferences) {
@@ -963,9 +1034,14 @@ $(function () {
     }
     $('#btnUpdate').on('click', UpdatePurchase);
     function UpdatePurchase() {
-        
+
         if (!transactionDate.val()) {
             toastr.error('TransactionDate Is Required.');
+            return;
+        }
+        else if (!ddlProductType.val() || ddlProductType.val() === '--Select Option--') {
+            toastr.error('Product Type Is Required.');
+            Pr_ddlProductType.focus();
             return;
         }
         else if (!ddlSupplyer.val() || ddlSupplyer.val() === '--Select Option--') {
@@ -1015,6 +1091,7 @@ $(function () {
             });
             var requestData = {
                 PurchaseOrderId: purchaseOrderId.val(),
+                Fk_ProductTypeId: ddlProductType.val(),
                 TransactionDate: transactionDate.val(),
                 TransactionNo: transactionNo.val(),
                 Fk_SubLedgerId: ddlSupplyer.val(),
@@ -1113,7 +1190,35 @@ $(function () {
     $('a[href="#CreatePurchaseReturn"]').on('click', function () {
         GetSundryCreditorsForPurchaseReturn();
         GetLastPurchaseReturnTransaction();
+        GetProductTypeForPurchaseReturn();
     });
+    function GetProductTypeForPurchaseReturn() {
+        $.ajax({
+            url: "/Transaction/GetProductTypes",
+            type: "GET",
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            success: function (result) {
+                if (result.ResponseCode == 302) {
+                    Pr_ddlProductType.empty();
+                    var defaultOption = $('<option></option>').val('').text('--Select Option--');
+                    Pr_ddlProductType.append(defaultOption);
+                    $.each(result.ProductTypes, function (key, item) {
+                        var option = $('<option></option>').val(item.ProductTypeId).text(item.Product_Type);
+                        Pr_ddlProductType.append(option);
+                    });
+                }
+                else {
+                    Pr_ddlProductType.empty();
+                    var defaultOption = $('<option></option>').val('').text('--Select Option--');
+                    Pr_ddlProductType.append(defaultOption);
+                }
+            },
+            error: function (errormessage) {
+                console.log(errormessage)
+            }
+        });
+    }
     function GetSundryCreditorsForPurchaseReturn() {
         $.ajax({
             url: "/Transaction/GetSundryCreditors",
@@ -1157,59 +1262,66 @@ $(function () {
     }
     $('#addPurchaseReturnRowBtn').on('click', PurchaseReturnRowBtn);
     function PurchaseReturnRowBtn() {
-        var uniqueId = 'ddlitem' + new Date().getTime();
-        var html = '<tr>';
-        html += '<td hidden><input type="hidden" class="form-control" value="0"></td>';
-        html += '<td><div class="form-group"><select class="form-control form-control-sm select2bs4 Rawmaterial" style="width: 100%;" id="' + uniqueId + '"></select></div></td>';
-        html += '<td style="width:8%"><div class="form-group"><input type="text" class="form-control" id="Qtyrt" value="0"></div></td>';
-        html += '<td style="width:12%">' +
-            '<div class="form-group">' +
-            '<select class="form-control form-control select2bs4 selectedUnitRtn" style="width:100%" disabled></select>' +
-            '</div>' +
-            '</td>';
-        html += '<td>' +
-            '<div class="form-group">' +
-            '<div class="input-group">' +
-            '<input type="text" class="form-control" value="0">' +
-            ' <div class="input-group-append">' +
-            ' <span class="input-group-text" id="Unit">N/A</span>' +
-            '</div>' +
-            '</div>' +
-            '</div>' +
-            '</td>';
-        html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
-        html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
-        html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
-        html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
-        html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
-        html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
-        html += '<td><button class="btn btn-primary btn-link deleteBtnReturn" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button></td>';
-        html += '</tr>';
-        var newRow = PurchaseReturnTable.row.add($(html)).draw(false).node();
-        $.ajax({
-            url: "/Transaction/GetProductRawMaterial",
-            type: "GET",
-            contentType: "application/json;charset=utf-8",
-            dataType: "json",
-            success: function (result) {
-                if (result.ResponseCode == 302) {
-                    var selectElement = $('#' + uniqueId);
-                    selectElement.empty();
-                    var defaultOption = $('<option></option>').val('').text('--Select Option--');
-                    selectElement.append(defaultOption);
-                    $.each(result.Products, function (key, item) {
-                        var option = $('<option></option>').val(item.ProductId).text(item.ProductName);
-                        selectElement.append(option);
-                    });
+        if (!Pr_ddlProductType.val() || Pr_ddlProductType.val() === '--Select Option--') {
+            toastr.error('Plz Select Product Type First');
+            Pr_ddlProductType.focus();
+            return;
+        }
+        else {
+            var uniqueId = 'ddlitem' + new Date().getTime();
+            var html = '<tr>';
+            html += '<td hidden><input type="hidden" class="form-control" value="0"></td>';
+            html += '<td><div class="form-group"><select class="form-control form-control-sm select2bs4 Rawmaterial" style="width: 100%;" id="' + uniqueId + '"></select></div></td>';
+            html += '<td style="width:8%"><div class="form-group"><input type="text" class="form-control" id="Qtyrt" value="0"></div></td>';
+            html += '<td style="width:12%">' +
+                '<div class="form-group">' +
+                '<select class="form-control form-control select2bs4 selectedUnitRtn" style="width:100%" disabled></select>' +
+                '</div>' +
+                '</td>';
+            html += '<td>' +
+                '<div class="form-group">' +
+                '<div class="input-group">' +
+                '<input type="text" class="form-control" value="0">' +
+                ' <div class="input-group-append">' +
+                ' <span class="input-group-text" id="Unit">N/A</span>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '</td>';
+            html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
+            html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
+            html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
+            html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
+            html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
+            html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
+            html += '<td><button class="btn btn-primary btn-link deleteBtnReturn" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button></td>';
+            html += '</tr>';
+            var newRow = PurchaseReturnTable.row.add($(html)).draw(false).node();
+            $.ajax({
+                url: '/Transaction/GetProductByType?ProductTypeId=' + Pr_ddlProductType.val() + '',
+                type: "GET",
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    if (result.ResponseCode == 302) {
+                        var selectElement = $('#' + uniqueId);
+                        selectElement.empty();
+                        var defaultOption = $('<option></option>').val('').text('--Select Option--');
+                        selectElement.append(defaultOption);
+                        $.each(result.Products, function (key, item) {
+                            var option = $('<option></option>').val(item.ProductId).text(item.ProductName);
+                            selectElement.append(option);
+                        });
+                    }
+                },
+                error: function (errormessage) {
+                    console.log(errormessage)
                 }
-            },
-            error: function (errormessage) {
-                console.log(errormessage)
-            }
-        });
-        $('#tblPurchaseReturn tbody').find('.select2bs4').select2({
-            theme: 'bootstrap4'
-        });
+            });
+            $('#tblPurchaseReturn tbody').find('.select2bs4').select2({
+                theme: 'bootstrap4'
+            });
+        }
     }
     $(document).on('change', '#Qtyrt', function () {
         var row = $(this).closest('tr');
@@ -1310,15 +1422,19 @@ $(function () {
     });
     $('#Pr_btnSave').on('click', CreatetPurchaseReturn);
     function CreatetPurchaseReturn() {
-        
+
         if (!Pr_transactionDate.val()) {
             toastr.error('TransactionDate Is Required.');
+            return;
+        }
+        else if (!Pr_ddlProductType.val() || Pr_ddlProductType.val() === '--Select Option--') {
+            toastr.error('Product Type Is Required.');
+            Pr_ddlProductType.focus();
             return;
         }
         else if (!Pr_ddlSupplyer.val() || Pr_ddlSupplyer.val() === '--Select Option--') {
             toastr.error('Supplyer Name Is Required.');
             Pr_ddlSupplyer.focus();
-
             return;
         } else if (!Pr_invoiceNo.val()) {
             toastr.error('InvoiceNo Is Required.');
@@ -1363,6 +1479,7 @@ $(function () {
             });
             if (rowData !== null) {
                 var requestData = {
+                    Fk_ProductTypeId: Pr_ddlProductType.val(),
                     Fk_SubLedgerId: Pr_ddlSupplyer.val(),
                     TransactionDate: Pr_transactionDate.val(),
                     TransactionNo: Pr_transactionNo.val(),
@@ -1541,7 +1658,35 @@ $(function () {
                         Pr_transactionDate.val(formattedDate);
                     }
                 }
-                Pr_transactionNo.val(result.purchaseReturnOrder.TransactionNo)
+                Pr_transactionNo.val(result.purchaseReturnOrder.TransactionNo);
+                $.ajax({
+                    url: "/Transaction/GetProductTypes",
+                    type: "GET",
+                    contentType: "application/json;charset=utf-8",
+                    dataType: "json",
+                    success: function (result0) {
+                        if (result0.ResponseCode == 302) {
+                            Pr_ddlProductType.empty();
+                            var defaultOption = $('<option></option>').val('').text('--Select Option--');
+                            Pr_ddlProductType.append(defaultOption);
+                            $.each(result0.ProductTypes, function (key, item) {
+                                var option = $('<option></option>').val(item.ProductTypeId).text(item.Product_Type);
+                                if (item.ProductTypeId === result.purchaseReturnOrder.Fk_ProductTypeId) {
+                                    option.attr('selected', 'selected');
+                                }
+                                Pr_ddlProductType.append(option);
+                            });
+                        }
+                        else {
+                            Pr_ddlProductType.empty();
+                            var defaultOption = $('<option></option>').val('').text('--Select Option--');
+                            Pr_ddlProductType.append(defaultOption);
+                        }
+                    },
+                    error: function (errormessage) {
+                        console.log(errormessage)
+                    }
+                });
                 $.ajax({
                     url: "/Transaction/GetSundryCreditors",
                     type: "GET",
@@ -1606,10 +1751,20 @@ $(function () {
                     var html = '<tr>';
                     html += '<td  hidden><input type="hidden" class="form-control"  value=' + item.PurchaseReturnId + '></td>';
                     html += '<td><div class="form-group"><select class="form-control form-control-sm select2bs4 Rawmaterial" style="width: 100%;" id="ddn_' + item.PurchaseReturnId + '"> </select></div></td>';
-                    html += '<td><div class="form-group"><input type="text" class="form-control" id="" value=' + item.Quantity + '></div></td>';
+                    html += '<td style="width:8%"><div class="form-group"><input type="text" class="form-control" id="Qtyrt" value=' + item.AlternateQuantity + '></div></td>';
                     html += '<td style="width:12%">' +
                         '<div class="form-group">' +
-                        '<select class="form-control form-control select2bs4" style="width:100%" id="ddnUnit_' + item.PurchaseReturnId + '"></select>' +
+                        '<select class="form-control form-control select2bs4 selectedUnitRtn" style="width:100%" id="ddnUnit_' + item.PurchaseReturnId + '" disabled></select>' +
+                        '</div>' +
+                        '</td>';
+                    html += '<td>' +
+                        '<div class="form-group">' +
+                        '<div class="input-group">' +
+                        '<input type="text" class="form-control" value=' + item.UnitQuantity + '>' +
+                        ' <div class="input-group-append">' +
+                        ' <span class="input-group-text" id="Unit">' + item.UnitName + '</span>' +
+                        '</div>' +
+                        '</div>' +
                         '</div>' +
                         '</td>';
                     html += '<td><div class="form-group"><input type="text" class="form-control" id=""  value=' + item.Rate + '></div></td>';
@@ -1626,13 +1781,13 @@ $(function () {
                     var defaultOption = $('<option></option>').val('').text('--Select Option--');
                     selectProductElement.append(defaultOption);
                     $.ajax({
-                        url: "/Transaction/GetProductRawMaterial",
+                        url: '/Transaction/GetProductByType?ProductTypeId=' + result.purchaseReturnOrder.Fk_ProductTypeId +'',
                         type: "GET",
                         contentType: "application/json;charset=utf-8",
                         dataType: "json",
                         success: function (result) {
                             if (result.ResponseCode == 302) {
-                                $.each(result.products, function (key, item1) {
+                                $.each(result.Products, function (key, item1) {
                                     var option = $('<option></option>').val(item1.ProductId).text(item1.ProductName);
                                     if (item.Fk_ProductId === item1.ProductId) {
                                         option.attr('selected', 'selected');
@@ -1675,8 +1830,8 @@ $(function () {
                 });
                 const gstDifferences = {};
                 $('#tblPurchaseReturn tbody tr').each(function () {
-                    const gstRate = parseFloat($(this).find('input:eq(5)').val()); // Assuming GST rate is in the 6th input field (0-based index).
-                    const amount = parseFloat($(this).find('input:eq(7)').val());   // Assuming the amount is in the 8th input field (0-based index).
+                    const gstRate = parseFloat($(this).find('input:eq(5)').val());
+                    const amount = parseFloat($(this).find('input:eq(7)').val());
 
                     if (!isNaN(gstRate) && !isNaN(amount)) {
                         if (gstRate in gstDifferences) {
@@ -1706,6 +1861,11 @@ $(function () {
     function UpdatetPurchaseReturn() {
         if (!Pr_transactionDate.val()) {
             toastr.error('TransactionDate Is Required.');
+            return;
+        }
+        else if (!Pr_ddlProductType.val() || Pr_ddlProductType.val() === '--Select Option--') {
+            toastr.error('Product Type Is Required.');
+            Pr_ddlProductType.focus();
             return;
         }
         else if (!Pr_ddlSupplyer.val() || Pr_ddlSupplyer.val() === '--Select Option--') {
@@ -1755,6 +1915,7 @@ $(function () {
             });
             var requestData = {
                 PurchaseOrderId: purchaseReturnOrderId.val(),
+                Fk_ProductTypeId: Pr_ddlProductType.val(),
                 TransactionDate: Pr_transactionDate.val(),
                 TransactionNo: Pr_transactionNo.val(),
                 Fk_SubLedgerId: Pr_ddlSupplyer.val(),
