@@ -612,7 +612,8 @@ namespace FMS.Controllers.Transaction
         [HttpGet]
         public async Task<IActionResult> GetAllLabours()
         {
-            var result = await _masterSvcs.GetAllLabourDetails();
+
+            var result = await _masterSvcs.GetLaboursByLabourTypeId(MappingLabourType.Production);
             return new JsonResult(result);
         }
         [HttpGet]

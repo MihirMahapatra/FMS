@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
+using System.ComponentModel.Design;
 using System.Globalization;
 using System.Text;
 
@@ -137,7 +138,7 @@ namespace FMS.Repository.Transaction
                 var Query = await _appDbContext.PurchaseOrders.Where(s => s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear && s.PurchaseOrderId == Id).Select(s => new PurchaseOrderModel
                 {
                     PurchaseOrderId = s.PurchaseOrderId,
-                    Fk_ProductTypeId =s.Fk_ProductTypeId,
+                    Fk_ProductTypeId = s.Fk_ProductTypeId,
                     Fk_SubLedgerId = s.Fk_SubLedgerId,
                     TransactionNo = s.TransactionNo,
                     TransactionDate = s.TransactionDate,
@@ -201,7 +202,7 @@ namespace FMS.Repository.Transaction
                         #region Purchase Odr
                         var newPurchaseOrder = new PurchaseOrder
                         {
-                            Fk_ProductTypeId=data.Fk_ProductTypeId,
+                            Fk_ProductTypeId = data.Fk_ProductTypeId,
                             Fk_SubLedgerId = data.Fk_SubLedgerId,
                             Fk_BranchId = BranchId,
                             Fk_FinancialYearId = FinancialYear,
@@ -389,6 +390,7 @@ namespace FMS.Repository.Transaction
                                     AvilableStock = newPurchaseTransaction.UnitQuantity
                                 };
                                 await _appDbContext.Stocks.AddAsync(AddNewStock);
+                                await _appDbContext.SaveChangesAsync();
                             }
                             #endregion
                         }
@@ -914,7 +916,7 @@ namespace FMS.Repository.Transaction
                         #region purchase Return Order
                         var newPurchaseReturnOrder = new PurchaseReturnOrder
                         {
-                            Fk_ProductTypeId=data.Fk_ProductTypeId,
+                            Fk_ProductTypeId = data.Fk_ProductTypeId,
                             Fk_SubLedgerId = data.Fk_SubLedgerId,
                             Fk_BranchId = BranchId,
                             Fk_FinancialYearId = FinancialYear,
@@ -1100,6 +1102,8 @@ namespace FMS.Repository.Transaction
                                     Fk_FinancialYear = FinancialYear,
                                     AvilableStock = -newPurchaseReturnTransaction.UnitQuantity
                                 };
+                                await _appDbContext.Stocks.AddAsync(AddNewStock);
+                                await _appDbContext.SaveChangesAsync();
                             }
                             #endregion
                         }
@@ -1592,40 +1596,49 @@ namespace FMS.Repository.Transaction
                             }
                             //update Rawmterial Stock
                             var getFinishedGoodRawmaterial = await _appDbContext.Productions.Where(s => s.Fk_FinishedGoodId == newProductionEntry.Fk_ProductId).ToListAsync();
-                            foreach (var item1 in getFinishedGoodRawmaterial)
+                            if (getFinishedGoodRawmaterial.Count > 0)
                             {
-                                var UpdateRawMaterialStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == item1.Fk_RawMaterialId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
-                                if (UpdateRawMaterialStock != null)
+                                foreach (var item1 in getFinishedGoodRawmaterial)
                                 {
-                                    UpdateRawMaterialStock.AvilableStock -= (newProductionEntry.Quantity * item1.Quantity);
-                                    await _appDbContext.SaveChangesAsync();
-                                }
-                                else
-                                {
-                                    var AddNewRawMaterialStock = new Stock
+                                    var UpdateRawMaterialStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == item1.Fk_RawMaterialId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                    if (UpdateRawMaterialStock != null)
                                     {
+                                        UpdateRawMaterialStock.AvilableStock -= (newProductionEntry.Quantity * item1.Quantity);
+                                        await _appDbContext.SaveChangesAsync();
+                                    }
+                                    else
+                                    {
+                                        var AddNewRawMaterialStock = new Stock
+                                        {
+                                            Fk_BranchId = BranchId,
+                                            Fk_ProductId = item1.Fk_RawMaterialId,
+                                            Fk_FinancialYear = FinancialYear,
+                                            AvilableStock = -(item1.Quantity)
+                                        };
+                                        await _appDbContext.Stocks.AddAsync(AddNewRawMaterialStock);
+                                        await _appDbContext.SaveChangesAsync();
+                                    }
+                                    //******************************************Production Entry Transaction***************************************************//
+                                    var newProductionEntryTransaction = new LabourTransaction()
+                                    {
+                                        Fk_LabourOdrId = newProductionEntry.LabourOrderId,
+                                        TransactionNo = newProductionEntry.TransactionNo,
+                                        TransactionDate = convertedProductionDate,
                                         Fk_BranchId = BranchId,
+                                        Fk_FinancialYearId = FinancialYear,
                                         Fk_ProductId = item1.Fk_RawMaterialId,
-                                        Fk_FinancialYear = FinancialYear,
-                                        AvilableStock = -(item1.Quantity)
+                                        Quantity = (newProductionEntry.Quantity * item1.Quantity),
                                     };
-                                    await _appDbContext.Stocks.AddAsync(AddNewRawMaterialStock);
+                                    await _appDbContext.LabourTransactions.AddAsync(newProductionEntryTransaction);
                                     await _appDbContext.SaveChangesAsync();
                                 }
-                                //******************************************Production Entry Transaction***************************************************//
-                                var newProductionEntryTransaction = new LabourTransaction()
-                                {
-                                    Fk_LabourOdrId = newProductionEntry.LabourOrderId,
-                                    TransactionNo = newProductionEntry.TransactionNo,
-                                    TransactionDate = convertedProductionDate,
-                                    Fk_BranchId = BranchId,
-                                    Fk_FinancialYearId = FinancialYear,
-                                    Fk_ProductId = item1.Fk_RawMaterialId,
-                                    Quantity = (newProductionEntry.Quantity * item1.Quantity),
-                                };
-                                await _appDbContext.LabourTransactions.AddAsync(newProductionEntryTransaction);
-                                await _appDbContext.SaveChangesAsync();
                             }
+                            else
+                            {
+                                _Result.WarningMessage = "Finshed Good Not Configure For Deduct RawMaterial";
+                                return _Result;
+                            }
+
                             #endregion
                             #region SubLedgerBalance & Ledger Balance
                             // @Labour A/c------Cr
@@ -1747,121 +1760,139 @@ namespace FMS.Repository.Transaction
                         if (UpdateProductionEntry != null)
                         {
                             var getFinishedGoodRawmaterial = await _appDbContext.Productions.Where(s => s.Fk_FinishedGoodId == data.Fk_ProductId).ToListAsync();
-                            var UpdateFinishedGoodStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == data.Fk_ProductId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
-                            if (data.Fk_ProductId == UpdateProductionEntry.Fk_ProductId)
+                            if (getFinishedGoodRawmaterial.Count > 0)
                             {
-                                #region Update Stock
-                                //Update FinishedGood Stock
-                                if (UpdateFinishedGoodStock != null)
+                                var UpdateFinishedGoodStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == data.Fk_ProductId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                if (data.Fk_ProductId == UpdateProductionEntry.Fk_ProductId)
                                 {
-                                    var quantityDifference = (UpdateProductionEntry.Quantity - data.Quantity);
-                                    UpdateFinishedGoodStock.AvilableStock -= quantityDifference;
-                                    await _appDbContext.SaveChangesAsync();
+                                    #region Update Stock
+                                    //Update FinishedGood Stock
+                                    if (UpdateFinishedGoodStock != null)
+                                    {
+                                        var quantityDifference = (UpdateProductionEntry.Quantity - data.Quantity);
+                                        UpdateFinishedGoodStock.AvilableStock -= quantityDifference;
+                                        await _appDbContext.SaveChangesAsync();
+                                    }
+                                    else
+                                    {
+                                        var AddNewStock = new Stock
+                                        {
+                                            Fk_BranchId = BranchId,
+                                            Fk_ProductId = data.Fk_ProductId,
+                                            Fk_FinancialYear = FinancialYear,
+                                            AvilableStock = data.Quantity
+                                        };
+                                        await _appDbContext.Stocks.AddAsync(AddNewStock);
+                                    }
+                                    //Update RawMaterial Stock
+                                    foreach (var item in getFinishedGoodRawmaterial)
+                                    {
+                                        var UpdateRawMaterialStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == item.Fk_RawMaterialId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                        if (UpdateRawMaterialStock != null)
+                                        {
+                                            var quantityDifference = ((UpdateProductionEntry.Quantity - data.Quantity) * item.Quantity);
+                                            UpdateRawMaterialStock.AvilableStock += quantityDifference;
+                                            await _appDbContext.SaveChangesAsync();
+                                        }
+                                        //******************************************Production Entry Transaction***************************************************//
+                                        var getSingleProductionEntryTransaction = await _appDbContext.LabourTransactions.Where(s => s.Fk_LabourOdrId == UpdateProductionEntry.LabourOrderId && s.Fk_ProductId == item.Fk_RawMaterialId && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).SingleOrDefaultAsync();
+                                        if (getSingleProductionEntryTransaction != null)
+                                        {
+                                            var differencetrn = ((UpdateProductionEntry.Quantity - data.Quantity) * item.Quantity);
+                                            getSingleProductionEntryTransaction.Quantity -= differencetrn;
+                                            getSingleProductionEntryTransaction.TransactionDate = convertedProductionDate;
+                                            await _appDbContext.SaveChangesAsync();
+                                        }
+                                    }
+                                    #endregion
                                 }
                                 else
                                 {
-                                    var AddNewStock = new Stock
+                                    #region Revert Stock
+                                    //Revert RawMaterial Stock
+                                    var getOldProductFinishedGoodRawmaterial = await _appDbContext.Productions.Where(s => s.Fk_FinishedGoodId == UpdateProductionEntry.Fk_ProductId).ToListAsync();
+                                    if (getOldProductFinishedGoodRawmaterial.Count > 0)
                                     {
-                                        Fk_BranchId = BranchId,
-                                        Fk_ProductId = data.Fk_ProductId,
-                                        Fk_FinancialYear = FinancialYear,
-                                        AvilableStock = data.Quantity
-                                    };
-                                    await _appDbContext.Stocks.AddAsync(AddNewStock);
-                                }
-                                //Update RawMaterial Stock
-                                foreach (var item in getFinishedGoodRawmaterial)
-                                {
-                                    var UpdateRawMaterialStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == item.Fk_RawMaterialId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
-                                    if (UpdateRawMaterialStock != null)
+                                        foreach (var item in getOldProductFinishedGoodRawmaterial)
+                                        {
+                                            var UpdateRawMaterialStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == item.Fk_RawMaterialId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                            if (UpdateRawMaterialStock != null)
+                                            {
+                                                UpdateRawMaterialStock.AvilableStock += (item.Quantity * UpdateProductionEntry.Quantity);
+                                                await _appDbContext.SaveChangesAsync();
+                                            }
+                                        }
+                                        //Revert FinishedGood Stock
+                                        var UpdateOldFinishedGoodStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == UpdateProductionEntry.Fk_ProductId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                        if (UpdateOldFinishedGoodStock != null)
+                                        {
+                                            UpdateOldFinishedGoodStock.AvilableStock -= UpdateProductionEntry.Quantity;
+                                            await _appDbContext.SaveChangesAsync();
+                                        }
+                                    }
+                                    else
                                     {
-                                        var quantityDifference = ((UpdateProductionEntry.Quantity - data.Quantity) * item.Quantity);
-                                        UpdateRawMaterialStock.AvilableStock += quantityDifference;
+                                        _Result.WarningMessage = "Finshed Good Not Configure For Deduct RawMaterial";
+                                        return _Result;
+                                    }
+                                    #endregion
+                                    #region Delete Production Entry Transaction
+                                    var deleteProductionEntryTransaction = await _appDbContext.LabourTransactions.Where(s => s.Fk_LabourOdrId == UpdateProductionEntry.LabourOrderId && s.Fk_BranchId == BranchId).ToListAsync();
+                                    _appDbContext.RemoveRange(deleteProductionEntryTransaction);
+                                    await _appDbContext.SaveChangesAsync();
+                                    #endregion
+                                    #region Update Stock
+                                    //Update RawMaterial Stock
+                                    foreach (var item in getFinishedGoodRawmaterial)
+                                    {
+                                        var UpdateRawMaterialStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == item.Fk_RawMaterialId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                        if (UpdateRawMaterialStock != null)
+                                        {
+                                            UpdateRawMaterialStock.AvilableStock -= (data.Quantity * item.Quantity);
+                                            await _appDbContext.SaveChangesAsync();
+                                        }
+                                        //******************************************Production Entry Transaction***************************************************//
+                                        var newProductionEntryTransaction = new LabourTransaction()
+                                        {
+                                            Fk_LabourOdrId = UpdateProductionEntry.LabourOrderId,
+                                            TransactionNo = UpdateProductionEntry.TransactionNo,
+                                            TransactionDate = convertedProductionDate,
+                                            Fk_BranchId = BranchId,
+                                            Fk_FinancialYearId = FinancialYear,
+                                            Fk_ProductId = item.Fk_RawMaterialId,
+                                            Quantity = (data.Quantity * item.Quantity),
+                                        };
+                                        await _appDbContext.LabourTransactions.AddAsync(newProductionEntryTransaction);
                                         await _appDbContext.SaveChangesAsync();
                                     }
-                                    //******************************************Production Entry Transaction***************************************************//
-                                    var getSingleProductionEntryTransaction = await _appDbContext.LabourTransactions.Where(s => s.Fk_LabourOdrId == UpdateProductionEntry.LabourOrderId && s.Fk_ProductId == item.Fk_RawMaterialId && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).SingleOrDefaultAsync();
-                                    if (getSingleProductionEntryTransaction != null)
+
+                                    //Update FinishedGood Stock
+                                    if (UpdateFinishedGoodStock != null)
                                     {
-                                        var differencetrn = ((UpdateProductionEntry.Quantity - data.Quantity) * item.Quantity);
-                                        getSingleProductionEntryTransaction.Quantity -= differencetrn;
-                                        getSingleProductionEntryTransaction.TransactionDate = convertedProductionDate;
+                                        UpdateFinishedGoodStock.AvilableStock += data.Quantity;
                                         await _appDbContext.SaveChangesAsync();
                                     }
+                                    else
+                                    {
+                                        var AddNewStock = new Stock
+                                        {
+                                            Fk_BranchId = BranchId,
+                                            Fk_ProductId = data.Fk_ProductId,
+                                            Fk_FinancialYear = FinancialYear,
+                                            AvilableStock = data.Quantity
+                                        };
+                                        await _appDbContext.Stocks.AddAsync(AddNewStock);
+                                        await _appDbContext.SaveChangesAsync();
+                                    }
+                                    #endregion
                                 }
-                                #endregion
                             }
                             else
                             {
-                                #region Revert Stock
-                                //Revert RawMaterial Stock
-                                var getOldProductFinishedGoodRawmaterial = await _appDbContext.Productions.Where(s => s.Fk_FinishedGoodId == UpdateProductionEntry.Fk_ProductId).ToListAsync();
-                                foreach (var item in getOldProductFinishedGoodRawmaterial)
-                                {
-                                    var UpdateRawMaterialStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == item.Fk_RawMaterialId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
-                                    if (UpdateRawMaterialStock != null)
-                                    {
-                                        UpdateRawMaterialStock.AvilableStock += (item.Quantity * UpdateProductionEntry.Quantity);
-                                        await _appDbContext.SaveChangesAsync();
-                                    }
-                                }
-                                //Revert FinishedGood Stock
-                                var UpdateOldFinishedGoodStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == UpdateProductionEntry.Fk_ProductId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
-                                if (UpdateOldFinishedGoodStock != null)
-                                {
-                                    UpdateOldFinishedGoodStock.AvilableStock -= UpdateProductionEntry.Quantity;
-                                    await _appDbContext.SaveChangesAsync();
-                                }
-                                #endregion
-                                # region Delete Production Entry Transaction
-                                var deleteProductionEntryTransaction = await _appDbContext.LabourTransactions.Where(s => s.Fk_LabourOdrId == UpdateProductionEntry.LabourOrderId && s.Fk_BranchId == BranchId).ToListAsync();
-                                _appDbContext.RemoveRange(deleteProductionEntryTransaction);
-                                await _appDbContext.SaveChangesAsync();
-                                #endregion
-                                #region Update Stock
-                                //Update RawMaterial Stock
-                                foreach (var item in getFinishedGoodRawmaterial)
-                                {
-                                    var UpdateRawMaterialStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == item.Fk_RawMaterialId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
-                                    if (UpdateRawMaterialStock != null)
-                                    {
-                                        UpdateRawMaterialStock.AvilableStock -= (data.Quantity * item.Quantity);
-                                        await _appDbContext.SaveChangesAsync();
-                                    }
-                                    //******************************************Production Entry Transaction***************************************************//
-                                    var newProductionEntryTransaction = new LabourTransaction()
-                                    {
-                                        Fk_LabourOdrId = UpdateProductionEntry.LabourOrderId,
-                                        TransactionNo = UpdateProductionEntry.TransactionNo,
-                                        TransactionDate = convertedProductionDate,
-                                        Fk_BranchId = BranchId,
-                                        Fk_FinancialYearId = FinancialYear,
-                                        Fk_ProductId = item.Fk_RawMaterialId,
-                                        Quantity = (data.Quantity * item.Quantity),
-                                    };
-                                    await _appDbContext.LabourTransactions.AddAsync(newProductionEntryTransaction);
-                                    await _appDbContext.SaveChangesAsync();
-                                }
-
-                                //Update FinishedGood Stock
-                                if (UpdateFinishedGoodStock != null)
-                                {
-                                    UpdateFinishedGoodStock.AvilableStock += data.Quantity;
-                                    await _appDbContext.SaveChangesAsync();
-                                }
-                                else
-                                {
-                                    var AddNewStock = new Stock
-                                    {
-                                        Fk_BranchId = BranchId,
-                                        Fk_ProductId = data.Fk_ProductId,
-                                        Fk_FinancialYear = FinancialYear,
-                                        AvilableStock = data.Quantity
-                                    };
-                                    await _appDbContext.Stocks.AddAsync(AddNewStock);
-                                }
-                                #endregion
+                                _Result.WarningMessage = "Finshed Good Not Configure For Deduct RawMaterial";
+                                return _Result;
                             }
+
                             #region Ledger & SubLedger Balance
                             var difference = data.Amount - UpdateProductionEntry.Amount;
                             // @Labour A/c------Cr
@@ -3957,6 +3988,517 @@ namespace FMS.Repository.Transaction
         }
         #endregion
         #endregion
+        #region Damage Transaction
+        public async Task<Result<string>> GetLastDamageEntry()
+        {
+            Result<string> _Result = new();
+            try
+            {
+                Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
+                Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
+                _Result.IsSuccess = false;
+                var lastDamageEntry = await _appDbContext.DamageOrders.Where(s => s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).OrderByDescending(s => s.TransactionNo).Select(s => new { s.TransactionNo }).FirstOrDefaultAsync();
+                if (lastDamageEntry != null)
+                {
+                    var lastTransactionNo = lastDamageEntry.TransactionNo;
+                    _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
+                    if (int.TryParse(lastTransactionNo.AsSpan(3), out int currentId))
+                    {
+                        currentId++;
+                        var newTransactionNo = $"DM{currentId:D6}";
+                        _Result.SingleObjData = newTransactionNo;
+                    }
+                }
+                else
+                {
+                    _Result.SingleObjData = "DM000001";
+                }
+                _Result.IsSuccess = true;
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"TransactionRepo/GetLastDamageEntry : {_Exception.Message}");
+            }
+            return _Result;
+        }
+        public async Task<Result<DamageOrderModel>> GetDamages()
+        {
+            Result<DamageOrderModel> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
+                Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
+                var Query = await _appDbContext.DamageOrders.Where(s => s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).Select(s => new DamageOrderModel
+                {
+                    DamageOrderId = s.DamageOrderId,
+                    TransactionNo = s.TransactionNo,
+                    TransactionDate = s.TransactionDate,
+                    TotalAmount = s.TotalAmount,
+                    Reason = s.Reason,
+                    ProductType = s.ProductType != null ? new ProductTypeModel { Product_Type = s.ProductType.Product_Type } : null,
+                    Labour = s.Labour != null ? new LabourModel { LabourName = s.Labour.LabourName } : null
+                }).ToListAsync();
+                if (Query.Count > 0)
+                {
+                    var OrderList = Query;
+                    _Result.CollectionObjData = OrderList;
+                    _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
+                }
+                _Result.IsSuccess = true;
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"TransactionRepo/GetDamages : {_Exception.Message}");
+            }
+            return _Result;
+        }
+        public async Task<Result<DamageOrderModel>> GetDamageById(Guid Id)
+        {
+            Result<DamageOrderModel> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
+                Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
+                var Query = await _appDbContext.DamageOrders.Where(s => s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear && s.DamageOrderId == Id).Select(s => new DamageOrderModel
+                {
+                    DamageOrderId = s.DamageOrderId,
+                    TransactionNo = s.TransactionNo,
+                    TransactionDate = s.TransactionDate,
+                    Fk_ProductTypeId = s.Fk_ProductTypeId,
+                    Fk_LabourId = s.Fk_LabourId,
+                    Reason = s.Reason,
+                    TotalAmount = s.TotalAmount,
+                    ProductTypeName = _appDbContext.ProductTypes.Where(p => p.ProductTypeId == s.Fk_ProductTypeId).Select(b => b.Product_Type).FirstOrDefault(),
+                    DamageTransactions = s.DamageTransactions != null ?
+                    s.DamageTransactions.Where(x => x.Fk_FinancialYearId == FinancialYear && s.Fk_BranchId == BranchId).Select(t => new DamageTransactionModel
+                    {
+                        DamageTransactionId = t.DamageTransactionId,
+                        Fk_ProductId = t.Fk_ProductId,
+                        Quantity = t.Quantity,
+                        Rate = t.Rate,
+                        Amount = t.Amount,
+                    }).ToList() : null,
+                }).SingleOrDefaultAsync();
+                if (Query != null)
+                {
+                    var Order = Query;
+                    _Result.SingleObjData = Order;
+                    _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
+                }
+                _Result.IsSuccess = true;
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"TransactionRepo/GetDamageById : {_Exception.Message}");
+            }
+            return _Result;
+        }
+        public async Task<Result<bool>> CreateDamage(DamageRequestData data)
+        {
+            Result<bool> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
+                Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
+                using var transaction = await _appDbContext.Database.BeginTransactionAsync();
+                try
+                {
+                    if (DateTime.TryParseExact(data.TransactionDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedTrnsactionDate))
+                    {
+                        #region Damage Order
+                        var newDamageOrder = new DamageOrder
+                        {
+                            TransactionDate = convertedTrnsactionDate,
+                            TransactionNo = data.TransactionNo,
+                            Fk_ProductTypeId = data.Fk_ProductTypeId,
+                            TotalAmount = data.TotalAmount,
+                            Fk_LabourId = data.Fk_LabourId,
+                            Reason = data.Reason,
+                            Fk_BranchId = BranchId,
+                            Fk_FinancialYearId = FinancialYear,
+                        };
+                        await _appDbContext.DamageOrders.AddAsync(newDamageOrder);
+                        await _appDbContext.SaveChangesAsync();
+                        #endregion
+                        #region Update Ledger and SubLedger Balance
+                        if (data.Fk_LabourId != null)
+                        {
+                            // @Labour A/c ------------ Dr
+                            var LedgerBalanceId = Guid.Empty;
+                            var updateLabourLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.LabourAccount && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                            if (updateLabourLedgerBalance != null)
+                            {
+                                updateLabourLedgerBalance.RunningBalance += data.TotalAmount;
+                                updateLabourLedgerBalance.RunningBalanceType = (updateLabourLedgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
+                                await _appDbContext.SaveChangesAsync();
+                                LedgerBalanceId = updateLabourLedgerBalance.LedgerBalanceId;
+                            }
+                            else
+                            {
+                                var newLedgerBalance = new LedgerBalance
+                                {
+                                    Fk_LedgerId = MappingLedgers.LabourAccount,
+                                    OpeningBalance = 0,
+                                    OpeningBalanceType = "Dr",
+                                    RunningBalance = data.TotalAmount,
+                                    RunningBalanceType = "Dr",
+                                    Fk_BranchId = BranchId,
+                                    Fk_FinancialYear = FinancialYear
+                                };
+                                await _appDbContext.LedgerBalances.AddAsync(newLedgerBalance);
+                                await _appDbContext.SaveChangesAsync();
+                                LedgerBalanceId = newLedgerBalance.LedgerBalanceId;
+                            }
+                            var SubledgerId = await _appDbContext.Labours.Where(s => s.LabourId == data.Fk_LabourId && s.Fk_BranchId == BranchId).Select(s => s.Fk_SubLedgerId).SingleOrDefaultAsync();
+                            var updateLabourSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == SubledgerId && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).SingleOrDefaultAsync();
+                            if (updateLabourSubledgerBalance != null)
+                            {
+                                updateLabourSubledgerBalance.RunningBalance += data.TotalAmount;
+                                updateLabourSubledgerBalance.RunningBalanceType = (updateLabourSubledgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
+                                await _appDbContext.SaveChangesAsync();
+                            }
+                            else
+                            {
+                                var newSubLedgerBalance = new SubLedgerBalance
+                                {
+                                    Fk_LedgerBalanceId = LedgerBalanceId,
+                                    Fk_SubLedgerId = SubledgerId,
+                                    OpeningBalanceType = "Dr",
+                                    OpeningBalance = 0,
+                                    RunningBalanceType = "Dr",
+                                    RunningBalance = data.TotalAmount,
+                                    Fk_FinancialYearId = FinancialYear,
+                                    Fk_BranchId = BranchId
+                                };
+                                await _appDbContext.SubLedgerBalances.AddAsync(newSubLedgerBalance);
+                                await _appDbContext.SaveChangesAsync();
+                            }
+                            // @ LabourCharges A/c --------- Cr
+                            var updateLabourChargesledgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.LabourCharges && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                            if (updateLabourChargesledgerBalance != null)
+                            {
+                                updateLabourChargesledgerBalance.RunningBalance -= data.TotalAmount;
+                                updateLabourChargesledgerBalance.RunningBalanceType = (updateLabourChargesledgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
+                                await _appDbContext.SaveChangesAsync();
+                            }
+                            else
+                            {
+                                var newLedgerBalance = new LedgerBalance
+                                {
+                                    Fk_LedgerId = MappingLedgers.LabourCharges,
+                                    OpeningBalance = 0,
+                                    OpeningBalanceType = "Cr",
+                                    RunningBalance = -data.TotalAmount,
+                                    RunningBalanceType = "Cr",
+                                    Fk_BranchId = BranchId,
+                                    Fk_FinancialYear = FinancialYear
+                                };
+                                await _appDbContext.LedgerBalances.AddAsync(newLedgerBalance);
+                                await _appDbContext.SaveChangesAsync();
+                            }
+                        }
+                        #endregion
+                        foreach (var item in data.RowData)
+                        {
+                            # region Damage Transaction
+                            var newDamageTransaction = new DamageTransaction
+                            {
+                                Fk_DamageOrderId = newDamageOrder.DamageOrderId,
+                                TransactionDate = convertedTrnsactionDate,
+                                TransactionNo = data.TransactionNo,
+                                Fk_ProductId = Guid.Parse(item[1]),
+                                Fk_BranchId = BranchId,
+                                Fk_FinancialYearId = FinancialYear,
+                                Quantity = Convert.ToDecimal(item[2]),
+                                Rate = Convert.ToDecimal(item[3]),
+                                Amount = Convert.ToDecimal(item[4])
+                            };
+                            await _appDbContext.DamageTransactions.AddAsync(newDamageTransaction);
+                            await _appDbContext.SaveChangesAsync();
+                            #endregion
+                            #region update Stock
+                            var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == newDamageTransaction.Fk_ProductId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                            if (UpdateStock != null)
+                            {
+                                UpdateStock.AvilableStock -= newDamageTransaction.Quantity;
+                                await _appDbContext.SaveChangesAsync();
+                            }
+                            else
+                            {
+                                var AddNewStock = new Stock
+                                {
+                                    Fk_BranchId = BranchId,
+                                    Fk_ProductId = newDamageTransaction.Fk_ProductId,
+                                    Fk_FinancialYear = FinancialYear,
+                                    AvilableStock = -newDamageTransaction.Quantity,
+                                };
+                                await _appDbContext.Stocks.AddAsync(AddNewStock);
+                                await _appDbContext.SaveChangesAsync();
+                            }
+                            #endregion
+                        }
+                        _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Created);
+                        transaction.Commit();
+                        _Result.IsSuccess = true;
+                    }
+                }
+                catch
+                {
+                    transaction.Rollback();
+                    throw;
+                }
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"TransactionRepo/CreateDamage : {_Exception.Message}");
+            }
+            return _Result;
+        }
+        public async Task<Result<bool>> UpdateDamage(DamageRequestData data)
+        {
+            Result<bool> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
+                Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
+                using var transaction = await _appDbContext.Database.BeginTransactionAsync();
+                try
+                {
+                    if (DateTime.TryParseExact(data.TransactionDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedTrnsactionDate))
+                    {
+
+                        var UpdateDamageOrder = await _appDbContext.DamageOrders.Where(s => s.DamageOrderId == data.DamageId && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).SingleOrDefaultAsync();
+                        if (UpdateDamageOrder != null)
+                        {
+                            #region Damage Order
+                            UpdateDamageOrder.TransactionDate = convertedTrnsactionDate;
+                            UpdateDamageOrder.Fk_LabourId = data.Fk_LabourId;
+                            UpdateDamageOrder.Fk_ProductTypeId = data.Fk_ProductTypeId;
+                            UpdateDamageOrder.Reason = data.Reason;
+                            UpdateDamageOrder.TotalAmount = data.TotalAmount;
+                            await _appDbContext.SaveChangesAsync();
+                            #endregion
+                            #region Update Ledger and SubLedger Balance
+                            if (UpdateDamageOrder.Fk_LabourId != null)
+                            {
+                                if (UpdateDamageOrder.Fk_LabourId == data.Fk_LabourId)
+                                {
+                                    var difference = data.TotalAmount - UpdateDamageOrder.TotalAmount;
+                                    // @Labour A/c ------------ Dr
+
+                                    var SubledgerId = await _appDbContext.Labours.Where(s => s.LabourId == data.Fk_LabourId && s.Fk_BranchId == BranchId).Select(s => s.Fk_SubLedgerId).SingleOrDefaultAsync();
+                                    var updateLabourSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == SubledgerId && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).SingleOrDefaultAsync();
+                                    if (updateLabourSubledgerBalance != null)
+                                    {
+                                        updateLabourSubledgerBalance.RunningBalance += difference;
+                                        updateLabourSubledgerBalance.RunningBalanceType = (updateLabourSubledgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
+                                        var updateLabourLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.LabourAccount && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                        if (updateLabourLedgerBalance != null)
+                                        {
+                                            updateLabourLedgerBalance.RunningBalance += difference;
+                                            updateLabourLedgerBalance.RunningBalanceType = (updateLabourLedgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
+                                        }
+                                        else
+                                        {
+                                            _Result.WarningMessage = "Ledger Balance Not Exist";
+                                            return _Result;
+                                        }
+                                        await _appDbContext.SaveChangesAsync();
+                                    }
+                                    else
+                                    {
+                                        _Result.WarningMessage = "SubLedger Balance Not Exist";
+                                        return _Result;
+                                    }
+                                    // @ LabourCharges A/c --------- Cr
+                                    var updateLabourChargesledgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.LabourCharges && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                    if (updateLabourChargesledgerBalance != null)
+                                    {
+                                        updateLabourChargesledgerBalance.RunningBalance -= difference;
+                                        updateLabourChargesledgerBalance.RunningBalanceType = (updateLabourChargesledgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
+                                        await _appDbContext.SaveChangesAsync();
+                                    }
+                                    else
+                                    {
+                                        _Result.WarningMessage = "Ledger Balance Not Exist";
+                                        return _Result;
+                                    }
+                                }
+                                if (UpdateDamageOrder.Fk_LabourId != data.Fk_LabourId)
+                                {
+
+                                }
+                            }
+                            else
+                            {
+                                if (data.Fk_LabourId != null) { }
+
+                            }
+
+                            #endregion
+
+                            foreach (var item in data.RowData)
+                            {
+                                Guid DamageId = Guid.TryParse(item[0], out var parsedGuid) ? parsedGuid : Guid.Empty;
+                                var UpdateDamageTransaction = await _appDbContext.DamageTransactions.Where(s => s.DamageTransactionId == DamageId && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).SingleOrDefaultAsync();
+                                if (UpdateDamageTransaction != null)
+                                {
+                                    #region Update Stock
+                                    var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == UpdateDamageTransaction.Fk_ProductId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                    if (UpdateStock != null)
+                                    {
+                                        if (UpdateDamageTransaction.Fk_ProductId != Guid.Parse(item[1]))
+                                        {
+                                            UpdateStock.AvilableStock += UpdateDamageTransaction.Quantity;
+                                            await _appDbContext.SaveChangesAsync();
+                                            var UpdateNewStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == Guid.Parse(item[1]) && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                            if (UpdateNewStock != null)
+                                            {
+                                                UpdateNewStock.AvilableStock -= UpdateDamageTransaction.Quantity;
+                                                await _appDbContext.SaveChangesAsync();
+                                            }
+                                            else
+                                            {
+                                                _Result.WarningMessage = "Stock Not Avilable";
+                                                return _Result;
+                                            }
+                                        }
+                                        if (UpdateDamageTransaction.Quantity != Convert.ToDecimal(item[2]))
+                                        {
+                                            var quantityDifference = UpdateDamageTransaction.Quantity - Convert.ToDecimal(item[2]);
+                                            UpdateStock.AvilableStock += quantityDifference;
+                                            await _appDbContext.SaveChangesAsync();
+                                        }
+                                    }
+                                    #endregion
+                                    #region Update Damage Transaction
+                                    UpdateDamageTransaction.Fk_ProductId = Guid.Parse(item[1]);
+                                    UpdateDamageTransaction.Quantity = Convert.ToDecimal(item[2]);
+                                    UpdateDamageTransaction.Rate = Convert.ToDecimal(item[3]);
+                                    UpdateDamageTransaction.Amount = Convert.ToDecimal(item[4]);
+                                    await _appDbContext.SaveChangesAsync();
+                                    #endregion
+                                }
+                                else
+                                {
+                                    #region Damage Transaction
+                                    var newDamageTransaction = new DamageTransaction
+                                    {
+                                        Fk_DamageOrderId = UpdateDamageOrder.DamageOrderId,
+                                        TransactionNo = data.TransactionNo,
+                                        TransactionDate = convertedTrnsactionDate,
+                                        Fk_ProductId = Guid.Parse(item[1]),
+                                        Fk_BranchId = BranchId,
+                                        Fk_FinancialYearId = FinancialYear,
+                                        Quantity = Convert.ToDecimal(item[2]),
+                                        Rate = Convert.ToDecimal(item[3]),
+                                        Amount = Convert.ToDecimal(item[4]),
+                                    };
+                                    await _appDbContext.DamageTransactions.AddAsync(newDamageTransaction);
+                                    await _appDbContext.SaveChangesAsync();
+                                    #endregion
+                                    #region Update Stock
+                                    var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == newDamageTransaction.Fk_ProductId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                    if (UpdateStock != null)
+                                    {
+                                        UpdateStock.AvilableStock -= newDamageTransaction.Quantity;
+                                    }
+                                    else
+                                    {
+                                        _Result.WarningMessage = "Stock Not Avilable";
+                                        return _Result;
+                                    }
+                                    await _appDbContext.SaveChangesAsync();
+                                    #endregion
+                                }
+                            }
+                            _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Modified);
+                            transaction.Commit();
+                            _Result.IsSuccess = true;
+                        }
+                    }
+                }
+                catch (DbUpdateException ex)
+                {
+                    _Result.Exception = ex;
+                }
+                catch
+                {
+                    transaction.Rollback();
+                    throw;
+                }
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"TransactionRepo/UpdateDamage : {_Exception.Message}");
+            }
+            return _Result;
+        }
+        public async Task<Result<bool>> DeleteDamage(Guid Id, IDbContextTransaction transaction, bool IsCallback)
+        {
+            Result<bool> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
+                Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
+                using var localTransaction = transaction ?? await _appDbContext.Database.BeginTransactionAsync();
+                try
+                {
+                    if (Id != Guid.Empty)
+                    {
+                        //*****************************Delete Damage Transaction**************************************//
+                        var deleteDamageTransaction = await _appDbContext.DamageTransactions.Where(s => s.Fk_DamageOrderId == Id && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).ToListAsync();
+                        if (deleteDamageTransaction.Count > 0)
+                        {
+                            foreach (var item in deleteDamageTransaction)
+                            {
+                                var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == item.Fk_ProductId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                if (UpdateStock != null)
+                                {
+                                    UpdateStock.AvilableStock += item.Quantity;
+                                    await _appDbContext.SaveChangesAsync();
+                                }
+                                _appDbContext.DamageTransactions.Remove(item);
+                                await _appDbContext.SaveChangesAsync();
+
+                            }
+                        }
+                        //*******************************Delete Damage Orders***************************************//
+                        var deleteDamageOrders = await _appDbContext.DamageOrders.SingleOrDefaultAsync(x => x.DamageOrderId == Id && x.Fk_BranchId == BranchId && x.Fk_FinancialYearId == FinancialYear);
+                        if (deleteDamageOrders != null)
+                        {
+                            _appDbContext.DamageOrders.Remove(deleteDamageOrders);
+                            await _appDbContext.SaveChangesAsync();
+                        }
+                        _Result.IsSuccess = true;
+                        if (IsCallback == false) localTransaction.Commit();
+                        _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Deleted);
+                    }
+                }
+                catch
+                {
+                    localTransaction.Rollback();
+                    throw;
+                }
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"TransactionRepo/DeleteDamage : {_Exception.Message}");
+            }
+            return _Result;
+        }
+        #endregion
         #region Inward Supply Transaction
         public async Task<Result<string>> GetLastInwardSupply()
         {
@@ -3964,8 +4506,9 @@ namespace FMS.Repository.Transaction
             try
             {
                 Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
+                Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
                 _Result.IsSuccess = false;
-                var lastInwardSupply = await _appDbContext.InwardSupplyOrders.Where(s => s.Fk_BranchId == BranchId).OrderByDescending(s => s.TransactionNo).Select(s => new { s.TransactionNo }).FirstOrDefaultAsync();
+                var lastInwardSupply = await _appDbContext.InwardSupplyOrders.Where(s => s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).OrderByDescending(s => s.TransactionNo).Select(s => new { s.TransactionNo }).FirstOrDefaultAsync();
                 if (lastInwardSupply != null)
                 {
                     var lastTransactionNo = lastInwardSupply.TransactionNo;
@@ -4159,7 +4702,7 @@ namespace FMS.Repository.Transaction
                     if (DateTime.TryParseExact(data.TransactionDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedTrnsactionDate))
                     {
                         //************************************************************Inward Supply Order*************************************************************//
-                        var UpdateInwardSupplyOrder = await _appDbContext.InwardSupplyOrders.Where(s => s.InwardSupplyOrderId == data.SupplyId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
+                        var UpdateInwardSupplyOrder = await _appDbContext.InwardSupplyOrders.Where(s => s.InwardSupplyOrderId == data.SupplyId && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).SingleOrDefaultAsync();
                         if (UpdateInwardSupplyOrder != null)
                         {
 
@@ -4172,7 +4715,7 @@ namespace FMS.Repository.Transaction
                             foreach (var item in data.RowData)
                             {
                                 Guid InwardSupplyId = Guid.TryParse(item[0], out var parsedGuid) ? parsedGuid : Guid.Empty;
-                                var UpdateInwardSupplyTransaction = await _appDbContext.InwardSupplyTransactions.Where(s => s.InwardSupplyTransactionId == InwardSupplyId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
+                                var UpdateInwardSupplyTransaction = await _appDbContext.InwardSupplyTransactions.Where(s => s.InwardSupplyTransactionId == InwardSupplyId && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).SingleOrDefaultAsync();
                                 if (UpdateInwardSupplyTransaction != null)
                                 {
                                     //Update Stock
@@ -4183,11 +4726,10 @@ namespace FMS.Repository.Transaction
                                         {
                                             UpdateStock.AvilableStock -= UpdateInwardSupplyTransaction.Quantity;
                                             await _appDbContext.SaveChangesAsync();
-                                            var UpdateNewStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == Guid.Parse(item[1]) && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).FirstOrDefaultAsync();
+                                            var UpdateNewStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == Guid.Parse(item[1]) && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
                                             if (UpdateNewStock != null)
                                             {
                                                 UpdateNewStock.AvilableStock += UpdateInwardSupplyTransaction.Quantity;
-                                                await _appDbContext.SaveChangesAsync();
                                             }
                                             else
                                             {
@@ -4199,8 +4741,8 @@ namespace FMS.Repository.Transaction
                                                     AvilableStock = Convert.ToDecimal(item[2])
                                                 };
                                                 await _appDbContext.Stocks.AddAsync(newStock);
-                                                await _appDbContext.SaveChangesAsync();
                                             }
+                                            await _appDbContext.SaveChangesAsync();
                                         }
                                         if (UpdateInwardSupplyTransaction.Quantity != Convert.ToDecimal(item[2]))
                                         {
@@ -4289,7 +4831,7 @@ namespace FMS.Repository.Transaction
                     if (Id != Guid.Empty)
                     {
                         //*****************************Delete InwardSupply Transaction**************************************//
-                        var deleteInwardSupplyTransaction = await _appDbContext.InwardSupplyTransactions.Where(s => s.Fk_InwardSupplyOrderId == Id && s.Fk_BranchId == BranchId).ToListAsync();
+                        var deleteInwardSupplyTransaction = await _appDbContext.InwardSupplyTransactions.Where(s => s.Fk_InwardSupplyOrderId == Id && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).ToListAsync();
                         if (deleteInwardSupplyTransaction.Count > 0)
                         {
                             foreach (var item in deleteInwardSupplyTransaction)
@@ -4338,8 +4880,9 @@ namespace FMS.Repository.Transaction
             try
             {
                 Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
+                Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
                 _Result.IsSuccess = false;
-                var lastOutwardSupply = await _appDbContext.OutwardSupplyOrders.Where(s => s.Fk_BranchId == BranchId).OrderByDescending(s => s.TransactionNo).Select(s => new { s.TransactionNo }).FirstOrDefaultAsync();
+                var lastOutwardSupply = await _appDbContext.OutwardSupplyOrders.Where(s => s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).OrderByDescending(s => s.TransactionNo).Select(s => new { s.TransactionNo }).FirstOrDefaultAsync();
                 if (lastOutwardSupply != null)
                 {
                     var lastTransactionNo = lastOutwardSupply.TransactionNo;
@@ -4411,10 +4954,10 @@ namespace FMS.Repository.Transaction
                     TransactionDate = s.TransactionDate,
                     ToBranch = s.ToBranch,
                     Fk_ProductTypeId = s.Fk_ProductTypeId,
-                    ProductTypeName = _appDbContext.ProductTypes.Where(p => p.ProductTypeId == s.Fk_ProductTypeId).Select(b => b.Product_Type).FirstOrDefault(),
+                    ProductTypeName = _appDbContext.ProductTypes.Where(p => p.ProductTypeId == s.Fk_ProductTypeId).Select(b => b.Product_Type).SingleOrDefault(),
                     TotalAmount = s.TotalAmount,
                     OutwardSupplyTransactions = s.OutwardSupplyTransactions != null ?
-                    s.OutwardSupplyTransactions.Select(t => new OutwardSupplyTransactionModel
+                    s.OutwardSupplyTransactions.Where(s => s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).Select(t => new OutwardSupplyTransactionModel
                     {
                         OutwardSupplyTransactionId = t.OutwardSupplyTransactionId,
                         Fk_ProductId = t.Fk_ProductId,
@@ -4422,7 +4965,7 @@ namespace FMS.Repository.Transaction
                         Rate = t.Rate,
                         Amount = t.Amount,
                     }).ToList() : null,
-                }).FirstOrDefaultAsync();
+                }).SingleOrDefaultAsync();
                 if (Query != null)
                 {
                     var Order = Query;
@@ -4528,7 +5071,7 @@ namespace FMS.Repository.Transaction
                     if (DateTime.TryParseExact(data.TransactionDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedTrnsactionDate))
                     {
                         //************************************************************Inward Supply Order*************************************************************//
-                        var UpdateOutwardSupplyOrder = await _appDbContext.OutwardSupplyOrders.Where(s => s.OutwardSupplyOrderId == data.SupplyId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
+                        var UpdateOutwardSupplyOrder = await _appDbContext.OutwardSupplyOrders.Where(s => s.OutwardSupplyOrderId == data.SupplyId && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).SingleOrDefaultAsync();
                         if (UpdateOutwardSupplyOrder != null)
                         {
                             UpdateOutwardSupplyOrder.TransactionDate = convertedTrnsactionDate;
@@ -4540,7 +5083,7 @@ namespace FMS.Repository.Transaction
                             foreach (var item in data.RowData)
                             {
                                 Guid OutwardSupplyId = Guid.TryParse(item[0], out var parsedGuid) ? parsedGuid : Guid.Empty;
-                                var UpdateOutwardSupplyTransaction = await _appDbContext.OutwardSupplyTransactions.Where(s => s.OutwardSupplyTransactionId == OutwardSupplyId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
+                                var UpdateOutwardSupplyTransaction = await _appDbContext.OutwardSupplyTransactions.Where(s => s.OutwardSupplyTransactionId == OutwardSupplyId && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).SingleOrDefaultAsync();
                                 if (UpdateOutwardSupplyTransaction != null)
                                 {
                                     //Update Stock
@@ -4551,7 +5094,7 @@ namespace FMS.Repository.Transaction
                                         {
                                             UpdateStock.AvilableStock += UpdateOutwardSupplyTransaction.Quantity;
                                             await _appDbContext.SaveChangesAsync();
-                                            var UpdateNewStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == Guid.Parse(item[1]) && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).FirstOrDefaultAsync();
+                                            var UpdateNewStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == Guid.Parse(item[1]) && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
                                             if (UpdateNewStock != null)
                                             {
                                                 UpdateNewStock.AvilableStock -= UpdateOutwardSupplyTransaction.Quantity;
@@ -4644,7 +5187,7 @@ namespace FMS.Repository.Transaction
                     if (Id != Guid.Empty)
                     {
                         //*****************************Delete OutwardSupply Transaction**************************************//
-                        var deleteOutwardSupplyTransaction = await _appDbContext.OutwardSupplyTransactions.Where(s => s.Fk_OutwardSupplyOrderId == Id && s.Fk_BranchId == BranchId).ToListAsync();
+                        var deleteOutwardSupplyTransaction = await _appDbContext.OutwardSupplyTransactions.Where(s => s.Fk_OutwardSupplyOrderId == Id && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).ToListAsync();
                         if (deleteOutwardSupplyTransaction.Count > 0)
                         {
                             foreach (var item in deleteOutwardSupplyTransaction)
@@ -4661,7 +5204,7 @@ namespace FMS.Repository.Transaction
                             }
                         }
                         //*******************************Delete OutwardSupply Orders***************************************//
-                        var deleteOutwardSupplyOrders = await _appDbContext.OutwardSupplyOrders.SingleOrDefaultAsync(x => x.OutwardSupplyOrderId == Id && x.Fk_BranchId == BranchId);
+                        var deleteOutwardSupplyOrders = await _appDbContext.OutwardSupplyOrders.SingleOrDefaultAsync(x => x.OutwardSupplyOrderId == Id && x.Fk_BranchId == BranchId && x.Fk_FinancialYearId == FinancialYear);
                         if (deleteOutwardSupplyOrders != null)
                         {
                             _appDbContext.OutwardSupplyOrders.Remove(deleteOutwardSupplyOrders);
@@ -4682,392 +5225,6 @@ namespace FMS.Repository.Transaction
             {
                 _Result.Exception = _Exception;
                 await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"TransactionRepo/DeleteOutwardSupply : {_Exception.Message}");
-            }
-            return _Result;
-        }
-        #endregion
-        #region Damage Transaction
-        public async Task<Result<string>> GetLastDamageEntry()
-        {
-            Result<string> _Result = new();
-            try
-            {
-                Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
-                _Result.IsSuccess = false;
-                var lastDamageEntry = await _appDbContext.DamageOrders.Where(s => s.Fk_BranchId == BranchId).OrderByDescending(s => s.TransactionNo).Select(s => new { s.TransactionNo }).FirstOrDefaultAsync();
-                if (lastDamageEntry != null)
-                {
-                    var lastTransactionNo = lastDamageEntry.TransactionNo;
-                    _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
-                    if (int.TryParse(lastTransactionNo.AsSpan(3), out int currentId))
-                    {
-                        currentId++;
-                        var newTransactionNo = $"DM{currentId:D6}";
-                        _Result.SingleObjData = newTransactionNo;
-                    }
-                }
-                else
-                {
-                    _Result.SingleObjData = "DM000001";
-                }
-                _Result.IsSuccess = true;
-            }
-            catch (Exception _Exception)
-            {
-                _Result.Exception = _Exception;
-                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"TransactionRepo/GetLastDamageEntry : {_Exception.Message}");
-            }
-            return _Result;
-        }
-        public async Task<Result<DamageOrderModel>> GetDamages()
-        {
-            Result<DamageOrderModel> _Result = new();
-            try
-            {
-                _Result.IsSuccess = false;
-                Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
-                Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
-                var Query = await _appDbContext.DamageOrders.Where(s => s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).Select(s => new DamageOrderModel
-                {
-                    DamageOrderId = s.DamageOrderId,
-                    TransactionNo = s.TransactionNo,
-                    TransactionDate = s.TransactionDate,
-                    TotalAmount = s.TotalAmount,
-                    Reason = s.Reason,
-                    ProductType = s.ProductType != null ? new ProductTypeModel { Product_Type = s.ProductType.Product_Type } : null,
-                    Labour = s.Labour != null ? new LabourModel { LabourName = s.Labour.LabourName } : null
-
-                }).ToListAsync();
-                if (Query.Count > 0)
-                {
-                    var OrderList = Query;
-                    _Result.CollectionObjData = OrderList;
-                    _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
-                }
-                _Result.IsSuccess = true;
-            }
-            catch (Exception _Exception)
-            {
-                _Result.Exception = _Exception;
-                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"TransactionRepo/GetDamages : {_Exception.Message}");
-            }
-            return _Result;
-        }
-        public async Task<Result<DamageOrderModel>> GetDamageById(Guid Id)
-        {
-            Result<DamageOrderModel> _Result = new();
-            try
-            {
-                _Result.IsSuccess = false;
-                Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
-                Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
-                var Query = await _appDbContext.DamageOrders.Where(s => s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear && s.DamageOrderId == Id).Select(s => new DamageOrderModel
-                {
-                    DamageOrderId = s.DamageOrderId,
-                    TransactionNo = s.TransactionNo,
-                    TransactionDate = s.TransactionDate,
-                    Fk_ProductTypeId = s.Fk_ProductTypeId,
-                    Fk_LabourId = s.Fk_LabourId,
-                    Reason = s.Reason,
-                    TotalAmount = s.TotalAmount,
-                    ProductTypeName = _appDbContext.ProductTypes.Where(p => p.ProductTypeId == s.Fk_ProductTypeId).Select(b => b.Product_Type).FirstOrDefault(),
-                    DamageTransactions = s.DamageTransactions != null ?
-                    s.DamageTransactions.Select(t => new DamageTransactionModel
-                    {
-                        DamageTransactionId = t.DamageTransactionId,
-                        Fk_ProductId = t.Fk_ProductId,
-                        Quantity = t.Quantity,
-                        Rate = t.Rate,
-                        Amount = t.Amount,
-                    }).ToList() : null,
-                }).FirstOrDefaultAsync();
-                if (Query != null)
-                {
-                    var Order = Query;
-                    _Result.SingleObjData = Order;
-                    _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
-                }
-                _Result.IsSuccess = true;
-            }
-            catch (Exception _Exception)
-            {
-                _Result.Exception = _Exception;
-                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"TransactionRepo/GetDamageById : {_Exception.Message}");
-            }
-            return _Result;
-        }
-        public async Task<Result<bool>> CreateDamage(DamageRequestData data)
-        {
-            Result<bool> _Result = new();
-            try
-            {
-                _Result.IsSuccess = false;
-                Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
-                Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
-                using var transaction = await _appDbContext.Database.BeginTransactionAsync();
-                try
-                {
-                    if (DateTime.TryParseExact(data.TransactionDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedTrnsactionDate))
-                    {
-                        //************************************************************Damage Order*****************************************//
-                        var newDamageOrder = new DamageOrder
-                        {
-                            TransactionDate = convertedTrnsactionDate,
-                            TransactionNo = data.TransactionNo,
-                            Fk_ProductTypeId = data.Fk_ProductTypeId,
-                            TotalAmount = data.TotalAmount,
-                            Fk_LabourId = data.Fk_LabourId,
-                            Reason = data.Reason,
-                            Fk_BranchId = BranchId,
-                            Fk_FinancialYearId = FinancialYear,
-                        };
-                        await _appDbContext.DamageOrders.AddAsync(newDamageOrder);
-                        await _appDbContext.SaveChangesAsync();
-                        //Update Ledger and SubLedger Balance
-                        if (data.Fk_LabourId != null)
-                        {
-                            var SubledgerId = await _appDbContext.Labours.Where(s => s.LabourId == data.Fk_LabourId && s.Fk_BranchId == BranchId).Select(s => s.Fk_SubLedgerId).SingleOrDefaultAsync();
-                            // @Labour A/c ------------ Dr
-                            var updateLabourSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == SubledgerId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
-                            if (updateLabourSubledgerBalance != null)
-                            {
-                                updateLabourSubledgerBalance.RunningBalance += data.TotalAmount;
-                                updateLabourSubledgerBalance.RunningBalanceType = (updateLabourSubledgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
-                                var updateLabourLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.LedgerBalanceId == updateLabourSubledgerBalance.Fk_LedgerBalanceId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
-                                if (updateLabourLedgerBalance != null)
-                                {
-                                    updateLabourLedgerBalance.RunningBalance += data.TotalAmount;
-                                    updateLabourLedgerBalance.RunningBalanceType = (updateLabourLedgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
-                                }
-                                await _appDbContext.SaveChangesAsync();
-                            }
-                            // @ LabourCharges A/c --------- Cr
-                            var updateLabourChargesledgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.LabourCharges && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
-                            if (updateLabourChargesledgerBalance != null)
-                            {
-                                updateLabourChargesledgerBalance.RunningBalance -= data.TotalAmount;
-                                updateLabourChargesledgerBalance.RunningBalanceType = (updateLabourChargesledgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
-                                await _appDbContext.SaveChangesAsync();
-                            }
-                        }
-                        //*********************************InwardSupply Transaction**********************************************//
-                        foreach (var item in data.RowData)
-                        {
-                            var newDamageTransactionn = new DamageTransaction
-                            {
-                                Fk_DamageOrderId = newDamageOrder.DamageOrderId,
-                                TransactionDate = convertedTrnsactionDate,
-                                TransactionNo = data.TransactionNo,
-                                Fk_ProductId = Guid.Parse(item[1]),
-                                Fk_BranchId = BranchId,
-                                Fk_FinancialYearId = FinancialYear,
-                                Quantity = Convert.ToDecimal(item[2]),
-                                Rate = Convert.ToDecimal(item[3]),
-                                Amount = Convert.ToDecimal(item[4])
-                            };
-                            await _appDbContext.DamageTransactions.AddAsync(newDamageTransactionn);
-                            await _appDbContext.SaveChangesAsync();
-
-                            //update Stock
-                            var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == newDamageTransactionn.Fk_ProductId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
-                            if (UpdateStock != null)
-                            {
-                                UpdateStock.AvilableStock -= newDamageTransactionn.Quantity;
-                                await _appDbContext.SaveChangesAsync();
-                            }
-                            else
-                            {
-                                _Result.WarningMessage = "Stock Not Avilable";
-                                return _Result;
-                            }
-                        }
-                        _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Created);
-                        transaction.Commit();
-                        _Result.IsSuccess = true;
-                    }
-                }
-                catch
-                {
-                    transaction.Rollback();
-                    throw;
-                }
-            }
-            catch (Exception _Exception)
-            {
-                _Result.Exception = _Exception;
-                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"TransactionRepo/CreateDamage : {_Exception.Message}");
-            }
-            return _Result;
-        }
-        public async Task<Result<bool>> UpdateDamage(DamageRequestData data)
-        {
-            Result<bool> _Result = new();
-            try
-            {
-                _Result.IsSuccess = false;
-                Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
-                Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
-                using var transaction = await _appDbContext.Database.BeginTransactionAsync();
-                try
-                {
-                    if (DateTime.TryParseExact(data.TransactionDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedTrnsactionDate))
-                    {
-                        //************************************************************Damage Order*************************************************************//
-                        var UpdateDamageOrder = await _appDbContext.DamageOrders.Where(s => s.DamageOrderId == data.DamageId).FirstOrDefaultAsync();
-                        if (UpdateDamageOrder != null)
-                        {
-                            UpdateDamageOrder.TransactionDate = convertedTrnsactionDate;
-                            UpdateDamageOrder.Fk_LabourId = data.Fk_LabourId;
-                            UpdateDamageOrder.Fk_ProductTypeId = data.Fk_ProductTypeId;
-                            UpdateDamageOrder.Reason = data.Reason;
-                            UpdateDamageOrder.TotalAmount = data.TotalAmount;
-                            await _appDbContext.SaveChangesAsync();
-                            //************************************************************Damage Transaction**************************************************//
-                            foreach (var item in data.RowData)
-                            {
-                                Guid DamageId = Guid.TryParse(item[0], out var parsedGuid) ? parsedGuid : Guid.Empty;
-                                var UpdateDamageTransaction = await _appDbContext.DamageTransactions.Where(s => s.DamageTransactionId == DamageId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
-                                if (UpdateDamageTransaction != null)
-                                {
-                                    //Update Stock
-                                    var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == UpdateDamageTransaction.Fk_ProductId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
-                                    if (UpdateStock != null)
-                                    {
-                                        if (UpdateDamageTransaction.Fk_ProductId != Guid.Parse(item[1]))
-                                        {
-                                            UpdateStock.AvilableStock += UpdateDamageTransaction.Quantity;
-                                            await _appDbContext.SaveChangesAsync();
-                                            var UpdateNewStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == Guid.Parse(item[1]) && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
-                                            if (UpdateNewStock != null)
-                                            {
-                                                UpdateNewStock.AvilableStock -= UpdateDamageTransaction.Quantity;
-                                                await _appDbContext.SaveChangesAsync();
-                                            }
-                                            else
-                                            {
-                                                _Result.WarningMessage = "Stock Not Avilable";
-                                                return _Result;
-                                            }
-                                        }
-                                        if (UpdateDamageTransaction.Quantity != Convert.ToDecimal(item[2]))
-                                        {
-                                            var quantityDifference = UpdateDamageTransaction.Quantity - Convert.ToDecimal(item[2]);
-                                            UpdateStock.AvilableStock += quantityDifference;
-                                            await _appDbContext.SaveChangesAsync();
-                                        }
-                                    }
-                                    UpdateDamageTransaction.Fk_ProductId = Guid.Parse(item[1]);
-                                    UpdateDamageTransaction.Quantity = Convert.ToDecimal(item[2]);
-                                    UpdateDamageTransaction.Rate = Convert.ToDecimal(item[3]);
-                                    UpdateDamageTransaction.Amount = Convert.ToDecimal(item[4]);
-                                    await _appDbContext.SaveChangesAsync();
-                                }
-                                else
-                                {
-                                    var newDamageTransaction = new DamageTransaction
-                                    {
-                                        Fk_DamageOrderId = UpdateDamageOrder.DamageOrderId,
-                                        TransactionNo = data.TransactionNo,
-                                        TransactionDate = convertedTrnsactionDate,
-                                        Fk_ProductId = Guid.Parse(item[1]),
-                                        Fk_BranchId = BranchId,
-                                        Fk_FinancialYearId = FinancialYear,
-                                        Quantity = Convert.ToDecimal(item[2]),
-                                        Rate = Convert.ToDecimal(item[3]),
-                                        Amount = Convert.ToDecimal(item[4]),
-                                    };
-                                    await _appDbContext.DamageTransactions.AddAsync(newDamageTransaction);
-                                    await _appDbContext.SaveChangesAsync();
-
-                                    //Update Stock
-                                    var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == newDamageTransaction.Fk_ProductId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
-                                    if (UpdateStock != null)
-                                    {
-                                        UpdateStock.AvilableStock -= newDamageTransaction.Quantity;
-                                    }
-                                    else
-                                    {
-                                        _Result.WarningMessage = "Stock Not Avilable";
-                                        return _Result;
-                                    }
-                                    await _appDbContext.SaveChangesAsync();
-                                }
-                            }
-                            _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Modified);
-                            transaction.Commit();
-                            _Result.IsSuccess = true;
-                        }
-                    }
-                }
-                catch (DbUpdateException ex)
-                {
-                    _Result.Exception = ex;
-                }
-                catch
-                {
-                    transaction.Rollback();
-                    throw;
-                }
-            }
-            catch (Exception _Exception)
-            {
-                _Result.Exception = _Exception;
-                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"TransactionRepo/UpdateDamage : {_Exception.Message}");
-            }
-            return _Result;
-        }
-        public async Task<Result<bool>> DeleteDamage(Guid Id, IDbContextTransaction transaction, bool IsCallback)
-        {
-            Result<bool> _Result = new();
-            try
-            {
-                _Result.IsSuccess = false;
-                Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
-                Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
-                using var localTransaction = transaction ?? await _appDbContext.Database.BeginTransactionAsync();
-                try
-                {
-                    if (Id != Guid.Empty)
-                    {
-                        //*****************************Delete Damage Transaction**************************************//
-                        var deleteDamageTransaction = await _appDbContext.DamageTransactions.Where(s => s.Fk_DamageOrderId == Id && s.Fk_BranchId == BranchId).ToListAsync();
-                        if (deleteDamageTransaction.Count > 0)
-                        {
-                            foreach (var item in deleteDamageTransaction)
-                            {
-                                //Update Stock
-                                var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == item.Fk_ProductId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
-                                if (UpdateStock != null)
-                                {
-                                    UpdateStock.AvilableStock += item.Quantity;
-                                    await _appDbContext.SaveChangesAsync();
-                                }
-                                _appDbContext.DamageTransactions.Remove(item);
-                                await _appDbContext.SaveChangesAsync();
-                            }
-                        }
-                        //*******************************Delete Damage Orders***************************************//
-                        var deleteDamageOrders = await _appDbContext.DamageOrders.SingleOrDefaultAsync(x => x.DamageOrderId == Id && x.Fk_BranchId == BranchId);
-                        if (deleteDamageOrders != null)
-                        {
-                            _appDbContext.DamageOrders.Remove(deleteDamageOrders);
-                            await _appDbContext.SaveChangesAsync();
-                        }
-                        _Result.IsSuccess = true;
-                        if (IsCallback == false) localTransaction.Commit();
-                        _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Deleted);
-                    }
-                }
-                catch
-                {
-                    localTransaction.Rollback();
-                    throw;
-                }
-            }
-            catch (Exception _Exception)
-            {
-                _Result.Exception = _Exception;
-                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"TransactionRepo/DeleteDamage : {_Exception.Message}");
             }
             return _Result;
         }

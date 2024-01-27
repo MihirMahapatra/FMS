@@ -145,74 +145,43 @@ $(function () {
         var uniqueId = 'ddlitem' + new Date().getTime();
         var selectedOptionText = $("select[name='ddlProductTypeId'] option:selected").text();
         var html = '';
-        if (selectedOptionText === 'RAW MATERIALS') {
-            html = '<tr>';
-            html += '<td hidden><input type="hidden" class="form-control" value="0"></td>';
-            html += '<td><div class="form-group"><select class="form-control form-control-sm select2bs4" style="width: 100%;" id="' + uniqueId + '"></select></div></td>';
-            html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
-            html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
-            html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
-            html += '<td><button class="btn btn-primary btn-link deleteBtn" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button></td>';
-            html += '</tr>';
-            var newRow = InwardSupplyTable.row.add($(html)).draw(false).node();
-            $.ajax({
-                url: "/Transaction/GetProductRawMaterial",
-                type: "GET",
-                contentType: "application/json;charset=utf-8",
-                dataType: "json",
-                success: function (result) {
-                    if (result.ResponseCode == 302) {
-                        var selectElement = $('#' + uniqueId);
-                        selectElement.empty();
-                        var defaultOption = $('<option></option>').val('').text('--Select Option--');
-                        selectElement.append(defaultOption);
-                        $.each(result.products, function (key, item) {
-                            var option = $('<option></option>').val(item.ProductId).text(item.ProductName);
-                            selectElement.append(option);
-                        });
-                    }
-                },
-                error: function (errormessage) {
-                    console.log(errormessage)
-                }
-            });
-        }
-        else if (selectedOptionText === 'FINISHED GOODS') {
-            html = '<tr>';
-            html += '<td hidden><input type="hidden" class="form-control" value="0"></td>';
-            html += '<td><div class="form-group"><select class="form-control form-control-sm select2bs4" style="width: 100%;" id="' + uniqueId + '"></select></div></td>';
-            html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
-            html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
-            html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
-            html += '<td><button class="btn btn-primary btn-link deleteBtn" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button></td>';
-            html += '</tr>';
-            var newRow = InwardSupplyTable.row.add($(html)).draw(false).node();
-            $.ajax({
-                url: "/Transaction/GetProductFinishedGood",
-                type: "GET",
-                contentType: "application/json;charset=utf-8",
-                dataType: "json",
-                success: function (result) {
-                    if (result.ResponseCode == 302) {
-                        var selectElement = $('#' + uniqueId);
-                        selectElement.empty();
-                        var defaultOption = $('<option></option>').val('').text('--Select Option--');
-                        selectElement.append(defaultOption);
-                        $.each(result.products, function (key, item) {
-                            var option = $('<option></option>').val(item.ProductId).text(item.ProductName);
-                            selectElement.append(option);
-                        });
-                    }
-                },
-                error: function (errormessage) {
-                    console.log(errormessage)
-                }
-            });
+        if (!ddlProductType.val() || ddlProductType.val() === '--Select Option--') {
+            toastr.error('Pls select Product Type First');
+            ddlProductType.focus();
+            return;
         }
         else {
-            toastr.error('Pls select Product Type First');
+            html = '<tr>';
+            html += '<td hidden><input type="hidden" class="form-control" value="0"></td>';
+            html += '<td><div class="form-group"><select class="form-control form-control-sm select2bs4" style="width: 100%;" id="' + uniqueId + '"></select></div></td>';
+            html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
+            html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
+            html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
+            html += '<td><button class="btn btn-primary btn-link deleteBtn" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button></td>';
+            html += '</tr>';
+            var newRow = InwardSupplyTable.row.add($(html)).draw(false).node();
+            $.ajax({
+                url: '/Transaction/GetProductByType?ProductTypeId=' + ddlProductType.val() + '',
+                type: "GET",
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    if (result.ResponseCode == 302) {
+                        var selectElement = $('#' + uniqueId);
+                        selectElement.empty();
+                        var defaultOption = $('<option></option>').val('').text('--Select Option--');
+                        selectElement.append(defaultOption);
+                        $.each(result.Products, function (key, item) {
+                            var option = $('<option></option>').val(item.ProductId).text(item.ProductName);
+                            selectElement.append(option);
+                        });
+                    }
+                },
+                error: function (errormessage) {
+                    console.log(errormessage)
+                }
+            });
         }
-
         $('#tblInwardSupply tbody').find('.select2bs4').select2({
             theme: 'bootstrap4'
         });
@@ -494,50 +463,26 @@ $(function () {
                     selectElement.empty();
                     var defaultOption = $('<option></option>').val('').text('--Select Option--');
                     selectElement.append(defaultOption);
-                    if (result.InwardSupply.ProductTypeName === 'RAW MATERIALS') {
-                        $.ajax({
-                            url: "/Transaction/GetProductRawMaterial",
-                            type: "GET",
-                            contentType: "application/json;charset=utf-8",
-                            dataType: "json",
-                            success: function (result3) {
-                                if (result3.ResponseCode == 302) {
-                                    $.each(result3.products, function (key, item1) {
-                                        var option = $('<option></option>').val(item1.ProductId).text(item1.ProductName);
-                                        if (item.Fk_ProductId === item1.ProductId) {
-                                            option.attr('selected', 'selected');
-                                        }
-                                        selectElement.append(option);
-                                    });
-                                }
-                            },
-                            error: function (errormessage) {
-                                console.log(errormessage)
+                    $.ajax({
+                        url: '/Transaction/GetProductByType?ProductTypeId=' + result.InwardSupply.Fk_ProductTypeId + '',
+                        type: "GET",
+                        contentType: "application/json;charset=utf-8",
+                        dataType: "json",
+                        success: function (result3) {
+                            if (result3.ResponseCode == 302) {
+                                $.each(result3.Products, function (key, item1) {
+                                    var option = $('<option></option>').val(item1.ProductId).text(item1.ProductName);
+                                    if (item.Fk_ProductId === item1.ProductId) {
+                                        option.attr('selected', 'selected');
+                                    }
+                                    selectElement.append(option);
+                                });
                             }
-                        });
-                    }
-                    else {
-                        $.ajax({
-                            url: "/Transaction/GetProductFinishedGood",
-                            type: "GET",
-                            contentType: "application/json;charset=utf-8",
-                            dataType: "json",
-                            success: function (result4) {
-                                if (result4.ResponseCode == 302) {
-                                    $.each(result4.products, function (key, item2) {
-                                        var option = $('<option></option>').val(item2.ProductId).text(item2.ProductName);
-                                        if (item.Fk_ProductId === item2.ProductId) {
-                                            option.attr('selected', 'selected');
-                                        }
-                                        selectElement.append(option);
-                                    });
-                                }
-                            },
-                            error: function (errormessage) {
-                                console.log(errormessage)
-                            }
-                        });
-                    }
+                        },
+                        error: function (errormessage) {
+                            console.log(errormessage)
+                        }
+                    });
 
                 })
                 $('#tblInwardSupply tbody').find('.select2bs4').select2({

@@ -50,7 +50,7 @@ $(function () {
     });
     $('#addDamageRowBtn').on('keydown', function (e) {
         if (e.key === 'Insert' || e.keyCode === 45) {
-            
+
         }
     });
     $(document).on('keydown', function (e) {
@@ -162,81 +162,50 @@ $(function () {
     $('#addDamageRowBtn').on('click', addDamageRowBtn);
     function addDamageRowBtn() {
         var uniqueId = 'ddlitem' + new Date().getTime();
-        var selectedOptionText = $("select[name='ddlProductTypeId'] option:selected").text();
         var html = '';
-        if (selectedOptionText === 'RAW MATERIALS') {
-            html = '<tr>';
-            html += '<td hidden><input type="hidden" class="form-control" value="0"></td>';
-            html += '<td><div class="form-group"><select class="form-control form-control-sm select2bs4 SelectedProduct" style="width: 100%;" id="' + uniqueId + '"></select></div></td>';
-            html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
-            html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
-            html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
-            html += '<td><button class="btn btn-primary btn-link deleteBtn" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button></td>';
-            html += '</tr>';
-            var newRow = DamageTable.row.add($(html)).draw(false).node();
-            $.ajax({
-                url: "/Transaction/GetProductRawMaterial",
-                type: "GET",
-                contentType: "application/json;charset=utf-8",
-                dataType: "json",
-                success: function (result) {
-                    if (result.ResponseCode == 302) {
-                        var selectElement = $('#' + uniqueId);
-                        selectElement.empty();
-                        var defaultOption = $('<option></option>').val('').text('--Select Option--');
-                        selectElement.append(defaultOption);
-                        $.each(result.products, function (key, item) {
-                            var option = $('<option></option>').val(item.ProductId).text(item.ProductName);
-                            selectElement.append(option);
-                        });
-                    }
-                },
-                error: function (errormessage) {
-                    console.log(errormessage)
-                }
-            });
-        }
-        else if (selectedOptionText === 'FINISHED GOODS') {
-            html = '<tr>';
-            html += '<td hidden><input type="hidden" class="form-control" value="0"></td>';
-            html += '<td><div class="form-group"><select class="form-control form-control-sm select2bs4 SelectedProduct" style="width: 100%;" id="' + uniqueId + '"></select></div></td>';
-            html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
-            html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
-            html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
-            html += '<td><button class="btn btn-primary btn-link deleteBtn" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button></td>';
-            html += '</tr>';
-            var newRow = DamageTable.row.add($(html)).draw(false).node();
-            $.ajax({
-                url: "/Transaction/GetProductFinishedGood",
-                type: "GET",
-                contentType: "application/json;charset=utf-8",
-                dataType: "json",
-                success: function (result) {
-                    if (result.ResponseCode == 302) {
-                        var selectElement = $('#' + uniqueId);
-                        selectElement.empty();
-                        var defaultOption = $('<option></option>').val('').text('--Select Option--');
-                        selectElement.append(defaultOption);
-                        $.each(result.products, function (key, item) {
-                            var option = $('<option></option>').val(item.ProductId).text(item.ProductName);
-                            selectElement.append(option);
-                        });
-                    }
-                },
-                error: function (errormessage) {
-                    console.log(errormessage)
-                }
-            });
+        if (!ddlProductType.val() || ddlProductType.val() === '--Select Option--') {
+            toastr.error('Pls select Product Type First');
+            ddlProductType.focus();
+            return;
         }
         else {
-            toastr.error('Pls select Product Type First');
+
+            html = '<tr>';
+            html += '<td hidden><input type="hidden" class="form-control" value="0"></td>';
+            html += '<td><div class="form-group"><select class="form-control form-control-sm select2bs4 SelectedProduct" style="width: 100%;" id="' + uniqueId + '"></select></div></td>';
+            html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
+            html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
+            html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
+            html += '<td><button class="btn btn-primary btn-link deleteBtn" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button></td>';
+            html += '</tr>';
+            var newRow = DamageTable.row.add($(html)).draw(false).node();
+            $.ajax({
+                url: '/Transaction/GetProductByType?ProductTypeId=' + ddlProductType.val() + '',
+                type: "GET",
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    if (result.ResponseCode == 302) {
+                        var selectElement = $('#' + uniqueId);
+                        selectElement.empty();
+                        var defaultOption = $('<option></option>').val('').text('--Select Option--');
+                        selectElement.append(defaultOption);
+                        $.each(result.Products, function (key, item) {
+                            var option = $('<option></option>').val(item.ProductId).text(item.ProductName);
+                            selectElement.append(option);
+                        });
+                    }
+                },
+                error: function (errormessage) {
+                    console.log(errormessage)
+                }
+            });
         }
 
         $('#tblDamage tbody').find('.select2bs4').select2({
             theme: 'bootstrap4'
         });
     }
-
     $(document).on('change', '.SelectedProduct', function () {
         var selectElement = $(this);
         var selectedProductId = selectElement.val();
@@ -249,7 +218,7 @@ $(function () {
                 success: function (result) {
                     if (result.ResponseCode == 302) {
                         var Textbox = selectElement.closest('tr').find('input[type="text"]');
-                          Textbox.eq(1).val(result.product.Price);
+                        Textbox.eq(1).val(result.product.Price);
                     }
                 },
                 error: function (errormessage) {
@@ -373,20 +342,20 @@ $(function () {
                     </thead>
                     <tbody>
                 `;
-                    if (result.ResponseCode == 302) {
-                        $.each(result.DamageOrders, function (key, item) {
-                            let formattedDate = '';
-                            const ModifyDate = item.TransactionDate;
-                            if (ModifyDate) {
-                                const dateObject = new Date(ModifyDate);
-                                if (!isNaN(dateObject)) {
-                                    const day = String(dateObject.getDate()).padStart(2, '0');
-                                    const month = String(dateObject.getMonth() + 1).padStart(2, '0');
-                                    const year = dateObject.getFullYear();
-                                    formattedDate = `${day}/${month}/${year}`;
-                                }
+                if (result.ResponseCode == 302) {
+                    $.each(result.DamageOrders, function (key, item) {
+                        let formattedDate = '';
+                        const ModifyDate = item.TransactionDate;
+                        if (ModifyDate) {
+                            const dateObject = new Date(ModifyDate);
+                            if (!isNaN(dateObject)) {
+                                const day = String(dateObject.getDate()).padStart(2, '0');
+                                const month = String(dateObject.getMonth() + 1).padStart(2, '0');
+                                const year = dateObject.getFullYear();
+                                formattedDate = `${day}/${month}/${year}`;
                             }
-                      html += `
+                        }
+                        html += `
                       <tr>
                         <td hidden>${item.DamageOrderId}</td>
                         <td>${item.TransactionNo}</td>
@@ -401,14 +370,14 @@ $(function () {
                         </td>
                       </tr>
                     `;
-                      });
-                    } else {
-                     html += `
+                    });
+                } else {
+                    html += `
                     <tr>
                       <td colspan="8">No Record</td>
                     </tr>
                   `;
-              }
+                }
                 html += '</tbody></table>';
 
                 $('.tblDamageList').html(html);
@@ -537,51 +506,26 @@ $(function () {
                     selectElement.empty();
                     var defaultOption = $('<option></option>').val('').text('--Select Option--');
                     selectElement.append(defaultOption);
-                    if (result.DamageOrder.ProductTypeName === 'RAW MATERIALS') {
-                        $.ajax({
-                            url: "/Transaction/GetProductRawMaterial",
-                            type: "GET",
-                            contentType: "application/json;charset=utf-8",
-                            dataType: "json",
-                            success: function (result3) {
-                                if (result3.ResponseCode == 302) {
-                                    $.each(result3.products, function (key, item1) {
-                                        var option = $('<option></option>').val(item1.ProductId).text(item1.ProductName);
-                                        if (item.Fk_ProductId === item1.ProductId) {
-                                            option.attr('selected', 'selected');
-                                        }
-                                        selectElement.append(option);
-                                    });
-                                }
-                            },
-                            error: function (errormessage) {
-                                console.log(errormessage)
+                    $.ajax({
+                        url: '/Transaction/GetProductByType?ProductTypeId=' + result.DamageOrder.Fk_ProductTypeId + '',
+                        type: "GET",
+                        contentType: "application/json;charset=utf-8",
+                        dataType: "json",
+                        success: function (result4) {
+                            if (result4.ResponseCode == 302) {
+                                $.each(result4.Products, function (key, item2) {
+                                    var option = $('<option></option>').val(item2.ProductId).text(item2.ProductName);
+                                    if (item.Fk_ProductId === item2.ProductId) {
+                                        option.attr('selected', 'selected');
+                                    }
+                                    selectElement.append(option);
+                                });
                             }
-                        });
-                    }
-                    else {
-                        $.ajax({
-                            url: "/Transaction/GetProductFinishedGood",
-                            type: "GET",
-                            contentType: "application/json;charset=utf-8",
-                            dataType: "json",
-                            success: function (result4) {
-                                if (result4.ResponseCode == 302) {
-                                    $.each(result4.products, function (key, item2) {
-                                        var option = $('<option></option>').val(item2.ProductId).text(item2.ProductName);
-                                        if (item.Fk_ProductId === item2.ProductId) {
-                                            option.attr('selected', 'selected');
-                                        }
-                                        selectElement.append(option);
-                                    });
-                                }
-                            },
-                            error: function (errormessage) {
-                                console.log(errormessage)
-                            }
-                        });
-                    }
-
+                        },
+                        error: function (errormessage) {
+                            console.log(errormessage)
+                        }
+                    });
                 })
                 $('#tblDamage tbody').find('.select2bs4').select2({
                     theme: 'bootstrap4'
@@ -600,7 +544,7 @@ $(function () {
         $(this).closest('tr').remove();
     });
     $(document).on('click', '#btnUpdate', function () {
-       
+
         if (!transactionDate.val()) {
             toastr.error('TransactionDate Is Required.');
             transactionDate.focus();
