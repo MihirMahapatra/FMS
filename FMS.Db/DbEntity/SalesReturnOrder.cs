@@ -8,7 +8,7 @@
         public string TransactionType { get; set; }
         public string PriceType { get; set; }
         public Guid? Fk_SubLedgerId { get; set; }
-        public string CustomerName { get; set; }
+        public string CustomerName { get; set; } = null;
         public Guid Fk_BranchId { get; set; }
         public Guid Fk_FinancialYearId { get; set; }
         public string OrderNo { get; set; }

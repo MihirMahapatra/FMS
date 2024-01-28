@@ -436,7 +436,7 @@ namespace FMS.Controllers.Transaction
             return new JsonResult(result);
         }
         [HttpPost, Authorize(Policy = "Create")]
-        public async Task<IActionResult> CreateSalesReturn([FromBody] SalesDataRequest requestData)
+        public async Task<IActionResult> CreateSalesReturn([FromBody] SalesReturnDataRequest requestData)
         {
             if (ModelState.IsValid)
             {
@@ -450,7 +450,7 @@ namespace FMS.Controllers.Transaction
 
         }
         [HttpPost, Authorize(Policy = "Edit")]
-        public async Task<IActionResult> UpdateSalesReturn([FromBody] SalesDataRequest requestData)
+        public async Task<IActionResult> UpdateSalesReturn([FromBody] SalesReturnDataRequest requestData)
         {
             if (ModelState.IsValid)
             {

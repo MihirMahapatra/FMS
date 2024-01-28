@@ -7,14 +7,14 @@
         public string TransactionType { get; set; }
         public string PriceType { get; set; }
         public Guid? Fk_SubLedgerId { get; set; }
-        public string CustomerName { get; set; }
+        public string CustomerName { get; set; } = null;
         public Guid Fk_BranchId { get; set; }
         public Guid Fk_FinancialYearId { get; set; }
-        public DateTime TransactionDate { get;set; }
-        public string OrderNo { get; set;}
+        public DateTime TransactionDate { get; set; }
+        public string OrderNo { get; set; }
         public DateTime OrderDate { get; set; }
         public decimal SubTotal { get; set; }
-        public decimal Discount { get;set; }
+        public decimal Discount { get; set; }
         public decimal Gst { get; set; }
         public decimal GrandTotal { get; set; }
         public string TranspoterName { get; set; }

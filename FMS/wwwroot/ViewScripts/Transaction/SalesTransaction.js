@@ -451,7 +451,7 @@ $(function () {
                     selectElement.empty();
                     var defaultOption = $('<option></option>').val('').text('--Select Option--');
                     selectElement.append(defaultOption);
-                    $.each(result.products, function (key, item) {
+                    $.each(result.Products, function (key, item) {
                         var option = $('<option></option>').val(item.ProductId).text(item.ProductName);
                         selectElement.append(option);
                     });
@@ -484,10 +484,10 @@ $(function () {
                         for (var i = 0; i < 7; i++) {
                             Textbox.eq(i).val('0');
                         }
-                        Textbox.eq(4).val(result.product.GST);
-                        Textbox.eq(1).val(result.product.Price);
-                        var span = selectElement.closest('tr').find('span#Unit'); // Specify the ID of the span for accuracy
-                        span.text(result.product.Unit.UnitName);
+                        Textbox.eq(4).val(result.Product.GST);
+                        Textbox.eq(1).val(result.Product.Price);
+                        var span = selectElement.closest('tr').find('span#Unit');
+                        span.text(result.Product.Unit.UnitName);
                     }
                 },
                 error: function (errormessage) {
@@ -652,8 +652,6 @@ $(function () {
                     if (Response.ResponseCode == 201) {
                         toastr.success(Response.SuccessMsg);
                         SalesTable.clear().draw();
-                      
-                        transactionDate.val('');
                         CustomerName.val('');
                         orderNo.val('');
                         orderDate.val('');
@@ -866,7 +864,6 @@ $(function () {
                         }
                     });
                 }
-
                 transpoterName.val(result.salesOrder.TranspoterName);
                 receivingPerson.val(result.salesOrder.ReceivingPerson);
                 vehicleNo.val(result.salesOrder.VehicleNo);
@@ -933,7 +930,7 @@ $(function () {
                         dataType: "json",
                         success: function (result3) {
                             if (result3.ResponseCode == 302) {
-                                $.each(result3.products, function (key, item3) {
+                                $.each(result3.Products, function (key, item3) {
                                     var option = $('<option></option>').val(item3.ProductId).text(item3.ProductName);
                                     if (item.Fk_ProductId === item3.ProductId) {
                                         option.attr('selected', 'selected');
@@ -951,7 +948,6 @@ $(function () {
                 $('#tblSales tbody').find('.select2bs4').select2({
                     theme: 'bootstrap4'
                 });
-                // gst differance part //
                 const gstDifferences = {};
                 $('#tblSales tbody tr').each(function () {
                     const gstRate = parseFloat($(this).find('input:eq(5)').val());
@@ -965,12 +961,11 @@ $(function () {
                     }
                 });
                 const gstDifferenceBody = $('#tblGstdifference tbody');
-                gstDifferenceBody.empty(); // Clear the table before adding the rows.
+                gstDifferenceBody.empty();
                 for (const rate in gstDifferences) {
                     const row = $('<tr><td>GST ' + rate + ' % Amount: ' + gstDifferences[rate].toFixed(2) + '</td></tr>');
                     gstDifferenceBody.append(row);
                 }
-                // end //
             },
             error: function (errormessage) {
                 Swal.fire(

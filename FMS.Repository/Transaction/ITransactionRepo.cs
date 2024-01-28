@@ -52,10 +52,10 @@ namespace FMS.Repository.Transaction
         #endregion
         #region Sales Return
         Task<Result<string>> GetLastSalesReturnTransaction();
-        Task<Result<bool>> CreateSalesReturn(SalesDataRequest data);
+        Task<Result<bool>> CreateSalesReturn(SalesReturnDataRequest data);
         Task<Result<SalesReturnOrderModel>> GetSalesReturns();
         Task<Result<SalesReturnOrderModel>> GetSalesReturnById(Guid Id);
-        Task<Result<bool>> UpdateSalesReturn(SalesDataRequest data);
+        Task<Result<bool>> UpdateSalesReturn(SalesReturnDataRequest data);
         Task<Result<bool>> DeleteSalesReturn(Guid Id, IDbContextTransaction transaction, bool IsCallBack);
         #endregion
         #endregion

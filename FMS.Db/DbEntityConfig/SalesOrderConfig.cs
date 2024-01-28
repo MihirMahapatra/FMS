@@ -13,7 +13,7 @@ namespace FMS.Db.DbEntityConfig
             builder.Property(e => e.SalesOrderId).ValueGeneratedOnAdd().HasDefaultValueSql("NEWID()");
             builder.Property(e => e.TransactionNo).HasMaxLength(10).IsRequired(true);
             builder.Property(e => e.TransactionType).HasMaxLength(10).IsRequired(true);
-            builder.Property(e => e.PriceType).HasMaxLength(10).IsRequired(true);
+            builder.Property(e => e.PriceType).HasMaxLength(50).IsRequired(true);
             builder.Property(e => e.Fk_SubLedgerId).IsRequired(false);
             builder.Property(e => e.CustomerName).HasMaxLength(200).IsRequired(false);
             builder.Property(e => e.Fk_BranchId).IsRequired(true);

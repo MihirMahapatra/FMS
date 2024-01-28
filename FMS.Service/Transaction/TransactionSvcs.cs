@@ -1141,7 +1141,7 @@ namespace FMS.Service.Transaction
                 Data = Result.SingleObjData,
             };
         }
-        public async Task<Base> CreateSalesReturn(SalesDataRequest data)
+        public async Task<Base> CreateSalesReturn(SalesReturnDataRequest data)
         {
             Base Obj = new();
             var Result = await _transactionRepo.CreateSalesReturn(data);
@@ -1261,7 +1261,7 @@ namespace FMS.Service.Transaction
             }
             return Obj;
         }
-        public async Task<Base> UpdateSalesReturn(SalesDataRequest data)
+        public async Task<Base> UpdateSalesReturn(SalesReturnDataRequest data)
         {
             Base Obj = new();
             var Result = await _transactionRepo.UpdateSalesReturn(data);

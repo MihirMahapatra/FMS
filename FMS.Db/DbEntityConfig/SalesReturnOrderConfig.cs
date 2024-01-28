@@ -18,7 +18,7 @@ namespace FMS.Db.DbEntityConfig
             builder.Property(e => e.TransactionNo).HasMaxLength(100).IsRequired(true);
             builder.Property(e => e.TransactionType).HasMaxLength(100).IsRequired(true);
             builder.Property(e => e.TransactionDate).HasColumnType("datetime").IsRequired(true);
-            builder.Property(e => e.PriceType).HasMaxLength(10).IsRequired(true);
+            builder.Property(e => e.PriceType).HasMaxLength(50).IsRequired(true);
             builder.Property(e => e.OrderNo).HasMaxLength(100).IsRequired(true);
             builder.Property(e => e.OrderDate).HasColumnType("datetime").IsRequired(true);
             builder.Property(e => e.VehicleNo).HasMaxLength(100).IsRequired(true);

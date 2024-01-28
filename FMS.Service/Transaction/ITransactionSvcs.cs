@@ -53,10 +53,10 @@ namespace FMS.Service.Transaction
         #endregion
         #region Sales Return
         Task<Base> GetLastSalesReturnTransaction();
-        Task<Base> CreateSalesReturn(SalesDataRequest data);
+        Task<Base> CreateSalesReturn(SalesReturnDataRequest data);
         Task<SalesReturnOrderViewModel> GetSalesReturns();
         Task<SalesReturnOrderViewModel> GetSalesReturnById(Guid Id);
-        Task<Base> UpdateSalesReturn(SalesDataRequest data);
+        Task<Base> UpdateSalesReturn(SalesReturnDataRequest data);
         Task<Base> DeleteSalesReturn(Guid Id);
         #endregion
         #endregion
