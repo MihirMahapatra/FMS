@@ -2810,7 +2810,7 @@ namespace FMS.Repository.Transaction
                                 var newLedgerBalance = new LedgerBalance
                                 {
                                     Fk_LedgerId = MappingLedgers.SalesAccount,
-                                    OpeningBalance =0,
+                                    OpeningBalance = 0,
                                     OpeningBalanceType = "Cr",
                                     RunningBalance = -newSalesOrder.GrandTotal,
                                     RunningBalanceType = "Cr",
@@ -3386,6 +3386,7 @@ namespace FMS.Repository.Transaction
                                     {
                                         Fk_SalesOrderId = data.SalesOrderId,
                                         TransactionNo = data.TransactionNo,
+                                        TransactionDate = convertedTransactionDate,
                                         TransactionType = data.TransactionType,
                                         Fk_ProductId = Guid.Parse(item[1]),
                                         Fk_BranchId = BranchId,
@@ -3410,8 +3411,15 @@ namespace FMS.Repository.Transaction
                                     }
                                     else
                                     {
-                                        _Result.WarningMessage = "Stock < 0";
-                                        return _Result;
+                                        var AddNewStock = new Stock
+                                        {
+                                            Fk_BranchId = BranchId,
+                                            Fk_ProductId = newSalesTransaction.Fk_ProductId,
+                                            Fk_FinancialYear = FinancialYear,
+                                            AvilableStock = -newSalesTransaction.Quantity
+                                        };
+                                        await _appDbContext.Stocks.AddAsync(AddNewStock);
+                                        await _appDbContext.SaveChangesAsync();
                                     }
                                     #endregion
                                     #region Create Journal
@@ -3768,6 +3776,7 @@ namespace FMS.Repository.Transaction
                             TransactionDate = convertedTransactionDate,
                             TransactionNo = data.TransactionNo,
                             TransactionType = data.TransactionType,
+                            PriceType = data.RateType,
                             OrderNo = data.OrderNo,
                             OrderDate = convertedOrderDate,
                             TranspoterName = data.TranspoterName,
@@ -3785,7 +3794,7 @@ namespace FMS.Repository.Transaction
                         {
                             #region Ledger & Subledger
                             // @SalesReturn A/c ------Dr
-                            var updateSalesReturnLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.SalesReturnAccount && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
+                            var updateSalesReturnLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.SalesReturnAccount && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
                             if (updateSalesReturnLedgerBalance != null)
                             {
                                 updateSalesReturnLedgerBalance.RunningBalance += newSalesReturnOrder.GrandTotal;
@@ -3808,22 +3817,57 @@ namespace FMS.Repository.Transaction
                                 await _appDbContext.SaveChangesAsync();
                             }
                             // @SundryDebitors A/c ---- Cr
-                            var updateSundryDebitorsSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == newSalesReturnOrder.Fk_SubLedgerId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
+                            var LedgerBalanceId = Guid.Empty;
+                            var updateSundryDebitorsLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.SundryDebtors && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                            if (updateSundryDebitorsLedgerBalance != null)
+                            {
+                                updateSundryDebitorsLedgerBalance.RunningBalance -= newSalesReturnOrder.GrandTotal;
+                                updateSundryDebitorsLedgerBalance.RunningBalanceType = (updateSundryDebitorsLedgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
+                                await _appDbContext.SaveChangesAsync();
+                                LedgerBalanceId = updateSundryDebitorsLedgerBalance.LedgerBalanceId;
+                            }
+                            else
+                            {
+                                var newLedgerBalance = new LedgerBalance
+                                {
+                                    Fk_LedgerId = MappingLedgers.SundryDebtors,
+                                    OpeningBalance = 0,
+                                    OpeningBalanceType = "Cr",
+                                    RunningBalance = -newSalesReturnOrder.GrandTotal,
+                                    RunningBalanceType = "Cr",
+                                    Fk_BranchId = BranchId,
+                                    Fk_FinancialYear = FinancialYear
+                                };
+                                await _appDbContext.LedgerBalances.AddAsync(newLedgerBalance);
+                                await _appDbContext.SaveChangesAsync();
+                                LedgerBalanceId = newLedgerBalance.LedgerBalanceId;
+                            }
+                            var updateSundryDebitorsSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == newSalesReturnOrder.Fk_SubLedgerId && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).SingleOrDefaultAsync();
                             if (updateSundryDebitorsSubledgerBalance != null)
                             {
                                 updateSundryDebitorsSubledgerBalance.RunningBalance -= newSalesReturnOrder.GrandTotal;
                                 updateSundryDebitorsSubledgerBalance.RunningBalanceType = (updateSundryDebitorsSubledgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
-                                var updateSundryDebitorsLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.LedgerBalanceId == updateSundryDebitorsSubledgerBalance.Fk_LedgerBalanceId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
-                                if (updateSundryDebitorsLedgerBalance != null)
+                                await _appDbContext.SaveChangesAsync();
+                            }
+                            else
+                            {
+                                var newSubLedgerBalance = new SubLedgerBalance
                                 {
-                                    updateSundryDebitorsLedgerBalance.RunningBalance -= newSalesReturnOrder.GrandTotal;
-                                    updateSundryDebitorsLedgerBalance.RunningBalanceType = (updateSundryDebitorsLedgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
-                                }
+                                    Fk_LedgerBalanceId = LedgerBalanceId,
+                                    Fk_SubLedgerId = data.Fk_SubLedgerId ?? Guid.Empty,
+                                    OpeningBalanceType = "Cr",
+                                    OpeningBalance = 0,
+                                    RunningBalanceType = "Cr",
+                                    RunningBalance = -newSalesReturnOrder.GrandTotal,
+                                    Fk_FinancialYearId = FinancialYear,
+                                    Fk_BranchId = BranchId
+                                };
+                                await _appDbContext.SubLedgerBalances.AddAsync(newSubLedgerBalance);
                                 await _appDbContext.SaveChangesAsync();
                             }
                             #endregion
                             #region Journal 
-                            var JournalVoucherNo = await _appDbContext.Journals.Where(s => s.Fk_BranchId == BranchId).Select(s => new { s.VouvherNo }).OrderByDescending(s => s.VouvherNo).FirstOrDefaultAsync();
+                            var JournalVoucherNo = await _appDbContext.Journals.Where(s => s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).Select(s => new { s.VouvherNo }).OrderByDescending(s => s.VouvherNo).FirstOrDefaultAsync();
                             if (JournalVoucherNo != null)
                             {
                                 if (int.TryParse(JournalVoucherNo.VouvherNo.AsSpan(2), out int currentId))
@@ -3859,7 +3903,7 @@ namespace FMS.Repository.Transaction
                         {
                             #region Ledger & SubLedger
                             //@salesReturn A/c -----Dr
-                            var updateSalesReturnLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.SalesReturnAccount && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
+                            var updateSalesReturnLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.SalesReturnAccount && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
                             if (updateSalesReturnLedgerBalance != null)
                             {
                                 updateSalesReturnLedgerBalance.RunningBalance += newSalesReturnOrder.GrandTotal;
@@ -3871,7 +3915,7 @@ namespace FMS.Repository.Transaction
                                 var newLedgerBalance = new LedgerBalance
                                 {
                                     Fk_LedgerId = MappingLedgers.SalesReturnAccount,
-                                    OpeningBalance = newSalesReturnOrder.GrandTotal,
+                                    OpeningBalance = 0,
                                     OpeningBalanceType = "Dr",
                                     RunningBalance = newSalesReturnOrder.GrandTotal,
                                     RunningBalanceType = "Dr",
@@ -3882,7 +3926,7 @@ namespace FMS.Repository.Transaction
                                 await _appDbContext.SaveChangesAsync();
                             }
                             // @cash A/c -----Cr
-                            var updateCashLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.CashAccount && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
+                            var updateCashLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.CashAccount && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
                             if (updateCashLedgerBalance != null)
                             {
                                 updateCashLedgerBalance.RunningBalance -= newSalesReturnOrder.GrandTotal;
@@ -3906,7 +3950,7 @@ namespace FMS.Repository.Transaction
                             }
                             #endregion
                             #region Receipt
-                            var ReciptVoucherNo = await _appDbContext.Receipts.Where(s => s.Fk_BranchId == BranchId).Select(s => new { s.VouvherNo }).OrderByDescending(s => s.VouvherNo).FirstOrDefaultAsync();
+                            var ReciptVoucherNo = await _appDbContext.Receipts.Where(s => s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).Select(s => new { s.VouvherNo }).OrderByDescending(s => s.VouvherNo).FirstOrDefaultAsync();
                             if (ReciptVoucherNo != null)
                             {
                                 if (int.TryParse(ReciptVoucherNo.VouvherNo.AsSpan(2), out int currentId))
@@ -3990,8 +4034,15 @@ namespace FMS.Repository.Transaction
                             }
                             else
                             {
-                                _Result.WarningMessage = "Stock Not Avilable";
-                                return _Result;
+                                var AddNewStock = new Stock
+                                {
+                                    Fk_BranchId = BranchId,
+                                    Fk_ProductId = newSalesReturnTransaction.Fk_ProductId,
+                                    Fk_FinancialYear = FinancialYear,
+                                    AvilableStock = newSalesReturnTransaction.Quantity
+                                };
+                                await _appDbContext.Stocks.AddAsync(AddNewStock);
+                                await _appDbContext.SaveChangesAsync();
                             }
                             #endregion
                         }

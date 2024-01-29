@@ -343,7 +343,7 @@ namespace FMS.Controllers.Transaction
             return new JsonResult(result);
         }
         [HttpGet]
-        public async Task<IActionResult> GetProductGstWithRate([FromQuery] Guid id, string RateType)
+        public async Task<IActionResult> GetProductGstWithRate([FromQuery] Guid id, [FromQuery] string RateType)
         {
             var result = await _adminSvcs.GetProductGstWithRate(id, RateType);
             return new JsonResult(result);

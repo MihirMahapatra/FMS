@@ -164,6 +164,7 @@ $(function () {
     });
     //----------------------------------------Sale Return---------------------------------------------- //
     const Sr_ddlPayment = $('select[name="Sr_ddlPayment"]');
+    const Sr_ddlRate = $('select[name="Sr_ddlRate"]');
     const Sr_CustomerName = $('input[name="Sr_CustomerName"]');
     const Sr_ddlCustomer = $('select[name="Sr_ddlCustomerId"]');
     const Sr_OrderId = $('input[name="hdnSaleReturnOrderId"]');
@@ -1030,6 +1031,7 @@ $(function () {
             var requestData = {
                 SalesOrderId: SalesOrderId.val(),
                 TransactionType: ddlPayment.val(),
+                RateType: ddlRate.val(),
                 TransactionDate: transactionDate.val(),
                 TransactionNo: transactionNo.val(),
                 Fk_SubLedgerId: ddlCustomer.val(),
@@ -1183,6 +1185,24 @@ $(function () {
             }
         });
     }
+    GetSalesReturnRateType()
+    function GetSalesReturnRateType() {
+        $.ajax({
+            url: "/Transaction/GetRateType",
+            type: "GET",
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            success: function (result) {
+                $.each(result, function (key, item) {
+                    var option = $('<option></option>').val(key).text(item);
+                    Sr_ddlRate.append(option);
+                });
+            },
+            error: function (errormessage) {
+                console.log(errormessage)
+            }
+        });
+    }
     $('#addSalesReturnRowBtn').on('click', SalesReturnRowBtn);
     function SalesReturnRowBtn() {
         var uniqueId = 'ddlitem' + new Date().getTime();
@@ -1199,7 +1219,12 @@ $(function () {
             '</div>' +
             '</div>' +
             '</td>';
-        html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
+        if (Sr_ddlRate.val() === 'wholesalerate') {
+            html += '<td><div class="form-group"><input type="text" class="form-control sr_rate" value="0" disabled></div></td>';
+        }
+        else {
+            html += '<td><div class="form-group"><input type="text" class="form-control sr_rate" value="0"></div></td>';
+        }
         html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
         html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
         html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
@@ -1219,7 +1244,7 @@ $(function () {
                     selectElement.empty();
                     var defaultOption = $('<option></option>').val('').text('--Select Option--');
                     selectElement.append(defaultOption);
-                    $.each(result.products, function (key, item) {
+                    $.each(result.Products, function (key, item) {
                         var option = $('<option></option>').val(item.ProductId).text(item.ProductName);
                         selectElement.append(option);
                     });
@@ -1249,9 +1274,10 @@ $(function () {
     $(document).on('change', '.GoodsFinishedReturn',  function () {
         var selectElement = $(this);
         var selectedProductId = selectElement.val();
+        var rateType = Sr_ddlRate.val();
         if (selectedProductId) {
             $.ajax({
-                url: '/Transaction/GetProductGstWithRate?id=' + selectedProductId,
+                url: '/Transaction/GetProductGstWithRate?id=' + selectedProductId +'&&RateType=' + rateType +'',
                 type: "GET",
                 contentType: "application/json;charset=utf-8",
                 dataType: "json",
@@ -1261,14 +1287,10 @@ $(function () {
                         for (var i = 0; i < 7; i++) {
                             Textbox.eq(i).val('0');
                         }
-                        Textbox.eq(4).val(result.product.GST);
-                        Textbox.eq(1).val(result.product.Price);
-                        var span = selectElement.closest('tr').find('span#Unitrtn'); // Specify the ID of the span for accuracy
-                        span.text(result.product.Unit.UnitName);
-                        //var inputGst = selectElement.closest('tr').find('input[type="text"]').eq(4);
-                        //var inputPrice = selectElement.closest('tr').find('input[type="text"]').eq(1);
-                        //inputGst.val(result.product.GST);
-                        //inputPrice.val(result.product.Price);
+                        Textbox.eq(4).val(result.Product.GST);
+                        Textbox.eq(1).val(result.Product.Price);
+                        var span = selectElement.closest('tr').find('span#Unitrtn'); 
+                        span.text(result.Product.Unit.UnitName);
                     }
                 },
                 error: function (errormessage) {
@@ -1392,11 +1414,11 @@ $(function () {
 
             var requestData = {
                 TransactionType: Sr_ddlPayment.val(),
+                RateType: Sr_ddlRate.val(),
                 Fk_SubLedgerId: Sr_ddlCustomer.val(),
                 CustomerName: Sr_CustomerName.val(),
                 TransactionDate: Sr_transactionDate.val(),
                 TransactionNo: Sr_transactionNo.val(),
-
                 OrderNo: Sr_orderNo.val(),
                 OrderDate: Sr_orderDate.val(),
                 SubTotal: Sr_subTotal.val(),
@@ -1417,10 +1439,8 @@ $(function () {
                 success: function (Response) {
                     $('#loader').hide();
                     if (Response.ResponseCode == 201) {
-                       
                         toastr.success(Response.SuccessMsg);
                         SalesReturnTable.clear().draw();
-                        Sr_transactionDate.val('');
                         Sr_CustomerName.val('');
                         Sr_orderNo.val('');
                         Sr_orderDate.val('');
@@ -1564,6 +1584,25 @@ $(function () {
                     }
                 }
                 Sr_transactionNo.val(result.SalesReturnOrder.TransactionNo)
+                $.ajax({
+                    url: "/Transaction/GetSalesType",
+                    type: "GET",
+                    contentType: "application/json;charset=utf-8",
+                    dataType: "json",
+                    success: function (result2) {
+                        ddlPayment.empty();
+                        $.each(result2, function (key, item2) {
+                            var option = $('<option></option>').val(key).text(item2);
+                            if (key === result.SalesReturnOrder.TransactionType) {
+                                option.attr('selected', 'selected');
+                            }
+                            Sr_ddlPayment.append(option);
+                        });
+                    },
+                    error: function (errormessage) {
+                        console.log(errormessage)
+                    }
+                });
                 if (result.SalesReturnOrder.TransactionType === 'cash') {
                     $('.Sr_hdnddn').hide();
                     $('.Sr_hdntxt').show();
@@ -1674,7 +1713,7 @@ $(function () {
                         dataType: "json",
                         success: function (result3) {
                             if (result3.ResponseCode == 302) {
-                                $.each(result3.products, function (key, item3) {
+                                $.each(result3.Products, function (key, item3) {
                                     var option = $('<option></option>').val(item3.ProductId).text(item3.ProductName);
                                     if (item.Fk_ProductId === item3.ProductId) {
                                         option.attr('selected', 'selected');
@@ -1682,26 +1721,6 @@ $(function () {
                                     selectElement.append(option);
                                 });
                             }
-                            //This was about unit name
-                            var selectedProductId = selectElement.val();
-                            if (selectedProductId) {
-                                $.ajax({
-                                    url: '/Transaction/GetProductGstWithRate?id=' + selectedProductId,
-                                    type: "GET",
-                                    contentType: "application/json;charset=utf-8",
-                                    dataType: "json",
-                                    success: function (result) {
-                                        if (result.ResponseCode == 302) {
-                                            var span = selectElement.closest('tr').find('span#Unitrtn'); // Specify the ID of the span for accuracy
-                                            span.text(result.product.Unit.UnitName);
-                                        }
-                                    },
-                                    error: function (errormessage) {
-                                        console.log(errormessage);
-                                    }
-                                });
-                            }
-                            //end
                         },
                         error: function (errormessage) {
                             console.log(errormessage)
@@ -1729,7 +1748,6 @@ $(function () {
                     const row = $('<tr><td>GST ' + rate + ' % Amount: ' + gstDifferences[rate].toFixed(2) + '</td></tr>');
                     gstDifferenceBody.append(row);
                 }
-                // end //
             },
             error: function (errormessage) {
                 Swal.fire(
@@ -1795,6 +1813,7 @@ $(function () {
             var requestData = {
                 SalesOrderId: Sr_OrderId.val(),
                 TransactionType: Sr_ddlPayment.val(),
+                RateType: Sr_ddlRate.val(),
                 TransactionDate: Sr_transactionDate.val(),
                 TransactionNo: Sr_transactionNo.val(),
                 CustomerName: Sr_CustomerName.val(),
