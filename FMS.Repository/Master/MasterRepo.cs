@@ -85,13 +85,13 @@ namespace FMS.Repository.Master
             {
                 _Result.IsSuccess = false;
                 Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
-                var Query = await (from sl in _appDbContext.SubLedgers
-                                   where sl.Fk_LedgerId == LedgerId && sl.Fk_BranchId == BranchId
-                                   select new SubLedgerModel()
-                                   {
-                                       SubLedgerId = sl.SubLedgerId,
-                                       SubLedgerName = sl.SubLedgerName,
-                                   }).ToListAsync();
+                var Query = await _appDbContext.SubLedgers
+                            .Where(s => s.Fk_LedgerId == LedgerId && (s.Fk_BranchId == BranchId || s.Fk_BranchId == null))
+                            .Select(sl => new SubLedgerModel()
+                            {
+                                SubLedgerId = sl.SubLedgerId,
+                                SubLedgerName = sl.SubLedgerName,
+                            }).ToListAsync();
                 if (Query.Count > 0)
                 {
                     _Result.CollectionObjData = Query;
@@ -433,7 +433,7 @@ namespace FMS.Repository.Master
                 {
                     if (Id != Guid.Empty)
                     {
-                        var Query = await _appDbContext.LedgerBalances.SingleOrDefaultAsync(x => x.LedgerBalanceId == Id && x.Fk_BranchId == BranchId && x.Fk_FinancialYear==FinancialYear);
+                        var Query = await _appDbContext.LedgerBalances.SingleOrDefaultAsync(x => x.LedgerBalanceId == Id && x.Fk_BranchId == BranchId && x.Fk_FinancialYear == FinancialYear);
                         if (Query != null)
                         {
                             _appDbContext.LedgerBalances.Remove(Query);

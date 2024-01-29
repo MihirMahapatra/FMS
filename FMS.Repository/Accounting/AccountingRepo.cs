@@ -36,7 +36,7 @@ namespace FMS.Repository.Accounting
                 Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
                 Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
                 _Result.IsSuccess = false;
-                var lastJournalNo = await _appDbContext.Journals.Where(s => s.Fk_BranchId == BranchId && s.Fk_FinancialYearId== FinancialYear).OrderByDescending(s => s.VouvherNo).Select(s => new { s.VouvherNo }).FirstOrDefaultAsync();
+                var lastJournalNo = await _appDbContext.Journals.Where(s => s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).OrderByDescending(s => s.VouvherNo).Select(s => new { s.VouvherNo }).FirstOrDefaultAsync();
                 if (lastJournalNo != null)
                 {
                     var lastVoucherNo = lastJournalNo.VouvherNo;
@@ -202,18 +202,52 @@ namespace FMS.Repository.Accounting
                                         await _appDbContext.SaveChangesAsync();
                                         #endregion
                                         #region Ledger & SubLedger Balance
+                                        var LedgerBalanceId = Guid.Empty;
                                         var updateSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == newJournal.Fk_SubLedgerId && s.Fk_FinancialYearId == FinancialYear && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                                         if (updateSubledgerBalance != null)
                                         {
                                             decimal Amount = newJournal.DrCr == "Dr" ? newJournal.Amount : -newJournal.Amount;
                                             updateSubledgerBalance.RunningBalance += Amount;
                                             updateSubledgerBalance.RunningBalanceType = (updateSubledgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
-                                            var updateLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.LedgerBalanceId == updateSubledgerBalance.Fk_LedgerBalanceId).FirstOrDefaultAsync();
+                                            var updateLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.LedgerBalanceId == updateSubledgerBalance.Fk_LedgerBalanceId && s.Fk_FinancialYear == FinancialYear && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                                             if (updateLedgerBalance != null)
                                             {
                                                 updateLedgerBalance.RunningBalance += Amount;
                                                 updateLedgerBalance.RunningBalanceType = (updateLedgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
+                                                LedgerBalanceId = updateLedgerBalance.LedgerBalanceId;
                                             }
+                                            else
+                                            {
+                                                var newLedgerBalance = new LedgerBalance
+                                                {
+                                                    Fk_LedgerId = Guid.Parse(item.ddlLedgerId),
+                                                    OpeningBalance = 0,
+                                                    OpeningBalanceType = newJournal.DrCr == "Dr" ? "Dr" : "Cr",
+                                                    RunningBalance = newJournal.DrCr == "Dr" ? newJournal.Amount : -newJournal.Amount,
+                                                    RunningBalanceType = newJournal.DrCr == "Dr" ? "Dr" : "Cr",
+                                                    Fk_BranchId = BranchId,
+                                                    Fk_FinancialYear = FinancialYear
+                                                };
+                                                await _appDbContext.LedgerBalances.AddAsync(newLedgerBalance);
+                                                await _appDbContext.SaveChangesAsync();
+                                                LedgerBalanceId = newLedgerBalance.LedgerBalanceId;
+                                            }
+                                            await _appDbContext.SaveChangesAsync();
+                                        }
+                                        else
+                                        {
+                                            var newSubLedgerBalance = new SubLedgerBalance
+                                            {
+                                                Fk_LedgerBalanceId = LedgerBalanceId,
+                                                Fk_SubLedgerId = newJournal.Fk_SubLedgerId ?? Guid.Empty,
+                                                OpeningBalanceType = newJournal.DrCr == "Dr" ? "Dr" : "Cr",
+                                                OpeningBalance = 0,
+                                                RunningBalanceType = newJournal.DrCr == "Dr" ? "Dr" : "Cr",
+                                                RunningBalance = newJournal.DrCr == "Dr" ? newJournal.Amount : -newJournal.Amount,
+                                                Fk_FinancialYearId = FinancialYear,
+                                                Fk_BranchId = BranchId
+                                            };
+                                            await _appDbContext.SubLedgerBalances.AddAsync(newSubLedgerBalance);
                                             await _appDbContext.SaveChangesAsync();
                                         }
                                         #endregion
@@ -245,6 +279,21 @@ namespace FMS.Repository.Accounting
                                     decimal Amount = newJournal.DrCr == "Dr" ? newJournal.Amount : -newJournal.Amount;
                                     updateLedgerBalance.RunningBalance += Amount;
                                     updateLedgerBalance.RunningBalanceType = (updateLedgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
+                                    await _appDbContext.SaveChangesAsync();
+                                }
+                                else
+                                {
+                                    var newLedgerBalance = new LedgerBalance
+                                    {
+                                        Fk_LedgerId = Guid.Parse(item.ddlLedgerId),
+                                        OpeningBalance = 0,
+                                        OpeningBalanceType = newJournal.DrCr == "Dr" ? "Dr" : "Cr",
+                                        RunningBalance = newJournal.DrCr == "Dr" ? newJournal.Amount : -newJournal.Amount,
+                                        RunningBalanceType = newJournal.DrCr == "Dr" ? "Dr" : "Cr",
+                                        Fk_BranchId = BranchId,
+                                        Fk_FinancialYear = FinancialYear
+                                    };
+                                    await _appDbContext.LedgerBalances.AddAsync(newLedgerBalance);
                                     await _appDbContext.SaveChangesAsync();
                                 }
                                 #endregion
@@ -282,7 +331,7 @@ namespace FMS.Repository.Accounting
                     if (Id != null)
                     {
                         //*****************************Delete Journal**************************************//
-                        var GetJournals = await _appDbContext.Journals.Where(x => x.VouvherNo == Id && x.Fk_BranchId == BranchId && x.Fk_FinancialYearId== FinancialYear).ToListAsync();
+                        var GetJournals = await _appDbContext.Journals.Where(x => x.VouvherNo == Id && x.Fk_BranchId == BranchId && x.Fk_FinancialYearId == FinancialYear).ToListAsync();
                         foreach (var item in GetJournals)
                         {
                             if (item.Fk_LedgerId != Guid.Empty)
@@ -672,7 +721,7 @@ namespace FMS.Repository.Accounting
                     {
 
                         //*****************************Delete Payment**************************************//
-                        var GetPayments = await _appDbContext.Payments.Where(x => x.VouvherNo == Id && x.Fk_BranchId == BranchId && x.Fk_FinancialYearId==FinancialYear).ToListAsync();
+                        var GetPayments = await _appDbContext.Payments.Where(x => x.VouvherNo == Id && x.Fk_BranchId == BranchId && x.Fk_FinancialYearId == FinancialYear).ToListAsync();
                         foreach (var item in GetPayments)
                         {
                             decimal Balance = item.DrCr == "DR" ? item.Amount : -item.Amount;
@@ -700,13 +749,13 @@ namespace FMS.Repository.Accounting
                             if (item.CashBank == "bank")
                             {
                                 var updateSubLedgerBalance = await _appDbContext.LedgerBalances.Where(l => l.Fk_LedgerId == item.CashBankLedgerId && l.Fk_BranchId == BranchId && l.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
-                                if (updateSubLedgerBalance!=null)
+                                if (updateSubLedgerBalance != null)
                                 {
                                     updateSubLedgerBalance.RunningBalance += Balance;
                                     updateSubLedgerBalance.RunningBalanceType = updateSubLedgerBalance.RunningBalance > 0 ? "Dr" : "Cr";
                                     await _appDbContext.SaveChangesAsync();
                                 }
-                              
+
                             }
                             else
                             {
@@ -1027,7 +1076,7 @@ namespace FMS.Repository.Accounting
                     if (Id != null)
                     {
                         //*****************************Delete DeleteRecipt**************************************//
-                        var GetRecipts = await _appDbContext.Receipts.Where(x => x.VouvherNo == Id && x.Fk_BranchId == BranchId && x.Fk_FinancialYearId== FinancialYear).ToListAsync();
+                        var GetRecipts = await _appDbContext.Receipts.Where(x => x.VouvherNo == Id && x.Fk_BranchId == BranchId && x.Fk_FinancialYearId == FinancialYear).ToListAsync();
                         foreach (var item in GetRecipts)
                         {
                             decimal Balance = item.DrCr == "DR" ? item.Amount : -item.Amount;
@@ -1055,7 +1104,7 @@ namespace FMS.Repository.Accounting
                             if (item.CashBank == "bank")
                             {
                                 var updateSubLedgerBalance = await _appDbContext.LedgerBalances.Where(l => l.Fk_LedgerId == item.CashBankLedgerId && l.Fk_BranchId == BranchId && l.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
-                                if (updateSubLedgerBalance!=null)
+                                if (updateSubLedgerBalance != null)
                                 {
                                     updateSubLedgerBalance.RunningBalance += Balance;
                                     updateSubLedgerBalance.RunningBalanceType = updateSubLedgerBalance.RunningBalance > 0 ? "Dr" : "Cr";
@@ -1065,7 +1114,7 @@ namespace FMS.Repository.Accounting
                             else
                             {
                                 var updateSubLedgerBalance = await _appDbContext.LedgerBalances.Where(l => l.Fk_LedgerId == MappingLedgers.CashAccount && l.Fk_BranchId == BranchId && l.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
-                                if (updateSubLedgerBalance!=null)
+                                if (updateSubLedgerBalance != null)
                                 {
                                     updateSubLedgerBalance.RunningBalance += Balance;
                                     updateSubLedgerBalance.RunningBalanceType = updateSubLedgerBalance.RunningBalance > 0 ? "Dr" : "Cr";

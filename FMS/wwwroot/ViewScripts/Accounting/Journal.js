@@ -110,25 +110,28 @@ $(function () {
         });
     }
     $(document).on('change', '.mySelection', function () {
-        var $select = $(this);
-        var $tr = $select.closest('tr');
-        var Option = $select.val();
+        var select = $(this);
+        var tr = select.closest('tr');
+        var Option = select.val();
         if (Option === 'DR') {
-            $tr.find('input[name="DrBalance"]').prop('disabled', false);
-            $tr.find('input[name="CrBalance"]').prop('disabled', true);
-            $tr.find('input[name="CrBalance"]').val('0');
+            tr.find('input[name="DrBalance"]').prop('disabled', false);
+            tr.find('input[name="CrBalance"]').prop('disabled', true);
+            tr.find('input[name="CrBalance"]').val('');
         } else if (Option === 'CR') {
-            $tr.find('input[name="DrBalance"]').prop('disabled', true);
-            $tr.find('input[name="CrBalance"]').prop('disabled', false);
-            $tr.find('input[name="DrBalance"]').va('0');
+            tr.find('input[name="DrBalance"]').prop('disabled', true);
+            tr.find('input[name="CrBalance"]').prop('disabled', false);
+            tr.find('input[name="DrBalance"]').val('');
         } else {
-            $tr.find('input[name="DrBalance"]').prop('disabled', false);
-            $tr.find('input[name="CrBalance"]').prop('disabled', false);
+            tr.find('input[name="DrBalance"]').prop('disabled', false);
+            tr.find('input[name="CrBalance"]').prop('disabled', false);
         }
     });
     var selectedOption = "";
     $(document).on('change', '.ledgerType', function () {
-        selectedOption = $(this).val();
+        var select = $(this);
+        var uniqueId = new Date().getTime();
+        var tr = select.closest('tr');
+        selectedOption = select.val();
         if (selectedOption) {
             var dataTarget = $(this).data('target');
             $('.additionalDropdown[data-id="' + dataTarget + '"]').html('');
@@ -142,7 +145,7 @@ $(function () {
                 success: function (result) {
                     if (result.ResponseCode == 302) {
                         html += '<div class="form-group row">';
-                        html += '<label name="SubLadgerCurBal" class="col-sm-2 col-form-label">Cur Bal: </label>';
+                        html += '<label name="SubLadgerCurBal" for="SubLadgerCurBal_' + uniqueId +'" class="col-sm-2 col-form-label">Cur Bal: </label>';
                         html += '<div class="col-sm-5" >';
                         html += '<select class= "select2bs4 SubledgerType"  style = "width: 100%;" name="ddlSubledgerId">';
                         html += '<option>--Select Option--</option>';
@@ -180,7 +183,7 @@ $(function () {
                         $.each(result.LedgerBalances, function (index, item) {
                             if (item.Ledger.LedgerName === selectedName) {
                                 var bal = "Cur Bal: " + Math.abs(item.RunningBalance) + " " + item.RunningBalanceType
-                                $('label[name="LadgerCurBal"]').text(bal);
+                                tr.find('label[name="LadgerCurBal"]').text(bal);
                             }
                         });
                     }
@@ -189,21 +192,22 @@ $(function () {
         }
     });
     $(document).on('input', 'input[name="SubledgerAmunt"]', function () {
-        var $row = $(this).closest('.tr');
+        var row = $(this).closest('.tr');
         var totalSum = 0;
-        $row.find('input[name="SubledgerAmunt"]').each(function () {
+        row.find('input[name="SubledgerAmunt"]').each(function () {
             var value = parseFloat($(this).val()) || 0;
             totalSum += value;
         });
-        $row.find('input[name="DrBalance"]').val(totalSum.toFixed(2));
+        row.find('input[name="DrBalance"]').val(totalSum.toFixed(2));
     });
     var selectedOptions = "";
     $(document).on('change', '.SubledgerType', function () {
-        selectedOptions = $(this).val();
+        var select = $(this);
+        var tr = select.closest('div.form-group.row'); 
+        selectedOptions = select.val();
         if (selectedOptions) {
-            var dataTarget = $(this).data('target');
-            $('.additionalDropdown[data-id="' + dataTarget + '"]').html('');
-            var selectedName = $(this).find('option:selected').text();
+            var uniqueId = select.closest('.form-group.row').find('label[for^="SubLadgerCurBal_"]').attr('for').split('_')[1];
+            var selectedName = select.find('option:selected').text();
             $.ajax({
                 url: '/Master/GetSubLedgerBalances',
                 type: "GET",
@@ -214,7 +218,7 @@ $(function () {
                         $.each(result.SubLedgerBalances, function (index, item) {
                             if (item.SubLedger.SubLedgerName.trim().toLowerCase() === selectedName.trim().toLowerCase()) {
                                 var bal = "CurBal: " + Math.abs(item.RunningBalance) + " " + item.RunningBalanceType
-                                $('label[name="SubLadgerCurBal"]').text(bal);
+                                tr.find('label[for="SubLadgerCurBal_' + uniqueId + '"]').text(bal);
                             }
                         });
                     }
@@ -228,7 +232,7 @@ $(function () {
     });
     $(document).on('click', '.addSubLedgerBtn', function () {
         var clickedButton = $(this);
-        var i = 0;
+        var uniqueId =new Date().getTime();
         $.ajax({
             url: '/Accounting/GetSubLedgersById?LedgerId=' + selectedOption + '',
             type: "GET",
@@ -236,10 +240,9 @@ $(function () {
             dataType: "json",
             success: function (result) {
                 if (result.ResponseCode == 302) {
-                    i++
                     var html = "";
                     html += '<div class="form-group row">';
-                    html += '<label name="SubLadgerCurBal' + i + '" class="col-sm-2 col-form-label">Cur Bal: </label>';
+                    html += '<label name="SubLadgerCurBal" for="SubLadgerCurBal_' + uniqueId + '" class="col-sm-2 col-form-label">Cur Bal: </label>';
                     html += '<div class="col-sm-5" >';
                     html += '<select class= "select2bs4 SubledgerType"  style = "width: 100%;" name="ddlSubledgerId">';
                     html += '<option>--Select Option--</option>';
@@ -299,7 +302,6 @@ $(function () {
                     "subledgerData": []
                 };
                 row.find(".additionalDropdown[data-id^='additionalDropdown_']").each(function () {
-                    debugger;
                     var subledgerRow = $(this);
                     var subledgerData = {
                         "ddlSubledgerId": [],
