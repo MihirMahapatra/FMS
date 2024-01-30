@@ -115,7 +115,7 @@ namespace FMS.Repository.Reports
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"ReportRepo/GetSummerizedStockReports : {_Exception.Message}");
+                await _emailService.SendExceptionEmail("horizonexception@gmail.com", "FMS Excepion", $"ReportRepo/GetSummerizedStockReports : {_Exception.Message}");
             }
             return _Result;
         }
@@ -208,7 +208,7 @@ namespace FMS.Repository.Reports
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"ReportRepo/GetDetailedStockReport : {_Exception.Message}");
+                await _emailService.SendExceptionEmail("horizonexception@gmail.com", "FMS Excepion", $"ReportRepo/GetDetailedStockReport : {_Exception.Message}");
             }
             return _Result;
         }
@@ -278,7 +278,7 @@ namespace FMS.Repository.Reports
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"ReportRepo/GetSummerizedLabourReport : {_Exception.Message}");
+                await _emailService.SendExceptionEmail("horizonexception@gmail.com", "FMS Excepion", $"ReportRepo/GetSummerizedLabourReport : {_Exception.Message}");
             }
             return _Result;
         }
@@ -351,7 +351,7 @@ namespace FMS.Repository.Reports
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"ReportRepo/GetDetailedLabourReport : {_Exception.Message}");
+                await _emailService.SendExceptionEmail("horizonexception@gmail.com", "FMS Excepion", $"ReportRepo/GetDetailedLabourReport : {_Exception.Message}");
             }
             return _Result;
         }
@@ -406,7 +406,7 @@ namespace FMS.Repository.Reports
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"ReportRepo/GetSummerizedCustomerReport : {_Exception.Message}");
+                await _emailService.SendExceptionEmail("horizonexception@gmail.com", "FMS Excepion", $"ReportRepo/GetSummerizedCustomerReport : {_Exception.Message}");
             }
             return _Result;
         }
@@ -457,7 +457,7 @@ namespace FMS.Repository.Reports
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"ReportRepo/GetDetailedCustomerReport : {_Exception.Message}");
+                await _emailService.SendExceptionEmail("horizonexception@gmail.com", "FMS Excepion", $"ReportRepo/GetDetailedCustomerReport : {_Exception.Message}");
             }
             return _Result;
         }
@@ -533,7 +533,7 @@ namespace FMS.Repository.Reports
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"ReportRepo/GetDetailedCustomerReport : {_Exception.Message}");
+                await _emailService.SendExceptionEmail("horizonexception@gmail.com", "FMS Excepion", $"ReportRepo/GetDetailedCustomerReport : {_Exception.Message}");
             }
             return _Result;
         }
@@ -588,7 +588,7 @@ namespace FMS.Repository.Reports
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"ReportRepo/GetSummerizedSupplyerReport : {_Exception.Message}");
+                await _emailService.SendExceptionEmail("horizonexception@gmail.com", "FMS Excepion", $"ReportRepo/GetSummerizedSupplyerReport : {_Exception.Message}");
             }
             return _Result;
         }
@@ -637,7 +637,7 @@ namespace FMS.Repository.Reports
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"ReportRepo/GetDetailedSupplyerReport : {_Exception.Message}");
+                await _emailService.SendExceptionEmail("horizonexception@gmail.com", "FMS Excepion", $"ReportRepo/GetDetailedSupplyerReport : {_Exception.Message}");
             }
             return _Result;
         }
@@ -818,7 +818,7 @@ namespace FMS.Repository.Reports
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"ReportRepo/GetDaySheet : {_Exception.Message}");
+                await _emailService.SendExceptionEmail("horizonexception@gmail.com", "FMS Excepion", $"ReportRepo/GetDaySheet : {_Exception.Message}");
             }
             return _Result;
         }
@@ -889,7 +889,7 @@ namespace FMS.Repository.Reports
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"ReportRepo/GetSummerizedLabourReport : {_Exception.Message}");
+                await _emailService.SendExceptionEmail("horizonexception@gmail.com", "FMS Excepion", $"ReportRepo/GetSummerizedLabourReport : {_Exception.Message}");
             }
             return _Result;
         }
@@ -960,7 +960,7 @@ namespace FMS.Repository.Reports
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"ReportRepo/GetSummerizedLabourReport : {_Exception.Message}");
+                await _emailService.SendExceptionEmail("horizonexception@gmail.com", "FMS Excepion", $"ReportRepo/GetSummerizedLabourReport : {_Exception.Message}");
             }
             return _Result;
         }
@@ -1033,7 +1033,7 @@ namespace FMS.Repository.Reports
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"ReportRepo/GetSummerizedLabourReport : {_Exception.Message}");
+                await _emailService.SendExceptionEmail("horizonexception@gmail.com", "FMS Excepion", $"ReportRepo/GetSummerizedLabourReport : {_Exception.Message}");
             }
             return _Result;
         }
@@ -1090,7 +1090,7 @@ namespace FMS.Repository.Reports
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"ReportRepo/GetSummerizedLabourReport : {_Exception.Message}");
+                await _emailService.SendExceptionEmail("horizonexception@gmail.com", "FMS Excepion", $"ReportRepo/GetSummerizedLabourReport : {_Exception.Message}");
             }
             return _Result;
         }
@@ -1143,7 +1143,7 @@ namespace FMS.Repository.Reports
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/GetAllProducts : {_Exception.Message}");
+                await _emailService.SendExceptionEmail("horizonexception@gmail.com", "FMS Excepion", $"MasterRepo/GetAllProducts : {_Exception.Message}");
             }
             return _Result;
         }

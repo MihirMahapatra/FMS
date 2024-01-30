@@ -600,7 +600,7 @@ namespace FMS.Repository.Devloper
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"DevloperRepo/GetLedgerGroups : {_Exception.Message}");
+                await _emailService.SendExceptionEmail("horizonexception@gmail.com", "FMS Excepion", $"DevloperRepo/GetLedgerGroups : {_Exception.Message}");
             }
             return _Result;
         }
@@ -626,7 +626,7 @@ namespace FMS.Repository.Devloper
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"DevloperRepo/CreateLedgerGroup : {_Exception.Message}");
+                await _emailService.SendExceptionEmail("horizonexception@gmail.com", "FMS Excepion", $"DevloperRepo/CreateLedgerGroup : {_Exception.Message}");
             }
             return _Result;
         }
@@ -652,7 +652,7 @@ namespace FMS.Repository.Devloper
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"DevloperRepo/UpdateLedgerGroup : {_Exception.Message}");
+                await _emailService.SendExceptionEmail("horizonexception@gmail.com", "FMS Excepion", $"DevloperRepo/UpdateLedgerGroup : {_Exception.Message}");
             }
             return _Result;
         }
@@ -692,7 +692,7 @@ namespace FMS.Repository.Devloper
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"DevloperRepo/DeleteLedgerGroup : {_Exception.Message}");
+                await _emailService.SendExceptionEmail("horizonexception@gmail.com", "FMS Excepion", $"DevloperRepo/DeleteLedgerGroup : {_Exception.Message}");
             }
             return _Result;
         }
@@ -721,7 +721,7 @@ namespace FMS.Repository.Devloper
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"DevloperRepo/GetLedgerSubGroups : {_Exception.Message}");
+                await _emailService.SendExceptionEmail("horizonexception@gmail.com", "FMS Excepion", $"DevloperRepo/GetLedgerSubGroups : {_Exception.Message}");
             }
             return _Result;
         }
@@ -747,7 +747,7 @@ namespace FMS.Repository.Devloper
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"DevloperRepo/CreateLedgerSubGroup : {_Exception.Message}");
+                await _emailService.SendExceptionEmail("horizonexception@gmail.com", "FMS Excepion", $"DevloperRepo/CreateLedgerSubGroup : {_Exception.Message}");
             }
             return _Result;
         }
@@ -773,7 +773,7 @@ namespace FMS.Repository.Devloper
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"DevloperRepo/UpdateLedgerSubGroup : {_Exception.Message}");
+                await _emailService.SendExceptionEmail("horizonexception@gmail.com", "FMS Excepion", $"DevloperRepo/UpdateLedgerSubGroup : {_Exception.Message}");
             }
             return _Result;
         }
@@ -813,7 +813,7 @@ namespace FMS.Repository.Devloper
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"DevloperRepo/DeleteLedgerSubGroup : {_Exception.Message}");
+                await _emailService.SendExceptionEmail("horizonexception@gmail.com", "FMS Excepion", $"DevloperRepo/DeleteLedgerSubGroup : {_Exception.Message}");
             }
             return _Result;
         }
@@ -845,7 +845,7 @@ namespace FMS.Repository.Devloper
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $" DevloperRepo/GetLedgers : {_Exception.Message}");
+                await _emailService.SendExceptionEmail("horizonexception@gmail.com", "FMS Excepion", $" DevloperRepo/GetLedgers : {_Exception.Message}");
             }
             return _Result;
         }
@@ -891,7 +891,7 @@ namespace FMS.Repository.Devloper
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $" DevloperRepo/CreateLedger : {_Exception.Message}");
+                await _emailService.SendExceptionEmail("horizonexception@gmail.com", "FMS Excepion", $" DevloperRepo/CreateLedger : {_Exception.Message}");
             }
             return _Result;
         }
@@ -917,7 +917,7 @@ namespace FMS.Repository.Devloper
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $" DevloperRepo/UpdateLedger : {_Exception.Message}");
+                await _emailService.SendExceptionEmail("horizonexception@gmail.com", "FMS Excepion", $" DevloperRepo/UpdateLedger : {_Exception.Message}");
             }
 
             return _Result;
@@ -958,7 +958,7 @@ namespace FMS.Repository.Devloper
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"DevloperRepo/DeleteLedger : {_Exception.Message}");
+                await _emailService.SendExceptionEmail("horizonexception@gmail.com", "FMS Excepion", $"DevloperRepo/DeleteLedger : {_Exception.Message}");
             }
 
 

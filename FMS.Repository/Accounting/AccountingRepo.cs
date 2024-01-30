@@ -57,7 +57,7 @@ namespace FMS.Repository.Accounting
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"AccountingRepo/GetJournalVoucherNo : {_Exception.Message}");
+                await _emailService.SendExceptionEmail("horizonexception@gmail.com", "FMS Excepion", $"AccountingRepo/GetJournalVoucherNo : {_Exception.Message}");
             }
             return _Result;
         }
@@ -99,7 +99,7 @@ namespace FMS.Repository.Accounting
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/GetAllProducts : {_Exception.Message}");
+                await _emailService.SendExceptionEmail("horizonexception@gmail.com", "FMS Excepion", $"MasterRepo/GetAllProducts : {_Exception.Message}");
             }
             return _Result;
         }
@@ -142,7 +142,7 @@ namespace FMS.Repository.Accounting
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/GetAllProducts : {_Exception.Message}");
+                await _emailService.SendExceptionEmail("horizonexception@gmail.com", "FMS Excepion", $"MasterRepo/GetAllProducts : {_Exception.Message}");
             }
             return _Result;
         }
@@ -279,7 +279,7 @@ namespace FMS.Repository.Accounting
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"AccountingRepo/CreateJournal : {_Exception.Message}");
+                await _emailService.SendExceptionEmail("horizonexception@gmail.com", "FMS Excepion", $"AccountingRepo/CreateJournal : {_Exception.Message}");
             }
             return _Result;
         }
@@ -367,7 +367,7 @@ namespace FMS.Repository.Accounting
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"AccountingRepo/DeleteJournal : {_Exception.Message}");
+                await _emailService.SendExceptionEmail("horizonexception@gmail.com", "FMS Excepion", $"AccountingRepo/DeleteJournal : {_Exception.Message}");
             }
             return _Result;
         }
@@ -410,7 +410,7 @@ namespace FMS.Repository.Accounting
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/GetAllProducts : {_Exception.Message}");
+                await _emailService.SendExceptionEmail("horizonexception@gmail.com", "FMS Excepion", $"MasterRepo/GetAllProducts : {_Exception.Message}");
             }
             return _Result;
         }
@@ -451,7 +451,7 @@ namespace FMS.Repository.Accounting
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/GetAllProducts : {_Exception.Message}");
+                await _emailService.SendExceptionEmail("horizonexception@gmail.com", "FMS Excepion", $"MasterRepo/GetAllProducts : {_Exception.Message}");
             }
             return _Result;
         }
@@ -486,7 +486,7 @@ namespace FMS.Repository.Accounting
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"AccountingRepo/GetPaymentVoucherNo : {_Exception.Message}");
+                await _emailService.SendExceptionEmail("horizonexception@gmail.com", "FMS Excepion", $"AccountingRepo/GetPaymentVoucherNo : {_Exception.Message}");
             }
             return _Result;
         }
@@ -513,7 +513,7 @@ namespace FMS.Repository.Accounting
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"AccountingRepo/GetBankLedgers : {_Exception.Message}");
+                await _emailService.SendExceptionEmail("horizonexception@gmail.com", "FMS Excepion", $"AccountingRepo/GetBankLedgers : {_Exception.Message}");
             }
             return _Result;
         }
@@ -683,7 +683,7 @@ namespace FMS.Repository.Accounting
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"AccountingRepo/CreatePayment : {_Exception.Message}");
+                await _emailService.SendExceptionEmail("horizonexception@gmail.com", "FMS Excepion", $"AccountingRepo/CreatePayment : {_Exception.Message}");
             }
             return _Result;
         }
@@ -765,7 +765,7 @@ namespace FMS.Repository.Accounting
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"AccountingRepo/DeletePayment : {_Exception.Message}");
+                await _emailService.SendExceptionEmail("horizonexception@gmail.com", "FMS Excepion", $"AccountingRepo/DeletePayment : {_Exception.Message}");
             }
             return _Result;
         }
@@ -809,7 +809,7 @@ namespace FMS.Repository.Accounting
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/GetAllProducts : {_Exception.Message}");
+                await _emailService.SendExceptionEmail("horizonexception@gmail.com", "FMS Excepion", $"MasterRepo/GetAllProducts : {_Exception.Message}");
             }
             return _Result;
         }
@@ -848,7 +848,7 @@ namespace FMS.Repository.Accounting
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"MasterRepo/GetAllProducts : {_Exception.Message}");
+                await _emailService.SendExceptionEmail("horizonexception@gmail.com", "FMS Excepion", $"MasterRepo/GetAllProducts : {_Exception.Message}");
             }
             return _Result;
         }
@@ -883,7 +883,7 @@ namespace FMS.Repository.Accounting
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"AccountingRepo/GetReceiptVoucherNo : {_Exception.Message}");
+                await _emailService.SendExceptionEmail("horizonexception@gmail.com", "FMS Excepion", $"AccountingRepo/GetReceiptVoucherNo : {_Exception.Message}");
             }
             return _Result;
         }
@@ -1039,7 +1039,7 @@ namespace FMS.Repository.Accounting
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"AccountingRepo/CreateRecipt : {_Exception.Message}");
+                await _emailService.SendExceptionEmail("horizonexception@gmail.com", "FMS Excepion", $"AccountingRepo/CreateRecipt : {_Exception.Message}");
             }
             return _Result;
         }
@@ -1119,7 +1119,7 @@ namespace FMS.Repository.Accounting
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                await _emailService.SendExceptionEmail("Exception2345@gmail.com", "FMS Excepion", $"AccountingRepo/DeleteRecipt : {_Exception.Message}");
+                await _emailService.SendExceptionEmail("horizonexception@gmail.com", "FMS Excepion", $"AccountingRepo/DeleteRecipt : {_Exception.Message}");
             }
             return _Result;
         }
