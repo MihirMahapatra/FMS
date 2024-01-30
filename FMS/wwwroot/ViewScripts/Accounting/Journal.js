@@ -64,8 +64,8 @@ $(function () {
                     html += '<td style="width:10px">';
                     html += '<div class="form-group">';
                     html += '<select class="form-control select2bs4 mySelection" style = "width: 100%"  name = "BalanceType">';
-                    html += '<option value="DR" selected = "selected" > DR </option>';
-                    html += '<option value ="CR"> CR </option>';
+                    html += '<option value="Dr" selected = "selected" > DR </option>';
+                    html += '<option value ="Cr"> CR </option>';
                     html += '</select>';
                     html += '</div>';
                     html += '</td>';
@@ -113,11 +113,11 @@ $(function () {
         var select = $(this);
         var tr = select.closest('tr');
         var Option = select.val();
-        if (Option === 'DR') {
+        if (Option === 'Dr') {
             tr.find('input[name="DrBalance"]').prop('disabled', false);
             tr.find('input[name="CrBalance"]').prop('disabled', true);
             tr.find('input[name="CrBalance"]').val('');
-        } else if (Option === 'CR') {
+        } else if (Option === 'Cr') {
             tr.find('input[name="DrBalance"]').prop('disabled', true);
             tr.find('input[name="CrBalance"]').prop('disabled', false);
             tr.find('input[name="DrBalance"]').val('');
@@ -155,7 +155,7 @@ $(function () {
                         html += '</select>';
                         html += '</div>';
                         html += '<div class="col-sm-3" >';
-                        html += '<input type="text" class="form-control"  name="SubledgerAmunt">';
+                        html += '<input type="text" class="form-control"  name="SubledgerAmount">';
                         html += '</div>';
                         html += '<div class="col-sm-2">';
                         html += '<button class="btn btn-primary btn-link addSubLedgerBtn" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-plus"></i></button>';
@@ -191,10 +191,10 @@ $(function () {
             });
         }
     });
-    $(document).on('input', 'input[name="SubledgerAmunt"]', function () {
+    $(document).on('input', 'input[name="SubledgerAmount"]', function () {
         var row = $(this).closest('.tr');
         var totalSum = 0;
-        row.find('input[name="SubledgerAmunt"]').each(function () {
+        row.find('input[name="SubledgerAmount"]').each(function () {
             var value = parseFloat($(this).val()) || 0;
             totalSum += value;
         });
@@ -252,7 +252,7 @@ $(function () {
                     html += '</select>';
                     html += '</div>';
                     html += '<div class="col-sm-3" >';
-                    html += '<input type="text" class="form-control" name="SubledgerAmunt">';
+                    html += '<input type="text" class="form-control" name="SubledgerAmount">';
                     html += '</div>';
                     html += '<div class="col-sm-2">';
                     html += '<button class="btn btn-primary btn-link addSubLedgerBtn" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-plus"></i></button>';
@@ -310,7 +310,7 @@ $(function () {
                     subledgerRow.find("select[name='ddlSubledgerId']").each(function () {
                         subledgerData.ddlSubledgerId.push($(this).val());
                     });
-                    subledgerRow.find("input[name='SubledgerAmunt']").each(function () {
+                    subledgerRow.find("input[name='SubledgerAmount']").each(function () {
                         subledgerData.SubledgerAmunt.push($(this).val());
                     });
                     if (subledgerData.ddlSubledgerId.length > 0 || subledgerData.SubledgerAmunt.length > 0) {

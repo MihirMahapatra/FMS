@@ -135,6 +135,7 @@ $(function () {
             var dataTarget = $(this).data('target');
             $('.additionalDropdown[data-id="' + dataTarget + '"]').html('');
             var selectedName = $(this).find('option:selected').text();
+            var uniqueId = new Date().getTime();
             var html = "";
             $.ajax({
                 url: '/Accounting/GetSubLedgersById?LedgerId=' + selectedOption + '',
@@ -144,17 +145,18 @@ $(function () {
                 success: function (result) {
                     if (result.ResponseCode == 302) {
                         html += '<div class="form-group row">';
-                        html += '<label name="SubLadgerCurBal" class="col-sm-2 col-form-label">Cur Bal: </label>';
+                        html += '<label name="SubLadgerCurBal" for="SubLadgerCurBal_' + uniqueId + '" class="col-sm-2 col-form-label">Cur Bal: </label>';
                         html += '<div class="col-sm-5" >';
                         html += '<select class= "select2bs4 SubledgerType"  style = "width: 100%;" name="ddlSubledgerId">';
                         html += '<option>--Select Option--</option>';
+
                         $.each(result.SubLedgers, function (key, item) {
                             html += '<option value=' + item.SubLedgerId + '>' + item.SubLedgerName + ' </option>';
                         });
                         html += '</select>';
                         html += '</div>';
                         html += '<div class="col-sm-3" >';
-                        html += '<input type="text" class="form-control"  name="SubledgerAmunt">';
+                        html += '<input type="text" class="form-control"  name="SubledgerAmount">';
                         html += '</div>';
                         html += '<div class="col-sm-2">';
                         html += '<button class="btn btn-primary btn-link addSubLedgerBtn" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-plus"></i></button>';
@@ -166,17 +168,6 @@ $(function () {
                             theme: 'bootstrap4'
                         });
                     }
-                    $(document).on('change', 'input[name="SubledgerAmunt"]', function () {
-                        var totalSum = 0;
-                        $('input[name="SubledgerAmunt"]').each(function () {
-                            var inputValue = parseFloat($(this).val());
-                            if (!isNaN(inputValue)) {
-                                totalSum += inputValue;
-                            }
-                        });
-                        $('input[name="CrBalance"]').val(totalSum);
-
-                    });
                 },
 
                 error: function (errormessage) {
@@ -202,12 +193,23 @@ $(function () {
             });
         }
     });
+    $(document).on('change', 'input[name="SubledgerAmunt"]', function () {
+        var totalSum = 0;
+        $('input[name="SubledgerAmunt"]').each(function () {
+            var inputValue = parseFloat($(this).val());
+            if (!isNaN(inputValue)) {
+                totalSum += inputValue;
+            }
+        });
+        $('input[name="CrBalance"]').val(totalSum);
+
+    });
     var selectedOptions = "";
     $(document).on('change', '.SubledgerType', function () {
-        selectedOptions = $(this).val();
+        var select = $(this);
+        var tr = select.closest('div.form-group.row');
+        selectedOptions = select.val();
         if (selectedOptions) {
-            var dataTarget = $(this).data('target');
-            $('.additionalDropdown[data-id="' + dataTarget + '"]').html('');
             var selectedName = $(this).find('option:selected').text();
             $.ajax({
                 url: '/Master/GetSubLedgerBalances',
@@ -216,13 +218,11 @@ $(function () {
                 dataType: "json",
                 success: function (result) {
                     if (result.ResponseCode == 302) {
-                        console.log(result.SubLedgerBalances);
-                        console.log(selectedName);
                         $.each(result.SubLedgerBalances, function (index, item) {
                             if (item.SubLedger.SubLedgerName.trim().toLowerCase() === selectedName.trim().toLowerCase()) {
                                 var bal = "CurBal: " + Math.abs(item.RunningBalance) + " " + item.RunningBalanceType
-                                $('label[name="SubLadgerCurBal"]').text(bal);
-                                console.log(bal);
+                                var uniqueId = tr.find('label[for^="SubLadgerCurBal_"]').attr('for').split('_')[1];
+                                tr.find('label[for="SubLadgerCurBal_' + uniqueId + '"]').text(bal);
                             }
                         });
                     }
@@ -236,6 +236,7 @@ $(function () {
     });
     $(document).on('click', '.addSubLedgerBtn', function () {
         var clickedButton = $(this);
+        var uniqueId = new Date().getTime();
         $.ajax({
             url: '/Accounting/GetSubLedgersById?LedgerId=' + selectedOption + '',
             type: "GET",
@@ -245,9 +246,9 @@ $(function () {
                 if (result.ResponseCode == 302) {
                     var html = "";
                     html += '<div class="form-group row">';
-                    html += '<label name="SubLadgerCurBal" class="col-sm-2 col-form-label">Cur Bal: </label>';
+                    html += '<label name="SubLadgerCurBal" for="SubLadgerCurBal_' + uniqueId + '" class="col-sm-2 col-form-label">Cur Bal: </label>';
                     html += '<div class="col-sm-5" >';
-                    html += '<select class= "select2bs4"  style = "width: 100%;" name="ddlSubledgerId">';
+                    html += '<select class= "select2bs4 SubledgerType"  style = "width: 100%;" name="ddlSubledgerId">';
                     html += '<option>--Select Option--</option>';
                     $.each(result.SubLedgers, function (key, item) {
                         html += '<option value=' + item.SubLedgerId + '>' + item.SubLedgerName + ' </option>';
@@ -255,7 +256,7 @@ $(function () {
                     html += '</select>';
                     html += '</div>';
                     html += '<div class="col-sm-3" >';
-                    html += '<input type="text" class="form-control" name="SubledgerAmunt">';
+                    html += '<input type="text" class="form-control" name="SubledgerAmount">';
                     html += '</div>';
                     html += '<div class="col-sm-2">';
                     html += '<button class="btn btn-primary btn-link addSubLedgerBtn" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-plus"></i></button>';
@@ -323,7 +324,7 @@ $(function () {
                     subledgerRow.find("select[name='ddlSubledgerId']").each(function () {
                         subledgerData.ddlSubledgerId.push($(this).val());
                     });
-                    subledgerRow.find("input[name='SubledgerAmunt']").each(function () {
+                    subledgerRow.find("input[name='SubledgerAmount']").each(function () {
                         subledgerData.SubledgerAmunt.push($(this).val());
                     });
 
@@ -333,7 +334,6 @@ $(function () {
                 });
                 requestData.arr.push(rowData);
             });
-            console.log(requestData);
             $.ajax({
                 type: "POST",
                 url: '/Accounting/CreateRecipt',

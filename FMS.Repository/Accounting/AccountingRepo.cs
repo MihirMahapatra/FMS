@@ -202,7 +202,6 @@ namespace FMS.Repository.Accounting
                                         await _appDbContext.SaveChangesAsync();
                                         #endregion
                                         #region Ledger & SubLedger Balance
-                                        var LedgerBalanceId = Guid.Empty;
                                         var updateSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == newJournal.Fk_SubLedgerId && s.Fk_FinancialYearId == FinancialYear && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                                         if (updateSubledgerBalance != null)
                                         {
@@ -214,41 +213,18 @@ namespace FMS.Repository.Accounting
                                             {
                                                 updateLedgerBalance.RunningBalance += Amount;
                                                 updateLedgerBalance.RunningBalanceType = (updateLedgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
-                                                LedgerBalanceId = updateLedgerBalance.LedgerBalanceId;
                                             }
                                             else
                                             {
-                                                var newLedgerBalance = new LedgerBalance
-                                                {
-                                                    Fk_LedgerId = Guid.Parse(item.ddlLedgerId),
-                                                    OpeningBalance = 0,
-                                                    OpeningBalanceType = newJournal.DrCr == "Dr" ? "Dr" : "Cr",
-                                                    RunningBalance = newJournal.DrCr == "Dr" ? newJournal.Amount : -newJournal.Amount,
-                                                    RunningBalanceType = newJournal.DrCr == "Dr" ? "Dr" : "Cr",
-                                                    Fk_BranchId = BranchId,
-                                                    Fk_FinancialYear = FinancialYear
-                                                };
-                                                await _appDbContext.LedgerBalances.AddAsync(newLedgerBalance);
-                                                await _appDbContext.SaveChangesAsync();
-                                                LedgerBalanceId = newLedgerBalance.LedgerBalanceId;
+                                                _Result.WarningMessage = "Ledger Balance Not Exist";
+                                                return _Result;
                                             }
                                             await _appDbContext.SaveChangesAsync();
                                         }
                                         else
                                         {
-                                            var newSubLedgerBalance = new SubLedgerBalance
-                                            {
-                                                Fk_LedgerBalanceId = LedgerBalanceId,
-                                                Fk_SubLedgerId = newJournal.Fk_SubLedgerId ?? Guid.Empty,
-                                                OpeningBalanceType = newJournal.DrCr == "Dr" ? "Dr" : "Cr",
-                                                OpeningBalance = 0,
-                                                RunningBalanceType = newJournal.DrCr == "Dr" ? "Dr" : "Cr",
-                                                RunningBalance = newJournal.DrCr == "Dr" ? newJournal.Amount : -newJournal.Amount,
-                                                Fk_FinancialYearId = FinancialYear,
-                                                Fk_BranchId = BranchId
-                                            };
-                                            await _appDbContext.SubLedgerBalances.AddAsync(newSubLedgerBalance);
-                                            await _appDbContext.SaveChangesAsync();
+                                            _Result.WarningMessage = "SubLedger Balance Not Exist";
+                                            return _Result;
                                         }
                                         #endregion
                                     }
@@ -283,18 +259,8 @@ namespace FMS.Repository.Accounting
                                 }
                                 else
                                 {
-                                    var newLedgerBalance = new LedgerBalance
-                                    {
-                                        Fk_LedgerId = Guid.Parse(item.ddlLedgerId),
-                                        OpeningBalance = 0,
-                                        OpeningBalanceType = newJournal.DrCr == "Dr" ? "Dr" : "Cr",
-                                        RunningBalance = newJournal.DrCr == "Dr" ? newJournal.Amount : -newJournal.Amount,
-                                        RunningBalanceType = newJournal.DrCr == "Dr" ? "Dr" : "Cr",
-                                        Fk_BranchId = BranchId,
-                                        Fk_FinancialYear = FinancialYear
-                                    };
-                                    await _appDbContext.LedgerBalances.AddAsync(newLedgerBalance);
-                                    await _appDbContext.SaveChangesAsync();
+                                    _Result.WarningMessage = "Ledger Balance Not Exist";
+                                    return _Result;
                                 }
                                 #endregion
                             }
@@ -340,7 +306,7 @@ namespace FMS.Repository.Accounting
                                 if (updateLedgerBalance != null)
                                 {
                                     ;
-                                    decimal Balance = item.DrCr == "DR" ? item.Amount : -item.Amount;
+                                    decimal Balance = item.DrCr == "Dr" ? item.Amount : -item.Amount;
                                     updateLedgerBalance.RunningBalance += Balance;
                                     updateLedgerBalance.RunningBalanceType = updateLedgerBalance.RunningBalance > 0 ? "Dr" : "Cr";
                                     await _appDbContext.SaveChangesAsync();
@@ -350,7 +316,7 @@ namespace FMS.Repository.Accounting
                                     var updateSubLedgerBalance = await _appDbContext.SubLedgerBalances.Where(l => l.Fk_SubLedgerId == item.Fk_SubLedgerId && l.Fk_BranchId == BranchId && l.Fk_FinancialYearId == FinancialYear).SingleOrDefaultAsync();
                                     if (updateSubLedgerBalance != null)
                                     {
-                                        decimal Balance = item.DrCr == "DR" ? item.Amount : -item.Amount;
+                                        decimal Balance = item.DrCr == "Dr" ? item.Amount : -item.Amount;
                                         updateSubLedgerBalance.RunningBalance += Balance;
                                         updateSubLedgerBalance.RunningBalanceType = updateSubLedgerBalance.RunningBalance > 0 ? "Dr" : "Cr";
                                         await _appDbContext.SaveChangesAsync();
@@ -615,7 +581,17 @@ namespace FMS.Repository.Accounting
                                                 updateLedgerBalance.RunningBalance += newPayment.Amount;
                                                 updateLedgerBalance.RunningBalanceType = (updateLedgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
                                             }
+                                            else
+                                            {
+                                                _Result.WarningMessage = "Ledger Balance Not Set";
+                                                return _Result;
+                                            }
                                             await _appDbContext.SaveChangesAsync();
+                                        }
+                                        else
+                                        {
+                                            _Result.WarningMessage = "SubLedger Balance Not Set";
+                                            return _Result;
                                         }
                                         #endregion
                                     }
@@ -651,6 +627,11 @@ namespace FMS.Repository.Accounting
                                     updateLedgerBalance.RunningBalance += Convert.ToDecimal(item.DrBalance);
                                     updateLedgerBalance.RunningBalanceType = (updateLedgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
                                     await _appDbContext.SaveChangesAsync();
+                                }
+                                else
+                                {
+                                    _Result.WarningMessage = "Ledger Balance Not Set";
+                                    return _Result;
                                 }
                                 #endregion
                             }
