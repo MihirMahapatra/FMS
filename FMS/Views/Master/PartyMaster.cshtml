@@ -35,9 +35,6 @@
                         <i class="fas fa-edit"></i>
                         Party Setup
                     </h3>
-                    <a href="@Url.Action("PartyList", "Master")" class="btn btn-primary btn-link ml-1" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px; float:right">
-                        <i class="fa-solid fa-eye"></i>
-                    </a>
                 </div>
                 <div class="card-body">
                     <div id="loader" style="display:none;"></div>
@@ -106,8 +103,20 @@
                             </div>
                         </div>
                     </div>
-                    <button type="button" tabindex="9" class="btn btn-primary btn-party-create" style="float:right">Submit</button>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <button type="button" tabindex="9" class="btn btn-primary btn-party-create" style="float:right">Submit</button>
+                        </div>
+                        <div class="col-md-12 mt-3">
+                            <button class="btn btn-primary btn-link cust-btn mb-2" id="btnRefresh" style="float:right;border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-arrows-rotate"></i>Refresh</button>
+                            <div id="loader" style="display:none;"></div>
+                            <div class="tblPartyList">
+                            </div>
+
+                        </div>
+                    </div>
                 </div>
+
             </div>
         </div>
     </section>
@@ -304,9 +313,85 @@
     <!-- /.modal-dialog -->
 </div>
 <!--.end Modal City-->
+@* Modal Partylist Edit *@
+<div class="modal fade" id="modal-party-edit">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Update</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" name="mdlPartyId" />
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Party Type</label>
+                            <select class="form-control select2bs4" style="width: 100%;" name="ddnPartyTypeId">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="">Party Name</label>
+                            <input type="text" class="form-control" id="txtPartyName" name="PartyName">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>State</label>
+                            <select class="form-control select2bs4" style="width: 100%;" id="stateId" name="ddnStateId">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>City</label>
+                            <select class="form-control select2bs4" style="width: 100%;" id="cityId" name="ddnCityId">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="">Phone No</label>
+                            <input type="text" class="form-control" id="txtPhoneNo" name="PhoneNo">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="">Email</label>
+                            <input type="text" class="form-control" id="txtMail" name="Mail">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="">Address</label>
+                            <input type="text" class="form-control" id="txtAdress" name="Address">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="">GST No</label>
+                            <input type="text" class="form-control" id="txtGstNo" name="GstNo">
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <button type="button" class="btn btn-primary btn-party-update" style="float:right">Update</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+@* End partylist Modal edit *@
 @section additionalScripts {
     <script src="~/scripts/FormScript.js"></script>
     <script src="~/viewscripts/master/party/partymaster.js"></script>
+    <script src="~/viewscripts/master/party/partylist.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             window.stepper = new Stepper(document.querySelector('.bs-stepper'))
