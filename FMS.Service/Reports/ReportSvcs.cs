@@ -13,9 +13,9 @@ namespace FMS.Service.Reports
             _reportRepo = reportRepo;
         }
         #region Stock Report
-        public async Task<StockReportViewModel> GetSummerizedStockReports(StockReportDataRequest requestData)
+        public async Task<StockReportSummerizedViewModel> GetSummerizedStockReports(StockReportDataRequest requestData)
         {
-            StockReportViewModel Obj;
+            StockReportSummerizedViewModel Obj;
             var Result = await _reportRepo.GetSummerizedStockReports(requestData);
             if (Result.IsSuccess)
             {
@@ -50,9 +50,9 @@ namespace FMS.Service.Reports
             }
             return Obj;
         }
-        public async Task<ProductViewModel> GetDetailedStockReport(StockReportDataRequest requestData)
+        public async Task<StockReportDetailedViewModel> GetDetailedStockReport(StockReportDataRequest requestData)
         {
-            ProductViewModel Obj;
+            StockReportDetailedViewModel Obj;
             var Result = await _reportRepo.GetDetailedStockReport(requestData);
             if (Result.IsSuccess)
             {
@@ -62,7 +62,7 @@ namespace FMS.Service.Reports
                     {
                         ResponseStatus = Result.Response,
                         ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
-                        Product = Result.SingleObjData,
+                        DetailedStock = Result.CollectionObjData,
                     };
                 }
                 else
@@ -126,7 +126,7 @@ namespace FMS.Service.Reports
             }
             return Obj;
         }
-        public async  Task<LabourViewModel> GetDetailedLabourReport(LabourReportDataRequest requestData)
+        public async Task<LabourViewModel> GetDetailedLabourReport(LabourReportDataRequest requestData)
         {
             LabourViewModel Obj;
             var Result = await _reportRepo.GetDetailedLabourReport(requestData);

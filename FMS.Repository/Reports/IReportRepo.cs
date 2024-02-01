@@ -5,8 +5,8 @@ namespace FMS.Repository.Reports
     public interface IReportRepo
     {
         #region Stock Report
-        Task<Result<StockReportModel>> GetSummerizedStockReports(StockReportDataRequest requestData);
-        Task<Result<ProductModel>> GetDetailedStockReport(StockReportDataRequest requestData);
+        Task<Result<StockReportSummerizedModel>> GetSummerizedStockReports(StockReportDataRequest requestData);
+        Task<Result<StockReportDetailedModel2>> GetDetailedStockReport(StockReportDataRequest requestData);
         #endregion
         #region Labour Report
         Task<Result<LaborReportModel>> GetSummerizedLabourReport(LabourReportDataRequest requestData);

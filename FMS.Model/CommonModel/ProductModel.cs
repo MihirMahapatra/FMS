@@ -20,8 +20,6 @@
         public List<StockModel> Stocks { get; set; }
         public List<LabourOrderModel> LabourOrders { get; set; }
         public List<LabourTransactionModel> LabourTransactions { get; set; }
-
-  
         public List<PurchaseTransactionModel> PurchaseTransactions { get; set; }
         public List<SalesTransactionModel> SalesTransactions { get; set; }
         public List<SalesReturnTransactionModel> SalesReturnTransactions { get; set; }
