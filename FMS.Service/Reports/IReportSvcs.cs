@@ -7,8 +7,8 @@ namespace FMS.Service.Reports
     public interface IReportSvcs
     {
         #region Stock Report 
-        Task<StockReportViewModel> GetSummerizedStockReports(StockReportDataRequest requestData);
-        Task<ProductViewModel> GetDetailedStockReport(StockReportDataRequest requestData);
+        Task<StockReportSummerizedViewModel> GetSummerizedStockReports(StockReportDataRequest requestData);
+        Task<StockReportDetailedViewModel> GetDetailedStockReport(StockReportDataRequest requestData);
         #endregion
         #region Labour Report
         Task<LaborReportViewModel> GetSummerizedLabourReport(LabourReportDataRequest requestData);

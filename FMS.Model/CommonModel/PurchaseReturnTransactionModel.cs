@@ -26,5 +26,6 @@ namespace FMS.Model.CommonModel
         public ProductModel Product { get; set; }
         public AlternateUnitModel AlternateUnit { get; set; }
         public string UnitName { get; set; }
+        public decimal Quantity { get; set; }
     }
 }

@@ -21,6 +21,8 @@
     const toDateDetailed = $('input[name="DetaledToDate"]');
     toDateDetailed.val(todayDate);
     const ddlZeroValuedDetailed = $('select[name="ddlDetailedZerovalued"]');
+    var PrintData = {};
+    var PrintDataDetailed = {};
     //-----------------------------------stock Report Summerized---------------------------------------//
     GetAllProductTypes();
     function GetAllProductTypes() {
@@ -50,7 +52,6 @@
             }
         });
     }
-    var PrintData = {}
     $('#btnViewSummerized').on('click', function () {
         $('#loader').show();
         $('.SummerizedStockReportTable').empty();
@@ -100,11 +101,10 @@
                     html += '</thead>'
                     html += '<tbody>';
                     if (result.ResponseCode == 302) {
-                        $('#BtnPrintSummarized').show();
                         $.each(result.StockReports, function (key, item) {
                             html += '<tr>';
                             html += '<td>' + item.ProductName + '</td>';
-                            html += '<td>' + item.OpeningQty + '</td>';
+                            html += '<td>' + item.OpeningQty + '  ' + item.UnitName + '</td>';
                             html += '<td>' + item.PurchaseQty + '</td>';
                             html += '<td>' + item.PurchaseReturnQty + '</td>';
                             html += '<td>' + item.ProductionQty + '</td>';
@@ -115,10 +115,11 @@
                             html += '<td>' + item.OutwardQty + '</td>';
                             html += '<td>' + item.InwardQty + '</td>';
                             var closing = item.OpeningQty + item.PurchaseQty + item.ProductionQty + item.SalesReturnQty + item.InwardQty - item.PurchaseReturnQty - item.SalesQty - item.DamageQty - item.OutwardQty - item.ProductionEntryQty;
-                            html += '<td>' + closing + '</td>';
+                            html += '<td>' + closing + ' ' + item.UnitName + '</td>';
                             html += '</tr >';
                         });
-                         PrintData = {
+                        $('#BtnPrintSummarized').show();
+                        PrintData = {
                             FromDate: fromDate.val(),
                             ToDate: toDate.val(),
                             StockReport: result.StockReports
@@ -209,7 +210,7 @@
                     ddlProduct.empty();
                     var defaultOption = $('<option></option>').val('').text('--Select Option--');
                     ddlProduct.append(defaultOption);
-                    $.each(result.products, function (key, item) {
+                    $.each(result.Products, function (key, item) {
                         var option = $('<option></option>').val(item.ProductId).text(item.ProductName);
                         ddlProduct.append(option);
                     });
@@ -220,7 +221,6 @@
             }
         });
     }
-    var PrintDataDetailed = {}
     $('#btnViewDetailed').on('click', function () {
         $('#loader').show();
         $('.DetailedStockReportTable').empty();
@@ -253,14 +253,14 @@
                 dataType: "json",
                 data: JSON.stringify(requestData),
                 success: function (result) {
+                    console.log(result)
                     $('#loader').hide();
                     var html = '';
                     html += '<table class="table table-bordered table-hover text-center mt-2 DetailedStockReportTable" style="width:100%">';
                     html += '<thead>'
                     html += '<tr>'
                     html += '<th>Date</th>'
-                    html += '<th>Product Name</th>'
-                    html += '<th>Trxn N0</th>'
+                    html += '<th>Trxn No</th>'
                     html += '<th>Particular</th>'
                     html += '<th>Inward(+)</th>'
                     html += '<th>Outward(-)</th>'
@@ -269,16 +269,18 @@
                     html += '</thead>'
                     html += '<tbody>';
                     if (result.ResponseCode == 302) {
-                        var Stock = 0;
-                        var item = result.product;
-                        html += '<tr>';
-                        html += '<td colspan="6">Opening Qty</td>';
-                        html += '<td>' + (item.OpeningQty + item.OpeningStock) + '</td>';
-                        html += '</tr >';
-                        Stock = item.OpeningQty + item.OpeningStock;
-                        if (item.ProductionEntries !== null) {
-                            $.each(item.ProductionEntries, function (key, Production) {
-                                const ModifyDate = Production.ProductionDate;
+                        $.each(result.DetailedStock, function (key, item) {
+                            var Stock = 0;
+                            html += '<tr>';
+                            html += '<td colspan="6"  style="background-color:red">' + item.BranchName + '</td>';
+                            html += '</tr >';
+                            html += '<tr>';
+                            html += '<td colspan="5">Opening Qty</td>';
+                            html += '<td>' + item.OpeningQty + '</td>';
+                            html += '</tr >';
+                            Stock = item.OpeningQty;
+                            $.each(item.Stocks, function (key, item2) {
+                                const ModifyDate = item2.TransactionDate;
                                 var formattedDate = '';
                                 if (ModifyDate) {
                                     const dateObject = new Date(ModifyDate);
@@ -291,239 +293,39 @@
                                 }
                                 html += '<tr>';
                                 html += '<td>' + formattedDate + '</td>';
-                                html += '<td>' + item.ProductName + '</td>';
-                                html += '<td>' + Production.ProductionNo + '</td>';
-                                html += '<td>Production</td>';
-                                html += '<td>' + Production.Quantity + '</td>';
-                                html += '<td></td>';
-                                Stock += Production.Quantity
-                                html += '<td>' + Stock + '</td>';
-                                html += '</tr >';
-                            });
-                        }
-                        if (item.ProductionEntryTransactions != null) {
-                            $.each(item.ProductionEntryTransactions, function (key, Pet) {
-                                const ModifyDate = Pet.TransactionDate;
-                                var formattedDate = '';
-                                if (ModifyDate) {
-                                    const dateObject = new Date(ModifyDate);
-                                    if (!isNaN(dateObject)) {
-                                        const day = String(dateObject.getDate()).padStart(2, '0');
-                                        const month = String(dateObject.getMonth() + 1).padStart(2, '0');
-                                        const year = dateObject.getFullYear();
-                                        formattedDate = `${day}/${month}/${year}`;
-                                    }
-                                }
-                                html += '<tr>';
-                                html += '<td>' + formattedDate + '</td>';
-                                html += '<td>' + item.ProductName + '</td>';
-                                html += '<td>' + Pet.TransactionNo + '</td>';
-                                html += '<td>Raw Material Used For Production</td>';
-                                html += '<td></td>';
-                                html += '<td>' + Pet.Quantity + '</td>';
-                                Stock -= Pet.Quantity
-                                html += '<td>' + Stock + '</td>';
-                                html += '</tr >';
-                            });
-                        }
-                        if (item.DamageTransactions != null) {
-                            $.each(item.DamageTransactions, function (key, Damage) {
-                                const ModifyDate = Damage.TransactionDate;
-                                var formattedDate = '';
-                                if (ModifyDate) {
-                                    const dateObject = new Date(ModifyDate);
-                                    if (!isNaN(dateObject)) {
-                                        const day = String(dateObject.getDate()).padStart(2, '0');
-                                        const month = String(dateObject.getMonth() + 1).padStart(2, '0');
-                                        const year = dateObject.getFullYear();
-                                        formattedDate = `${day}/${month}/${year}`;
-                                    }
-                                }
-                                html += '<tr>';
-                                html += '<td>' + formattedDate + '</td>';
-                                html += '<td>' + item.ProductName + '</td>';
-                                html += '<td>' + Damage.TransactionNo + '</td>';
-                                html += '<td>Damage</td>';
-                                html += '<td></td>';
-                                html += '<td>' + Damage.Quantity + '</td>';
-                                Stock -= Damage.Quantity
-                                html += '<td>' + Stock + '</td>';
-                                html += '</tr >';
-                            });
-                        }
-                        if (item.SalesTransactions != null) {
-                            $.each(item.SalesTransactions, function (key, Sales) {
-                                const ModifyDate = Sales.TransactionDate;
-                                var formattedDate = '';
-                                if (ModifyDate) {
-                                    const dateObject = new Date(ModifyDate);
-                                    if (!isNaN(dateObject)) {
-                                        const day = String(dateObject.getDate()).padStart(2, '0');
-                                        const month = String(dateObject.getMonth() + 1).padStart(2, '0');
-                                        const year = dateObject.getFullYear();
-                                        formattedDate = `${day}/${month}/${year}`;
-                                    }
-                                }
-                                html += '<tr>';
-                                html += '<td>' + formattedDate + '</td>';
-                                html += '<td>' + item.ProductName + '</td>';
-                                html += '<td>' + Sales.TransactionNo + '</td>';
-                                html += '<td>Sales</td>';
-                                html += '<td></td>';
-                                html += '<td>' + Sales.Quantity + '</td>';
-                                Stock -= Sales.Quantity
-                                html += '<td>' + Stock + '</td>';
-                                html += '</tr >';
-                            });
-                        }
-                        if (item.SalesReturnTransactions != null) {
-                            $.each(item.SalesReturnTransactions, function (key, SalesReturn) {
-                                const ModifyDate = SalesReturn.TransactionDate;
-                                var formattedDate = '';
-                                if (ModifyDate) {
-                                    const dateObject = new Date(ModifyDate);
-                                    if (!isNaN(dateObject)) {
-                                        const day = String(dateObject.getDate()).padStart(2, '0');
-                                        const month = String(dateObject.getMonth() + 1).padStart(2, '0');
-                                        const year = dateObject.getFullYear();
-                                        formattedDate = `${day}/${month}/${year}`;
-                                    }
-                                }
-                                html += '<tr>';
-                                html += '<td>' + formattedDate + '</td>';
-                                html += '<td>' + item.ProductName + '</td>';
-                                html += '<td>' + SalesReturn.TransactionNo + '</td>';
-                                html += '<td>Sales Return</td>';
-                                html += '<td>' + SalesReturn.Quantity + '</td>';
-                                html += '<td></td>';
-                                Stock += SalesReturn.Quantity
-                                html += '<td>' + Stock + '</td>';
-                                html += '</tr >';
-                            });
-                        }
-                        if (item.PurchaseTransactions != null) {
-                            $.each(item.PurchaseTransactions, function (key, Purchase) {
-                                const ModifyDate = Purchase.TransactionDate;
-                                var formattedDate = '';
-                                if (ModifyDate) {
-                                    const dateObject = new Date(ModifyDate);
-                                    if (!isNaN(dateObject)) {
-                                        const day = String(dateObject.getDate()).padStart(2, '0');
-                                        const month = String(dateObject.getMonth() + 1).padStart(2, '0');
-                                        const year = dateObject.getFullYear();
-                                        formattedDate = `${day}/${month}/${year}`;
-                                    }
-                                }
-                                html += '<tr>';
-                                html += '<td>' + formattedDate + '</td>';
-                                html += '<td>' + item.ProductName + '</td>';
-                                html += '<td>' + Purchase.TransactionNo + '</td>';
-                                html += '<td>Purchase</td>';
-                                html += '<td>' + Purchase.Quantity + '</td>';
-                                html += '<td></td>';
-                                Stock += Purchase.Quantity
-                                html += '<td>' + Stock + '</td>';
-                                html += '</tr >';
-                            });
-                        }
-                        if (item.PurchaseReturnTransactions != null) {
-                            $.each(item.PurchaseReturnTransactions, function (key, PurchaseReturn) {
-                                const ModifyDate = PurchaseReturn.TransactionDate;
-                                var formattedDate = '';
-                                if (ModifyDate) {
-                                    const dateObject = new Date(ModifyDate);
-                                    if (!isNaN(dateObject)) {
-                                        const day = String(dateObject.getDate()).padStart(2, '0');
-                                        const month = String(dateObject.getMonth() + 1).padStart(2, '0');
-                                        const year = dateObject.getFullYear();
-                                        formattedDate = `${day}/${month}/${year}`;
-                                    }
-                                }
-                                html += '<tr>';
-                                html += '<td>' + formattedDate + '</td>';
-                                html += '<td>' + item.ProductName + '</td>';
-                                html += '<td>' + PurchaseReturn.TransactionNo + '</td>';
-                                html += '<td>Purchase Return</td>';
-                                html += '<td></td>';
-                                html += '<td>' + PurchaseReturn.Quantity + '</td>';
-                                Stock -= PurchaseReturn.Quantity
-                                html += '<td>' + Stock + '</td>';
-                                html += '</tr >';
-                            });
-                        }
-                        if (item.InwardSupplyTransactions != null) {
-                            $.each(item.InwardSupplyTransactions, function (key, Inward) {
-                                const ModifyDate = Inward.TransactionDate;
-                                var formattedDate = '';
-                                if (ModifyDate) {
-                                    const dateObject = new Date(ModifyDate);
-                                    if (!isNaN(dateObject)) {
-                                        const day = String(dateObject.getDate()).padStart(2, '0');
-                                        const month = String(dateObject.getMonth() + 1).padStart(2, '0');
-                                        const year = dateObject.getFullYear();
-                                        formattedDate = `${day}/${month}/${year}`;
-                                    }
-                                }
-                                html += '<tr>';
-                                html += '<td>' + formattedDate + '</td>';
-                                html += '<td>' + item.ProductName + '</td>';
-                                html += '<td>' + Inward.TransactionNo + '</td>';
-                                html += '<td>Inward Supply</td>';
-                                html += '<td>' + Inward.Quantity + '</td>';
-                                html += '<td></td>';
-                                Stock += Inward.Quantity
-                                html += '<td>' + Stock + '</td>';
-                                html += '</tr >';
-                            });
-                        }
-                        if (item.OutwardSupplyTransactions != null) {
-                            $.each(item.OutwardSupplyTransactions, function (key, Outward) {
-                                const ModifyDate = Outward.TransactionDate;
-                                var formattedDate = '';
-                                if (ModifyDate) {
-                                    const dateObject = new Date(ModifyDate);
-                                    if (!isNaN(dateObject)) {
-                                        const day = String(dateObject.getDate()).padStart(2, '0');
-                                        const month = String(dateObject.getMonth() + 1).padStart(2, '0');
-                                        const year = dateObject.getFullYear();
-                                        formattedDate = `${day}/${month}/${year}`;
-                                    }
-                                }
-                                html += '<tr>';
-                                html += '<td>' + formattedDate + '</td>';
-                                html += '<td>' + item.ProductName + '</td>';
-                                html += '<td>' + Outward.TransactionNo + '</td>';
-                                html += '<td>Outward Supply</td>';
-                                html += '<td></td>';
-                                html += '<td>' + Outward.Quantity + '</td>';
-                                Stock -= Outward.Quantity
+                                html += '<td>' + item2.TransactionNo + '</td>';
+                                html += '<td>' + item2.Particular + '</td>';
+                                html += item2.IncrementStock === true ? '<td>' + item2.Quantity + '</td>' : '<td>-</td>';
+                                html += item2.IncrementStock === false ? '<td>' + item2.Quantity + '</td>' : '<td>-</td>';
+                                Stock += item2.IncrementStock === true ? item2.Quantity : -item2.Quantity;
                                 html += '<td>' + Stock + '</td>';
                                 html += '</tr >';
                             });
 
-                        }
+                        });
+
                         $('#BtnPrintDetailed').show();
-                        PrintDataDetailed = {
-                            FromDate: fromDateDetailed.val(),
-                            ToDate: toDateDetailed.val(),
-                            Product: result.product,
-                            ProductName: result.product.ProductName
-                        }
+                        //PrintDataDetailed = {
+                        //    FromDate: fromDateDetailed.val(),
+                        //    ToDate: toDateDetailed.val(),
+                        //    Product: result.Product,
+                        //    ProductName: result.Product.ProductName
+                        //}
                     }
                     else {
                         html += '<tr>';
-                        html += '<td colspan="7">No Record</td>';
+                        html += '<td colspan="6">No Record</td>';
                         html += '</tr >';
                     }
                     html += ' </tbody>';
                     html += '</table >';
                     $('.tblDetailedStockList').html(html);
-                    if (!$.fn.DataTable.isDataTable('.DetailedStockReportTable')) {
-                        var table = $('.DetailedStockReportTable').DataTable({
-                            "responsive": true, "lengthChange": false, "autoWidth": false,
-                            "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-                        }).buttons().container().appendTo('#example2_wrapper .col-md-6:eq(0)');
-                    }
+                    //if (!$.fn.DataTable.isDataTable('.DetailedStockReportTable')) {
+                    //    var table = $('.DetailedStockReportTable').DataTable({
+                    //        "responsive": true, "lengthChange": false, "autoWidth": false,
+                    //        "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+                    //    }).buttons().container().appendTo('#example2_wrapper .col-md-6:eq(0)');
+                    //}
                 },
                 error: function (errormessage) {
                     $('#loader').hide();

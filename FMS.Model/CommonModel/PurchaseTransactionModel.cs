@@ -29,5 +29,6 @@ namespace FMS.Model.CommonModel
 
         //Others
         public string ProductName { get; set; }
+        public decimal Quantity { get; set; }
     }
 }
