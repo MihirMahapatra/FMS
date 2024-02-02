@@ -8,6 +8,8 @@ namespace FMS.Model.CommonModel
 {
     public class PartyReportModel
     {
+        public Guid PartyId { get; set; }
+        public Guid Fk_SubledgerId { get; set; }
         public string PartyName { get; set; }
         public decimal OpeningBal { get; set; }
         public string OpeningBalType { get; set; }
@@ -15,5 +17,21 @@ namespace FMS.Model.CommonModel
         public decimal CrAmt { get; set; }
         public decimal Balance { get; set; }
         public string BalanceType { get; set; }
+    }
+    public class PartyReportInfoModel
+    {
+        public string BranchName { get; set; }
+        public decimal OpeningBalance { get; set; }
+        public string OpeningBalanceType { get; set; }
+        public decimal RunningBalance { get; set; }
+        public string RunningBalanceType { get; set;}
+    }
+    public class PartyReportInfoViewModel : Base
+    {
+        public PartyReportInfoViewModel()
+        {
+            PartyInfos = new List<PartyReportInfoModel>();
+        }
+        public List<PartyReportInfoModel> PartyInfos { get; set; }
     }
 }

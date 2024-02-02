@@ -239,6 +239,43 @@ namespace FMS.Service.Reports
             }
             return Obj;
         }
+        public async Task<PartyReportInfoViewModel> GetBranchWiseCustomerInfo(PartyReportDataRequest requestData)
+        {
+            PartyReportInfoViewModel Obj;
+            var Result = await _reportRepo.GetBranchWiseCustomerInfo(requestData);
+            if (Result.IsSuccess)
+            {
+                if (Result.Response == "success")
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
+                        PartyInfos = Result.CollectionObjData,
+                    };
+                }
+                else
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.NotFound),
+                        Message = "No Record Found"
+                    };
+                }
+            }
+            else
+            {
+                Obj = new()
+                {
+                    ResponseStatus = Result.Response,
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    Message = "Some Eroor Occoured"
+                };
+            }
+            return Obj;
+        }
         public async Task<PartyViewModel> GetDetailedCustomerReport(PartyReportDataRequest requestData)
         {
             PartyViewModel Obj;

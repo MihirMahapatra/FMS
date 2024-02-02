@@ -1121,6 +1121,7 @@ $(function () {
                         else {
                             toastr.error(result.ErrorMsg);
                         }
+                        GetLastSalesTransaction();
                         GetSalesList();
                     },
                     error: function (error) {

@@ -86,7 +86,6 @@
                     html += '<thead>'
                     html += '<tr>'
                     html += '<th></th>'
-                    html += '<th hidden>Product Id</th>'
                     html += '<th>Product</th>'
                     html += '<th>Opening(+)</th>'
                     html += '<th>Purchase(+)</th>'
@@ -106,7 +105,6 @@
                         $.each(result.StockReports, function (key, item) {
                             html += '<tr>';
                             html += '<td><button  class="btn btn-primary btn-sm toggleColumnsBtn" id="btn-info-' + item.ProductId + '"  data-id="' + item.ProductId + '" style=" border-radius: 50%;" ><i class="fa-solid fa-circle-info"></i></button></td>'
-                            html += '<td hidden>' + item.ProductId + '</td>';
                             html += '<td>' + item.ProductName + '</td>';
                             html += '<td>' + item.OpeningQty + '  ' + item.UnitName + '</td>';
                             html += '<td>' + item.PurchaseQty + '</td>';
@@ -131,7 +129,7 @@
                     }
                     else {
                         html += '<tr>';
-                        html += '<td colspan="14">No Record</td>';
+                        html += '<td colspan="13">No Record</td>';
                         html += '</tr >';
                     }
                     html += ' </tbody>';

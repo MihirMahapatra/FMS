@@ -20,10 +20,6 @@ $(function () {
     fromDateDetailed.val(todayDate);
     const toDateDetailed = $('input[name="ToDateDetailed"]');
     toDateDetailed.val(todayDate);
-    const TfromDateDetailed = $('input[name="TFromDateDetailed"]');
-    TfromDateDetailed.val(todayDate);
-    const TtoDateDetailed = $('input[name="TToDateDetailed"]');
-    TtoDateDetailed.val(todayDate);
     //--------------------------------Customer Report Summerized------------------------------------------------//
     var PrintData = {}
     $('#btnViewSummerized').on('click', function () {
@@ -53,6 +49,7 @@ $(function () {
                     html += '<table class="table table-bordered table-hover text-center mt-2 SummerizedReportTable" style="width:100%">';
                     html += '<thead>'
                     html += '<tr>'
+                    html += '<th></th>'
                     html += '<th>Name</th>'
                     html += '<th>Opn Bal</th>'
                     html += '<th>Opn Type</th>'
@@ -67,6 +64,7 @@ $(function () {
                         $('#BtnPrintSummarized').show();
                         $.each(result.PartyReports, function (key, item) {
                             html += '<tr>';
+                            html += '<td><button  class="btn btn-primary btn-sm toggleColumnsBtn" id="btn-info-' + item.Fk_SubledgerId + '"  data-id="' + item.Fk_SubledgerId + '" style=" border-radius: 50%;" ><i class="fa-solid fa-circle-info"></i></button></td>'
                             html += '<td>' + item.PartyName + '</td>';
                             html += '<td>' + item.OpeningBal + '</td>';
                             html += '<td>' + item.OpeningBalType + '</td>';
@@ -77,15 +75,15 @@ $(function () {
                             html += '<td>' + item.BalanceType + '</td>';
                             html += '<tr>';
                         })
-                        PrintData = {
-                            FromDate: fromDateSummerized.val(),
-                            ToDate: toDateSummerized.val(),
-                            PartyReports: result.PartyReports
-                        }
+                        //PrintData = {
+                        //    FromDate: fromDateSummerized.val(),
+                        //    ToDate: toDateSummerized.val(),
+                        //    PartyReports: result.PartyReports
+                        //}
                     }
                     else {
                         html += '<tr>';
-                        html += '<td colspan="6">No Record</td>';
+                        html += '<td colspan="8">No Record</td>';
                         html += '</tr >';
                     }
                     html += ' </tbody>';
@@ -108,7 +106,61 @@ $(function () {
                 }
             });
         }
-    })
+    });
+    $(document).on('click', '.toggleColumnsBtn', (event) => {
+        const value = $(event.currentTarget).data('id');
+        var requestData = {
+            FromDate: fromDateSummerized.val(),
+            ToDate: toDateSummerized.val(),
+            ZeroValued: ddlZeroValued.val(),
+            Fk_SubledgerId: value
+        };
+        $.ajax({
+            url: "/Reports/GetBranchWiseCustomerInfo",
+            type: "POST",
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            data: JSON.stringify(requestData),
+            success: function (result) {
+                var html = '';
+                html += '<table class="table table-bordered table-hover text-center mt-2 SummerizedCustomerInfoTable" style="width:100%">';
+                html += '<thead>'
+                html += '<tr>'
+                html += '<th>Branch</th>'
+                html += '<th>Opening Bal</th>'
+                html += '<th>Closing Bal</th>'
+                html += '</tr>'
+                html += '</thead>'
+                html += '<tbody>';
+                if (result.ResponseCode == 302) {
+                    var totalClosing = 0;
+                    $.each(result.PartyInfos, function (key, item) {
+                        html += '<tr>';
+                        html += '<td>' + item.BranchName + '</td>';
+                        html += '<td>' + item.OpeningBalance + ' ' + item.OpeningBalanceType + '</td>';
+                        html += '<td>' + item.RunningBalance + ' ' + item.RunningBalanceType + '</td>';
+                        html += '</tr >';
+                    });
+                }
+                else {
+                    html += '<tr>';
+                    html += '<td colspan="3">No Record</td>';
+                    html += '</tr >';
+                }
+                html += ' </tbody>';
+                html += '</table >';
+                $('.tblSummerizedInfo').html(html);
+            },
+            error: function (errormessage) {
+                Swal.fire(
+                    'Error!',
+                    'An error occurred',
+                    'error'
+                );
+            }
+        });
+        $('#modal-customer-info').modal('show');
+    });
     $('#BtnPrintSummarized').on('click', function () {
         console.log(PrintData);
         $.ajax({
@@ -337,34 +389,4 @@ $(function () {
             },
         });
     });
-
-    //-----------------------------------------------------------------Transation Detailed Report --------------------------------------------//
-    TGetSundryDebtors();
-    function TGetSundryDebtors() {
-        $.ajax({
-            url: "/Transaction/GetSundryDebtors",
-            type: "GET",
-            contentType: "application/json;charset=utf-8",
-            dataType: "json",
-            success: function (result) {
-                if (result.ResponseCode == 302) {
-                    TddlCustomer.empty();
-                    var defaultOption = $('<option></option>').val('').text('--Select Option--');
-                    TddlCustomer.append(defaultOption);
-                    $.each(result.SubLedgers, function (key, item) {
-                        var option = $('<option></option>').val(item.SubLedgerId).text(item.SubLedgerName);
-                        TddlCustomer.append(option);
-                    });
-                }
-                else {
-                    TddlCustomer.empty();
-                    var defaultOption = $('<option></option>').val('').text('--Select Option--');
-                    TddlCustomer.append(defaultOption);
-                }
-            },
-            error: function (errormessage) {
-                console.log(errormessage)
-            }
-        });
-    }
 })

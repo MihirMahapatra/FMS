@@ -239,7 +239,7 @@ namespace FMS.Repository.Transaction
                             var newLedgerBalance = new LedgerBalance
                             {
                                 Fk_LedgerId = MappingLedgers.PurchaseAccount,
-                                OpeningBalance = newPurchaseOrder.GrandTotal,
+                                OpeningBalance = 0,
                                 OpeningBalanceType = "Dr",
                                 RunningBalance = newPurchaseOrder.GrandTotal,
                                 RunningBalanceType = "Dr",
@@ -328,7 +328,7 @@ namespace FMS.Repository.Transaction
                             TransactionId = newPurchaseOrder.PurchaseOrderId,
                             Narration = newPurchaseOrder.TransactionNo.ToString(),
                             Amount = newPurchaseOrder.GrandTotal,
-                            DrCr = "CR"
+                            DrCr = "Cr"
                         };
                         await _appDbContext.Journals.AddAsync(NewJournalPurchaseOrder);
                         await _appDbContext.SaveChangesAsync();
@@ -370,7 +370,7 @@ namespace FMS.Repository.Transaction
                                 TransactionId = newPurchaseTransaction.PurchaseId,
                                 Narration = newPurchaseOrder.TransactionNo.ToString(),
                                 Amount = newPurchaseTransaction.Amount,
-                                DrCr = "DR"
+                                DrCr = "Dr"
                             };
                             await _appDbContext.Journals.AddAsync(NewJournalPurchaseTransactionr);
                             await _appDbContext.SaveChangesAsync();
@@ -616,7 +616,7 @@ namespace FMS.Repository.Transaction
                                             TransactionId = newPurchaseTransaction.PurchaseId,
                                             Narration = UpdatePurchaseOrder.TransactionNo.ToString(),
                                             Amount = newPurchaseTransaction.Amount,
-                                            DrCr = "DR"
+                                            DrCr = "Dr"
                                         };
                                         await _appDbContext.Journals.AddAsync(NewJournalPurchaseTransactionr);
                                         await _appDbContext.SaveChangesAsync();
@@ -957,7 +957,7 @@ namespace FMS.Repository.Transaction
                             var newLedgerBalance = new LedgerBalance
                             {
                                 Fk_LedgerId = MappingLedgers.PurchaseReturnAccount,
-                                OpeningBalance = -newPurchaseReturnOrder.GrandTotal,
+                                OpeningBalance =0,
                                 OpeningBalanceType = "Cr",
                                 RunningBalance = -newPurchaseReturnOrder.GrandTotal,
                                 RunningBalanceType = "Cr",
@@ -1045,7 +1045,7 @@ namespace FMS.Repository.Transaction
                             TransactionId = newPurchaseReturnOrder.PurchaseReturnOrderId,
                             Narration = newPurchaseReturnOrder.TransactionNo.ToString(),
                             Amount = newPurchaseReturnOrder.GrandTotal,
-                            DrCr = "DR"
+                            DrCr = "Dr"
                         };
                         await _appDbContext.Journals.AddAsync(NewJournalPurchaseReturnOrder);
                         await _appDbContext.SaveChangesAsync();
@@ -1087,7 +1087,7 @@ namespace FMS.Repository.Transaction
                                 TransactionId = newPurchaseReturnTransaction.PurchaseReturnId,
                                 Narration = newPurchaseReturnOrder.TransactionNo.ToString(),
                                 Amount = newPurchaseReturnOrder.GrandTotal,
-                                DrCr = "CR"
+                                DrCr = "Cr"
                             };
                             await _appDbContext.Journals.AddAsync(NewJournalPurchaseTransaction);
                             await _appDbContext.SaveChangesAsync();
@@ -1322,7 +1322,7 @@ namespace FMS.Repository.Transaction
                                             TransactionId = newPurchaseReturnTransaction.PurchaseReturnId,
                                             Narration = UpdatePurchaseReturnOrder.TransactionNo.ToString(),
                                             Amount = newPurchaseReturnTransaction.Amount,
-                                            DrCr = "CR"
+                                            DrCr = "Cr"
                                         };
                                         await _appDbContext.Journals.AddAsync(NewJournalPurchaseReturnTransaction);
                                         await _appDbContext.SaveChangesAsync();
@@ -2773,7 +2773,7 @@ namespace FMS.Repository.Transaction
                                 TransactionId = newSalesOrder.SalesOrderId,
                                 Narration = newSalesOrder.TransactionNo.ToString(),
                                 Amount = newSalesOrder.GrandTotal,
-                                DrCr = "DR"
+                                DrCr = "Dr"
                             };
                             await _appDbContext.Journals.AddAsync(NewJournalSalesOrder);
                             await _appDbContext.SaveChangesAsync();
@@ -2837,7 +2837,7 @@ namespace FMS.Repository.Transaction
                                 if (int.TryParse(ReciptVoucherNo.VouvherNo.AsSpan(2), out int currentId))
                                 {
                                     currentId++;
-                                    ReciptVoucher = $"CR{currentId:D6}";
+                                    ReciptVoucher = $"Cr{currentId:D6}";
                                 }
                             }
                             else
@@ -2855,7 +2855,7 @@ namespace FMS.Repository.Transaction
                                 Fk_FinancialYearId = FinancialYear,
                                 TransactionNo = newSalesOrder.TransactionNo,
                                 Amount = newSalesOrder.GrandTotal,
-                                DrCr = "CR",
+                                DrCr = "Cr",
                             };
                             await _appDbContext.Receipts.AddAsync(newRecipt);
                             await _appDbContext.SaveChangesAsync();
@@ -2900,7 +2900,7 @@ namespace FMS.Repository.Transaction
                                     TransactionId = newSalesTransaction.SalesId,
                                     Narration = newSalesOrder.TransactionNo.ToString(),
                                     Amount = newSalesTransaction.Amount,
-                                    DrCr = "CR"
+                                    DrCr = "Cr"
                                 };
                                 await _appDbContext.Journals.AddAsync(NewJournalSalesTransaction);
                                 await _appDbContext.SaveChangesAsync();
@@ -3151,7 +3151,7 @@ namespace FMS.Repository.Transaction
                                         if (int.TryParse(ReciptVoucherNo.VouvherNo.AsSpan(2), out int currentId))
                                         {
                                             currentId++;
-                                            ReciptVoucher = $"CR{currentId:D6}";
+                                            ReciptVoucher = $"Cr{currentId:D6}";
                                         }
                                     }
                                     else
@@ -3169,7 +3169,7 @@ namespace FMS.Repository.Transaction
                                         Fk_FinancialYearId = FinancialYear,
                                         TransactionNo = data.TransactionNo,
                                         Amount = data.GrandTotal,
-                                        DrCr = "CR",
+                                        DrCr = "Cr",
                                     };
                                     await _appDbContext.Receipts.AddAsync(newRecipt);
                                     await _appDbContext.SaveChangesAsync();
@@ -3279,7 +3279,7 @@ namespace FMS.Repository.Transaction
                                         TransactionNo = data.TransactionNo,
                                         Narration = data.TransactionNo.ToString(),
                                         Amount = data.GrandTotal,
-                                        DrCr = "DR"
+                                        DrCr = "Dr"
                                     };
                                     await _appDbContext.Journals.AddAsync(NewJournalSalesOrder);
                                     await _appDbContext.SaveChangesAsync();
@@ -3369,7 +3369,7 @@ namespace FMS.Repository.Transaction
                                                 TransactionId = UpdateSalesTransaction.SalesId,
                                                 Narration = UpdateSalesOrder.TransactionNo.ToString(),
                                                 Amount = Convert.ToDecimal(item[8]),
-                                                DrCr = "CR"
+                                                DrCr = "Cr"
                                             };
                                             await _appDbContext.Journals.AddAsync(NewJournalSalesTransaction);
                                             await _appDbContext.SaveChangesAsync();
@@ -3460,7 +3460,7 @@ namespace FMS.Repository.Transaction
                                             TransactionNo = UpdateSalesOrder.TransactionNo,
                                             Narration = UpdateSalesOrder.TransactionNo.ToString(),
                                             Amount = newSalesTransaction.Amount,
-                                            DrCr = "CR"
+                                            DrCr = "Cr"
                                         };
                                         await _appDbContext.Journals.AddAsync(NewJournalTransaction);
                                         await _appDbContext.SaveChangesAsync();
@@ -3554,17 +3554,8 @@ namespace FMS.Repository.Transaction
                                         updateSubledgerBalance.RunningBalanceType = (updateSubledgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
                                         await _appDbContext.SaveChangesAsync();
                                     }
-                                    else
-                                    {
-                                        _Result.WarningMessage = "Ledger Balance Not Exist";
-                                        return _Result;
-                                    }
                                 }
-                                else
-                                {
-                                    _Result.WarningMessage = "SubLedger Balance Not Exist";
-                                    return _Result;
-                                }
+                                
                                 // @Sales A/c ------Cr
                                 var updateSalesLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.SalesAccount && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
                                 if (updateSalesLedgerBalance != null)
@@ -3572,11 +3563,6 @@ namespace FMS.Repository.Transaction
                                     updateSalesLedgerBalance.RunningBalance += deleteSalesOrders.GrandTotal;
                                     updateSalesLedgerBalance.RunningBalanceType = (updateSalesLedgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
                                     await _appDbContext.SaveChangesAsync();
-                                }
-                                else
-                                {
-                                    _Result.WarningMessage = "Ledger Balance Not Exist";
-                                    return _Result;
                                 }
                                 #endregion
                             }
@@ -3819,7 +3805,7 @@ namespace FMS.Repository.Transaction
                                 var newLedgerBalance = new LedgerBalance
                                 {
                                     Fk_LedgerId = MappingLedgers.SalesReturnAccount,
-                                    OpeningBalance = newSalesReturnOrder.GrandTotal,
+                                    OpeningBalance = 0,
                                     OpeningBalanceType = "Dr",
                                     RunningBalance = newSalesReturnOrder.GrandTotal,
                                     RunningBalanceType = "Dr",
@@ -3906,7 +3892,7 @@ namespace FMS.Repository.Transaction
                                 TransactionId = newSalesReturnOrder.SalesReturnOrderId,
                                 Narration = newSalesReturnOrder.TransactionNo.ToString(),
                                 Amount = newSalesReturnOrder.GrandTotal,
-                                DrCr = "CR"
+                                DrCr = "Cr"
                             };
                             await _appDbContext.Journals.AddAsync(NewJournalSalesOrder);
                             await _appDbContext.SaveChangesAsync();
@@ -3951,7 +3937,7 @@ namespace FMS.Repository.Transaction
                                 var newLedgerBalance = new LedgerBalance
                                 {
                                     Fk_LedgerId = MappingLedgers.CashAccount,
-                                    OpeningBalance = -newSalesReturnOrder.GrandTotal,
+                                    OpeningBalance = 0,
                                     OpeningBalanceType = "Cr",
                                     RunningBalance = -newSalesReturnOrder.GrandTotal,
                                     RunningBalanceType = "Cr",
@@ -3969,7 +3955,7 @@ namespace FMS.Repository.Transaction
                                 if (int.TryParse(ReciptVoucherNo.VouvherNo.AsSpan(2), out int currentId))
                                 {
                                     currentId++;
-                                    ReciptVoucher = $"CR{currentId:D6}";
+                                    ReciptVoucher = $"Cr{currentId:D6}";
                                 }
                             }
                             else
@@ -3987,7 +3973,7 @@ namespace FMS.Repository.Transaction
                                 Fk_FinancialYearId = FinancialYear,
                                 TransactionNo = newSalesReturnOrder.TransactionNo,
                                 Amount = newSalesReturnOrder.GrandTotal,
-                                DrCr = "DR",
+                                DrCr = "Dr",
                             };
                             await _appDbContext.Receipts.AddAsync(newRecipt);
                             await _appDbContext.SaveChangesAsync();
@@ -4032,7 +4018,7 @@ namespace FMS.Repository.Transaction
                                     TransactionId = newSalesReturnTransaction.SalesReturnId,
                                     Narration = newSalesReturnOrder.TransactionNo.ToString(),
                                     Amount = newSalesReturnTransaction.Amount,
-                                    DrCr = "DR"
+                                    DrCr = "Dr"
                                 };
                                 await _appDbContext.Journals.AddAsync(NewJournalSalesTransaction);
                                 await _appDbContext.SaveChangesAsync();
@@ -4287,7 +4273,7 @@ namespace FMS.Repository.Transaction
                                         if (int.TryParse(ReciptVoucherNo.VouvherNo.AsSpan(2), out int currentId))
                                         {
                                             currentId++;
-                                            ReciptVoucher = $"CR{currentId:D6}";
+                                            ReciptVoucher = $"Cr{currentId:D6}";
                                         }
                                     }
                                     else
@@ -4305,7 +4291,7 @@ namespace FMS.Repository.Transaction
                                         Fk_FinancialYearId = FinancialYear,
                                         TransactionNo = data.TransactionNo,
                                         Amount = data.GrandTotal,
-                                        DrCr = "CR",
+                                        DrCr = "Cr",
                                     };
                                     await _appDbContext.Receipts.AddAsync(newRecipt);
                                     await _appDbContext.SaveChangesAsync();
@@ -4414,7 +4400,7 @@ namespace FMS.Repository.Transaction
                                         TransactionNo = data.TransactionNo,
                                         Narration = data.TransactionNo.ToString(),
                                         Amount = data.GrandTotal,
-                                        DrCr = "DR"
+                                        DrCr = "Dr"
                                     };
                                     await _appDbContext.Journals.AddAsync(NewJournalSalesOrder);
                                     await _appDbContext.SaveChangesAsync();
@@ -4504,7 +4490,7 @@ namespace FMS.Repository.Transaction
                                                 TransactionId = UpdateSalesReturnTransaction.SalesReturnId,
                                                 Narration = UpdateSalesReturnOrder.TransactionNo.ToString(),
                                                 Amount = Convert.ToDecimal(item[8]),
-                                                DrCr = "CR"
+                                                DrCr = "Cr"
                                             };
                                             await _appDbContext.Journals.AddAsync(NewJournalSalesTransaction);
                                             await _appDbContext.SaveChangesAsync();
@@ -4587,7 +4573,7 @@ namespace FMS.Repository.Transaction
                                             TransactionNo = UpdateSalesReturnOrder.TransactionNo,
                                             Narration = UpdateSalesReturnOrder.TransactionNo.ToString(),
                                             Amount = newSalesReturnTransaction.Amount,
-                                            DrCr = "CR"
+                                            DrCr = "Cr"
                                         };
                                         await _appDbContext.Journals.AddAsync(NewJournalTransaction);
                                         await _appDbContext.SaveChangesAsync();

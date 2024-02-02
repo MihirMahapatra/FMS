@@ -136,6 +136,16 @@ namespace FMS.Controllers.Reports
             return BadRequest(ModelState);
         }
         [HttpPost]
+        public async Task<IActionResult> GetBranchWiseCustomerInfo([FromBody] PartyReportDataRequest requestData)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _reportSvcs.GetBranchWiseCustomerInfo(requestData);
+                return new JsonResult(result);
+            }
+            return BadRequest(ModelState);
+        }
+        [HttpPost]
         public async Task<IActionResult> GetDetailedCustomerReport([FromBody] PartyReportDataRequest requestData)
         {
             if (ModelState.IsValid)
