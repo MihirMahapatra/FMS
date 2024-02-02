@@ -6,6 +6,7 @@ namespace FMS.Repository.Reports
     {
         #region Stock Report
         Task<Result<StockReportSummerizedModel>> GetSummerizedStockReports(StockReportDataRequest requestData);
+        Task<Result<StockReportSummerizedInfoModel>> GetBranchWiseStockInfo(StockReportDataRequest requestData);
         Task<Result<StockReportDetailedModel2>> GetDetailedStockReport(StockReportDataRequest requestData);
         #endregion
         #region Labour Report

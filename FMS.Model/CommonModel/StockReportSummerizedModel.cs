@@ -2,6 +2,7 @@
 {
     public class StockReportSummerizedModel
     {
+        public Guid ProductId { get; set; }
         public string ProductName { get; set; }
         public decimal DamageQty { get; set; }
         public decimal OutwardQty { get; set; }
@@ -16,6 +17,20 @@
         public decimal OpeningQty { get; set; }
         public string UnitName { get; set; }
     }
+    public class StockReportSummerizedInfoModel
+    {
+        public string BranchName { get; set; }
+        public decimal OpeningStock { get; set; }
+        public decimal RunningStock { get; set; }
+    }
+    public class StockReportSummerizedInfoViewModel : Base
+    {
+        public StockReportSummerizedInfoViewModel()
+        {
+            StockInfos = new List<StockReportSummerizedInfoModel>();
+        }
+        public List<StockReportSummerizedInfoModel> StockInfos { get; set; }
+    }
     public class StockReportDetailedModel
     {
         public DateTime TransactionDate { get; set; }
@@ -29,7 +44,7 @@
     {
         public StockReportDetailedModel2()
         {
-            Stocks =new List<StockReportDetailedModel>();
+            Stocks = new List<StockReportDetailedModel>();
         }
         public decimal OpeningQty { get; set; }
         public string BranchName { get; set; }

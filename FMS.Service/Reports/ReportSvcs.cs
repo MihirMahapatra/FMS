@@ -50,6 +50,43 @@ namespace FMS.Service.Reports
             }
             return Obj;
         }
+        public async Task<StockReportSummerizedInfoViewModel> GetBranchWiseStockInfo(StockReportDataRequest requestData)
+        {
+            StockReportSummerizedInfoViewModel Obj;
+            var Result = await _reportRepo.GetBranchWiseStockInfo(requestData);
+            if (Result.IsSuccess)
+            {
+                if (Result.Response == "success")
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
+                        StockInfos = Result.CollectionObjData,
+                    };
+                }
+                else
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.NotFound),
+                        Message = "No Record Found"
+                    };
+                }
+            }
+            else
+            {
+                Obj = new()
+                {
+                    ResponseStatus = Result.Response,
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    Message = "Some Eroor Occoured"
+                };
+            }
+            return Obj;
+        }
         public async Task<StockReportDetailedViewModel> GetDetailedStockReport(StockReportDataRequest requestData)
         {
             StockReportDetailedViewModel Obj;

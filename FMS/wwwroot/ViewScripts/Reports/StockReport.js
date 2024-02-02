@@ -85,6 +85,8 @@
                     html += '<table class="table table-bordered table-hover text-center mt-2 SummerizedStockReportTable" style="width:100%">';
                     html += '<thead>'
                     html += '<tr>'
+                    html += '<th></th>'
+                    html += '<th hidden>Product Id</th>'
                     html += '<th>Product</th>'
                     html += '<th>Opening(+)</th>'
                     html += '<th>Purchase(+)</th>'
@@ -103,6 +105,8 @@
                     if (result.ResponseCode == 302) {
                         $.each(result.StockReports, function (key, item) {
                             html += '<tr>';
+                            html += '<td><button  class="btn btn-primary btn-sm toggleColumnsBtn" id="btn-info-' + item.ProductId + '"  data-id="' + item.ProductId + '" style=" border-radius: 50%;" ><i class="fa-solid fa-circle-info"></i></button></td>'
+                            html += '<td hidden>' + item.ProductId + '</td>';
                             html += '<td>' + item.ProductName + '</td>';
                             html += '<td>' + item.OpeningQty + '  ' + item.UnitName + '</td>';
                             html += '<td>' + item.PurchaseQty + '</td>';
@@ -127,7 +131,7 @@
                     }
                     else {
                         html += '<tr>';
-                        html += '<td colspan="11">No Record</td>';
+                        html += '<td colspan="14">No Record</td>';
                         html += '</tr >';
                     }
                     html += ' </tbody>';
@@ -164,6 +168,68 @@
             },
         });
     });
+    $(document).on('click', '.toggleColumnsBtn', (event) => {
+        const value = $(event.currentTarget).data('id');
+        var requestData = {
+            FromDate: fromDate.val(),
+            ToDate: toDate.val(),
+            ZeroValued: ddlZeroValued.val(),
+            ProductTypeId: ddlProductType.val(),
+            ProductId: value
+        };
+        $.ajax({
+            url: "/Reports/GetBranchWiseStockInfo",
+            type: "POST",
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            data: JSON.stringify(requestData),
+            success: function (result) {
+                var html = '';
+                html += '<table class="table table-bordered table-hover text-center mt-2 SummerizedStockInfoTable" style="width:100%">';
+                html += '<thead>'
+                html += '<tr>'
+                html += '<th>Branch</th>'
+                html += '<th>Opening Qty</th>'
+                html += '<th>Closing</th>'
+                html += '</tr>'
+                html += '</thead>'
+                html += '<tbody>';
+                if (result.ResponseCode == 302) {
+                    var totalClosing = 0;
+                    $.each(result.StockInfos, function (key, item) {
+                        html += '<tr>';
+                        html += '<td>' + item.BranchName + '</td>';
+                        html += '<td>' + item.OpeningStock + '</td>';
+                        let closingStock = item.OpeningStock + item.RunningStock;
+                        totalClosing += closingStock;
+                        html += '<td>' + closingStock + '</td>';
+                        html += '</tr >';
+                    });
+                    html += '<tr>';
+                    html += '<td colspan=2> Total Closing</td>';
+                    html += '<td >' + totalClosing +' </td>';
+                    html +='</tr> ';
+                }
+                else {
+                    html += '<tr>';
+                    html += '<td colspan="3">No Record</td>';
+                    html += '</tr >';
+                }
+                html += ' </tbody>';
+                html += '</table >';
+                $('.tblSummerizedInfo').html(html);
+            },
+            error: function (errormessage) {
+                Swal.fire(
+                    'Error!',
+                    'An error occurred',
+                    'error'
+                );
+            }
+        });
+        $('#modal-stock-info').modal('show');
+    });
+
     //-----------------------------------stock Report Detailed-------------------------------------------//
     GetAllProductTypesForDetailed()
     function GetAllProductTypesForDetailed() {

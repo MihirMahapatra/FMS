@@ -60,6 +60,16 @@ namespace FMS.Controllers.Reports
             return BadRequest(ModelState);
         }
         [HttpPost]
+        public async Task<IActionResult> GetBranchWiseStockInfo([FromBody] StockReportDataRequest requestData)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _reportSvcs.GetBranchWiseStockInfo(requestData);
+                return new JsonResult(result);
+            }
+            return BadRequest(ModelState);
+        }
+        [HttpPost]
         public async Task<IActionResult> GetDetailedStockReport([FromBody] StockReportDataRequest requestData)
         {
             if (ModelState.IsValid)
