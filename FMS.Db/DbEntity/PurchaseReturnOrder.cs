@@ -20,6 +20,7 @@
         public string TranspoterName { get; set; }
         public string VehicleNo { get; set; } = null;
         public string ReceivingPerson { get; set; } = null;
+        public string Narration { get; set; } = null;
         public SubLedger SubLedger { get; set; }
         public Branch Branch { get; set; }
         public FinancialYear FinancialYear { get; set; }

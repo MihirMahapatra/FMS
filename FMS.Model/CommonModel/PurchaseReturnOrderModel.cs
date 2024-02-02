@@ -19,6 +19,7 @@
         public string TranspoterName { get; set; }
         public string VehicleNo { get; set; } = null;
         public string ReceivingPerson { get; set; } = null;
+        public string Naration { get; set; } = null;
         public decimal GrandTotal { get; set; }
         public SubLedgerModel SubLedger { get; set; }
         public BranchModel Branch { get; set; }

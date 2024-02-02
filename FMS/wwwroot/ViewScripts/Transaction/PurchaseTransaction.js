@@ -27,6 +27,7 @@ $(function () {
     const transpoterName = $('input[name="TranspoterName"]');
     const receivingPerson = $('input[name="ReceivingPerson"]');
     const gst = $('input[name="GstAmount"]');
+    const Naration = $('textarea[name="NarrationPurchase"]');
     var PurchaseTable = $('#tblPurchase').DataTable({
         "paging": false,
         "lengthChange": false,
@@ -180,6 +181,7 @@ $(function () {
     const Pr_transpoterName = $('input[name="Pr_TranspoterName"]');
     const Pr_receivingPerson = $('input[name="Pr_ReceivingPerson"]');
     const Pr_gst = $('input[name="Pr_GstAmount"]');
+    const Pr_Narration = $('textarea[name="NarrationPurchaseReturn"]');
     var PurchaseReturnTable = $('#tblPurchaseReturn').DataTable({
         "paging": false,
         "lengthChange": false,
@@ -667,6 +669,7 @@ $(function () {
                 TranspoterName: transpoterName.val(),
                 VehicleNo: vehicleNo.val(),
                 ReceivingPerson: receivingPerson.val(),
+                Naration: Naration.val(),
                 rowData: rowData
             };
             $.ajax({
@@ -692,6 +695,7 @@ $(function () {
                         discount.val('0');
                         gst.val('0');
                         grandTotal.val('0');
+                        Naration.val('');
                         GetLastPurchaseTransaction();
                     }
                     else {
@@ -888,6 +892,7 @@ $(function () {
                 transpoterName.val(result.purchaseOrder.TranspoterName);
                 receivingPerson.val(result.purchaseOrder.ReceivingPerson);
                 vehicleNo.val(result.purchaseOrder.VehicleNo);
+                Naration.val(result.purchaseOrder.Naration);
                 const ModifyinvoiceDate = result.purchaseOrder.InvoiceDate;
                 if (ModifyinvoiceDate) {
                     const dateObject = new Date(ModifyinvoiceDate);
@@ -1106,6 +1111,7 @@ $(function () {
                 DiscountAmount: discount.val(),
                 GstAmount: gst.val(),
                 GrandTotal: grandTotal.val(),
+                Naration: Naration.val(),
                 rowData: rowData
             };
             $.ajax({
@@ -1134,6 +1140,7 @@ $(function () {
                         gst.val('0');
                         discount.val('0');
                         grandTotal.val('0');
+                        Naration.val('');
                         GetLastPurchaseTransaction();
                     }
                     else {
@@ -1494,6 +1501,7 @@ $(function () {
                     TranspoterName: Pr_transpoterName.val(),
                     VehicleNo: Pr_vehicleNo.val(),
                     ReceivingPerson: Pr_receivingPerson.val(),
+                    Naration: Pr_Narration.val(),
                     rowData: rowData
                 };
                 $.ajax({
@@ -1520,6 +1528,7 @@ $(function () {
                             Pr_gst.val('0');
                             Pr_discount.val('0');
                             Pr_grandTotal.val('0');
+                            Pr_Narration.val('');
                             GetLastPurchaseReturnTransaction();
                         }
                         else {
@@ -1731,6 +1740,7 @@ $(function () {
                 Pr_vehicleNo.val(result.purchaseReturnOrder.VehicleNo);
                 Pr_receivingPerson.val(result.purchaseReturnOrder.ReceivingPerson);
                 Pr_transpoterName.val(result.purchaseReturnOrder.TranspoterName);
+                Pr_Narration.val(result.purchaseReturnOrder.Naration);
                 ModifyorderDate = result.purchaseReturnOrder.OrderDate;
                 if (ModifyorderDate) {
                     const dateObject = new Date(ModifyorderDate);
@@ -1930,6 +1940,7 @@ $(function () {
                 DiscountAmount: Pr_discount.val(),
                 GstAmount: Pr_gst.val(),
                 GrandTotal: Pr_grandTotal.val(),
+                Naration: Pr_Narration.val(),
                 rowData: rowData
             };
             $.ajax({
@@ -1957,6 +1968,7 @@ $(function () {
                         Pr_discount.val('0');
                         Pr_gst.val('0');
                         Pr_grandTotal.val('0');
+                        Pr_Narration.val('');
                         GetLastPurchaseReturnTransaction();
                     }
                     else {

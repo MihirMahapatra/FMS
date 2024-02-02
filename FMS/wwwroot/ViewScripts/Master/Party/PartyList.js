@@ -79,6 +79,7 @@ $(function () {
             }
         });
     }
+    $(document).on('click', '#btnRefresh', GetParties);
     $(document).on('click', '.btn-party-edit', (event) => {
         const value = $(event.currentTarget).data('id');
         EditParty(value);

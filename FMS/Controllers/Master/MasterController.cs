@@ -37,6 +37,12 @@ namespace FMS.Controllers.Master
             return new JsonResult(result);
         }
         [HttpGet]
+        public async Task<IActionResult> GetStocksByProductTypeId(Guid ProductTypeId)
+        {
+            var result = await _masterSvcs.GetStocksByProductTypeId(ProductTypeId);
+            return new JsonResult(result);
+        }
+        [HttpGet]
         public async Task<IActionResult> GetAllProducts()
         {
             var result = await _adminSvcs.GetAllProducts();

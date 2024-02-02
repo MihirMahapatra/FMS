@@ -13,7 +13,7 @@ namespace FMS.Db.DbEntityConfig
             builder.Property(e => e.ProductionId).HasDefaultValueSql("(newid())");
             builder.Property(e => e.Fk_RawMaterialId).IsRequired(true);
             builder.Property(e => e.Fk_FinishedGoodId).IsRequired(true);
-            builder.Property(e => e.Quantity).HasColumnType("decimal(18, 2)").IsRequired(true);
+            builder.Property(e => e.Quantity).HasColumnType("decimal(18, 5)").IsRequired(true);
             builder.Property(e => e.Unit).HasMaxLength(100).IsRequired(true);
         }
     }

@@ -19,6 +19,7 @@ $(function () {
     const productId = $('select[name="ProductId"]');
     const groupId = $('select[name="GroupId"]');
     const subGroupId = $('select[name="SubGroupId"]');
+    const ddlProductType = $('select[name="ProductTypeId"]');
 
     //-----------------------------------Contorl Foucous Of Element   ProductMaster StockDetail----------------------------//
     groupId.focus();
@@ -164,6 +165,8 @@ $(function () {
             }
         });
     }
+
+
     LoadStocks();
     function LoadStocks() {
         $('#loader').show();
@@ -197,14 +200,14 @@ $(function () {
                         html += '<tr>';
                         html += '<td hidden>' + item.StockId + '</td>';
                         html += '<td>' + item.Product.ProductName + '</td>';
-                        html += '<td>' + item.OpeningStock + '</td>';
+                        html += '<td>' + item.OpeningStock + ' ' + item.UnitName + '</td>';
                         html += '<td>' + item.Rate + '</td>';
                         html += '<td>' + item.Amount + '</td>';
                         if (item.AvilableStock < item.MinQty) {
-                            html += '<td class="bg-danger text-white">' + item.AvilableStock + '</td>';
+                            html += '<td class="bg-danger text-white">' + item.AvilableStock + ' ' + item.UnitName + '</td>';
                         }
                         else {
-                            html += '<td>' + item.AvilableStock + '</td>';
+                            html += '<td>' + item.AvilableStock + ' ' + item.UnitName + '</td>';
                         }
                         html += '<td>' + item.MinQty + '</td>';
                         html += '<td>' + item.MaxQty + '</td>';
@@ -226,6 +229,121 @@ $(function () {
                 $('.tblStock').html(html);
                 if (!$.fn.DataTable.isDataTable('.StockTable')) {
                     $('.StockTable').DataTable({
+                        "paging": true,
+                        "lengthChange": false,
+                        "searching": true,
+                        "ordering": true,
+                        "info": true,
+                        "autoWidth": false,
+                        "responsive": true,
+                        "dom": '<"row"<"col-md-2"f><"col-md-2"l>>rtip'
+                    });
+                }
+            },
+            error: function (errormessage) {
+                $('#loader').hide();
+                Swal.fire(
+                    'Error!',
+                    'An error occurred',
+                    'error'
+                );
+            }
+        });
+    }
+    GetAllProductTypes();
+    function GetAllProductTypes() {
+        $.ajax({
+            url: "/Reports/GetAllProductTypes",
+            type: "GET",
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            success: function (result) {
+                if (result.ResponseCode == 302) {
+                    ddlProductType.empty();
+                    var defaultOption = $('<option></option>').val('').text('--Select Option--');
+                    ddlProductType.append(defaultOption);
+                    $.each(result.ProductTypes, function (key, item) {
+                        var option = $('<option></option>').val(item.ProductTypeId).text(item.Product_Type);
+                        ddlProductType.append(option);
+                    });
+                }
+                else {
+                    ddlProductType.empty();
+                    var defaultOption = $('<option></option>').val('').text('--Select Option--');
+                    ddlProductType.append(defaultOption);
+                }
+            },
+            error: function (errormessage) {
+                console.log(errormessage)
+            }
+        });
+    }
+    $(ddlProductType).on("change", function () {
+        console.log("Hi");
+        var ProductTypeId = $(this).val();
+        LoadStocksByProductTypeId(ProductTypeId);
+    });
+    //LoadStocksByProductTypeId(Id);
+    function LoadStocksByProductTypeId(id) {
+        $('#loader').show();
+        $('.tblStock').empty();
+        $.ajax({
+            url: '/Master/GetStocksByProductTypeId?ProductTypeId=' + id + '',
+            type: "GET",
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            success: function (result) {
+                $('#loader').hide();
+                var html = '';
+                html += '<table class="table table-bordered table-hover text-center mt-1 StockTables" style="width:100%">';
+                html += '<thead>'
+                html += '<tr>'
+                html += '<th hidden>Stock Id</th>'
+                html += '<th>Product Name</th>'
+                html += '<th>Opening Qty</th>'
+                html += '<th>Rate</th>'
+                html += '<th>Amount</th>'
+                html += '<th>Avilable Qty</th>'
+                html += '<th>Min Qty</th>'
+                html += '<th>Max Qty</th>'
+                html += '<th>Action</th>'
+                html += '</tr>'
+                html += '</thead>'
+                html += '<tbody>';
+                if (result.Stocks !== null) {
+                    $.each(result.Stocks, function (key, item) {
+                        html += '<tr>';
+                        html += '<td hidden>' + item.StockId + '</td>';
+                        html += '<td>' + item.Product.ProductName + '</td>';
+                        html += '<td>' + item.OpeningStock + ' ' + item.UnitName + '</td>';
+                        html += '<td>' + item.Rate + '</td>';
+                        html += '<td>' + item.Amount + '</td>';
+                        if (item.AvilableStock < item.MinQty) {
+                            html += '<td class="bg-danger text-white">' + item.AvilableStock + ' ' + item.UnitName + '</td>';
+                        }
+                        else {
+                            html += '<td>' + item.AvilableStock + ' ' + item.UnitName + '</td>';
+                        }
+                        html += '<td>' + item.MinQty + '</td>';
+                        html += '<td>' + item.MaxQty + '</td>';
+                        html += '<td style="background-color:#ffe6e6;">';
+                        html += '<button class="btn btn-primary btn-link btn-sm btn-stock-edit"   id="btnStockEdit_' + item.StockId + '" data-id="' + item.StockId + '" data-toggle="modal" data-target="#modal-edit-Stock" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-edit"></i></button>';
+                        html += ' <button class="btn btn-primary btn-link btn-sm btn-stock-delete" id="btnStockDelete_' + item.StockId + '"   data-id="' + item.StockId + '" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button>';
+                        html += '</td>';
+                        html += '</tr >';
+                    });
+                }
+                else {
+                    html += '<tr>';
+                    html += '<td colspan="7">No record</td>';
+                    html += '</tr>';
+                }
+
+                html += ' </tbody>';
+                html += '</table >';
+                $('.tblStock').html(html);
+                if (!$.fn.DataTable.isDataTable('.StockTables')) {
+                    $('.StockTables').DataTable({
                         "paging": true,
                         "lengthChange": false,
                         "searching": true,
