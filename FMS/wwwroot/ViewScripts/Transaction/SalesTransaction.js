@@ -39,6 +39,7 @@ $(function () {
     const transpoterName = $('input[name="TranspoterName"]');
     const receivingPerson = $('input[name="ReceivingPerson"]');
     const grandTotal = $('input[name="GrandTotal"]');
+    const Narration = $('textarea[name="NarrationSales"]')
     //---------------------------------Contorl Foucous Of Element Sale-------------------------------//
     ddlPayment.focus();
     CustomerName.on('focus', function () {
@@ -181,6 +182,7 @@ $(function () {
     const Sr_transpoterName = $('input[name="Sr_TranspoterName"]');
     const Sr_receivingPerson = $('input[name="Sr_ReceivingPerson"]');
     const Sr_gst = $('input[name="Sr_GstAmount"]');
+    const Sr_Narration = $('textarea[name="NarrationSalesReturn"]');
     var SalesReturnTable = $('#tblSalesReturn').DataTable({
         "paging": false,
         "lengthChange": false,
@@ -593,7 +595,8 @@ $(function () {
             toastr.error('ReceivingPerson Is Required.');
             receivingPerson.focus();
             return;
-        } else {
+        } 
+        else {
             $('#loader').show();
             var rowData = [];
             $('#tblSales tbody tr').each(function () {
@@ -639,6 +642,7 @@ $(function () {
                 Discount: discount.val(),
                 Gst: gst.val(),
                 GrandTotal: grandTotal.val(),
+                Naration: Narration.val(),
                 rowData: rowData,
                 PrintData: PrintData
             };
@@ -663,6 +667,7 @@ $(function () {
                         discount.val('0');
                         gst.val('0');
                         grandTotal.val('0');
+                        Narration.val('');
                         GetLastSalesTransaction();
                         GstTable.clear().draw();
                         $.ajax({
@@ -867,6 +872,7 @@ $(function () {
                 }
                 transpoterName.val(result.salesOrder.TranspoterName);
                 receivingPerson.val(result.salesOrder.ReceivingPerson);
+                Narration.val(result.salesOrder.Naration)
                 vehicleNo.val(result.salesOrder.VehicleNo);
                 const ModifyinvoiceDate = result.salesOrder.InvoiceDate;
                 if (ModifyinvoiceDate) {
@@ -1044,6 +1050,7 @@ $(function () {
                 SubTotal: subTotal.val(),
                 Discount: discount.val(),
                 Gst: gst.val(),
+                Naration: Narration.val(),
                 GrandTotal: grandTotal.val(),
                 rowData: rowData
             };
@@ -1069,6 +1076,7 @@ $(function () {
                         receivingPerson.val('');
                         subTotal.val('0');
                         discount.val('0');
+                        Narration.val('');
                         gst.val('0');
                         grandTotal.val('0');
                         GetLastSalesTransaction();
@@ -1428,6 +1436,7 @@ $(function () {
                 TranspoterName: Sr_transpoterName.val(),
                 VehicleNo: Sr_vehicleNo.val(),
                 ReceivingPerson: Sr_receivingPerson.val(),
+                Naration: Sr_Narration.val(),
                 rowData: rowData
             };
             $.ajax({
@@ -1451,6 +1460,7 @@ $(function () {
                         Sr_transpoterName.val('');
                         Sr_vehicleNo.val('');
                         Sr_receivingPerson.val('');
+                        Sr_Narration.val('');
                         GetLastSalesReturnTransaction();
                     }
                     else {
@@ -1660,6 +1670,7 @@ $(function () {
                 });
                 Sr_transpoterName.val(result.SalesReturnOrder.TranspoterName);
                 Sr_receivingPerson.val(result.SalesReturnOrder.ReceivingPerson);
+                Sr_Narration.val(result.SalesReturnOrder.Naration);
                 Sr_vehicleNo.val(result.SalesReturnOrder.VehicleNo);
                 Sr_orderNo.val(result.SalesReturnOrder.OrderNo);
                 ModifyorderDate = result.SalesReturnOrder.OrderDate;
@@ -1826,6 +1837,7 @@ $(function () {
                 Gst: Sr_gst.val(),
                 TranspoterName: Sr_transpoterName.val(),
                 VehicleNo: Sr_vehicleNo.val(),
+                Naration: Sr_Narration.val(),
                 ReceivingPerson: Sr_receivingPerson.val(),
                 rowData: rowData
             };
@@ -1847,6 +1859,7 @@ $(function () {
                         Sr_invoiceDate.val('');
                         Sr_orderNo.val('');
                         Sr_orderDate.val('');
+                        Sr_Narration.val('');
                         Sr_subTotal.val('0');
                         Sr_discount.val('0');
                         Sr_grandTotal.val('0');

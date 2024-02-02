@@ -8,6 +8,7 @@ namespace FMS.Service.Master
     {
         #region Stock Master 
         Task<StockViewModel> GetStocks();
+        Task<StockViewModel> GetStocksByProductTypeId(Guid ProductTypeId);
         Task<ProductViewModel> GetProductsWhichNotInStock(Guid GroupId, Guid SubGroupId);
         Task<Base> CreateStock(StockModel data);
         Task<Base> UpdateStock(StockModel data);

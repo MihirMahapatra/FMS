@@ -16,6 +16,7 @@
         public string ReceivingPerson { get; set; }
         public decimal SubTotal { get; set; }
         public decimal DiscountAmount { get; set; }
+        public string Naration { get; set; }
         public decimal GrandTotal { get; set; }
         public decimal GstAmount { get; set; }
         public List<List<string>> RowData { get; set; }

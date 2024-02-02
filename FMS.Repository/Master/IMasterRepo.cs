@@ -10,6 +10,7 @@ namespace FMS.Repository.Master
         #region Stock Master
       
         Task<Result<StockModel>> GetStocks();
+        Task<Result<StockModel>> GetStocksByProductTypeId( Guid ProductTypeId);
         Task<Result<ProductModel>> GetProductsWhichNotInStock(Guid GroupId, Guid SubGroupId);
         Task<Result<bool>> CreateStock(StockModel data);
         Task<Result<bool>> UpdateStock(StockModel data);

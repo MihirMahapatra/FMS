@@ -54,6 +54,43 @@ namespace FMS.Service.Master
             }
             return Obj;
         }
+        public async Task<StockViewModel> GetStocksByProductTypeId(Guid ProductTypeId)
+        {
+            StockViewModel Obj;
+            var Result = await _masterRepo.GetStocksByProductTypeId(ProductTypeId);
+            if (Result.IsSuccess)
+            {
+                if (Result.Response == "success")
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
+                        Stocks = Result.CollectionObjData,
+                    };
+                }
+                else
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.NotFound),
+                        Message = "No Record Found"
+                    };
+                }
+            }
+            else
+            {
+                Obj = new()
+                {
+                    ResponseStatus = Result.Response,
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    Message = "Some Eroor Occoured"
+                };
+            }
+            return Obj;
+        }
         public async Task<ProductViewModel> GetProductsWhichNotInStock(Guid GroupId, Guid SubGroupId)
         {
             ProductViewModel Obj;
@@ -1591,6 +1628,6 @@ namespace FMS.Service.Master
             return Obj;
         }
         #endregion
-        #endregion       
+        #endregion
     }
 }

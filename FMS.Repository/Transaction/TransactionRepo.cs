@@ -149,6 +149,7 @@ namespace FMS.Repository.Transaction
                     VehicleNo = s.VehicleNo,
                     TranspoterName = s.TranspoterName,
                     ReceivingPerson = s.ReceivingPerson,
+                    Naration = s.Narration,
                     Discount = s.Discount,
                     SubTotal = s.SubTotal,
                     Gst = s.Gst,
@@ -216,6 +217,7 @@ namespace FMS.Repository.Transaction
                             OrderNo = data.OrderNo,
                             OrderDate = convertedOrderDate,
                             SubTotal = data.SubTotal,
+                            Narration = data.Naration,
                             Discount = data.DiscountAmount,
                             Gst = data.GstAmount,
                             GrandTotal = data.GrandTotal,
@@ -496,6 +498,7 @@ namespace FMS.Repository.Transaction
                                 UpdatePurchaseOrder.OrderDate = convertedOrderDate;
                                 UpdatePurchaseOrder.VehicleNo = data.VehicleNo;
                                 UpdatePurchaseOrder.TranspoterName = data.TranspoterName;
+                                UpdatePurchaseOrder.Narration = data.Naration;
                                 UpdatePurchaseOrder.ReceivingPerson = data.ReceivingPerson;
                                 UpdatePurchaseOrder.SubTotal = Convert.ToDecimal(data.SubTotal);
                                 UpdatePurchaseOrder.Discount = Convert.ToDecimal(data.DiscountAmount);
@@ -864,6 +867,7 @@ namespace FMS.Repository.Transaction
                     VehicleNo = s.VehicleNo,
                     TranspoterName = s.TranspoterName,
                     ReceivingPerson = s.ReceivingPerson,
+                    Naration = s.Narration,
                     Discount = s.Discount,
                     Gst = s.Gst,
                     SubTotal = s.SubTotal,
@@ -929,6 +933,7 @@ namespace FMS.Repository.Transaction
                             OrderDate = convertedOrderDate,
                             TranspoterName = data.TranspoterName,
                             ReceivingPerson = data.ReceivingPerson,
+                            Narration = data.Naration,
                             VehicleNo = data.VehicleNo,
                             SubTotal = data.SubTotal,
                             Discount = data.DiscountAmount,
@@ -1207,6 +1212,7 @@ namespace FMS.Repository.Transaction
                                 UpdatePurchaseReturnOrder.VehicleNo = data.VehicleNo;
                                 UpdatePurchaseReturnOrder.TranspoterName = data.TranspoterName;
                                 UpdatePurchaseReturnOrder.ReceivingPerson = data.ReceivingPerson;
+                                UpdatePurchaseReturnOrder.Narration = data.Naration;
                                 UpdatePurchaseReturnOrder.SubTotal = Convert.ToDecimal(data.SubTotal);
                                 UpdatePurchaseReturnOrder.Discount = Convert.ToDecimal(data.DiscountAmount);
                                 UpdatePurchaseReturnOrder.Gst = Convert.ToDecimal(data.GstAmount);
@@ -2549,6 +2555,7 @@ namespace FMS.Repository.Transaction
                     GrandTotal = s.GrandTotal,
                     SubLedger = s.SubLedger != null ? new SubLedgerModel { SubLedgerName = s.SubLedger.SubLedgerName } : null,
                     CustomerName = s.CustomerName,
+                    Naration = s.Narration,
                     TransactionType = s.TransactionType
                 }).ToListAsync();
                 if (Query.Count > 0)
@@ -2587,6 +2594,7 @@ namespace FMS.Repository.Transaction
                     TranspoterName = s.TranspoterName,
                     VehicleNo = s.VehicleNo,
                     ReceivingPerson = s.ReceivingPerson,
+                    Naration = s.Narration,
                     Discount = s.Discount,
                     SubTotal = s.SubTotal,
                     Gst = s.Gst,
@@ -2654,6 +2662,7 @@ namespace FMS.Repository.Transaction
                             Gst = data.Gst,
                             Discount = data.Discount,
                             GrandTotal = data.GrandTotal,
+                           Narration = data.Naration
                         };
                         await _appDbContext.SalesOrders.AddAsync(newSalesOrder);
                         await _appDbContext.SaveChangesAsync();
@@ -3301,6 +3310,7 @@ namespace FMS.Repository.Transaction
                             UpdateSalesOrder.Discount = Convert.ToDecimal(data.Discount);
                             UpdateSalesOrder.Gst = Convert.ToDecimal(data.Gst);
                             UpdateSalesOrder.GrandTotal = Convert.ToDecimal(data.GrandTotal);
+                            UpdateSalesOrder.Narration = data.Naration;
                             await _appDbContext.SaveChangesAsync();
                             #endregion
                             //************************************************************Sales Transaction**************************************************//
@@ -3680,6 +3690,7 @@ namespace FMS.Repository.Transaction
                     OrderNo = s.OrderNo,
                     GrandTotal = s.GrandTotal,
                     CustomerName = s.CustomerName,
+                    Naration = s.Narration,
                     SubLedger = s.SubLedger != null ? new SubLedgerModel { SubLedgerName = s.SubLedger.SubLedgerName } : null,
                 }).ToListAsync();
                 if (Query.Count > 0)
@@ -3722,6 +3733,7 @@ namespace FMS.Repository.Transaction
                     TranspoterName = s.TranspoterName,
                     VehicleNo = s.VehicleNo,
                     ReceivingPerson = s.ReceivingPerson,
+                    Naration = s.Narration,
                     SalesReturnTransactions = _appDbContext.SalesReturnTransactions.Where(x => x.Fk_SalesReturnOrderId == s.SalesReturnOrderId).Select(x => new SalesReturnTransactionModel
                     {
                         SalesReturnId = x.SalesReturnId,
@@ -3782,6 +3794,7 @@ namespace FMS.Repository.Transaction
                             TranspoterName = data.TranspoterName,
                             VehicleNo = data.VehicleNo,
                             ReceivingPerson = data.ReceivingPerson,
+                            Narration = data.Naration,
                             SubTotal = data.SubTotal,
                             Discount = data.Discount,
                             Gst = data.Gst,
@@ -4427,6 +4440,7 @@ namespace FMS.Repository.Transaction
                             UpdateSalesReturnOrder.OrderDate = convertedOrderDate;
                             UpdateSalesReturnOrder.TranspoterName = data.TranspoterName;
                             UpdateSalesReturnOrder.ReceivingPerson = data.ReceivingPerson;
+                            UpdateSalesReturnOrder.Narration = data.Naration;
                             UpdateSalesReturnOrder.VehicleNo = data.VehicleNo;
                             UpdateSalesReturnOrder.SubTotal = Convert.ToDecimal(data.SubTotal);
                             UpdateSalesReturnOrder.Discount = Convert.ToDecimal(data.Discount);

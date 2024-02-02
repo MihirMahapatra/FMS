@@ -667,7 +667,7 @@ namespace FMS.Repository.Master
                 Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
                 _Result.IsSuccess = false;
                 var Query = await (from s in _appDbContext.Stocks
-                                   where s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear
+                                   where s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear /*&& s.Product.ProductType.ProductTypeId==*/
                                    select new StockModel
                                    {
                                        StockId = s.StockId,
@@ -678,7 +678,45 @@ namespace FMS.Repository.Master
                                        Rate = s.Rate,
                                        Amount = s.Amount,
                                        Product = s.Product != null ? new ProductModel { ProductName = s.Product.ProductName } : null,
+                                       UnitName = s.Product.Unit.UnitName
                                    }).ToListAsync();
+                if (Query.Count > 0)
+                {
+                    var StockList = Query;
+                    _Result.CollectionObjData = StockList;
+                    _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
+                }
+                _Result.IsSuccess = true;
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("horizonexception@gmail.com", "FMS Excepion", $"MasterRepo/GetStocks : {_Exception.Message}");
+            }
+            return _Result;
+        }
+        public async Task<Result<StockModel>> GetStocksByProductTypeId(Guid ProductTypeId)
+        {
+            Result<StockModel> _Result = new();
+            try
+            {
+                Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
+                Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
+                _Result.IsSuccess = false;
+                var Query = await(from s in _appDbContext.Stocks
+                                  where s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear && s.Product.ProductType.ProductTypeId == ProductTypeId
+                                  select new StockModel
+                                  {
+                                      StockId = s.StockId,
+                                      MinQty = s.MinQty,
+                                      MaxQty = s.MaxQty,
+                                      AvilableStock = s.AvilableStock,
+                                      OpeningStock = s.OpeningStock,
+                                      Rate = s.Rate,
+                                      Amount = s.Amount,
+                                      Product = s.Product != null ? new ProductModel { ProductName = s.Product.ProductName } : null,
+                                      UnitName = s.Product.Unit.UnitName
+                                  }).ToListAsync();
                 if (Query.Count > 0)
                 {
                     var StockList = Query;
@@ -1647,6 +1685,6 @@ namespace FMS.Repository.Master
             return _Result;
         }
         #endregion
-        #endregion 
+        #endregion
     }
 }

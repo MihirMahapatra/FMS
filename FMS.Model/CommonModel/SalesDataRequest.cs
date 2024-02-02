@@ -18,6 +18,7 @@
         public decimal Gst { get; set; }
         public decimal Discount { get; set; }
         public decimal GrandTotal { get; set; }
+        public string Naration { get; set; } = null;
         public List<List<string>> RowData { get; set; }
         public List<List<string>> PrintData { get; set; }
     }
