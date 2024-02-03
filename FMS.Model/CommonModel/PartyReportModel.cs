@@ -18,13 +18,28 @@ namespace FMS.Model.CommonModel
         public decimal Balance { get; set; }
         public string BalanceType { get; set; }
     }
+    public class PartyReportModel2
+    {
+        public String BranchName;
+        public PartyModel PartyInfo { get; set; }
+    }
+    public class PartyReportViewModel : Base
+    {
+        public PartyReportViewModel()
+        {
+            PartyDetailed = new List<PartyReportModel2>();
+            PartySummerized = new List<PartyReportModel>();
+        }
+        public List<PartyReportModel2> PartyDetailed { get; set; }
+        public List<PartyReportModel> PartySummerized { get; set; }
+    }
     public class PartyReportInfoModel
     {
         public string BranchName { get; set; }
         public decimal OpeningBalance { get; set; }
         public string OpeningBalanceType { get; set; }
         public decimal RunningBalance { get; set; }
-        public string RunningBalanceType { get; set;}
+        public string RunningBalanceType { get; set; }
     }
     public class PartyReportInfoViewModel : Base
     {

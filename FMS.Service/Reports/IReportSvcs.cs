@@ -18,7 +18,7 @@ namespace FMS.Service.Reports
         #region Customer Report
         Task<PartyReportViewModel> GetSummerizedCustomerReport(PartyReportDataRequest requestData);
         Task<PartyReportInfoViewModel> GetBranchWiseCustomerInfo(PartyReportDataRequest requestData);
-        Task<PartyViewModel> GetDetailedCustomerReport(PartyReportDataRequest requestData);
+        Task<PartyReportViewModel> GetDetailedCustomerReport(PartyReportDataRequest requestData);
         #endregion
         #region Supplyer Report
         Task<PartyReportViewModel> GetSummerizedSupplyerReport(PartyReportDataRequest requestData);

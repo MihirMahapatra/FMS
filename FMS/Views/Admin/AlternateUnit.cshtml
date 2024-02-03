@@ -33,37 +33,47 @@
                     <div class="card card-primary card-outline" style="background:#C7C9DC" >
                         <div class="card-body">
                             <div class="row">
-                                <div class="col-md-3">
+                                <div class="col-md-2">
                                     <div class="form-group">
-                                        <select class="form-control select2bs4" style="width: 100%;" name="ProductId" tabindex="1">
+                                        <label class="pt-2">Product  Type</label>
+                                        <select class="form-control select2bs4" style="width: 100%" name="ddlProductType" tabindex="1">
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label class="pt-2">Product  Name</label>
+                                        <select class="form-control select2bs4" style="width: 100%;" name="ProductId" tabindex="2">
                                         </select>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
+                                    <label class="pt-2">Alternate Unit</label>
                                     <div class="form-group">
                                         <div class="input-group">
                                             <input type="text" class="form-control" id=""  value="1" disabled  name="AlternateQty">
-                                            <div class="input-group-append">
-                                                <input type="text" class="form-control" id="" name="AlternateUnit" placeholder="Alternate Unit" tabindex="2">
+                                            <div class="input-group-prepend">
+                                                <input type="text" class="form-control" id="" name="AlternateUnit" placeholder="Alternate Unit" tabindex="3">
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-2">
+                                <div class="col-md-3">
                                     <input type="hidden" class="form-control" id="HdnUnitId">
+                                    <label class="pt-2">Unit</label>
                                     <div class="form-group">
                                         <div class="input-group">
-                                            <input type="text" class="form-control" name="UnitQty" tabindex="3">
+                                            <input type="text" class="form-control" name="UnitQty" tabindex="4">
                                             <div class="input-group-append">
                                                 <span class="input-group-text" id="Unit">N/A</span>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-2">
-                                    <div class="form-group">
+                                <div class="col-md-2" >
+                                    <div class="form-group" style="padding-top:37px">
                                         <label></label>
-                                        <button type="button" tabindex="4" class="btn btn-block btn-outline-primary btn-alternateunit-create" style="float:right"><b>Submit</b></button>
+                                        <button type="button" tabindex="5" class="btn btn-block btn-outline-primary btn-alternateunit-create" style="float:right"><b>Submit</b></button>
                                     </div>
                                 </div>
                             </div>

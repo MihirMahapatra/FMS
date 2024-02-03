@@ -27,5 +27,9 @@
         public List<PaymentModel> Payments { get; set; }
         public decimal OpeningBal { get; set; }
         public string OpeningBalType { get; set; }
+
+
+        //other Property
+        public string BranchName { get; set; }
     }
 }

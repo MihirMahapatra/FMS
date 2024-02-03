@@ -214,7 +214,7 @@ namespace FMS.Service.Reports
                     {
                         ResponseStatus = Result.Response,
                         ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
-                        PartyReports = Result.CollectionObjData,
+                        PartySummerized = Result.CollectionObjData,
                     };
                 }
                 else
@@ -276,9 +276,9 @@ namespace FMS.Service.Reports
             }
             return Obj;
         }
-        public async Task<PartyViewModel> GetDetailedCustomerReport(PartyReportDataRequest requestData)
+        public async Task<PartyReportViewModel> GetDetailedCustomerReport(PartyReportDataRequest requestData)
         {
-            PartyViewModel Obj;
+            PartyReportViewModel Obj;
             var Result = await _reportRepo.GetDetailedCustomerReport(requestData);
             if (Result.IsSuccess)
             {
@@ -288,7 +288,7 @@ namespace FMS.Service.Reports
                     {
                         ResponseStatus = Result.Response,
                         ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
-                        Party = Result.SingleObjData,
+                        PartyDetailed = Result.CollectionObjData,
                     };
                 }
                 else
@@ -327,7 +327,7 @@ namespace FMS.Service.Reports
                     {
                         ResponseStatus = Result.Response,
                         ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
-                        PartyReports = Result.CollectionObjData,
+                        PartySummerized = Result.CollectionObjData,
                     };
                 }
                 else

@@ -3,6 +3,7 @@
     $("#AlternateUnitLink").addClass("active");
     $("#AlternateUnitLink i.far.fa-circle").removeClass("far fa-circle").addClass("far fa-dot-circle");
     /***************************************Variable Declaration***********************************************************/
+    const ddlProductType = $('select[name="ddlProductType"]');
     const ProductId = $('select[name="ProductId"]');
     const HdnUnitId = $('#HdnUnitId');
     const UnitName = $('#Unit');
@@ -26,33 +27,7 @@
         $(this).css('background-color', '');
     });
     /********************************************************************************************************/
-    LoadProducts();
-    function LoadProducts() {
-        ProductId.empty();
-        var defaultOption = $('<option></option>').val('').text('--Select Product--');
-        ProductId.append(defaultOption);
-        $.ajax({
-            url: "/Admin/GetProductByTypeId",
-            type: "GET",
-            contentType: "application/json;charset=utf-8",
-            dataType: "json",
-            success: function (result) {
-                if (result.ResponseCode == 302) {
-                    $.each(result.Products, function (key, item) {
-                        var option = $('<option></option>').val(item.ProductId).text(item.ProductName);
-                        ProductId.append(option);
-                    });
-                }
-            },
-            error: function (errormessage) {
-                Swal.fire(
-                    'Error!',
-                    'An error occurred',
-                    'error'
-                );
-            }
-        });
-    }
+
     LoadAlternateUnit();
     function LoadAlternateUnit() {
         $('#loader').show();
@@ -80,7 +55,7 @@
                     $.each(result.AlternateUnits, function (key, item) {
                         html += '<tr>';
                         html += '<td hidden>' + item.AlternateUnitId + '</td>';
-                        if (item.Product!==null) {
+                        if (item.Product !== null) {
                             html += '<td>' + item.Product.ProductName + '</td>';
                         }
                         else {
@@ -96,7 +71,7 @@
                             html += '<td>-</td>';
                             html += '<td>-</td>';
                         }
-                    
+
                         html += '<td style="background-color:#ffe6e6;">';
                         html += '<button class="btn btn-primary btn-link btn-sm btn-alternateunit-edit"   id="btnAlternateUnitEdit_' + item.AlternateUnitId + '" data-id="' + item.AlternateUnitId + '" data-toggle="modal" data-target="#modal-edit-Product" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-edit"></i></button>';
                         html += ' <button class="btn btn-primary btn-link btn-sm btn-alternateunit-delete" id="btnAlternateUnitDelete_' + item.AlternateUnitId + '"   data-id="' + item.AlternateUnitId + '" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button>';
@@ -135,6 +110,59 @@
             }
         });
     }
+    GetProductTypes();
+    function GetProductTypes() {
+        $.ajax({
+            url: "/Transaction/GetProductTypes",
+            type: "GET",
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            success: function (result) {
+                if (result.ResponseCode == 302) {
+                    ddlProductType.empty();
+                    var defaultOption = $('<option></option>').val('').text('--Select Option--');
+                    ddlProductType.append(defaultOption);
+                    $.each(result.ProductTypes, function (key, item) {
+                        var option = $('<option></option>').val(item.ProductTypeId).text(item.Product_Type);
+                        ddlProductType.append(option);
+                    });
+                }
+                else {
+                    ddlProductType.empty();
+                    var defaultOption = $('<option></option>').val('').text('--Select Option--');
+                    ddlProductType.append(defaultOption);
+                }
+            },
+            error: function (errormessage) {
+                console.log(errormessage)
+            }
+        });
+    }
+    ddlProductType.on('change', function () {
+        var ProductTypeId = ddlProductType.val();
+        $.ajax({
+            url: '/Admin/GetProductByTypeId?ProductTypeId=' + ProductTypeId + '',
+            type: "GET",
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            success: function (result) {
+                if (result.ResponseCode == 302) {
+                    ProductId.empty();
+                    $.each(result.Products, function (key, item) {
+                        var option = $('<option></option>').val(item.ProductId).text(item.ProductName);
+                        ProductId.append(option);
+                    });
+                }
+            },
+            error: function (errormessage) {
+                Swal.fire(
+                    'Error!',
+                    'An error occurred',
+                    'error'
+                );
+            }
+        });
+    });
     ProductId.on('change', function () {
         var productId = ProductId.val();
         $.ajax({

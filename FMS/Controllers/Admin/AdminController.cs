@@ -191,24 +191,24 @@ namespace FMS.Controllers.Admin
         [HttpPost]
         public async Task<IActionResult> ManageUsersInRole(RoleModel model)
         {
-        
-                var Rolename = await _adminSvcs.FindRoleById(model.Id);
-                if (Rolename != null)
-                {
-                    var UpdateUserWithClaims = await _adminSvcs.UpdateUserwithClaimsForRole(model, Rolename);
-                    if (UpdateUserWithClaims.ResponseCode == 200)
-                    {
-                        return RedirectToAction("ListRoles", "Admin", new { SuccessMsg = UpdateUserWithClaims.SuccessMsg });
-                    }
-                    else
-                    {
-                        return RedirectToAction("ListRoles", "Admin", new { ErrorMsg = UpdateUserWithClaims.ErrorMsg });
-                    }
-                }
 
-                return RedirectToAction("ListRoles", "Admin", new { ErrorMsg = "Some Error Occoured" });
-            
-         
+            var Rolename = await _adminSvcs.FindRoleById(model.Id);
+            if (Rolename != null)
+            {
+                var UpdateUserWithClaims = await _adminSvcs.UpdateUserwithClaimsForRole(model, Rolename);
+                if (UpdateUserWithClaims.ResponseCode == 200)
+                {
+                    return RedirectToAction("ListRoles", "Admin", new { SuccessMsg = UpdateUserWithClaims.SuccessMsg });
+                }
+                else
+                {
+                    return RedirectToAction("ListRoles", "Admin", new { ErrorMsg = UpdateUserWithClaims.ErrorMsg });
+                }
+            }
+
+            return RedirectToAction("ListRoles", "Admin", new { ErrorMsg = "Some Error Occoured" });
+
+
         }
         #endregion
         #region Company Details
@@ -486,9 +486,9 @@ namespace FMS.Controllers.Admin
             return new JsonResult(result);
         }
         [HttpGet]
-        public async Task<IActionResult> GetProductByTypeId()
+        public async Task<IActionResult> GetProductByTypeId([FromQuery] Guid ProductTypeId)
         {
-            var result = await _adminSvcs.GetProductByTypeId(MappingProductType.RawMaterial);
+            var result = await _adminSvcs.GetProductByTypeId(ProductTypeId);
             return new JsonResult(result);
         }
         [HttpGet]
@@ -673,7 +673,7 @@ namespace FMS.Controllers.Admin
             return new JsonResult(result);
         }
         #endregion
-    
+
         #region Account Configuration
         [HttpGet]
         public IActionResult AccountConfig()

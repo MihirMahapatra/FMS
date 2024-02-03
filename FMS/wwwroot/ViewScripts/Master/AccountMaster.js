@@ -10,7 +10,7 @@ $(function () {
 
     const ddlLedger = $('select[name="ddnLedgerId"]');
     const ledgerbal_OpeningBal = $('input[name="ledgerbal_OpeningBal"]');
-    const Ledgerbal_BalanceType = $('select[name="LedgerBalanceType"]');
+    const Ledgerbal_BalanceType = $('select[name="Ledgerbal_BalanceType"]');
 
     const ddnSubLedger = $('select[name="ddnSubLedgerId"]');
     const Subledgerbal_OpeningBal = $('input[name="Subledgerbal_OpeningBal"]');

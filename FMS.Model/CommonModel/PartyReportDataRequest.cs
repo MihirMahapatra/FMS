@@ -12,6 +12,5 @@ namespace FMS.Model.CommonModel
         public Guid Fk_SubledgerId {  get; set; }
         public string FromDate {  get; set; }
         public string ToDate { get; set; }
-        public string ZeroValued { get; set; }
     }
 }
