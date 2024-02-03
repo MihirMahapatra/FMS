@@ -547,9 +547,10 @@ $(function () {
         var discountPercentage = parseFloat(row.find('input:eq(4)').val());
         var GstPercentage = parseFloat(row.find('input:eq(6)').val());
         var amount = quantity * rate * (1 - discountPercentage / 100);
-        var GstAmounts = amount * GstPercentage / (100 + GstPercentage);
+        var GstAmounts = amount * GstPercentage / 100;
+        var AcctualAmount = amount + GstAmounts;
         var discountAmount = (discountPercentage > 0) ? (rate * quantity - amount) : 0;
-        row.find('input:eq(8)').val(amount.toFixed(2));
+        row.find('input:eq(8)').val(AcctualAmount.toFixed(2));
         row.find('input:eq(7)').val(GstAmounts.toFixed(2));
         row.find('input:eq(5)').val(discountAmount.toFixed(2));
 
@@ -1378,9 +1379,11 @@ $(function () {
         var discountPercentage = parseFloat(row.find('input:eq(4)').val());
         var GstPercentage = parseFloat(row.find('input:eq(6)').val());
         var amount = quantity * rate * (1 - discountPercentage / 100);
-        var GstAmounts = amount * GstPercentage / (100 + GstPercentage);
+        //var GstAmounts = amount * GstPercentage / (100 + GstPercentage);
+        var GstAmounts = amount * GstPercentage / 100;
+        var acctualAmount = amount + GstAmounts;
         var discountAmount = (discountPercentage > 0) ? (rate * quantity - amount) : 0;
-        row.find('input:eq(8)').val(amount.toFixed(2));
+        row.find('input:eq(8)').val(acctualAmount.toFixed(2));
         row.find('input:eq(7)').val(GstAmounts.toFixed(2));
         row.find('input:eq(5)').val(discountAmount);
 
