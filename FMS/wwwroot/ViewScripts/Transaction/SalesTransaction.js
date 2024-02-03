@@ -506,13 +506,15 @@ $(function () {
         var discount = parseFloat(row.find('input:eq(3)').val());
         var Gst = parseFloat(row.find('input:eq(5)').val());
         var amount = quantity * rate * (1 - discount / 100);
-        var GstAmounts = amount * Gst / (100 + Gst);
+        //var GstAmounts = amount * Gst / (100 + Gst);
+        var GstAmounts = amount * Gst / 100;
+        var amountwithGst = amount + GstAmounts;
         if (discount > 0) {
             var DiscountAmount = (rate * quantity - amount);
         } else {
             var DiscountAmount = 0;
         }
-        row.find('input:eq(7)').val(amount.toFixed(2));
+        row.find('input:eq(7)').val(amountwithGst.toFixed(2));
         row.find('input:eq(6)').val(GstAmounts.toFixed(2));
         row.find('input:eq(4)').val(DiscountAmount);
         var totalAmount = 0;
@@ -1314,15 +1316,16 @@ $(function () {
         var rate = parseFloat(row.find('input:eq(2)').val());
         var discount = parseFloat(row.find('input:eq(3)').val());
         var Gst = parseFloat(row.find('input:eq(5)').val());
-        //var GstAmounts = parseFloat(row.find('input:eq(6)').val());
         var amount = quantity * rate * (1 - discount / 100);
-        var GstAmounts = amount * Gst / (100 + Gst);
+        //var GstAmounts = amount * Gst / (100 + Gst);
+        var GstAmounts = amount * Gst / 100;
+        var AcctualAmount = amount + GstAmounts;
         if (discount > 0) {
             var DiscountAmount = (rate * quantity - amount);
         } else {
             var DiscountAmount = 0;
         }
-        row.find('input:eq(7)').val(amount.toFixed(2));
+        row.find('input:eq(7)').val(AcctualAmount.toFixed(2));
         row.find('input:eq(6)').val(GstAmounts.toFixed(2));
         row.find('input:eq(4)').val(DiscountAmount);
         var totalAmount = 0;
