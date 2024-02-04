@@ -1,52 +1,51 @@
-﻿
-@model EmailConfirmModel
+﻿@model EmailConfirmModel
 @{
-    Layout = null;
+    ViewData["Title"] = "Confirm Mail";
+    Layout = "_AuthLayout";
+}
+@section additionalStyles {
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <link rel="stylesheet" href="~/plugins/fontawesome-free/css/all.min.css">
+    <link rel="stylesheet" href="~/dist/css/adminlte.min.css">
+    <link rel="stylesheet" href="~/plugins/toastr/toastr.min.css">
+}
+<div class="row text-center">
+    <div class="col-md-4">
+    </div>
+    <div class="col-md-4">
+        @if (Model.EmailVerified == true)
+        {
+            <div class="alert alert-success" role="alert">
+                <p>Your email has been verified successfully.</p>
+            </div>
+        }
+        else
+        {
+            if (Model.EmailSent)
+            {
+                <p>Email sent on your registered email id.</p>
+            }
+
+            else
+            {
+                <p>We have sent an email on your email id. Click on the link to login.</p>
+            }
+
+            <form action="/Account/ConfirmEmail" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="Email" value="@Model.Email" />
+                <p>Did not get any email of deleted by mistake?</p>
+                <div class="form-group">
+                    <input type="submit" value="Resend confirmation email" class="btn btn-primary" />
+                </div>
+            </form>
+        }
+    </div>
+</div>
+@section additionalScripts {
+    <script src="https://kit.fontawesome.com/70d8db024d.js" crossorigin="anonymous"></script>
+    <script src="~/plugins/jquery/jquery.min.js"></script>
+    <script src="~/dist/js/adminlte.min.js"></script>
+    <script src="~/plugins/toastr/toastr.min.js"></script>
 }
 
-<!DOCTYPE html>
 
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>Factory Management System</title>
-    @await Html.PartialAsync("_Head")
-</head>
-<body class="hold-transition register-page">
-    <div class ="register-box">
-        <div class="row text-center">
-            <div class="col-md-4">
-            </div>
-            <div class="col-md-4">
-                @if (Model.EmailVerified == true)
-                {
-                    <div class="alert alert-success" role="alert">
-                        <p>Your email has been verified successfully.</p>
-                    </div>
-                }
-                else
-                {
-                    if (Model.EmailSent)
-                    {
-                        <p>Email sent on your registered email id.</p>
-                    }
-
-                    else
-                    {
-                        <p>We have sent an email on your email id. Click on the link to login.</p>
-                    }
-
-                    <form action="/Account/ConfirmEmail" method="post" enctype="multipart/form-data">
-                        <input type="hidden" name="Email" value="@Model.Email" />
-                        <p>Did not get any email of deleted by mistake?</p>
-                        <div class="form-group">
-                            <input type="submit" value="Resend confirmation email" class="btn btn-primary" />
-                        </div>
-                    </form>
-                }
-            </div>
-        </div>
-    </div>
-    @await Html.PartialAsync("_FooterScript")
-</body>
-</html>

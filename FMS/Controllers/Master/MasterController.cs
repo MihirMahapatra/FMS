@@ -401,6 +401,12 @@ namespace FMS.Controllers.Master
             return new JsonResult(result);
         }
         [HttpGet]
+        public async Task<IActionResult> GetLedgers()
+        {
+            var result = await _adminSvcs.GetLedgers();
+            return new JsonResult(result);
+        }
+        [HttpGet]
         public async Task<IActionResult> GetSubLedgersById(Guid LedgerId)
         {
             var result = await _masterSvcs.GetSubLedgersById(LedgerId);

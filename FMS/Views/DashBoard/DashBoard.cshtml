@@ -2,9 +2,12 @@
 @{
     ViewData["Title"] = "Dashboard";
     Layout = "_Layout";
-
 }
-
+@section additionalStyles {
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <link rel="stylesheet" href="~/plugins/fontawesome-free/css/all.min.css">
+    <link rel="stylesheet" href="~/dist/css/adminlte.min.css">
+}
 <div class="content-wrapper">
     <div class="content-header">
         <div class="container-fluid">
@@ -134,8 +137,14 @@
     </section>
 </div>
 @section additionalScripts {
+    <script src="https://kit.fontawesome.com/70d8db024d.js" crossorigin="anonymous"></script>
+    <script src="~/plugins/jquery/jquery.min.js"></script>
+    <script src="~/dist/js/adminlte.min.js"></script>
+    <script src="~/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="~/plugins/toastr/toastr.min.js"></script>
+    <script src="~/plugins/chart.js/Chart.min.js"></script>
+    <!--Page Script-->
     <script src="~/scripts/ChartScript.js"></script>
-    <script src="~/scripts/DataTableScript.js"></script>
     <script src="~/viewscripts/dashboard/dashboard.js"></script>
     @if (TempData["SuccessMsg"] != null)
     {

@@ -16,7 +16,7 @@ $(function () {
     confirmPasswordInput.prop('disabled', true)
     PhotoInput.prop('disabled', true)
     $('#btnSubmit').prop('disabled', true);
-    //*****************************Token Validation*********************************//
+    /*******************************Validation*************************************/
     $('#btnValidate').on('click', function () {
         $.ajax({
             url: '/Account/Token',
@@ -45,12 +45,6 @@ $(function () {
             }
         });
     });
-    //********************************File**********************************//
-    $('.custom-file-input').on("change", function () {
-        var fileName = $(this).val().split("\\").pop();
-        $(this).next('.custom-file-label').html(fileName);
-    });
-    //************Validation**************/
     nameInput.on('keydown', function (event) {
         const keyCode = event.keyCode || event.which;
         if (keyCode >= 48 && keyCode <= 57 || (keyCode >= 96 && keyCode <= 111)) {

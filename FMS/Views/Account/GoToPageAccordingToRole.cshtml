@@ -1,42 +1,36 @@
 ﻿@{
     ViewData["Title"] = "Login";
+    Layout = "_AuthLayout";
 }
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Factory Management System</title>
-
-    @await Html.PartialAsync("_Head")
-
-</head>
-<body class="hold-transition login-page">
-
-    @Html.AntiForgeryToken()
-
-    <div class="login-box">
-        <div class="card card-outline card-primary">
-            <div class="card-header text-center">
-                <a href="#" class="brand-link">
-                    @*<img src="~/dist/img/logo.jpg" alt="Logo" class="brand-image" style="opacity: .8; max-height:95px; float:none">*@
-                </a>
-            </div>
-            <div class="card-body">
-                <p class="login-box-msg">You Dont Have Any Role Allocated Yet</p>
-            </div>
-        </div>
+@section additionalStyles {
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <link rel="stylesheet" href="~/plugins/fontawesome-free/css/all.min.css">
+    <link rel="stylesheet" href="~/dist/css/adminlte.min.css">
+    <link rel="stylesheet" href="~/plugins/toastr/toastr.min.css">
+}
+<div class="card card-outline card-primary">
+    <div class="card-header text-center">
+        <a href="#" class="brand-link">
+            @*<img src="~/dist/img/logo.jpg" alt="Logo" class="brand-image" style="opacity: .8; max-height:95px; float:none">*@
+        </a>
     </div>
+    <div class="card-body">
+        <p class="login-box-msg">You Dont Have Any Role Allocated Yet</p>
+    </div>
+</div>
 
-    @await Html.PartialAsync("_FooterScript")
-
+@section additionalScripts {
+    <script src="https://kit.fontawesome.com/70d8db024d.js" crossorigin="anonymous"></script>
+    <script src="~/plugins/jquery/jquery.min.js"></script>
+    <script src="~/dist/js/adminlte.min.js"></script>
+    <script src="~/plugins/toastr/toastr.min.js"></script>
     @if (TempData["SuccessMsg"] != null)
     {
         <script>
             toastr.success('@TempData["SuccessMsg"]');
         </script>
     }
-</body>
-</html>
+}
+
 

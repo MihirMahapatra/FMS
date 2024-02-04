@@ -1,75 +1,68 @@
-﻿
-@model SignInModel
+﻿@model SignInModel
 @{
     ViewData["Title"] = "Login";
+    Layout = "_AuthLayout";
 }
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Factory Management System</title>
-
-    @await Html.PartialAsync("_Head")
-
-</head>
-<body class="hold-transition login-page">
-
-    @Html.AntiForgeryToken()
-
-    <div class="login-box">
-        <div class="card card-outline card-primary">
-            <div class="card-header text-center">
-                <a href="#" class="brand-link">
-                    <img src="~/assets/images/logo/logo.png" alt="Logo" class="brand-image" style="opacity: .8; max-height:95px; float:none">
-                </a>
-            </div>
-            <div class="card-body">
-                <p class="login-box-msg">Sign in to start your session</p>
-                <form action="/Account/Login" method="post" enctype="multipart/form-data" id="LoginForm">
-                    <div class="input-group mb-3">
-                        <input type="email" class="form-control" placeholder="Email" asp-for="Email" name="Email">
-                        <div class="input-group-append">
-                            <div class="input-group-text">
-                                <span class="fas fa-envelope"></span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="input-group mb-3">
-                        <input type="password" class="form-control" placeholder="Password" asp-for="Password" name="Password">
-                        <div class="input-group-append">
-                            <div class="input-group-text">
-                                <span class="fas fa-lock"></span>
-                            </div>
-                        </div>
-                    </div>
-             
-                    <div class="row">
-                        <div class="col-8">
-                            <div class="icheck-primary">
-                                <input type="checkbox" id="remember" name="RememberMe">
-                                <label for="remember">
-                                    Remember Me
-                                </label>
-                            </div>
-                        </div>
-                        <div class="col-4">
-                            <button type="button" class="btn btn-primary btn-block" id="btnSignin">Sign In</button>
-                        </div>
-                    </div>
-                </form>
-                <p class="mb-0 mt-3">
-                    <div class="btn-group" style="width:100%">
-                        <a type="button" class="btn btn-primary" href="@Url.Action("ForgotPassword","Account")" style="text-align: center; width:50%">Forgot Password?</a>
-                    </div>
-                </p>
-            </div>
-        </div>
+@section additionalStyles {
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <link rel="stylesheet" href="~/plugins/fontawesome-free/css/all.min.css">
+    <link rel="stylesheet" href="~/dist/css/adminlte.min.css">
+    <link rel="stylesheet" href="~/plugins/toastr/toastr.min.css">
+}
+<div class="card card-outline card-primary">
+    <div class="card-header text-center">
+        <a href="#" class="brand-link">
+            <img src="~/assets/images/logo/logo.png" alt="Logo" class="brand-image" style="opacity: .8; max-height:95px; float:none">
+        </a>
     </div>
+    <div class="card-body">
+        <p class="login-box-msg">Sign in to start your session</p>
+        <form action="/Account/Login" method="post" enctype="multipart/form-data" id="LoginForm">
+            <div class="input-group mb-3">
+                <input type="email" class="form-control" placeholder="Email" asp-for="Email" name="Email">
+                <div class="input-group-append">
+                    <div class="input-group-text">
+                        <span class="fas fa-envelope"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="input-group mb-3">
+                <input type="password" class="form-control" placeholder="Password" asp-for="Password" name="Password">
+                <div class="input-group-append">
+                    <div class="input-group-text">
+                        <span class="fas fa-lock"></span>
+                    </div>
+                </div>
+            </div>
 
-    @await Html.PartialAsync("_FooterScript")
-    <script src="~/scripts/FormScript.js"></script>
+            <div class="row">
+                <div class="col-8">
+                    <div class="icheck-primary">
+                        <input type="checkbox" id="remember" name="RememberMe">
+                        <label for="remember">
+                            Remember Me
+                        </label>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <button type="button" class="btn btn-primary btn-block" id="btnSignin">Sign In</button>
+                </div>
+            </div>
+        </form>
+        <p class="mb-0 mt-3">
+            <div class="btn-group" style="width:100%">
+                <a type="button" class="btn btn-primary" href="@Url.Action("ForgotPassword","Account")" style="text-align: center; width:50%">Forgot Password?</a>
+            </div>
+        </p>
+    </div>
+</div>
+
+@section additionalScripts {
+    <script src="https://kit.fontawesome.com/70d8db024d.js" crossorigin="anonymous"></script>
+    <script src="~/plugins/jquery/jquery.min.js"></script>
+    <script src="~/dist/js/adminlte.min.js"></script>
+    <script src="~/plugins/toastr/toastr.min.js"></script>
+    <!--Page Script-->
     <script src="~/viewscripts/account/login.js"></script>
     @if (TempData["ErrorMsg"] != null)
     {
@@ -77,14 +70,15 @@
             toastr.error('@TempData["ErrorMsg"]');
         </script>
     }
-
     @if (TempData["SuccessMsg"] != null)
     {
         <script>
             toastr.success('@TempData["SuccessMsg"]');
         </script>
     }
+}
 
-</body>
-</html>
+
+
+
 

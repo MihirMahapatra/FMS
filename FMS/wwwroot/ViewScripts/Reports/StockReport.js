@@ -121,11 +121,11 @@
                             html += '</tr >';
                         });
                         $('#BtnPrintSummarized').show();
-                        PrintData = {
-                            FromDate: fromDate.val(),
-                            ToDate: toDate.val(),
-                            StockReport: result.StockReports
-                        };
+                        //PrintData = {
+                        //    FromDate: fromDate.val(),
+                        //    ToDate: toDate.val(),
+                        //    StockReport: result.StockReports
+                        //};
                     }
                     else {
                         html += '<tr>';
@@ -138,8 +138,8 @@
                     if (!$.fn.DataTable.isDataTable('.SummerizedStockReportTable')) {
                         var table = $('.SummerizedStockReportTable').DataTable({
                             "responsive": true, "lengthChange": false, "autoWidth": false,
-                            "buttons": ["copy", "csv", "excel", "pdf", "colvis"]
-                        }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+                            /*"buttons": ["copy", "csv", "excel", "pdf", "colvis"]*/
+                        })/*.buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');*/
                     }
                 },
                 error: function (errormessage) {
@@ -227,7 +227,6 @@
         });
         $('#modal-stock-info').modal('show');
     });
-
     //-----------------------------------stock Report Detailed-------------------------------------------//
     GetAllProductTypesForDetailed()
     function GetAllProductTypesForDetailed() {
@@ -317,7 +316,6 @@
                 dataType: "json",
                 data: JSON.stringify(requestData),
                 success: function (result) {
-                    console.log(result)
                     $('#loader').hide();
                     var html = '';
                     html += '<table class="table table-bordered table-hover text-center mt-2 DetailedStockReportTable" style="width:100%">';
@@ -384,12 +382,6 @@
                     html += ' </tbody>';
                     html += '</table >';
                     $('.tblDetailedStockList').html(html);
-                    //if (!$.fn.DataTable.isDataTable('.DetailedStockReportTable')) {
-                    //    var table = $('.DetailedStockReportTable').DataTable({
-                    //        "responsive": true, "lengthChange": false, "autoWidth": false,
-                    //        "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-                    //    }).buttons().container().appendTo('#example2_wrapper .col-md-6:eq(0)');
-                    //}
                 },
                 error: function (errormessage) {
                     $('#loader').hide();
@@ -405,7 +397,6 @@
 
     })
     $('#BtnPrintDetailed').on('click', function () {
-        console.log(PrintDataDetailed);
         $.ajax({
             type: "POST",
             url: '/Print/StockDetailedPrintData',
