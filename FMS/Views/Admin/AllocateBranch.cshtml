@@ -54,23 +54,23 @@
                         </div>
 
                         <div class="card-body">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>User</label>
-                                            <select class="form-control select2bs4" style="width: 100%;" name="UserId">
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Branch</label>
-                                            <select class="form-control select2bs4" style="width: 100%;" name="BranchId">
-                                            </select>
-                                        </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>User</label>
+                                        <select class="form-control select2bs4" style="width: 100%;" name="UserId">
+                                        </select>
                                     </div>
                                 </div>
-                       
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Branch</label>
+                                        <select class="form-control select2bs4" style="width: 100%;" name="BranchId">
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
                             <button type="button" class="btn btn-primary" style="float:right" id="btnBranch">Submit</button>
                         </div>
                     </div>
@@ -93,7 +93,6 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                               
                                 </tbody>
                             </table>
                         </div>
@@ -130,24 +129,22 @@
     <!-- Toastr -->
     <script src="~/plugins/toastr/toastr.min.js"></script>
     <!--Page Script-->
-<script src="~/viewscripts/admin/allocatebranch.js"></script>
-<script>
+    <script src="~/viewscripts/admin/allocatebranch.js"></script>
+    <script>
+        $('.select2bs4').select2({
+            theme: 'bootstrap4'
+        });
+    </script>
+    @if (TempData["SuccessMsg"] != null)
+    {
         <script>
-            $('.select2bs4').select2({
-                theme: 'bootstrap4'
-            });
-    </script>
-</script>
-@if (TempData["SuccessMsg"] != null)
-{
-    <script>
-        toastr.success('@TempData["SuccessMsg"]');
-    </script>
-}
-@if (TempData["ErrorMsg"] != null)
-{
-    <script>
-        toastr.error('@TempData["ErrorMsg"]');
-    </script>
-}
+            toastr.success('@TempData["SuccessMsg"]');
+        </script>
+    }
+    @if (TempData["ErrorMsg"] != null)
+    {
+        <script>
+            toastr.error('@TempData["ErrorMsg"]');
+        </script>
+    }
 }

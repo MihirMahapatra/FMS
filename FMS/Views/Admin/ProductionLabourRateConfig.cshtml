@@ -50,56 +50,56 @@
                 <div class="card-header">
                     <h3 class="card-title">
                         <i class="fas fa-edit"></i>
-                        Labour Rate Setup
+                        Production Labour Rate Setup
                     </h3>
                 </div>
                 <div class="card-body">
-                    <div class="row">
-                        <div id="loader" style="display:none;"></div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label for="">Date</label>
-                                <div class="input-group date" id="reservationdate" data-target-input="nearest">
-                                    <input type="text" class="form-control datetimepicker-input" data-target="#reservationdate" name="date" tabindex="1" />
-                                    <div class="input-group-append" data-target="#reservationdate" data-toggle="datetimepicker">
-                                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                    <div id="loader" style="display:none;"></div>
+                    <div class="card card-primary card-outline">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="">Date</label>
+                                        <div class="input-group date" id="reservationdate" data-target-input="nearest">
+                                            <input type="text" class="form-control datetimepicker-input" data-target="#reservationdate" name="date" tabindex="1" />
+                                            <div class="input-group-append" data-target="#reservationdate" data-toggle="datetimepicker">
+                                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="">Product</label>
+                                        <select class="form-control  select2bs4" style="width: 100%;" name="ItemId" tabindex="2">
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="">Rate</label>
+                                        <input type="text" class="form-control" id="txtRate" name="Rate" tabindex="3">
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label></label>
+                                        <button type="button" tabindex="4" class="btn btn-block btn-outline-primary btn-labourrate-create "><b>Submit</b></button>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        @* <div class="col-md-3">
-                            <div class="form-group">
-                                <label for="">Product Types</label>
-                                <select class="form-control  select2bs4" style="width: 100%;" name="ProductTypeId" tabindex="2">
-                                </select>
-                            </div>
-                        </div> *@
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label for="">Product</label>
-                                <select class="form-control  select2bs4" style="width: 100%;" name="ItemId" tabindex="2">
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label for="">Rate</label>
-                                <input type="text" class="form-control" id="txtRate" name="Rate" tabindex="3">
-                            </div>
-                        </div>
-                        <div class="col-md-6"></div>
-                        <div class="col-md-10"></div>
-                        <div class="col-md-2">
-                            <div class="form-group">
-                                <label></label>
-                                <button type="button" tabindex="4" class="btn btn-block btn-outline-primary btn-labourrate-create "><b>Submit</b></button>
-                            </div>
-                        </div>
-
-                        <div class="col-md-12">
-                            <div id="loader" style="display:none;"></div>
-                            <button class="btn btn-primary btn-link cust-btn" id="btnRefresh" style="float:right;border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-arrows-rotate"></i>Refresh</button>
-                            <div class="tblLabourRate">
+                    </div>
+                    <div class="card card-primary card-outline">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div id="loader" style="display:none;"></div>
+                                    <button class="btn btn-primary btn-link cust-btn" id="btnRefresh" style="float:right;border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-arrows-rotate"></i>Refresh</button>
+                                    <div class="tblLabourRate">
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

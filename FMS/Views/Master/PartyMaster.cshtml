@@ -3,11 +3,6 @@
     ViewData["Title"] = "Party Master";
 }
 @section additionalStyles {
-    <style>
-        .cust-btn {
-            margin-top: 32px !important;
-        }
-    </style>
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
     <!-- Font Awesome -->
@@ -29,6 +24,11 @@
     <link rel="stylesheet" href="~/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
     <!-- Toastr -->
     <link rel="stylesheet" href="~/plugins/toastr/toastr.min.css">
+    <style>
+        .cust-btn {
+            margin-top: 32px !important;
+        }
+    </style>
 }
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
@@ -58,89 +58,94 @@
                 </div>
                 <div class="card-body">
                     <div id="loader" style="display:none;"></div>
-                    <div class="row">
-                        <div class="col-md-2">
-                            <div class="form-group">
-                                <label>Party Type</label>
-                                <select class="form-control select2bs4" style="width: 100%;" name="ddnPartyTypeId" tabindex="1">
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label>Party Name</label>
-                                <input type="text" class="form-control" id="txtPartyName" name="PartyName" tabindex="2">
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="form-group">
-                                <label>Phone No</label>
-                                <input type="text" class="form-control" id="txtPhoneNo" name="PhoneNo" tabindex="3">
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="form-group">
-                                <label>Email</label>
-                                <input type="text" class="form-control" id="txtMail" name="Mail" tabindex="4">
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label>GST No</label>
-                                <input type="text" class="form-control" id="txtGstNo" name="GstNo" tabindex="5">
+                    <div class="card card-primary card-outline">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label>Party Type</label>
+                                        <select class="form-control select2bs4" style="width: 100%;" name="ddnPartyTypeId" tabindex="1">
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Party Name</label>
+                                        <input type="text" class="form-control" id="txtPartyName" name="PartyName" tabindex="2">
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label>Phone No</label>
+                                        <input type="text" class="form-control" id="txtPhoneNo" name="PhoneNo" tabindex="3">
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label>Email</label>
+                                        <input type="text" class="form-control" id="txtMail" name="Mail" tabindex="4">
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>GST No</label>
+                                        <input type="text" class="form-control" id="txtGstNo" name="GstNo" tabindex="5">
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label>State</label>
+                                        <select class="form-control select2bs4" style="width: 100%;" name="ddnStateId" tabindex="6">
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <button class="btn btn-primary btn-link cust-btn" id="btnStateAdd" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-plus"></i></button>
+                                    <button class="btn btn-primary btn-link cust-btn"  id="btnStateEdit" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"><i class="fa-solid fa-edit"></i></button>
+                                    <button class="btn btn-primary btn-link cust-btn" id="btnStateDelete" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"><i class="fa-solid fa-trash-can"></i></button>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label>City</label>
+                                        <select class="form-control select2bs4" style="width: 100%;" name="ddnCityId" tabindex="7" disabled>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <button class="btn btn-primary btn-link cust-btn"  id="btnCityAdd" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-plus"></i></button>
+                                    <button class="btn btn-primary btn-link cust-btn" id="btnCityEdit" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"><i class="fa-solid fa-edit"></i></button>
+                                    <button class="btn btn-primary btn-link cust-btn" id="btnCityDelete" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"><i class="fa-solid fa-trash-can"></i></button>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Address</label>
+                                        <input type="text" class="form-control" id="txtAdress" name="Address" tabindex="8">
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <button type="button" tabindex="9" class="btn btn-primary btn-party-create" style="float:right">Submit</button>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-md-2">
-                            <div class="form-group">
-                                <label>State</label>
-                                <select class="form-control select2bs4State" style="width: 100%;" id="stateId" name="ddnStateId" tabindex="6">
-                                </select>
+                    <div class="card card-primary card-outline">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12 mt-3">
+                                    <button class="btn btn-primary btn-link cust-btn mb-2" id="btnRefresh" style="float:right;border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-arrows-rotate"></i>Refresh</button>
+                                    <div id="loader" style="display:none;"></div>
+                                    <div class="tblPartyList">
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-md-2">
-                            <button class="btn btn-primary btn-link cust-btn" data-toggle="modal" data-target="#modal-add-state" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-plus"></i></button>
-                            <button class="btn btn-primary btn-link cust-btn" data-toggle="modal" data-target="#modal-edit-state" id="btnStateEdit" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"><i class="fa-solid fa-edit"></i></button>
-                            <button class="btn btn-primary btn-link cust-btn" id="btnStateDelete" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"><i class="fa-solid fa-trash-can"></i></button>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="form-group">
-                                <label>City</label>
-                                <select class="form-control select2bs4City" style="width: 100%;" id="cityId" name="ddnCityId" tabindex="7" disabled>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <button class="btn btn-primary btn-link cust-btn" data-toggle="modal" data-target="#modal-add-city" id="btnCityAdd" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-plus"></i></button>
-                            <button class="btn btn-primary btn-link cust-btn" data-toggle="modal" data-target="#modal-edit-city" id="btnCityEdit" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"><i class="fa-solid fa-edit"></i></button>
-                            <button class="btn btn-primary btn-link cust-btn" id="btnCityDelete" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"><i class="fa-solid fa-trash-can"></i></button>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label>Address</label>
-                                <input type="text" class="form-control" id="txtAdress" name="Address" tabindex="8">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <button type="button" tabindex="9" class="btn btn-primary btn-party-create" style="float:right">Submit</button>
-                        </div>
-                        <div class="col-md-12 mt-3">
-                            <button class="btn btn-primary btn-link cust-btn mb-2" id="btnRefresh" style="float:right;border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-arrows-rotate"></i>Refresh</button>
-                            <div id="loader" style="display:none;"></div>
-                            <div class="tblPartyList">
-                            </div>
-
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
     </section>
 </div>
+<!---------------------------------------------------------------------------------------------------------------------------->
 <!--Modal Add Party Type-->
 <div class="modal fade" id="modal-add-party-type">
     <div class="modal-dialog">
@@ -333,7 +338,7 @@
     <!-- /.modal-dialog -->
 </div>
 <!--.end Modal City-->
-@* Modal Partylist Edit *@
+<!--Modal Partylist Edit -->
 <div class="modal fade" id="modal-party-edit">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -348,53 +353,53 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label>Party Type</label>
-                            <select class="form-control select2bs4" style="width: 100%;" name="ddnPartyTypeId">
+                            <label for="txtPartyTypeId">Party Type</label>
+                            <select class="form-control select2bs4" style="width: 100%;" id="txtPartyTypeId" name="mdlddnPartyTypeId">
                             </select>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="">Party Name</label>
-                            <input type="text" class="form-control" id="txtPartyName" name="PartyName">
+                            <label for="txtPartyName">Party Name</label>
+                            <input type="text" class="form-control" id="txtPartyName" name="mdlPartyName">
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label>State</label>
-                            <select class="form-control select2bs4State" style="width: 100%;" id="stateId" name="ddnStateId">
+                            <label for="stateId">State</label>
+                            <select class="form-control select2bs4" style="width: 100%;"  name="mdlddnStateId">
                             </select>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label>City</label>
-                            <select class="form-control select2bs4City" style="width: 100%;" id="cityId" name="ddnCityId">
+                            <label for="cityId">City</label>
+                            <select class="form-control select2bs4" style="width: 100%;"  name="mdlddnCityId">
                             </select>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="">Phone No</label>
-                            <input type="text" class="form-control" id="txtPhoneNo" name="PhoneNo">
+                            <label for="txtPhoneNo">Phone No</label>
+                            <input type="text" class="form-control" id="txtPhoneNo" name="mdlPhoneNo" value="0000000000">
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="">Email</label>
-                            <input type="text" class="form-control" id="txtMail" name="Mail">
+                            <label for="txtMail">Email</label>
+                            <input type="text" class="form-control" id="txtMail" name="mdlMail">
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="">Address</label>
-                            <input type="text" class="form-control" id="txtAdress" name="Address">
+                            <label for="txtAdress">Address</label>
+                            <input type="text" class="form-control" id="txtAdress" name="mdlAddress">
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="">GST No</label>
-                            <input type="text" class="form-control" id="txtGstNo" name="GstNo">
+                            <label for="txtGstNo">GST No</label>
+                            <input type="text" class="form-control" id="txtGstNo" name="mdlGstNo" value="NA">
                         </div>
                     </div>
                     <div class="col-md-12">
@@ -407,7 +412,8 @@
     </div>
     <!-- /.modal-dialog -->
 </div>
-@* End partylist Modal edit *@
+<!--End partylist Modal edit  -->
+<!---------------------------------------------------------------------------------------------------------------------------->
 @section additionalScripts {
     <!--Fontawsome Kit-->
     <script src="https://kit.fontawesome.com/70d8db024d.js" crossorigin="anonymous"></script>
@@ -426,18 +432,11 @@
     <script src="~/plugins/sweetalert2/sweetalert2.min.js"></script>
     <!-- Toastr -->
     <script src="~/plugins/toastr/toastr.min.js"></script>
-    <!--Page Script-->
-    <script src="~/viewscripts/master/party/partymaster.js"></script>
-    <script src="~/viewscripts/master/party/partylist.js"></script>
     <script>
         $('.select2bs4').select2({
             theme: 'bootstrap4'
         });
-        $('.select2bs4State').select2({
-            theme: 'bootstrap4'
-        });
-        $('.select2bs4City').select2({
-            theme: 'bootstrap4'
-        });
     </script>
+    <!--Page Script-->
+    <script src="~/viewscripts/master/party/partymaster.js"></script>
 }

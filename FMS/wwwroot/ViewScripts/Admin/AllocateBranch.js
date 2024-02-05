@@ -5,9 +5,6 @@ $(function () {
     /********************************************Declaration Section****************************/
     const userId = $('select[name="UserId"]');
     const branchId = $('select[name="BranchId"]');
-    $("#example1").DataTable({
-        "responsive": true, "lengthChange": false, "autoWidth": false,
-    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');  
     GetAllUserAndBranch();
     function GetAllUserAndBranch() {
         $.ajax({
@@ -46,6 +43,9 @@ $(function () {
                         html += '</tr >';
                     });
                     $('#example1 tbody').html(html);
+                    $("#example1").DataTable({
+                        "responsive": true, "lengthChange": false, "autoWidth": false,
+                    });  
                 }
             },
             error: function (errormessage) {

@@ -54,71 +54,68 @@
                             Account Config
                         </div>
                         <div class="card-body">
-                            <div class="row">
-                                <!-----------Group & SubGroup-------------->
-                                <div class="col-md-12">
-                                    <div class="card card-primary">
-                                        <div class="card-header">
-                                            <h3 class="card-title"><b>Group</b></h3>
-                                        </div>
-                                        <div class="card-body">
-                                            <div class="row">
-                                                <div class="col-md-2">
-                                                    <div class="form-group">
-                                                        <label>Group Name</label>
-                                                        <select class="form-control select2bs4" style="width: 100%;" name="LedgerGroupId">
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-2">
-                                                    <div class="form-group">
-                                                        <label>SubGroup (optional)</label>
-                                                        <select class="form-control select2bs4" style="width: 100%;" name="LedgerSubGroupId" disabled>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-2">
-                                                    <button class="btn btn-primary btn-link cust-btn" id="btnLedgerSubGrupAdd" style=" margin-top: 32px !important;border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-plus"></i></button>
-                                                    <button class="btn btn-primary btn-link cust-btn" id="btnLedgerSubGrupEdit" style=" margin-top: 32px !important;border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"><i class="fa-solid fa-edit"></i></button>
-                                                    <button class="btn btn-primary btn-link cust-btn" id="btnLedgerSubGrupDelete" style=" margin-top: 32px !important;border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"><i class="fa-solid fa-trash-can"></i></button>
-                                                </div>
-                                                <!-------------Ledger------------>
-                                                <div class="col-md-6">
-                                                    <div class="card card-primary">
-                                                        <div class="card-header">
-                                                            <h3 class="card-title"><b>Ledger</b></h3>
-                                                            <a href="@Url.Action("Ledger", "Admin")" class="btn btn-primary btn-link ml-1" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px; float:right">
-                                                                <i class="fa-solid fa-eye"></i>
-                                                            </a>
-                                                            <button class="btn btn-primary btn-link" id="addLedgerRowBtn" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px; float:right"> <i class="fa-solid fa-plus"></i></button>
-                                                        </div>
-                                                        <div id="loader" style="display:none;"></div>
-                                                        <div class="card-body">
-                                                            <table id="tblLedger" class="table table-bordered table-hover">
-                                                                <thead>
-                                                                    <tr>
-                                                                        <th>ledger Type</th>
-                                                                        <th>Ledger Name</th>
-                                                                        <th>SubLedger</th>
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody>
-                                                                </tbody>
-                                                            </table>
-                                                        </div>
-                                                        <div class="card-footer">
-                                                            <button type="button" id="btnLedger" class="btn btn-primary" style="float:right">Submit</button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-3"></div>
+                            <div class="card card-primary">
+                                <div class="card-header">
+                                    <h3 class="card-title"><b>Ledger</b></h3>
+                                    @*  <a href="@Url.Action("Ledger", "Admin")" class="btn btn-primary btn-link ml-1" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px; float:right">
+                                    <i class="fa-solid fa-eye"></i>
+                                    </a> *@
+                                    <button class="btn btn-primary btn-link" id="addLedgerRowBtn" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px; float:right"> <i class="fa-solid fa-plus"></i></button>
+                                </div>
+                                <div class="card-body">
+                                    <div id="loader" style="display:none;"></div>
+                                    <div class="row">
+                                        <div class="col-md-2">
+                                            <div class="form-group">
+                                                <label>Group Name</label>
+                                                <select class="form-control select2bs4" style="width: 100%;" name="LedgerGroupId">
+                                                </select>
                                             </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="form-group">
+                                                <label>SubGroup (optional)</label>
+                                                <select class="form-control select2bs4" style="width: 100%;" name="LedgerSubGroupId" disabled>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <button class="btn btn-primary btn-link cust-btn" id="btnLedgerSubGrupAdd" style=" margin-top: 32px !important;border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-plus"></i></button>
+                                            <button class="btn btn-primary btn-link cust-btn" id="btnLedgerSubGrupEdit" style=" margin-top: 32px !important;border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"><i class="fa-solid fa-edit"></i></button>
+                                            <button class="btn btn-primary btn-link cust-btn" id="btnLedgerSubGrupDelete" style=" margin-top: 32px !important;border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"><i class="fa-solid fa-trash-can"></i></button>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <table id="tblLedger" class="table table-bordered table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th>ledger Type</th>
+                                                        <th>Ledger Name</th>
+                                                        <th>SubLedger</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <button type="button" id="btnLedger" class="btn btn-primary mt-2" style="float:right">Submit</button>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="card card-primary card-outline">
+                        <div class="card-body">
+                            <div class="col-md-12">
+                                <div class="tblLedger">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -190,6 +187,63 @@
     <!-- /.modal-dialog -->
 </div>
 <!--.end Modal Update SUbGroup-->
+<!--MODAL Edit Ledger-->
+<div class="modal fade" id="modal-edit-ledger">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Update</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div class="row">
+                    <input type="hidden" name="mdlLedgerId" />
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Ledger Group</label>
+                            <select class="form-control select2bs4" style="width: 100%;" name="mdlLedgerGroupId">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>SubGroup(Optional)</label>
+                            <select class="form-control select2bs4" style="width: 100%;" name="mdlLedgerSubGroupId">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="">Ledger Name</label>
+                            <input type="text" class="form-control" id="" name="mdlLedgerName">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="">Ledger Type</label>
+                            <select class="form-control select2bs4" style="width: 100%;" name="mdlLedgerType">
+                                <option value="None">None</option>
+                                <option value="Cash">Cash</option>
+                                <option value="Bank">Bank</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary btnLedgerModal">Save changes</button>
+            </div>
+
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!--.END MODAL-->
 @section additionalScripts {
     <!--Fontawsome Kit-->
     <script src="https://kit.fontawesome.com/70d8db024d.js" crossorigin="anonymous"></script>
@@ -221,6 +275,7 @@
     </script>
     <!--Page Script-->
     <script src="~/viewscripts/admin/accountconfig/master.js"></script>
+    <script src="~/viewscripts/admin/accountconfig/ledger.js"></script>
     <script>
         $('.select2bs4').select2({
             theme: 'bootstrap4'

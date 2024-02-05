@@ -392,10 +392,12 @@ $(function () {
         var RawMaterial = $tr.find('Select').eq(0).find('option:selected').text();
         var FinishedGood = $tr.find('Select').eq(1).find('option:selected').text();
         var Quantity = $tr.find('input[type="text"]').eq(0).val();
+        var Unit = $tr.find('input[type="text"]').eq(1).val()
 
         $tr.find('td:eq(1)').text(RawMaterial);
         $tr.find('td:eq(2)').text(FinishedGood);
         $tr.find('td:eq(3)').text(Quantity);
+        $tr.find('td:eq(4)').text(Unit);
         $tr.find('#btnProductionConfigEdit_' + Id + ', #btnProductionConfigDelete_' + Id + '').show();
         $tr.find('#btnProductionConfigUpdate_' + Id + ',#btnProductionConfigCancel_' + Id + '').hide();
     }
