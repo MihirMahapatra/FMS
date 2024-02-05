@@ -132,19 +132,14 @@ $(function () {
             contentType: "application/json;charset=utf-8",
             dataType: "json",
             success: function (result) {
+                ddlState.empty();
+                var defaultOption = $('<option></option>').val('').text('--Select Option--');
+                ddlState.append(defaultOption);
                 if (result.ResponseCode == 302) {
-                    ddlState.empty();
-                    var defaultOption = $('<option></option>').val('').text('--Select Option--');
-                    ddlState.append(defaultOption);
                     $.each(result.States, function (key, item) {
                         var option = $('<option></option>').val(item.StateId).text(item.StateName);
                         ddlState.append(option);
                     });
-                }
-                else {
-                    ddlState.empty();
-                    var defaultOption = $('<option></option>').val('').text('--Select Option--');
-                    ddlState.append(defaultOption);
                 }
             },
             error: function (errormessage) {

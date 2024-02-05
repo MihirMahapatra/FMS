@@ -8,26 +8,31 @@
 
   <ItemGroup>
     <Compile Remove="Models\**" />
+    <Compile Remove="wwwroot\assets\**" />
+    <Compile Remove="wwwroot\css\**" />
+    <Compile Remove="wwwroot\images\Document\**" />
+    <Compile Remove="wwwroot\lib\**" />
     <Content Remove="Models\**" />
+    <Content Remove="wwwroot\assets\**" />
+    <Content Remove="wwwroot\css\**" />
+    <Content Remove="wwwroot\images\Document\**" />
+    <Content Remove="wwwroot\lib\**" />
     <EmbeddedResource Remove="Models\**" />
+    <EmbeddedResource Remove="wwwroot\assets\**" />
+    <EmbeddedResource Remove="wwwroot\css\**" />
+    <EmbeddedResource Remove="wwwroot\images\Document\**" />
+    <EmbeddedResource Remove="wwwroot\lib\**" />
     <None Remove="Models\**" />
+    <None Remove="wwwroot\assets\**" />
+    <None Remove="wwwroot\css\**" />
+    <None Remove="wwwroot\images\Document\**" />
+    <None Remove="wwwroot\lib\**" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Models\" />
-    <Folder Include="wwwroot\assets\images\Products\" />
-    <Folder Include="wwwroot\css\" />
     <Folder Include="wwwroot\images\" />
-    <Folder Include="wwwroot\images\Document\" />
     <Folder Include="wwwroot\images\ProfilePhoto\" />
-    <Folder Include="wwwroot\lib\bootstrap\" />
-    <Folder Include="wwwroot\lib\bootstrap\dist\css\" />
-    <Folder Include="wwwroot\lib\bootstrap\dist\js\" />
-    <Folder Include="wwwroot\lib\jquery-validation-unobtrusive\" />
-    <Folder Include="wwwroot\lib\jquery-validation\" />
-    <Folder Include="wwwroot\lib\jquery-validation\dist\" />
-    <Folder Include="wwwroot\lib\jquery\" />
-    <Folder Include="wwwroot\lib\jquery\dist\" />
     <Folder Include="wwwroot\ViewScripts\Account\" />
     <Folder Include="wwwroot\ViewScripts\Admin\AccountConfig\" />
   </ItemGroup>

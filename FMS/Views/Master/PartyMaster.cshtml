@@ -95,7 +95,7 @@
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label>State</label>
-                                <select class="form-control select2bs4" style="width: 100%;" id="stateId" name="ddnStateId" tabindex="6">
+                                <select class="form-control select2bs4State" style="width: 100%;" id="stateId" name="ddnStateId" tabindex="6">
                                 </select>
                             </div>
                         </div>
@@ -107,7 +107,7 @@
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label>City</label>
-                                <select class="form-control select2bs4" style="width: 100%;" id="cityId" name="ddnCityId" tabindex="7" disabled>
+                                <select class="form-control select2bs4City" style="width: 100%;" id="cityId" name="ddnCityId" tabindex="7" disabled>
                                 </select>
                             </div>
                         </div>
@@ -362,14 +362,14 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label>State</label>
-                            <select class="form-control select2bs4" style="width: 100%;" id="stateId" name="ddnStateId">
+                            <select class="form-control select2bs4State" style="width: 100%;" id="stateId" name="ddnStateId">
                             </select>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
                             <label>City</label>
-                            <select class="form-control select2bs4" style="width: 100%;" id="cityId" name="ddnCityId">
+                            <select class="form-control select2bs4City" style="width: 100%;" id="cityId" name="ddnCityId">
                             </select>
                         </div>
                     </div>
@@ -431,6 +431,12 @@
     <script src="~/viewscripts/master/party/partylist.js"></script>
     <script>
         $('.select2bs4').select2({
+            theme: 'bootstrap4'
+        });
+        $('.select2bs4State').select2({
+            theme: 'bootstrap4'
+        });
+        $('.select2bs4City').select2({
             theme: 'bootstrap4'
         });
     </script>
