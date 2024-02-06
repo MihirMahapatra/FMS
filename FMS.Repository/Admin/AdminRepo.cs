@@ -20,7 +20,7 @@ namespace FMS.Repository.Admin
     public class AdminRepo : IAdminRepo
     {
         #region Dependancy
-        private readonly ILogger _logger;
+        private readonly ILogger<AdminRepo> _logger;
         private readonly AppDbContext _appDbContext;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly UserManager<AppUser> _userManager;
@@ -29,7 +29,7 @@ namespace FMS.Repository.Admin
         private readonly IMapper _mapper;
         #endregion
 
-        public AdminRepo(ILogger logger, IHttpContextAccessor httpContextAccessor, AppDbContext appDbContext, RoleManager<IdentityRole> roleManager, UserManager<AppUser> userManager, IEmailService emailService, IMapper mapper)
+        public AdminRepo(ILogger<AdminRepo> logger, IHttpContextAccessor httpContextAccessor, AppDbContext appDbContext, RoleManager<IdentityRole> roleManager, UserManager<AppUser> userManager, IEmailService emailService, IMapper mapper)
         {
             _logger = logger;
             _appDbContext = appDbContext;
