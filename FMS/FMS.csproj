@@ -10,30 +10,28 @@
     <Compile Remove="Models\**" />
     <Compile Remove="wwwroot\assets\**" />
     <Compile Remove="wwwroot\css\**" />
-    <Compile Remove="wwwroot\images\Document\**" />
+    <Compile Remove="wwwroot\images\**" />
     <Compile Remove="wwwroot\lib\**" />
     <Content Remove="Models\**" />
     <Content Remove="wwwroot\assets\**" />
     <Content Remove="wwwroot\css\**" />
-    <Content Remove="wwwroot\images\Document\**" />
+    <Content Remove="wwwroot\images\**" />
     <Content Remove="wwwroot\lib\**" />
     <EmbeddedResource Remove="Models\**" />
     <EmbeddedResource Remove="wwwroot\assets\**" />
     <EmbeddedResource Remove="wwwroot\css\**" />
-    <EmbeddedResource Remove="wwwroot\images\Document\**" />
+    <EmbeddedResource Remove="wwwroot\images\**" />
     <EmbeddedResource Remove="wwwroot\lib\**" />
     <None Remove="Models\**" />
     <None Remove="wwwroot\assets\**" />
     <None Remove="wwwroot\css\**" />
-    <None Remove="wwwroot\images\Document\**" />
+    <None Remove="wwwroot\images\**" />
     <None Remove="wwwroot\lib\**" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Logs\" />
     <Folder Include="Models\" />
-    <Folder Include="wwwroot\images\" />
-    <Folder Include="wwwroot\images\ProfilePhoto\" />
     <Folder Include="wwwroot\ViewScripts\Account\" />
     <Folder Include="wwwroot\ViewScripts\Admin\AccountConfig\" />
   </ItemGroup>

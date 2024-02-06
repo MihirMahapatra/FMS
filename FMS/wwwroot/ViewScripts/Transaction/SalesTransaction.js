@@ -37,7 +37,7 @@ $(function () {
     const gst = $('input[name="GstAmount"]');
     const vehicleNo = $('input[name="VehicleNo"]');
     const transpoterName = $('input[name="TranspoterName"]');
-    const receivingPerson = $('input[name="ReceivingPerson"]');
+    //const receivingPerson = $('input[name="ReceivingPerson"]');
     const grandTotal = $('input[name="GrandTotal"]');
     const Narration = $('textarea[name="NarrationSales"]')
     //---------------------------------Contorl Foucous Of Element Sale-------------------------------//
@@ -72,13 +72,6 @@ $(function () {
     transpoterName.on('blur', function () {
         $(this).css('border-color', ''); // Reset background color on blur
     });
-    receivingPerson.on('focus', function () {
-        $(this).css('border-color', 'red');
-    });
-    receivingPerson.on('blur', function () {
-        $(this).css('border-color', ''); // Reset background color on blur
-    });
-   
     var chkPage = false;
     $('a[href="#CreateSale"]').on('click', function () {
         chkPage = false;
@@ -132,17 +125,6 @@ $(function () {
         }
     });
     transpoterName.on('keydown', function (event) {
-        const keyCode = event.keyCode || event.which;
-        if (keyCode >= 48 && keyCode <= 57 || (keyCode >= 96 && keyCode <= 111)) {
-            event.preventDefault();
-        }
-        else {
-            let inputValue = $(this).val();
-            inputValue = inputValue.toUpperCase();
-            $(this).val(inputValue);
-        }
-    });
-    receivingPerson.on('keydown', function (event) {
         const keyCode = event.keyCode || event.which;
         if (keyCode >= 48 && keyCode <= 57 || (keyCode >= 96 && keyCode <= 111)) {
             event.preventDefault();
@@ -593,11 +575,7 @@ $(function () {
             toastr.error('TranspoterName Is Required.');
             transpoterName.focus();
             return;
-        } else if (!receivingPerson.val()) {
-            toastr.error('ReceivingPerson Is Required.');
-            receivingPerson.focus();
-            return;
-        } 
+        }
         else {
             $('#loader').show();
             var rowData = [];
@@ -639,7 +617,6 @@ $(function () {
                 OrderDate: orderDate.val(),
                 TranspoterName: transpoterName.val(),
                 VehicleNo: vehicleNo.val(),
-                ReceivingPerson: receivingPerson.val(),
                 SubTotal: subTotal.val(),
                 Discount: discount.val(),
                 Gst: gst.val(),
@@ -664,7 +641,6 @@ $(function () {
                         orderDate.val('');
                         transpoterName.val('');
                         vehicleNo.val('');
-                        receivingPerson.val('');
                         subTotal.val('0');
                         discount.val('0');
                         gst.val('0');
@@ -717,7 +693,7 @@ $(function () {
                 html += '<th>Trxn Dt.</th>'
                 html += '<th>Party</th>'
                 html += '<th>Trxn Type</th>'
-                html += '<th>Order No</th>'
+                html += '<th>Challan No</th>'
                 html += '<th>Grand Total</th>'
                 html += '<th>Action</th>'
                 html += '</tr>'
@@ -873,7 +849,6 @@ $(function () {
                     });
                 }
                 transpoterName.val(result.salesOrder.TranspoterName);
-                receivingPerson.val(result.salesOrder.ReceivingPerson);
                 Narration.val(result.salesOrder.Naration)
                 vehicleNo.val(result.salesOrder.VehicleNo);
                 const ModifyinvoiceDate = result.salesOrder.InvoiceDate;
@@ -1018,11 +993,7 @@ $(function () {
             toastr.error('TranspoterName Is Required.');
             transpoterName.focus();
             return;
-        } else if (!receivingPerson.val()) {
-            toastr.error('ReceivingPerson Is Required.');
-            receivingPerson.focus();
-            return;
-        } else {
+        }  else {
             $('#loader').show();
             var rowData = [];
             $('#tblSales tbody tr').each(function () {
@@ -1048,7 +1019,6 @@ $(function () {
                 OrderDate: orderDate.val(),
                 TranspoterName: transpoterName.val(),
                 VehicleNo: vehicleNo.val(),
-                ReceivingPerson: receivingPerson.val(),
                 SubTotal: subTotal.val(),
                 Discount: discount.val(),
                 Gst: gst.val(),
@@ -1075,7 +1045,6 @@ $(function () {
                         orderDate.val('');
                         transpoterName.val('');
                         vehicleNo.val('');
-                        receivingPerson.val('');
                         subTotal.val('0');
                         discount.val('0');
                         Narration.val('');
@@ -1501,7 +1470,7 @@ $(function () {
                 html += '<th>Trxn No</th>'
                 html += '<th>Trxn Dt.</th>'
                 html += '<th>Party</th>'
-                html += '<th>Order No</th>'
+                html += '<th>Mat Receipt No</th>'
                 html += '<th>Grand Total</th>'
                 html += '<th>Action</th>'
                 html += '</tr>'
@@ -1826,7 +1795,7 @@ $(function () {
                 rowData.push(cellData);
             });
             var requestData = {
-                SalesOrderId: Sr_OrderId.val(),
+                SalesRetunOrderId: Sr_OrderId.val(),
                 TransactionType: Sr_ddlPayment.val(),
                 RateType: Sr_ddlRate.val(),
                 TransactionDate: Sr_transactionDate.val(),
@@ -1847,7 +1816,7 @@ $(function () {
             };
             $.ajax({
                 type: "POST",
-                url: '/Transaction/UpdateSales',
+                url: '/Transaction/UpdateSalesReturn',
                 dataType: 'json',
                 data: JSON.stringify(requestData),
                 contentType: "application/json;charset=utf-8",
@@ -1859,10 +1828,10 @@ $(function () {
                         Sr_OrderId.val('');
                         Sr_transactionNo.val('');
                         Sr_transactionDate.val('');
-                        Sr_invoiceNo.val('');
-                        Sr_invoiceDate.val('');
                         Sr_orderNo.val('');
+                        Sr_receivingPerson.val('');
                         Sr_orderDate.val('');
+                        Sr_CustomerName.val('');
                         Sr_Narration.val('');
                         Sr_subTotal.val('0');
                         Sr_discount.val('0');

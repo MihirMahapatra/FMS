@@ -18,7 +18,7 @@ $(function () {
     const ddlSupplyer = $('select[name="ddlSupplyerId"]');
     const invoiceNo = $('input[name="InvoiceNo"]');
     const invoiceDate = $('input[name="InvoiceDate"]');
-    const orderNo = $('input[name="OrderNo"]');
+    //const orderNo = $('input[name="OrderNo"]');
     const orderDate = $('input[name="OrderDate"]');
     const subTotal = $('input[name="SubTotal"]');
     const discount = $('input[name="TotalDiscountAmount"]');
@@ -54,12 +54,6 @@ $(function () {
         $(this).css('border-color', 'red');
     });
     invoiceDate.on('blur', function () {
-        $(this).css('border-color', ''); // Reset background color on blur
-    });
-    orderNo.on('focus', function () {
-        $(this).css('border-color', 'red');
-    });
-    orderNo.on('blur', function () {
         $(this).css('border-color', ''); // Reset background color on blur
     });
     orderDate.on('focus', function () {
@@ -154,11 +148,7 @@ $(function () {
         inputValue = inputValue.toUpperCase();
         $(this).val(inputValue);
     });
-    orderNo.on("input", function () {
-        let inputValue = $(this).val();
-        inputValue = inputValue.toUpperCase();
-        $(this).val(inputValue);
-    });
+   
     vehicleNo.on("input", function () {
         let inputValue = $(this).val();
         inputValue = inputValue.toUpperCase();
@@ -172,7 +162,6 @@ $(function () {
     const Pr_ddlSupplyer = $('select[name="Pr_ddlSupplyerId"]');
     const Pr_invoiceNo = $('input[name="Pr_InvoiceNo"]');
     const Pr_invoiceDate = $('input[name="Pr_InvoiceDate"]');
-    const Pr_orderNo = $('input[name="Pr_OrderNo"]');
     const Pr_orderDate = $('input[name="Pr_OrderDate"]');
     const Pr_subTotal = $('input[name="Pr_SubTotal"]');
     const Pr_discount = $('input[name="Pr_DiscountAmount"]');
@@ -209,12 +198,7 @@ $(function () {
     Pr_invoiceDate.on('blur', function () {
         $(this).css('border-color', ''); // Reset background color on blur
     });
-    Pr_orderNo.on('focus', function () {
-        $(this).css('border-color', 'red');
-    });
-    Pr_orderNo.on('blur', function () {
-        $(this).css('border-color', ''); // Reset background color on blur
-    });
+   
     Pr_orderDate.on('focus', function () {
         $(this).css('border-color', 'red');
     });
@@ -285,11 +269,7 @@ $(function () {
         inputValue = inputValue.toUpperCase();
         $(this).val(inputValue);
     });
-    Pr_orderNo.on("input", function () {
-        let inputValue = $(this).val();
-        inputValue = inputValue.toUpperCase();
-        $(this).val(inputValue);
-    });
+   
     Pr_vehicleNo.on("input", function () {
         let inputValue = $(this).val();
         inputValue = inputValue.toUpperCase();
@@ -618,11 +598,7 @@ $(function () {
         } else if (!invoiceDate.val()) {
             toastr.error('InvoiceDate Is Required.');
             return;
-        } else if (!orderNo.val()) {
-            toastr.error('orderNo Is Required.');
-            orderNo.focus();
-            return;
-        } else if (!orderDate.val()) {
+        }  else if (!orderDate.val()) {
             toastr.error('orderDate Is Required.');
             return;
         } else if (!vehicleNo.val()) {
@@ -661,7 +637,6 @@ $(function () {
                 TransactionNo: transactionNo.val(),
                 InvoiceNo: invoiceNo.val(),
                 InvoiceDate: invoiceDate.val(),
-                OrderNo: orderNo.val(),
                 OrderDate: orderDate.val(),
                 SubTotal: subTotal.val(),
                 DiscountAmount: discount.val(),
@@ -687,7 +662,6 @@ $(function () {
                         transactionDate.val('');
                         invoiceNo.val('');
                         invoiceDate.val('');
-                        orderNo.val('');
                         orderDate.val('');
                         transpoterName.val('');
                         vehicleNo.val('');
@@ -733,8 +707,7 @@ $(function () {
                 html += '<th>Trxn No</th>'
                 html += '<th>Trxn Dt.</th>'
                 html += '<th>Party</th>'
-                html += '<th>Invoice No</th>'
-                html += '<th>Order No</th>'
+                html += '<th>Mat Receipt No</th>'
                 html += '<th>Grand Total</th>'
                 html += '<th>Action</th>'
                 html += '</tr>'
@@ -765,7 +738,6 @@ $(function () {
                         }
 
                         html += '<td>' + item.InvoiceNo + '</td>';
-                        html += '<td>' + item.OrderNo + '</td>';
                         html += '<td>' + item.GrandTotal + '</td>';
                         html += '<td style="background-color:#ffe6e6;">';
                         html += '<button class="btn btn-primary btn-link btn-sm btn-purchase-edit"   id="btnPurchaseEdit_' + item.PurchaseOrderId + '"     data-id="' + item.PurchaseOrderId + '" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-edit"></i></button>';
@@ -905,7 +877,7 @@ $(function () {
                         invoiceDate.val(formattedDate);
                     }
                 }
-                orderNo.val(result.purchaseOrder.OrderNo);
+                
                 ModifyorderDate = result.purchaseOrder.OrderDate;
                 if (ModifyorderDate) {
                     const dateObject = new Date(ModifyorderDate);
@@ -1061,11 +1033,7 @@ $(function () {
         } else if (!invoiceDate.val()) {
             toastr.error('InvoiceDate Is Required.');
             return;
-        } else if (!orderNo.val()) {
-            toastr.error('orderNo Is Required.');
-            orderNo.focus();
-            return;
-        } else if (!orderDate.val()) {
+        }  else if (!orderDate.val()) {
             toastr.error('orderDate Is Required.');
             return;
         } else if (!vehicleNo.val()) {
@@ -1103,7 +1071,6 @@ $(function () {
                 Fk_SubLedgerId: ddlSupplyer.val(),
                 InvoiceNo: invoiceNo.val(),
                 InvoiceDate: invoiceDate.val(),
-                OrderNo: orderNo.val(),
                 OrderDate: orderDate.val(),
                 TranspoterName: transpoterName.val(),
                 VehicleNo: vehicleNo.val(),
@@ -1126,13 +1093,11 @@ $(function () {
                     if (Response.ResponseCode == 200) {
                         toastr.success(Response.SuccessMsg);
                         PurchaseTable.clear().draw();
-
                         purchaseOrderId.val('');
                         transactionNo.val('');
                         transactionDate.val('');
                         invoiceNo.val('');
                         invoiceDate.val('');
-                        orderNo.val('');
                         orderDate.val('');
                         vehicleNo.val('');
                         transpoterName.val('');
@@ -1453,10 +1418,6 @@ $(function () {
         } else if (!Pr_invoiceDate.val()) {
             toastr.error('InvoiceDate Is Required.');
             return;
-        } else if (!Pr_orderNo.val()) {
-            toastr.error('orderNo Is Required.');
-            Pr_orderNo.focus();
-            return;
         } else if (!Pr_orderDate.val()) {
             toastr.error('orderDate Is Required.');
             return;
@@ -1495,7 +1456,6 @@ $(function () {
                     TransactionNo: Pr_transactionNo.val(),
                     InvoiceNo: Pr_invoiceNo.val(),
                     InvoiceDate: Pr_invoiceDate.val(),
-                    OrderNo: Pr_orderNo.val(),
                     OrderDate: Pr_orderDate.val(),
                     SubTotal: Pr_subTotal.val(),
                     DiscountAmount: Pr_discount.val(),
@@ -1522,7 +1482,6 @@ $(function () {
                             Pr_transactionDate.val('');
                             Pr_invoiceNo.val('');
                             Pr_invoiceDate.val('');
-                            Pr_orderNo.val('');
                             Pr_orderDate.val('');
                             Pr_transpoterName.val('');
                             Pr_vehicleNo.val('');
@@ -1572,8 +1531,7 @@ $(function () {
                 html += '<th>Trxn No</th>'
                 html += '<th>Trxn Dt.</th>'
                 html += '<th>Party</th>'
-                html += '<th>Invoice No</th>'
-                html += '<th>Order No</th>'
+                html += '<th>Challan No</th>'
                 html += '<th>Grand Total</th>'
                 html += '<th>Action</th>'
                 html += '</tr>'
@@ -1604,7 +1562,7 @@ $(function () {
                         }
 
                         html += '<td>' + item.InvoiceNo + '</td>';
-                        html += '<td>' + item.OrderNo + '</td>';
+                        
                         html += '<td>' + item.GrandTotal + '</td>';
                         html += '<td style="background-color:#ffe6e6;">';
                         html += '<button class="btn btn-primary btn-link btn-sm btn-purchase-return-edit"   id="btnPurchaseReturnEdit_' + item.PurchaseReturnOrderId + '"     data-id="' + item.PurchaseReturnOrderId + '" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-edit"></i></button>';
@@ -1739,7 +1697,6 @@ $(function () {
                         Pr_invoiceDate.val(formattedDate);
                     }
                 }
-                Pr_orderNo.val(result.purchaseReturnOrder.OrderNo);
                 Pr_vehicleNo.val(result.purchaseReturnOrder.VehicleNo);
                 Pr_receivingPerson.val(result.purchaseReturnOrder.ReceivingPerson);
                 Pr_transpoterName.val(result.purchaseReturnOrder.TranspoterName);
@@ -1892,11 +1849,7 @@ $(function () {
         } else if (!Pr_invoiceDate.val()) {
             toastr.error('InvoiceDate Is Required.');
             return;
-        } else if (!Pr_orderNo.val()) {
-            toastr.error('orderNo Is Required.');
-            Pr_orderNo.focus();
-            return;
-        } else if (!Pr_orderDate.val()) {
+        }  else if (!Pr_orderDate.val()) {
             toastr.error('orderDate Is Required.');
             return;
         } else if (!Pr_vehicleNo.val()) {
@@ -1934,7 +1887,6 @@ $(function () {
                 Fk_SubLedgerId: Pr_ddlSupplyer.val(),
                 InvoiceNo: Pr_invoiceNo.val(),
                 InvoiceDate: Pr_invoiceDate.val(),
-                OrderNo: Pr_orderNo.val(),
                 OrderDate: Pr_orderDate.val(),
                 TranspoterName: Pr_transpoterName.val(),
                 VehicleNo: Pr_vehicleNo.val(),
@@ -1962,7 +1914,6 @@ $(function () {
                         Pr_transactionDate.val('');
                         Pr_invoiceNo.val('');
                         Pr_invoiceDate.val('');
-                        Pr_orderNo.val('');
                         Pr_orderDate.val('');
                         Pr_transpoterName.val('');
                         Pr_vehicleNo.val('');

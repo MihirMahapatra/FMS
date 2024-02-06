@@ -483,7 +483,7 @@ $(function () {
             success: function (result) {
                 console.log(result)
                 if (result.ResponseCode == 302) {
-                    $('input[name="mdlRate"]').val(result.Data);
+                    $('input[name="mdlRate"]').val(result.LabourRate.Rate);
                     if ($('input[name="mdlQuantity"]') !== '') {
                         var quantity = $('input[name="mdlQuantity"]').val();
                         var rate = $('input[name="mdlRate"]').val();
