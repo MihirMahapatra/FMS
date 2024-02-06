@@ -245,14 +245,15 @@ $(function () {
                     html += '<tbody>';
                     if (result.ResponseCode == 302) {
                         $.each(result.Labours, function (key, item) {
+                            console.log(result.Labours)
                             var Balance = item.OpeningBalance;
                             html += '<tr>';
                             html += '<td colspan=9>Opening Bal.</td>';
                             html += '<td>' + item.OpeningBalance + '</td>';
                             html += '</tr >';
-                            if (item.ProductionEntries !== null) {
-                                $.each(item.ProductionEntries, function (key, Production) {
-                                    const ModifyDate = Production.ProductionDate;
+                            if (item.LabourOrders !== null) {
+                                $.each(item.LabourOrders, function (key, Production) {
+                                    const ModifyDate = Production.TransactionDate;
                                     var formattedDate = '';
                                     if (ModifyDate) {
                                         const dateObject = new Date(ModifyDate);
@@ -265,7 +266,7 @@ $(function () {
                                     }
                                     html += '<tr>';
                                     html += '<td>' + formattedDate + '</td>';
-                                    html += '<td>' + Production.ProductionNo + '</td>';
+                                    html += '<td>' + Production.TransactionNo + '</td>';
                                     html += '<td>' + Production.Product.ProductName + '</td>';
                                     html += '<td>' + Production.Quantity + '</td>';
                                     html += '<td>' + Production.Rate + '</td>';
@@ -338,14 +339,14 @@ $(function () {
                         });
 
                         $('#BtnPrint').show();
-                        LabourName = result.Labours[0].LabourName
-                        PrintData = {
-                            LaborReports: result.Labours,
-                            FromDate: fromDateDetailed.val(),
-                            LabourName: LabourName,
-                            ToDate: toDateDetailed.val(),
-                            OpeningBal: result.Labours[0].OpeningBalance
-                        };
+                        //LabourName = result.Labours[0].LabourName
+                        //PrintData = {
+                        //    LaborReports: result.Labours,
+                        //    FromDate: fromDateDetailed.val(),
+                        //    LabourName: LabourName,
+                        //    ToDate: toDateDetailed.val(),
+                        //    OpeningBal: result.Labours[0].OpeningBalance
+                        //};
                     }
                     else {
                         html += '<tr>';
@@ -355,45 +356,6 @@ $(function () {
                     html += ' </tbody>';
                     html += '</table >';
                     $('.tblDetailedLabourList').html(html);
-                    if (!$.fn.DataTable.isDataTable('.DetailedLabourReportTable')) {
-                        var table = $('.DetailedLabourReportTable').DataTable({
-                            "responsive": true,
-                            "lengthChange": false,
-                            "autoWidth": false,
-                            "buttons": [
-                                {
-                                    extend: 'copy',
-                                    footer: true
-                                },
-                                {
-                                    extend: 'csv',
-                                    footer: true
-                                },
-                                {
-                                    extend: 'excel',
-                                    footer: true
-                                },
-                                {
-                                    extend: 'pdf',
-                                    footer: true,
-                                    title: function () {
-                                        return getPrintHeaderFooter();
-                                    }
-                                },
-                                {
-                                    extend: 'print',
-                                    footer: true,
-                                    title: function () {
-                                        return getPrintHeaderFooter();
-                                    },
-
-                                },
-                                {
-                                    extend: 'colvis'
-                                }
-                            ]
-                        }).buttons().container().appendTo('#example2_wrapper .col-md-6:eq(0)');
-                    }
                 },
                 error: function (errormessage) {
                     $('#loader').hide();
