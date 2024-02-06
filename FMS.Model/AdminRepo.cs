@@ -1521,18 +1521,31 @@ namespace FMS.Repository.Admin
                 if (Query.Result == null)
                 {
                     List<SalesConfig> salesConfigs = new();
-
                     foreach (var item in data.RowData)
                     {
-                        salesConfigs.Add(new SalesConfig
+                        
+                        var AddNewMixProduct = new SalesConfig
                         {
                             Fk_FinishedGoodId = Guid.Parse(data.FinishedGoodId),
                             Fk_SubFinishedGoodId = Guid.Parse(item[0]),
                             Quantity = Convert.ToDecimal(item[1]),
                             Unit = item[2].ToString()
-
-                        });
-
+                           
+                    };
+                        salesConfigs.Add(AddNewMixProduct);
+                        #region Update Stock
+                        var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == Guid.Parse(item[0])).SingleOrDefaultAsync();
+                        if (UpdateStock != null)
+                        {
+                            UpdateStock.AvilableStock -= Convert.ToDecimal(item[1]);
+                            await _appDbContext.SaveChangesAsync();
+                        }
+                        else
+                        {
+                            _Result.WarningMessage = "Stock < 0";
+                            return _Result;
+                        }
+                        #endregion
                     }
                     await _appDbContext.SalesConfigs.AddRangeAsync(salesConfigs);
                     int count = await _appDbContext.SaveChangesAsync();
@@ -1714,7 +1727,7 @@ namespace FMS.Repository.Admin
                 if (ProductType == MappingProductType.ServiceGoods)
                 {
                     Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
-                    _Result.SingleObjData = await _appDbContext.LabourRates.Where(s => s.Fk_ProductId == ProductId && s.Fk_FinancialYearId == FinancialYear && s.Fk_BranchId == BranchId).OrderByDescending(s => s.Date).
+                    _Result.SingleObjData = await _appDbContext.LabourRates.Where(s => s.Fk_ProductId == ProductId && s.Fk_FinancialYearId == FinancialYear && s.Fk_BranchId== BranchId).OrderByDescending(s => s.Date).
                  Select(s => new LabourRateModel
                  {
                      Rate = s.Rate,
