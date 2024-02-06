@@ -478,7 +478,17 @@ namespace FMS.Controllers.Admin
 
             return PartialView();
         }
-
+        [HttpGet]
+        public async Task<IActionResult> GetProductTypes()
+        {
+            var result = await _adminSvcs.GetProductTypes();
+            var elementToRemove = result.ProductTypes.Where(x => x.ProductTypeId == MappingProductType.ServiceGoods).ToList();
+            if (elementToRemove.Count > 0)
+            {
+                result.ProductTypes.RemoveAll(x => elementToRemove.Contains(x));
+            }
+            return new JsonResult(result);
+        }
         [HttpGet]
         public async Task<IActionResult> GetAlternateUnits()
         {

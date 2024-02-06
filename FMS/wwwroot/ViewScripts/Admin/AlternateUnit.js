@@ -113,7 +113,7 @@
     GetProductTypes();
     function GetProductTypes() {
         $.ajax({
-            url: "/Transaction/GetProductTypes",
+            url: "/Admin/GetProductTypes",
             type: "GET",
             contentType: "application/json;charset=utf-8",
             dataType: "json",
