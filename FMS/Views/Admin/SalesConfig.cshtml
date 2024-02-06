@@ -1,0 +1,122 @@
+﻿@{
+    ViewData["Title"] = "SalesConfig";
+    Layout = "_Layout";
+}
+
+<div class="content-wrapper">
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1></h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="content">
+        <div class="container-fluid">
+            <div class="card card-primary card-outline">
+                <div class="card-body">
+                    <ul class="nav nav-tabs" id="custom-content-below-tab" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="tab-CreateSalesConfig" data-toggle="pill" href="#CreateSalesConfig" role="tab" aria-controls="CreateSalesConfig" aria-selected="true"><b>SalesConfig</b></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="tab-SalesConfigList" data-toggle="pill" href="#SalesConfigList" role="tab" aria-controls="SalesConfigList" aria-selected="false"><b>SalesConfig List</b></a>
+                        </li>
+                    </ul>
+                    <div class="tab-content pt-3" id="custom-content-below-tabContent">
+                        <div class="tab-pane fade show active" id="CreateSalesConfig" role="tabpanel" aria-labelledby="tab-CreateSalesConfig">
+                            <div class="card card-primary card-outline">
+                                <div class="card-body">
+                                    <div class="card card-primary">
+                                        <div class="card-header">
+                                            <h3 class="card-title"><b>Sales Config</b></h3>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label>Finished Good</label>
+                                                        <select class="form-control select2bs4" style="width: 100%;" name="ddlFinishedGoodId">
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div id="loader" style="display:none;"></div>
+                                                    <table id="tblSalesConfig" class="table table-bordered table-hover">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Sub Fhinished Goods</th>
+                                                                <th>Quantity</th>
+                                                                <th>Unit</th>
+                                                                <th>Action</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr>
+                                                                <td> <div class="form-group"><select class="form-control select2bs4 Subfinishedgood" style="width: 100%;" name="ddlSubfhishidGoodId"></select></div></td>
+                                                                <td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>
+                                                                <td><div class="form-group"><input type="text" class="form-control" disabled></div></td>
+                                                                <td style="background-color:#ffe6e6;">
+                                                                    <button class="btn btn-primary btn-link addBtn" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-plus"></i></button>
+                                                                    <button class="btn btn-primary btn-link deleteBtn" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;" disabled> <i class="fa-solid fa-trash-can"></i></button>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card-footer">
+                                            <button type="button" id="btnSave" class="btn btn-primary" style="float:right">Submit</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="SalesConfigList" role="tabpanel" aria-labelledby="tab-SalesConfigList">
+                            <div class="card card-primary card-outline">
+                                <div class="card-header">
+                                    <i class="fa-solid fa-file-invoice"></i>
+                                    SalesConfig List
+                                </div>
+                                <div class="card-body">
+                                    <div class="col-md-12">
+                                        <div id="loader" style="display:none;"></div>
+                                        <div class="tblSalesConfigList">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<!--Script Section -->
+@section additionalScripts {
+    <script src="~/scripts/FormScript.js"></script>
+    <script src="~/viewscripts/admin/salesconfig.js"></script>
+    @if (TempData["SuccessMsg"] != null)
+    {
+        <script>
+            toastr.success('@TempData["SuccessMsg"]');
+        </script>
+    }
+    @if (TempData["ErrorMsg"] != null)
+    {
+        <script>
+            toastr.error('@TempData["ErrorMsg"]');
+        </script>
+    }
+}

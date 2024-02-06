@@ -80,6 +80,12 @@ namespace FMS.Service.Admin
         Task<Base> UpdateProductConfig(ProductionModel data);
         Task<Base> DeleteProductConfig(Guid Id);
         #endregion
+        #region SalesConfig  
+        Task<SalesConfigViewModel> GetSalesConfig();
+        Task<Base> CreateSalesConfig(ProductConfigDataRequest requestData);
+        Task<Base> UpdateSalesConfig(SalesConfigModel data);
+        Task<Base> DeleteSalesConfig(Guid Id);
+        #endregion
         #region Labour Rate Configuration
         Task<LabourRateViewModel> GetAllLabourRates();
         Task<LabourRateViewModel> GetProductionLabourRates(Guid ProductTypeId);
