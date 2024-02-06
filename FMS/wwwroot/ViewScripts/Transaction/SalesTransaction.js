@@ -10,17 +10,17 @@ $(function () {
     const day = String(today.getDate()).padStart(2, '0');
     const todayDate = `${day}/${month}/${year}`;
     var GstTable = $('#tblGstdifference');
-    var SalesTable = $('#tblSales').DataTable({
-        "paging": false,
-        "lengthChange": false,
-        "searching": false,
-        "ordering": true,
-        "info": false,
-        "autoWidth": false,
-        "responsive": true,
-        lengthMenu: [5, 10, 25, 50], // Set the available page lengths
-        pageLength: 10 // Set the default page length to 5
-    });
+    //var SalesTable = $('#tblSales').DataTable({
+    //    "paging": false,
+    //    "lengthChange": false,
+    //    "searching": false,
+    //    "ordering": true,
+    //    "info": false,
+    //    "autoWidth": false,
+    //    "responsive": true,
+    //    lengthMenu: [5, 10, 25, 50], // Set the available page lengths
+    //    pageLength: 10 // Set the default page length to 5
+    //});
     const ddlPayment = $('select[name="ddlPayment"]');
     const ddlRate = $('select[name="ddlRate"]');
     const CustomerName = $('input[name="CustomerName"]');
@@ -165,17 +165,17 @@ $(function () {
     const Sr_receivingPerson = $('input[name="Sr_ReceivingPerson"]');
     const Sr_gst = $('input[name="Sr_GstAmount"]');
     const Sr_Narration = $('textarea[name="NarrationSalesReturn"]');
-    var SalesReturnTable = $('#tblSalesReturn').DataTable({
-        "paging": false,
-        "lengthChange": false,
-        "searching": false,
-        "ordering": true,
-        "info": false,
-        "autoWidth": false,
-        "responsive": true,
-        lengthMenu: [5, 10, 25, 50], // Set the available page lengths
-        pageLength: 10,// Set the default page length to 5
-    });
+    //var SalesReturnTable = $('#tblSalesReturn').DataTable({
+    //    "paging": false,
+    //    "lengthChange": false,
+    //    "searching": false,
+    //    "ordering": true,
+    //    "info": false,
+    //    "autoWidth": false,
+    //    "responsive": true,
+    //    lengthMenu: [5, 10, 25, 50], // Set the available page lengths
+    //    pageLength: 10,// Set the default page length to 5
+    //});
     //-------------------------------Contorl Foucous Of Element Sale Return--------------------------------//
     Sr_ddlPayment.focus();
     Sr_CustomerName.on('focus', function () {
@@ -424,7 +424,8 @@ $(function () {
         html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
         html += '<td><button class="btn btn-primary btn-link deleteBtn" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button></td>';
         html += '</tr>';
-        SalesTable.row.add($(html)).draw(false).node();
+        //SalesTable.row.add($(html)).draw(false).node();
+        var newRow = $('#tblSales tbody').append(html);
         $.ajax({
             url: "/Transaction/GetProductFinishedGood",
             type: "GET",
@@ -1212,7 +1213,8 @@ $(function () {
         html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
         html += '<td><button class="btn btn-primary btn-link deleteBtnReturn" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button></td>';
         html += '</tr>';
-        var newRow = SalesReturnTable.row.add($(html)).draw(false).node();
+        //var newRow = SalesReturnTable.row.add($(html)).draw(false).node();
+        var newRow = $('#tblSalesReturn tbody').append(html);
         $.ajax({
             url: "/Transaction/GetProductFinishedGood",
             type: "GET",

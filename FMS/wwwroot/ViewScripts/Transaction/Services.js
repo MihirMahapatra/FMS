@@ -121,7 +121,8 @@
         html += ' <button class="btn btn-primary btn-link deleteBtn" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button>';
         html += '</td>';
         html += '</tr>';
-        var newRow = ServiceEntryTable.row.add($(html)).draw(false).node();
+        //var newRow = ServiceEntryTable.row.add($(html)).draw(false).node();
+        var newRow = $('#tblServiceEntry tbody').append(html);
         $.ajax({
             url: "/Transaction/GetServiceGoods",
             type: "GET",

@@ -21,15 +21,15 @@ $(function () {
         }
     });
     //----------------------------------------varible declaration-----------------------------------------//
-    var ReciptTable = $('#tblReceipt').DataTable({
-        "paging": false,
-        "lengthChange": false,
-        "searching": false,
-        "ordering": true,
-        "info": false,
-        "autoWidth": false,
-        "responsive": true,
-    });
+    //var ReciptTable = $('#tblReceipt').DataTable({
+    //    "paging": false,
+    //    "lengthChange": false,
+    //    "searching": false,
+    //    "ordering": true,
+    //    "info": false,
+    //    "autoWidth": false,
+    //    "responsive": true,
+    //});
     var CashBank = $('select[name="ReceiptMode"]');
     var Bank = $('select[name="ddlBankId"]');
     var ChqNo = $('input[name="ChqNo"]');
@@ -117,7 +117,8 @@ $(function () {
                     html += '</div>';
                     html += '</td>';
                     html += '</tr>';
-                    var newRow = ReciptTable.row.add($(html)).draw(false).node();
+                    //var newRow = ReciptTable.row.add($(html)).draw(false).node();
+                    var newRow = $('#tblReceipt tbody').append(html);
                     $(newRow).find('.select2bs4').select2({
                         theme: 'bootstrap4'
                     });

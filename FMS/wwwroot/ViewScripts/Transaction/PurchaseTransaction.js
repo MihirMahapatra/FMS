@@ -28,17 +28,17 @@ $(function () {
     const receivingPerson = $('input[name="ReceivingPerson"]');
     const gst = $('input[name="GstAmount"]');
     const Naration = $('textarea[name="NarrationPurchase"]');
-    var PurchaseTable = $('#tblPurchase').DataTable({
-        "paging": false,
-        "lengthChange": false,
-        "searching": false,
-        "ordering": true,
-        "info": false,
-        "autoWidth": false,
-        "responsive": true,
-        lengthMenu: [5, 10, 25, 50], // Set the available page lengths
-        pageLength: 10,// Set the default page length to 5
-    });
+    //var PurchaseTable = $('#tblPurchase').DataTable({
+    //    "paging": false,
+    //    "lengthChange": false,
+    //    "searching": false,
+    //    "ordering": true,
+    //    "info": false,
+    //    "autoWidth": false,
+    //    "responsive": true,
+    //    lengthMenu: [5, 10, 25, 50], // Set the available page lengths
+    //    pageLength: 10,// Set the default page length to 5
+    //});
     transactionDate.val(todayDate);
     orderDate.val(todayDate);
     invoiceDate.val(todayDate);
@@ -171,17 +171,17 @@ $(function () {
     const Pr_receivingPerson = $('input[name="Pr_ReceivingPerson"]');
     const Pr_gst = $('input[name="Pr_GstAmount"]');
     const Pr_Narration = $('textarea[name="NarrationPurchaseReturn"]');
-    var PurchaseReturnTable = $('#tblPurchaseReturn').DataTable({
-        "paging": false,
-        "lengthChange": false,
-        "searching": false,
-        "ordering": true,
-        "info": false,
-        "autoWidth": false,
-        "responsive": true,
-        lengthMenu: [5, 10, 25, 50], // Set the available page lengths
-        pageLength: 10,// Set the default page length to 5
-    });
+    //var PurchaseReturnTable = $('#tblPurchaseReturn').DataTable({
+    //    "paging": false,
+    //    "lengthChange": false,
+    //    "searching": false,
+    //    "ordering": true,
+    //    "info": false,
+    //    "autoWidth": false,
+    //    "responsive": true,
+    //    lengthMenu: [5, 10, 25, 50], // Set the available page lengths
+    //    pageLength: 10,// Set the default page length to 5
+    //});
     Pr_transactionDate.val(todayDate)
     Pr_orderDate.val(todayDate);
     Pr_invoiceDate.val(todayDate);
@@ -409,7 +409,9 @@ $(function () {
             html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
             html += '<td><button class="btn btn-primary btn-link deleteBtn" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button></td>';
             html += '</tr>';
-            var newRow = PurchaseTable.row.add($(html)).draw(false).node();
+            //var newRow = PurchaseTable.row.add($(html)).draw(false).node();
+            var newRow = $('#tblPurchase tbody').append(html);
+            
             $.ajax({
                 url: '/Transaction/GetProductByType?ProductTypeId=' + ddlProductType.val() + '',
                 type: "GET",
@@ -1269,7 +1271,8 @@ $(function () {
             html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
             html += '<td><button class="btn btn-primary btn-link deleteBtnReturn" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button></td>';
             html += '</tr>';
-            var newRow = PurchaseReturnTable.row.add($(html)).draw(false).node();
+            //var newRow = PurchaseReturnTable.row.add($(html)).draw(false).node();
+            var newRow = $('#tblPurchaseReturn tbody').append(html);
             $.ajax({
                 url: '/Transaction/GetProductByType?ProductTypeId=' + Pr_ddlProductType.val() + '',
                 type: "GET",

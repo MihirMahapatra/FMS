@@ -16,17 +16,17 @@ $(function () {
     const ddlBranch = $('select[name="ddlBranchId"]');
     const ddlProductType = $('select[name="ddlProductTypeId"]');
     const totalAmout = $('input[name="GrandTotal"]');
-    var InwardSupplyTable = $('#tblInwardSupply').DataTable({
-        "paging": false,
-        "lengthChange": false,
-        "searching": false,
-        "ordering": true,
-        "info": false,
-        "autoWidth": false,
-        "responsive": true,
-        lengthMenu: [5, 10, 25, 50], // Set the available page lengths
-        pageLength: 10,// Set the default page length to 5
-    });
+    //var InwardSupplyTable = $('#tblInwardSupply').DataTable({
+    //    "paging": false,
+    //    "lengthChange": false,
+    //    "searching": false,
+    //    "ordering": true,
+    //    "info": false,
+    //    "autoWidth": false,
+    //    "responsive": true,
+    //    lengthMenu: [5, 10, 25, 50], // Set the available page lengths
+    //    pageLength: 10,// Set the default page length to 5
+    //});
     //-----------------------------------------Contorl Foucous Of Element----------------------------------//
     ddlBranch.focus();
     $('#addInwardSupplyRowBtn').on('keydown', function (e) {
@@ -159,7 +159,7 @@ $(function () {
             html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
             html += '<td><button class="btn btn-primary btn-link deleteBtn" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button></td>';
             html += '</tr>';
-            var newRow = InwardSupplyTable.row.add($(html)).draw(false).node();
+            var newRow = $('#tblInwardSupply tbody').append(html);
             $.ajax({
                 url: '/Transaction/GetProductByType?ProductTypeId=' + ddlProductType.val() + '',
                 type: "GET",

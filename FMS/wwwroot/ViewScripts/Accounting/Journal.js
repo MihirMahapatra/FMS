@@ -21,15 +21,15 @@ $(function () {
         }
     });
     //----------------------------------------varible declaration-----------------------------------------//
-    var JournalTable = $('#tblJournal').DataTable({
-        "paging": false,
-        "lengthChange": false,
-        "searching": false,
-        "ordering": true,
-        "info": false,
-        "autoWidth": false,
-        "responsive": true,
-    });
+    //var JournalTable = $('#tblJournal').DataTable({
+    //    "paging": false,
+    //    "lengthChange": false,
+    //    "searching": false,
+    //    "ordering": true,
+    //    "info": false,
+    //    "autoWidth": false,
+    //    "responsive": true,
+    //});
     const VoucherNo = $('input[name="VoucherNo"]');
     const VoucherDate = $('input[name="VoucherDate"]');
     VoucherDate.val(todayDate);
@@ -98,7 +98,8 @@ $(function () {
                     html += ' <button class="btn btn-primary btn-link journalRemoveBtn" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button>';
                     html += '</td>';
                     html += '</tr>';
-                    var newRow = JournalTable.row.add($(html)).draw(false).node();
+                    //var newRow = JournalTable.row.add($(html)).draw(false).node();
+                    var newRow = $('#tblJournal tbody').append(html);
                     $(newRow).find('.select2bs4').select2({
                         theme: 'bootstrap4'
                     });

@@ -63,7 +63,7 @@
             }
         });
     }
-    $(document).on('change', '.Subfinishedgood', function () {
+    $(document).on('change', '.SubFinishedGood', function () {
         var selectElement = $(this);
         var row = selectElement.closest('tr');
         var selectedProductId = selectElement.val();
@@ -96,7 +96,8 @@
         html += ' <button class="btn btn-primary btn-link deleteBtn" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button>';
         html += '</td>';
         html += '</tr>';
-        var newRow = SalesConfigTable.row.add($(html)).draw(false).node();
+        //var newRow = SalesConfigTable.row.add($(html)).draw(false).node();
+        var newRow = $('#tblSalesConfig tbody').append(html);
         $.ajax({
             url: "/Admin/GetFinishedGoods",
             type: "GET",
