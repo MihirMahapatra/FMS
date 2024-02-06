@@ -64,7 +64,8 @@ public partial class AppDbContext : IdentityDbContext<AppUser>
     public DbSet<OutwardSupplyTransaction> OutwardSupplyTransactions { get; set; }
     public DbSet<DamageOrder> DamageOrders { get; set; }
     public DbSet<DamageTransaction> DamageTransactions { get; set; }
-   
+    public DbSet<SalesConfig> SalesConfigs { get; set; }
+
     #endregion
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -118,6 +119,7 @@ public partial class AppDbContext : IdentityDbContext<AppUser>
         new OutwardSupplyTransactionConfig().Configure(modelBuilder.Entity<OutwardSupplyTransaction>());
         new DamageOrderConfig().Configure(modelBuilder.Entity<DamageOrder>());
         new DamageTransactionConfig().Configure(modelBuilder.Entity<DamageTransaction>());
+        new SalesConfigConfig().Configure(modelBuilder.Entity<SalesConfig>());
         #endregion
         base.OnModelCreating(modelBuilder);
     }

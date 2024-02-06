@@ -530,7 +530,7 @@ namespace FMS.Controllers.Admin
             var result = await _adminSvcs.DeleteAlternateUnit(Id);
             return new JsonResult(result);
         }
-        #endregion
+        #endregion 
         #region Production Configuration
         [HttpGet]
         public IActionResult ProductionConfig()
@@ -595,6 +595,53 @@ namespace FMS.Controllers.Admin
         {
             Guid id = Guid.Parse(Id);
             var result = await _adminSvcs.DeleteProductConfig(id);
+            return new JsonResult(result);
+        }
+        #endregion
+        #region SalesConfig
+        [HttpGet]
+        public IActionResult SalesConfig()
+        {
+
+            return PartialView();
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetSalesConfig()
+        {
+            var result = await _adminSvcs.GetSalesConfig();
+            return new JsonResult(result);
+        }
+        [HttpPost, Authorize(Policy = "Create")]
+        public async Task<IActionResult> CreateSalesConfig([FromBody] ProductConfigDataRequest requestData)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _adminSvcs.CreateSalesConfig(requestData);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
+        [HttpPost, Authorize(Policy = "Edit")]
+        public async Task<IActionResult> UpdateSalesConfig([FromBody] SalesConfigModel data)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _adminSvcs.UpdateSalesConfig(data);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
+        [HttpPost, Authorize(Policy = "Delete")]
+        public async Task<IActionResult> DeleteSalesConfig([FromQuery] string Id)
+        {
+            Guid id = Guid.Parse(Id);
+            var result = await _adminSvcs.DeleteSalesConfig(id);
             return new JsonResult(result);
         }
         #endregion
@@ -673,7 +720,6 @@ namespace FMS.Controllers.Admin
             return new JsonResult(result);
         }
         #endregion
-
         #region Account Configuration
         [HttpGet]
         public IActionResult AccountConfig()

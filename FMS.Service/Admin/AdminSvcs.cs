@@ -1956,6 +1956,186 @@ namespace FMS.Service.Admin
             return Obj;
         }
         #endregion
+        #region SalesConfig  
+        public async Task<SalesConfigViewModel> GetSalesConfig()
+        {
+            SalesConfigViewModel Obj;
+            var result = await _adminRepo.GetSalesConfig();
+            if (result.IsSuccess)
+            {
+                if (result.Response == "success")
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
+                        SalesConfigs = result.CollectionObjData,
+                    };
+                }
+                else
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.NotFound),
+                        Message = "No Record Found"
+                    };
+                }
+            }
+            else
+            {
+                Obj = new()
+                {
+                    ResponseStatus = result.Response,
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = result.Exception,
+                    Message = "Some Eroor Occoured"
+                };
+            }
+            return Obj;
+        }
+
+        public async Task<Base> CreateSalesConfig(ProductConfigDataRequest requestData)
+        {
+            Base Obj;
+            var result = await _adminRepo.CreateSalesConfig(requestData);
+            if (result.IsSuccess)
+            {
+                if (result.Response == "created")
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.Created),
+                        SuccessMsg = "Data Saved SuccessFully"
+                    };
+                }
+                else
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                        ErrorMsg = "Data Already Exist"
+                    };
+                }
+            }
+            else if (result.WarningMessage != null)
+            {
+                Obj = new()
+                {
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = result.Exception,
+                    ErrorMsg = result.WarningMessage,
+                };
+            }
+            else
+            {
+                Obj = new()
+                {
+                    ResponseStatus = result.Response,
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = result.Exception,
+                    ErrorMsg = "Some Error Occourd Try To Contact Your App Devloper"
+                };
+            }
+            return Obj;
+        }
+
+        public async Task<Base> UpdateSalesConfig(SalesConfigModel data)
+        {
+            var result = await _adminRepo.UpdateSalesConfig(data);
+            Base Obj;
+            if (result.IsSuccess)
+            {
+                if (result.Response == "modified")
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.OK),
+                        SuccessMsg = "Data Updated SuccessFully"
+                    };
+                }
+                else
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                        ErrorMsg = "Failed To Update Data"
+                    };
+                }
+            }
+            else if (result.WarningMessage != null)
+            {
+                Obj = new()
+                {
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = result.Exception,
+                    ErrorMsg = result.WarningMessage,
+                };
+            }
+            else
+            {
+                Obj = new()
+                {
+                    ResponseStatus = result.Response,
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = result.Exception,
+                    ErrorMsg = "Some Error Occourd Try To Contact Your App Devloper"
+                };
+            }
+            return Obj;
+        }
+
+        public async Task<Base> DeleteSalesConfig(Guid Id)
+        {
+            var result = await _adminRepo.DeleteSalesConfig(Id, null);
+            Base Obj;
+            if (result.IsSuccess)
+            {
+                if (result.Response == "deleted")
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.OK),
+                        SuccessMsg = "Data Deleted Successfully"
+                    };
+                }
+                else
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                        ErrorMsg = "Failed To Delete Data"
+                    };
+                }
+            }
+            else if (result.WarningMessage != null)
+            {
+                Obj = new()
+                {
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = result.Exception,
+                    ErrorMsg = result.WarningMessage,
+                };
+            }
+            else
+            {
+                Obj = new()
+                {
+                    ResponseStatus = result.Response,
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = result.Exception,
+                    ErrorMsg = "Some Error Occourd Try To Contact Your App Devloper"
+                };
+            }
+            return Obj;
+        }
+        #endregion
         #region Labour Rate Master
         public async Task<LabourRateViewModel> GetAllLabourRates( )
         {

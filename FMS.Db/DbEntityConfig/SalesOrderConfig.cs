@@ -19,11 +19,10 @@ namespace FMS.Db.DbEntityConfig
             builder.Property(e => e.Fk_BranchId).IsRequired(true);
             builder.Property(e => e.Fk_FinancialYearId).IsRequired(true);
             builder.Property(e => e.TransactionDate).HasColumnType("datetime").IsRequired(true);
-          
             builder.Property(e => e.OrderNo).HasMaxLength(200).IsRequired(true);
             builder.Property(e => e.OrderDate).HasColumnType("datetime").IsRequired(true);
             builder.Property(e => e.VehicleNo).HasMaxLength(100).IsRequired(true);
-            builder.Property(e => e.ReceivingPerson).HasMaxLength(100).IsRequired(true);
+            builder.Property(e => e.ReceivingPerson).HasMaxLength(100).IsRequired(false);
             builder.Property(e => e.TranspoterName).HasMaxLength(100).IsRequired(true);
             builder.Property(e => e.Narration).HasMaxLength(500).IsRequired(false);
             builder.Property(e => e.SubTotal).HasColumnType("decimal(18,2)").IsRequired(true);

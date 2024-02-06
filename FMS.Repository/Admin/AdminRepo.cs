@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
 using System.Globalization;
 using System.Security.Claims;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace FMS.Repository.Admin
 {
@@ -1481,6 +1482,148 @@ namespace FMS.Repository.Admin
             return _Result;
         }
         #endregion
+        #region SalesConfig
+        public async Task<Result<SalesConfigModel>> GetSalesConfig()
+        {
+            Result<SalesConfigModel> _Result = new();
+            try
+            {
+                var Query = await _appDbContext.SalesConfigs.Select(s => new SalesConfigModel
+                {
+                    SalesConfigId = s.SalesConfigId,
+                    Unit = s.Unit,
+                    Quantity = s.Quantity,
+                    FinishedGoodName = _appDbContext.Products.Where(p => p.ProductId == s.Fk_FinishedGoodId).Select(s => s.ProductName).SingleOrDefault(),
+                    SubFinishedGoodName = _appDbContext.Products.Where(p => p.ProductId == s.Fk_SubFinishedGoodId).Select(s => s.ProductName).SingleOrDefault(),
+                }).ToListAsync();
+                if (Query.Count > 0)
+                {
+                    var SalesConfigList = Query;
+                    _Result.CollectionObjData = SalesConfigList;
+                    _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
+                }
+                _Result.IsSuccess = true;
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+            }
+            return _Result;
+        }
+
+        public async Task<Result<bool>> CreateSalesConfig(ProductConfigDataRequest data)
+        {
+            Result<bool> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                var Query = _appDbContext.SalesConfigs.Where(s => s.Fk_FinishedGoodId == Guid.Parse(data.FinishedGoodId)).FirstOrDefaultAsync();
+                if (Query.Result == null)
+                {
+                    List<SalesConfig> salesConfigs = new();
+                    foreach (var item in data.RowData)
+                    {
+                        
+                        var AddNewMixProduct = new SalesConfig
+                        {
+                            Fk_FinishedGoodId = Guid.Parse(data.FinishedGoodId),
+                            Fk_SubFinishedGoodId = Guid.Parse(item[0]),
+                            Quantity = Convert.ToDecimal(item[1]),
+                            Unit = item[2].ToString()
+                           
+                    };
+                        salesConfigs.Add(AddNewMixProduct);
+                        #region Update Stock
+                        var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == Guid.Parse(item[0])).SingleOrDefaultAsync();
+                        if (UpdateStock != null)
+                        {
+                            UpdateStock.AvilableStock -= Convert.ToDecimal(item[1]);
+                            await _appDbContext.SaveChangesAsync();
+                        }
+                        else
+                        {
+                            _Result.WarningMessage = "Stock < 0";
+                            return _Result;
+                        }
+                        #endregion
+                    }
+                    await _appDbContext.SalesConfigs.AddRangeAsync(salesConfigs);
+                    int count = await _appDbContext.SaveChangesAsync();
+                    _Result.Response = (count > 0) ? ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Created) : ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Error);
+                }
+                _Result.IsSuccess = true;
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+            }
+            return _Result;
+        }
+
+        public async Task<Result<bool>> UpdateSalesConfig(SalesConfigModel data)
+        {
+            Result<bool> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                var Query = await _appDbContext.SalesConfigs.Where(s => s.SalesConfigId == data.SalesConfigId).FirstOrDefaultAsync();
+                if (Query != null)
+                {
+                    Query.Quantity = data.Quantity;
+                    Query.Unit = data.Unit;
+                    Query.Fk_FinishedGoodId = data.Fk_FinishedGoodId;
+                    Query.Fk_SubFinishedGoodId = data.Fk_SubFinishedGoodId;
+                    int count = await _appDbContext.SaveChangesAsync();
+                    _Result.Response = (count > 0) ? ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Modified) : ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Error);
+                }
+                _Result.IsSuccess = true;
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("horizonexception@gmail.com", "FMS Excepion", $"MasterRepo/UpdateGroup : {_Exception.Message}");
+            }
+            return _Result;
+        }
+
+        public async Task<Result<bool>> DeleteSalesConfig(Guid Id, IDbContextTransaction transaction)
+        {
+            Result<bool> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
+                Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
+                using var localTransaction = transaction ?? await _appDbContext.Database.BeginTransactionAsync();
+                try
+                {
+                    if (Id != Guid.Empty)
+                    {
+                        var Query = await _appDbContext.SalesConfigs.FirstOrDefaultAsync(x => x.SalesConfigId == Id);
+                        if (Query != null)
+                        {
+                            _appDbContext.SalesConfigs.Remove(Query);
+                            int count = await _appDbContext.SaveChangesAsync();
+                            _Result.Response = (count > 0) ? ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Deleted) : ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Error);
+                        }
+                        _Result.IsSuccess = true;
+                        localTransaction.Commit();
+                    }
+                }
+                catch
+                {
+                    localTransaction.Rollback();
+                    throw;
+                }
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("horizonexception@gmail.com", "FMS Excepion", $"AdminRepo/DeleteProductConfig : {_Exception.Message}");
+            }
+            return _Result;
+        }
+        #endregion
         #region Labour Rate Configuration
         public async Task<Result<LabourRateModel>> GetAllLabourRates()
         {
@@ -2101,7 +2244,6 @@ namespace FMS.Repository.Admin
             }
             return _Result;
         }
-
         #endregion
         #endregion
     }

@@ -83,6 +83,12 @@ namespace FMS.Repository.Admin
         Task<Result<bool>> UpdateProductConfig(ProductionModel data);
         Task<Result<bool>> DeleteProductConfig(Guid Id, IDbContextTransaction transaction);
         #endregion
+        #region  SalesConfig
+        Task<Result<SalesConfigModel>> GetSalesConfig();
+        Task<Result<bool>> CreateSalesConfig(ProductConfigDataRequest requestData);
+        Task<Result<bool>> UpdateSalesConfig(SalesConfigModel data);
+        Task<Result<bool>> DeleteSalesConfig(Guid Id, IDbContextTransaction transaction);
+        #endregion
         #region Labour Rate Configration
         Task<Result<LabourRateModel>> GetAllLabourRates();
         Task<Result<LabourRateModel>> GetProductionLabourRates(Guid ProductTypeId);
