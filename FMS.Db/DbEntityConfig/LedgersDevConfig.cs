@@ -28,8 +28,10 @@ namespace FMS.Db.DbEntityConfig
                new LedgerDev() { LedgerId = Guid.Parse("712D600B-DFD6-4704-9E32-317FE62499A9"), LedgerName = "Purchase Return A/c", LedgerType = "None", HasSubLedger = "No", Fk_LedgerGroupId = Guid.Parse("4458BCE5-4546-4120-A7DE-03ACEFD07B85") },
                new LedgerDev() { LedgerId = Guid.Parse("701C663E-DAC3-4A39-8D2A-36EB68426B54"), LedgerName = "Cash A/c", LedgerType = "None", HasSubLedger = "No", Fk_LedgerGroupId = Guid.Parse("F3EEF2DD-09BB-4E21-B036-1E5BBA920EFE") },
                new LedgerDev() { LedgerId = Guid.Parse("9BFA6931-977F-4A3D-A582-DA5F1F4AB773"), LedgerName = "Bank A/c", LedgerType = "None", HasSubLedger = "No", Fk_LedgerGroupId = Guid.Parse("F3EEF2DD-09BB-4E21-B036-1E5BBA920EFE") },
-               new LedgerDev() { LedgerId = Guid.Parse("7F740148-ED36-48AD-B194-031BC717842C"), LedgerName = "Labour Charges", LedgerType = "None", HasSubLedger = "No", Fk_LedgerGroupId = Guid.Parse("01548EF6-3FE2-4C0F-9A5F-CEED35066136") }
-                );
+               new LedgerDev() { LedgerId = Guid.Parse("7F740148-ED36-48AD-B194-031BC717842C"), LedgerName = "Labour Charges", LedgerType = "None", HasSubLedger = "No", Fk_LedgerGroupId = Guid.Parse("01548EF6-3FE2-4C0F-9A5F-CEED35066136") },
+                 new LedgerDev() { LedgerId = Guid.Parse("9EFD7830-125A-40E3-8F44-68AB03F52591"), LedgerName = "Transporting Charges Recive", LedgerType = "None", HasSubLedger = "No", Fk_LedgerGroupId = Guid.Parse("15FE2512-D922-45C5-9E03-64C32B903A5B") },
+                 new LedgerDev() { LedgerId = Guid.Parse("D281CBFB-3CAC-4C6A-8CE1-7B51973B8CA4"), LedgerName = "Transporting Charges Payment", LedgerType = "None", HasSubLedger = "No", Fk_LedgerGroupId = Guid.Parse("4458BCE5-4546-4120-A7DE-03ACEFD07B85") }
+               );
         }
     }
 }
