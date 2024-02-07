@@ -11,8 +11,7 @@
         public DateTime TransactionDate { get; set; }
         public string InvoiceNo { get; set; }
         public DateTime InvoiceDate { get; set; }
-        public string OrderNo { get; set; }
-        public DateTime OrderDate { get; set; }
+        public decimal TransportationCharges { get; set; }
         public decimal SubTotal { get; set; }
         public decimal Discount { get; set; }
         public decimal GrandTotal { get; set; }
@@ -25,7 +24,6 @@
         public Branch Branch { get; set; }
         public FinancialYear FinancialYear { get; set; }
         public ProductType ProductType { get; set; }
-    
         public ICollection<PurchaseReturnTransaction> PurchaseReturnTransactions { get; set; }
     }
 }

@@ -108,7 +108,6 @@ namespace FMS.Repository.Transaction
                     TransactionNo = s.TransactionNo,
                     TransactionDate = s.TransactionDate,
                     InvoiceNo = s.InvoiceNo,
-                    OrderNo = s.OrderNo,
                     GrandTotal = s.GrandTotal,
                     SubLedger = s.SubLedger != null ? new SubLedgerModel { SubLedgerName = s.SubLedger.SubLedgerName } : null,
                 }).ToListAsync();
@@ -144,8 +143,7 @@ namespace FMS.Repository.Transaction
                     TransactionDate = s.TransactionDate,
                     InvoiceNo = s.InvoiceNo,
                     InvoiceDate = s.InvoiceDate,
-                    OrderNo = s.OrderNo,
-                    OrderDate = s.OrderDate,
+                TransportationCharges=s.TransportationCharges,
                     VehicleNo = s.VehicleNo,
                     TranspoterName = s.TranspoterName,
                     ReceivingPerson = s.ReceivingPerson,
@@ -153,6 +151,7 @@ namespace FMS.Repository.Transaction
                     Discount = s.Discount,
                     SubTotal = s.SubTotal,
                     Gst = s.Gst,
+                  
                     GrandTotal = s.GrandTotal,
                     PurchaseTransactions = _appDbContext.PurchaseTransactions.Where(x => x.Fk_PurchaseOrderId == s.PurchaseOrderId && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).Select(x => new PurchaseTransactionModel
                     {
@@ -198,7 +197,7 @@ namespace FMS.Repository.Transaction
                 using var transaction = await _appDbContext.Database.BeginTransactionAsync();
                 try
                 {
-                    if (DateTime.TryParseExact(data.InvoiceDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedInvoiceDate) && DateTime.TryParseExact(data.OrderDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedOrderDate) && DateTime.TryParseExact(data.TransactionDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedTransactionDate))
+                    if (DateTime.TryParseExact(data.InvoiceDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedInvoiceDate) && DateTime.TryParseExact(data.TransactionDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedTransactionDate))
                     {
                         #region Purchase Odr
                         var newPurchaseOrder = new PurchaseOrder
@@ -214,8 +213,7 @@ namespace FMS.Repository.Transaction
                             TranspoterName = data.TranspoterName,
                             VehicleNo = data.VehicleNo,
                             ReceivingPerson = data.ReceivingPerson,
-                            OrderNo = data.OrderNo,
-                            OrderDate = convertedOrderDate,
+                            TransportationCharges = data.TransportationCharges,
                             SubTotal = data.SubTotal,
                             Narration = data.Naration,
                             Discount = data.DiscountAmount,
@@ -425,7 +423,7 @@ namespace FMS.Repository.Transaction
                 using var transaction = await _appDbContext.Database.BeginTransactionAsync();
                 try
                 {
-                    if (DateTime.TryParseExact(data.InvoiceDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedInvoiceDate) && DateTime.TryParseExact(data.OrderDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedOrderDate) && DateTime.TryParseExact(data.TransactionDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedTransactionDate))
+                    if (DateTime.TryParseExact(data.InvoiceDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedInvoiceDate) && DateTime.TryParseExact(data.TransactionDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedTransactionDate))
                     {
                         var UpdatePurchaseOrder = await _appDbContext.PurchaseOrders.Where(s => s.PurchaseOrderId == data.PurchaseOrderId && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).SingleOrDefaultAsync();
                         if (UpdatePurchaseOrder != null)
@@ -494,8 +492,7 @@ namespace FMS.Repository.Transaction
                                 UpdatePurchaseOrder.TransactionDate = convertedTransactionDate;
                                 UpdatePurchaseOrder.InvoiceNo = data.InvoiceNo;
                                 UpdatePurchaseOrder.InvoiceDate = convertedInvoiceDate;
-                                UpdatePurchaseOrder.OrderNo = data.OrderNo;
-                                UpdatePurchaseOrder.OrderDate = convertedOrderDate;
+                                UpdatePurchaseOrder.TransportationCharges = data.TransportationCharges;
                                 UpdatePurchaseOrder.VehicleNo = data.VehicleNo;
                                 UpdatePurchaseOrder.TranspoterName = data.TranspoterName;
                                 UpdatePurchaseOrder.Narration = data.Naration;
@@ -826,7 +823,6 @@ namespace FMS.Repository.Transaction
                     TransactionNo = s.TransactionNo,
                     TransactionDate = s.TransactionDate,
                     InvoiceNo = s.InvoiceNo,
-                    OrderNo = s.OrderNo,
                     GrandTotal = s.GrandTotal,
                     SubLedger = s.SubLedger != null ? new SubLedgerModel { SubLedgerName = s.SubLedger.SubLedgerName } : null,
                 }).ToListAsync();
@@ -862,8 +858,7 @@ namespace FMS.Repository.Transaction
                     TransactionDate = s.TransactionDate,
                     InvoiceNo = s.InvoiceNo,
                     InvoiceDate = s.InvoiceDate,
-                    OrderNo = s.OrderNo,
-                    OrderDate = s.OrderDate,
+                    TransportationCharges = s.TransportationCharges,
                     VehicleNo = s.VehicleNo,
                     TranspoterName = s.TranspoterName,
                     ReceivingPerson = s.ReceivingPerson,
@@ -916,7 +911,7 @@ namespace FMS.Repository.Transaction
                 using var transaction = await _appDbContext.Database.BeginTransactionAsync();
                 try
                 {
-                    if (DateTime.TryParseExact(data.InvoiceDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedInvoiceDate) && DateTime.TryParseExact(data.OrderDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedOrderDate) && DateTime.TryParseExact(data.TransactionDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedTransactionDate))
+                    if (DateTime.TryParseExact(data.InvoiceDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedInvoiceDate) && DateTime.TryParseExact(data.TransactionDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedTransactionDate))
                     {
                         #region purchase Return Order
                         var newPurchaseReturnOrder = new PurchaseReturnOrder
@@ -929,8 +924,7 @@ namespace FMS.Repository.Transaction
                             TransactionNo = data.TransactionNo,
                             InvoiceNo = data.InvoiceNo,
                             InvoiceDate = convertedInvoiceDate,
-                            OrderNo = data.OrderNo,
-                            OrderDate = convertedOrderDate,
+                            TransportationCharges = data.TransportationCharges,
                             TranspoterName = data.TranspoterName,
                             ReceivingPerson = data.ReceivingPerson,
                             Narration = data.Naration,
@@ -957,7 +951,7 @@ namespace FMS.Repository.Transaction
                             var newLedgerBalance = new LedgerBalance
                             {
                                 Fk_LedgerId = MappingLedgers.PurchaseReturnAccount,
-                                OpeningBalance =0,
+                                OpeningBalance = 0,
                                 OpeningBalanceType = "Cr",
                                 RunningBalance = -newPurchaseReturnOrder.GrandTotal,
                                 RunningBalanceType = "Cr",
@@ -1142,7 +1136,7 @@ namespace FMS.Repository.Transaction
                 using var transaction = await _appDbContext.Database.BeginTransactionAsync();
                 try
                 {
-                    if (DateTime.TryParseExact(data.InvoiceDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedInvoiceDate) && DateTime.TryParseExact(data.OrderDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedOrderDate) && DateTime.TryParseExact(data.TransactionDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedTransactionDate))
+                    if (DateTime.TryParseExact(data.InvoiceDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedInvoiceDate) && DateTime.TryParseExact(data.TransactionDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedTransactionDate))
                     {
                         //************************************************************purchase Return Order*************************************************************//
                         var UpdatePurchaseReturnOrder = await _appDbContext.PurchaseReturnOrders.Where(s => s.PurchaseReturnOrderId == data.PurchaseOrderId && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).SingleOrDefaultAsync();
@@ -1207,8 +1201,7 @@ namespace FMS.Repository.Transaction
                                 UpdatePurchaseReturnOrder.TransactionDate = convertedTransactionDate;
                                 UpdatePurchaseReturnOrder.InvoiceNo = data.InvoiceNo;
                                 UpdatePurchaseReturnOrder.InvoiceDate = convertedInvoiceDate;
-                                UpdatePurchaseReturnOrder.OrderNo = data.OrderNo;
-                                UpdatePurchaseReturnOrder.OrderDate = convertedOrderDate;
+                                UpdatePurchaseReturnOrder.TransportationCharges = data.TransportationCharges;
                                 UpdatePurchaseReturnOrder.VehicleNo = data.VehicleNo;
                                 UpdatePurchaseReturnOrder.TranspoterName = data.TranspoterName;
                                 UpdatePurchaseReturnOrder.ReceivingPerson = data.ReceivingPerson;
@@ -2662,7 +2655,7 @@ namespace FMS.Repository.Transaction
                             Gst = data.Gst,
                             Discount = data.Discount,
                             GrandTotal = data.GrandTotal,
-                           Narration = data.Naration
+                            Narration = data.Naration
                         };
                         await _appDbContext.SalesOrders.AddAsync(newSalesOrder);
                         await _appDbContext.SaveChangesAsync();
@@ -3555,7 +3548,7 @@ namespace FMS.Repository.Transaction
                                         await _appDbContext.SaveChangesAsync();
                                     }
                                 }
-                                
+
                                 // @Sales A/c ------Cr
                                 var updateSalesLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.SalesAccount && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
                                 if (updateSalesLedgerBalance != null)
