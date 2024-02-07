@@ -19,8 +19,7 @@ namespace FMS.Db.DbEntityConfig
             builder.Property(e => e.TransactionDate).HasColumnType("datetime").IsRequired(true);
             builder.Property(e => e.InvoiceNo).HasMaxLength(100).IsRequired(true);
             builder.Property(e => e.InvoiceDate).HasColumnType("datetime").IsRequired(true);
-            builder.Property(e => e.OrderNo).HasMaxLength(100).IsRequired(false);
-            builder.Property(e => e.OrderDate).HasColumnType("datetime").IsRequired(true);
+            builder.Property(e => e.TransportationCharges).HasColumnType("decimal(18,2)").HasDefaultValue(0);
             builder.Property(e => e.TranspoterName).HasMaxLength(100).IsRequired(true);
             builder.Property(e => e.ReceivingPerson).HasMaxLength(100).IsRequired(true);
             builder.Property(e => e.VehicleNo).HasMaxLength(100).IsRequired(true);

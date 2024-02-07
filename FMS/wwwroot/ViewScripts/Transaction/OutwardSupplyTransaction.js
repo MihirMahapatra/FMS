@@ -17,8 +17,24 @@ $(function () {
     const ddlBranch = $('select[name="ddlBranchId"]');
     const ddlProductType = $('select[name="ddlProductTypeId"]');
     const totalAmout = $('input[name="GrandTotal"]');
+    var OutwardSupplyTable = $('#tblOutwardSupply').DataTable({
+        "paging": false,
+        "lengthChange": false,
+        "searching": false,
+        "ordering": true,
+        "info": false,
+        "autoWidth": false,
+        "responsive": true,
+        lengthMenu: [5, 10, 25, 50], // Set the available page lengths
+        pageLength: 10,// Set the default page length to 5
+    });
     //-----------------------------------------Contorl Foucous Of Element----------------------------------//
     ddlBranch.focus();
+    $('#addOutwardSupplyRowBtn').on('keydown', function (e) {
+        if (e.key === 'Insert' || e.keyCode === 45) {
+
+        }
+    });
     $(document).on('keydown', function (e) {
         if (e.key === 'Insert' || e.keyCode === 45) {
             e.preventDefault();
@@ -144,7 +160,7 @@ $(function () {
             html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
             html += '<td><button class="btn btn-primary btn-link deleteBtn" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button></td>';
             html += '</tr>';
-            var newRow = $('#tblOutwardSupply tbody').append(html);
+            var newRow = OutwardSupplyTable.row.add($(html)).draw(false).node();
             $.ajax({
                 url: '/Transaction/GetProductByType?ProductTypeId=' + ddlProductType.val() + '',
                 type: "GET",
@@ -167,25 +183,15 @@ $(function () {
                 }
             });
         }
+
+
         $('#tblOutwardSupply tbody').find('.select2bs4').select2({
             theme: 'bootstrap4'
         });
-        if (!$.fn.DataTable.isDataTable('#tblOutwardSupply')) {
-            $('#tblOutwardSupply').DataTable({
-                    "paging": false,
-                    "lengthChange": false,
-                    "searching": false,
-                    "ordering": true,
-                    "info": false,
-                    "autoWidth": false,
-                    "responsive": true,
-                    lengthMenu: [5, 10, 25, 50],
-                    pageLength: 10,
-            });
-        }
     }
     $(document).on('click', '.deleteBtn', function () {
-        $(this).closest('tr').remove();
+        var row = OutwardSupplyTable.row($(this).closest('tr'));
+        row.remove().draw();
     });
     $('#tblOutwardSupply tbody').on('change', 'input[type="text"]', function () {
         var row = $(this).closest('tr');

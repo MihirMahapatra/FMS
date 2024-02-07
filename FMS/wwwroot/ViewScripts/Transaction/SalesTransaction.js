@@ -10,17 +10,17 @@ $(function () {
     const day = String(today.getDate()).padStart(2, '0');
     const todayDate = `${day}/${month}/${year}`;
     var GstTable = $('#tblGstdifference');
-    //var SalesTable = $('#tblSales').DataTable({
-    //    "paging": false,
-    //    "lengthChange": false,
-    //    "searching": false,
-    //    "ordering": true,
-    //    "info": false,
-    //    "autoWidth": false,
-    //    "responsive": true,
-    //    lengthMenu: [5, 10, 25, 50], // Set the available page lengths
-    //    pageLength: 10 // Set the default page length to 5
-    //});
+    var SalesTable = $('#tblSales').DataTable({
+        "paging": false,
+        "lengthChange": false,
+        "searching": false,
+        "ordering": true,
+        "info": false,
+        "autoWidth": false,
+        "responsive": true,
+        lengthMenu: [5, 10, 25, 50], // Set the available page lengths
+        pageLength: 10 // Set the default page length to 5
+    });
     const ddlPayment = $('select[name="ddlPayment"]');
     const ddlRate = $('select[name="ddlRate"]');
     const CustomerName = $('input[name="CustomerName"]');
@@ -37,7 +37,6 @@ $(function () {
     const gst = $('input[name="GstAmount"]');
     const vehicleNo = $('input[name="VehicleNo"]');
     const transpoterName = $('input[name="TranspoterName"]');
-    //const receivingPerson = $('input[name="ReceivingPerson"]');
     const grandTotal = $('input[name="GrandTotal"]');
     const Narration = $('textarea[name="NarrationSales"]')
     //---------------------------------Contorl Foucous Of Element Sale-------------------------------//
@@ -72,6 +71,7 @@ $(function () {
     transpoterName.on('blur', function () {
         $(this).css('border-color', ''); // Reset background color on blur
     });
+
     var chkPage = false;
     $('a[href="#CreateSale"]').on('click', function () {
         chkPage = false;
@@ -135,6 +135,7 @@ $(function () {
             $(this).val(inputValue);
         }
     });
+
     orderNo.on("input", function () {
         let inputValue = $(this).val();
         inputValue = inputValue.toUpperCase();
@@ -165,17 +166,17 @@ $(function () {
     const Sr_receivingPerson = $('input[name="Sr_ReceivingPerson"]');
     const Sr_gst = $('input[name="Sr_GstAmount"]');
     const Sr_Narration = $('textarea[name="NarrationSalesReturn"]');
-    //var SalesReturnTable = $('#tblSalesReturn').DataTable({
-    //    "paging": false,
-    //    "lengthChange": false,
-    //    "searching": false,
-    //    "ordering": true,
-    //    "info": false,
-    //    "autoWidth": false,
-    //    "responsive": true,
-    //    lengthMenu: [5, 10, 25, 50], // Set the available page lengths
-    //    pageLength: 10,// Set the default page length to 5
-    //});
+    var SalesReturnTable = $('#tblSalesReturn').DataTable({
+        "paging": false,
+        "lengthChange": false,
+        "searching": false,
+        "ordering": true,
+        "info": false,
+        "autoWidth": false,
+        "responsive": true,
+        lengthMenu: [5, 10, 25, 50], // Set the available page lengths
+        pageLength: 10,// Set the default page length to 5
+    });
     //-------------------------------Contorl Foucous Of Element Sale Return--------------------------------//
     Sr_ddlPayment.focus();
     Sr_CustomerName.on('focus', function () {
@@ -224,7 +225,7 @@ $(function () {
                 $('#addSalesReturnRowBtn').click();
             }
         }
-    }); 
+    });
     $('#addSalesReturnRowBtn').on('focus', function () {
         $(this).css('background-color', 'black');
     });
@@ -403,15 +404,15 @@ $(function () {
         html += '<td><div class="form-group"><select class="form-control form-control-sm select2bs4 FinishedGood" style="width: 100%;" id="' + uniqueId + '"></select></div></td>';
         html += '<td>' +
             '<div class="form-group">' +
-            '<div class="input-group">'+
+            '<div class="input-group">' +
             '<input type="text" class="form-control" value="0">' +
             ' <div class="input-group-append">' +
-            ' <span class="input-group-text" id="Unit">N/A</span>'+
+            ' <span class="input-group-text" id="Unit">N/A</span>' +
             '</div>' +
             '</div>' +
             '</div>' +
             '</td>';
-        if (ddlRate.val() ==='wholesalerate') {
+        if (ddlRate.val() === 'wholesalerate') {
             html += '<td><div class="form-group"><input type="text" class="form-control rate" value="0" disabled></div></td>';
         }
         else {
@@ -424,8 +425,7 @@ $(function () {
         html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
         html += '<td><button class="btn btn-primary btn-link deleteBtn" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button></td>';
         html += '</tr>';
-        //SalesTable.row.add($(html)).draw(false).node();
-        var newRow = $('#tblSales tbody').append(html);
+        SalesTable.row.add($(html)).draw(false).node();
         $.ajax({
             url: "/Transaction/GetProductFinishedGood",
             type: "GET",
@@ -454,13 +454,13 @@ $(function () {
     $(document).on('click', '.deleteBtn', function () {
         $(this).closest('tr').remove();
     });
-    $(document).on('change', '.FinishedGood', function ()  {
+    $(document).on('change', '.FinishedGood', function () {
         var selectElement = $(this);
         var selectedProductId = selectElement.val();
         var rateType = ddlRate.val();
         if (selectedProductId) {
             $.ajax({
-                url: '/Transaction/GetProductGstWithRate?id=' + selectedProductId + '&&RateType=' + rateType +' ' ,
+                url: '/Transaction/GetProductGstWithRate?id=' + selectedProductId + '&&RateType=' + rateType + ' ',
                 type: "GET",
                 contentType: "application/json;charset=utf-8",
                 dataType: "json",
@@ -481,7 +481,7 @@ $(function () {
                 }
             });
         }
-        });
+    });
     $('#tblSales tbody').on('change', 'input[type="text"]', function () {
         var row = $(this).closest('tr');
         var quantity = parseFloat(row.find('input:eq(1)').val());
@@ -890,7 +890,7 @@ $(function () {
                         '<div class="input-group">' +
                         '<input type="text" class="form-control" id="" value=' + item.Quantity + '>' +
                         ' <div class="input-group-append">' +
-                        ' <span class="input-group-text" id="Unit">' + item.Product.Unit.UnitName +'</span>' +
+                        ' <span class="input-group-text" id="Unit">' + item.Product.Unit.UnitName + '</span>' +
                         '</div>' +
                         '</div>' +
                         '</div>' +
@@ -994,7 +994,7 @@ $(function () {
             toastr.error('TranspoterName Is Required.');
             transpoterName.focus();
             return;
-        }  else {
+        } else {
             $('#loader').show();
             var rowData = [];
             $('#tblSales tbody tr').each(function () {
@@ -1213,8 +1213,7 @@ $(function () {
         html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
         html += '<td><button class="btn btn-primary btn-link deleteBtnReturn" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button></td>';
         html += '</tr>';
-        //var newRow = SalesReturnTable.row.add($(html)).draw(false).node();
-        var newRow = $('#tblSalesReturn tbody').append(html);
+        var newRow = SalesReturnTable.row.add($(html)).draw(false).node();
         $.ajax({
             url: "/Transaction/GetProductFinishedGood",
             type: "GET",
@@ -1253,13 +1252,13 @@ $(function () {
             $('.Sr_hdntxt').show();
         }
     });
-    $(document).on('change', '.GoodsFinishedReturn',  function () {
+    $(document).on('change', '.GoodsFinishedReturn', function () {
         var selectElement = $(this);
         var selectedProductId = selectElement.val();
         var rateType = Sr_ddlRate.val();
         if (selectedProductId) {
             $.ajax({
-                url: '/Transaction/GetProductGstWithRate?id=' + selectedProductId +'&&RateType=' + rateType +'',
+                url: '/Transaction/GetProductGstWithRate?id=' + selectedProductId + '&&RateType=' + rateType + '',
                 type: "GET",
                 contentType: "application/json;charset=utf-8",
                 dataType: "json",
@@ -1271,7 +1270,7 @@ $(function () {
                         }
                         Textbox.eq(4).val(result.Product.GST);
                         Textbox.eq(1).val(result.Product.Price);
-                        var span = selectElement.closest('tr').find('span#Unitrtn'); 
+                        var span = selectElement.closest('tr').find('span#Unitrtn');
                         span.text(result.Product.Unit.UnitName);
                     }
                 },
@@ -1363,7 +1362,8 @@ $(function () {
             toastr.error('orderNo Is Required.');
             Sr_orderNo.focus();
             return;
-        } else if (!Sr_orderDate.val()) {
+        }
+        else if (!Sr_orderDate.val()) {
             toastr.error('orderDate Is Required.');
             Sr_orderDate.focus();
             return;
@@ -1380,7 +1380,8 @@ $(function () {
             toastr.error('ReceivingPerson Is Required.');
             Sr_receivingPerson.focus();
             return;
-        } else {
+        }
+        else {
             $('#loader').show();
             var rowData = [];
             $('#tblSalesReturn tbody tr').each(function () {
@@ -1410,8 +1411,8 @@ $(function () {
                 Gst: Sr_gst.val(),
                 TranspoterName: Sr_transpoterName.val(),
                 VehicleNo: Sr_vehicleNo.val(),
-                ReceivingPerson: Sr_receivingPerson.val(),
                 Naration: Sr_Narration.val(),
+                ReceivingPerson: Sr_receivingPerson.val(),
                 rowData: rowData
             };
             $.ajax({
@@ -1472,7 +1473,7 @@ $(function () {
                 html += '<th>Trxn No</th>'
                 html += '<th>Trxn Dt.</th>'
                 html += '<th>Party</th>'
-                html += '<th>Mat Receipt No</th>'
+                html += '<th>Mat.ReceiptNo</th>'
                 html += '<th>Grand Total</th>'
                 html += '<th>Action</th>'
                 html += '</tr>'
@@ -1644,10 +1645,10 @@ $(function () {
                     }
                 });
                 Sr_transpoterName.val(result.SalesReturnOrder.TranspoterName);
-                Sr_receivingPerson.val(result.SalesReturnOrder.ReceivingPerson);
                 Sr_Narration.val(result.SalesReturnOrder.Naration);
                 Sr_vehicleNo.val(result.SalesReturnOrder.VehicleNo);
                 Sr_orderNo.val(result.SalesReturnOrder.OrderNo);
+                Sr_receivingPerson.val(result.SalesReturnOrder.ReceivingPerson);
                 ModifyorderDate = result.SalesReturnOrder.OrderDate;
                 if (ModifyorderDate) {
                     const dateObject = new Date(ModifyorderDate);
@@ -1674,7 +1675,7 @@ $(function () {
                         '<div class="input-group">' +
                         '<input type="text" class="form-control" value=' + item.Quantity + '>' +
                         ' <div class="input-group-append">' +
-                        ' <span class="input-group-text" id="Unitrtn" value="N/A">'+"N/A"+'</span>' +
+                        ' <span class="input-group-text" id="Unitrtn" value="N/A">' + "N/A" + '</span>' +
                         '</div>' +
                         '</div>' +
                         '</div>' +
@@ -1782,7 +1783,8 @@ $(function () {
             toastr.error('ReceivingPerson Is Required.');
             Sr_receivingPerson();
             return;
-        } else {
+        }
+        else {
             $('#loader').show();
             var rowData = [];
             $('#tblSalesReturn tbody tr').each(function () {
@@ -1830,10 +1832,11 @@ $(function () {
                         Sr_OrderId.val('');
                         Sr_transactionNo.val('');
                         Sr_transactionDate.val('');
-                        Sr_orderNo.val('');
                         Sr_receivingPerson.val('');
+                        Sr_transpoterName.val('');
+                        Sr_vehicleNo.val('');
+                        Sr_orderNo.val('');
                         Sr_orderDate.val('');
-                        Sr_CustomerName.val('');
                         Sr_Narration.val('');
                         Sr_subTotal.val('0');
                         Sr_discount.val('0');

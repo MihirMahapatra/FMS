@@ -18,27 +18,26 @@ $(function () {
     const ddlSupplyer = $('select[name="ddlSupplyerId"]');
     const invoiceNo = $('input[name="InvoiceNo"]');
     const invoiceDate = $('input[name="InvoiceDate"]');
-    //const orderNo = $('input[name="OrderNo"]');
-    const orderDate = $('input[name="OrderDate"]');
     const subTotal = $('input[name="SubTotal"]');
     const discount = $('input[name="TotalDiscountAmount"]');
+    const transportationCharges = $('input[name="TransportationCharges"]');
     const grandTotal = $('input[name="GrandTotal"]');
     const vehicleNo = $('input[name="VehicleNo"]');
     const transpoterName = $('input[name="TranspoterName"]');
     const receivingPerson = $('input[name="ReceivingPerson"]');
     const gst = $('input[name="GstAmount"]');
     const Naration = $('textarea[name="NarrationPurchase"]');
-    //var PurchaseTable = $('#tblPurchase').DataTable({
-    //    "paging": false,
-    //    "lengthChange": false,
-    //    "searching": false,
-    //    "ordering": true,
-    //    "info": false,
-    //    "autoWidth": false,
-    //    "responsive": true,
-    //    lengthMenu: [5, 10, 25, 50], // Set the available page lengths
-    //    pageLength: 10,// Set the default page length to 5
-    //});
+    var PurchaseTable = $('#tblPurchase').DataTable({
+        "paging": false,
+        "lengthChange": false,
+        "searching": false,
+        "ordering": true,
+        "info": false,
+        "autoWidth": false,
+        "responsive": true,
+        lengthMenu: [5, 10, 25, 50], // Set the available page lengths
+        pageLength: 10,// Set the default page length to 5
+    });
     transactionDate.val(todayDate);
     orderDate.val(todayDate);
     invoiceDate.val(todayDate);
@@ -54,12 +53,6 @@ $(function () {
         $(this).css('border-color', 'red');
     });
     invoiceDate.on('blur', function () {
-        $(this).css('border-color', ''); // Reset background color on blur
-    });
-    orderDate.on('focus', function () {
-        $(this).css('border-color', 'red');
-    });
-    orderDate.on('blur', function () {
         $(this).css('border-color', ''); // Reset background color on blur
     });
     vehicleNo.on('focus', function () {
@@ -148,7 +141,6 @@ $(function () {
         inputValue = inputValue.toUpperCase();
         $(this).val(inputValue);
     });
-   
     vehicleNo.on("input", function () {
         let inputValue = $(this).val();
         inputValue = inputValue.toUpperCase();
@@ -162,30 +154,30 @@ $(function () {
     const Pr_ddlSupplyer = $('select[name="Pr_ddlSupplyerId"]');
     const Pr_invoiceNo = $('input[name="Pr_InvoiceNo"]');
     const Pr_invoiceDate = $('input[name="Pr_InvoiceDate"]');
-    const Pr_orderDate = $('input[name="Pr_OrderDate"]');
     const Pr_subTotal = $('input[name="Pr_SubTotal"]');
     const Pr_discount = $('input[name="Pr_DiscountAmount"]');
+    const Pr_transportationCharges = $('input[name="Pr_TransportationCharges"]');
     const Pr_grandTotal = $('input[name="Pr_GrandTotal"]');
     const Pr_vehicleNo = $('input[name="Pr_VehicleNo"]');
     const Pr_transpoterName = $('input[name="Pr_TranspoterName"]');
     const Pr_receivingPerson = $('input[name="Pr_ReceivingPerson"]');
     const Pr_gst = $('input[name="Pr_GstAmount"]');
     const Pr_Narration = $('textarea[name="NarrationPurchaseReturn"]');
-    //var PurchaseReturnTable = $('#tblPurchaseReturn').DataTable({
-    //    "paging": false,
-    //    "lengthChange": false,
-    //    "searching": false,
-    //    "ordering": true,
-    //    "info": false,
-    //    "autoWidth": false,
-    //    "responsive": true,
-    //    lengthMenu: [5, 10, 25, 50], // Set the available page lengths
-    //    pageLength: 10,// Set the default page length to 5
-    //});
+    var PurchaseReturnTable = $('#tblPurchaseReturn').DataTable({
+        "paging": false,
+        "lengthChange": false,
+        "searching": false,
+        "ordering": true,
+        "info": false,
+        "autoWidth": false,
+        "responsive": true,
+        lengthMenu: [5, 10, 25, 50], // Set the available page lengths
+        pageLength: 10,// Set the default page length to 5
+    });
     Pr_transactionDate.val(todayDate)
     Pr_orderDate.val(todayDate);
     Pr_invoiceDate.val(todayDate);
-    //-----------------------------------Contorl Foucous Of Element Purchase Return----------------------------//
+    /*-----------------------------------Contorl Foucous Of Element Purchase Return----------------------------*/
     Pr_invoiceNo.on('focus', function () {
         $(this).css('border-color', 'red');
     });
@@ -196,13 +188,6 @@ $(function () {
         $(this).css('border-color', 'red');
     });
     Pr_invoiceDate.on('blur', function () {
-        $(this).css('border-color', ''); // Reset background color on blur
-    });
-   
-    Pr_orderDate.on('focus', function () {
-        $(this).css('border-color', 'red');
-    });
-    Pr_orderDate.on('blur', function () {
         $(this).css('border-color', ''); // Reset background color on blur
     });
     Pr_vehicleNo.on('focus', function () {
@@ -263,13 +248,12 @@ $(function () {
     $('#Pr_btnUpdate').on('blur', function () {
         $(this).css('background-color', '');
     });
-    //-------------------------------------Purchase Return Validation------------------------------------------//
+    /*-------------------------------------Purchase Return Validation------------------------------------------*/
     Pr_invoiceNo.on("input", function () {
         let inputValue = $(this).val();
         inputValue = inputValue.toUpperCase();
         $(this).val(inputValue);
     });
-   
     Pr_vehicleNo.on("input", function () {
         let inputValue = $(this).val();
         inputValue = inputValue.toUpperCase();
@@ -297,7 +281,7 @@ $(function () {
             $(this).val(inputValue);
         }
     });
-    //-------------------------------------------------------------Purchase Screen --------------------------------------------------------//
+    /*-------------------------------------------------------------Purchase Screen --------------------------------------------------------*/
     //Insert Operation  
     GetProductTypes();
     function GetProductTypes() {
@@ -409,9 +393,7 @@ $(function () {
             html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
             html += '<td><button class="btn btn-primary btn-link deleteBtn" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button></td>';
             html += '</tr>';
-            //var newRow = PurchaseTable.row.add($(html)).draw(false).node();
-            var newRow = $('#tblPurchase tbody').append(html);
-            
+            var newRow = PurchaseTable.row.add($(html)).draw();
             $.ajax({
                 url: '/Transaction/GetProductByType?ProductTypeId=' + ddlProductType.val() + '',
                 type: "GET",
@@ -520,7 +502,8 @@ $(function () {
         }
     });
     $(document).on('click', '.deleteBtn', function () {
-        $(this).closest('tr').remove();
+        var row = PurchaseTable.row($(this).closest('tr'));
+        row.remove().draw();
     });
     $('#tblPurchase tbody').on('change', 'input[type="text"]', function () {
         var row = $(this).closest('tr');
@@ -600,10 +583,7 @@ $(function () {
         } else if (!invoiceDate.val()) {
             toastr.error('InvoiceDate Is Required.');
             return;
-        }  else if (!orderDate.val()) {
-            toastr.error('orderDate Is Required.');
-            return;
-        } else if (!vehicleNo.val()) {
+        }  else if (!vehicleNo.val()) {
             toastr.error('VehicleNo Is Required.');
             vehicleNo.focus();
             return;
@@ -639,10 +619,10 @@ $(function () {
                 TransactionNo: transactionNo.val(),
                 InvoiceNo: invoiceNo.val(),
                 InvoiceDate: invoiceDate.val(),
-                OrderDate: orderDate.val(),
                 SubTotal: subTotal.val(),
                 DiscountAmount: discount.val(),
                 GrandTotal: grandTotal.val(),
+                TransportationCharges: transportationCharges.val(),
                 GstAmount: gst.val(),
                 TranspoterName: transpoterName.val(),
                 VehicleNo: vehicleNo.val(),
@@ -740,6 +720,7 @@ $(function () {
                         }
 
                         html += '<td>' + item.InvoiceNo + '</td>';
+
                         html += '<td>' + item.GrandTotal + '</td>';
                         html += '<td style="background-color:#ffe6e6;">';
                         html += '<button class="btn btn-primary btn-link btn-sm btn-purchase-edit"   id="btnPurchaseEdit_' + item.PurchaseOrderId + '"     data-id="' + item.PurchaseOrderId + '" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-edit"></i></button>';
@@ -879,7 +860,7 @@ $(function () {
                         invoiceDate.val(formattedDate);
                     }
                 }
-                
+
                 ModifyorderDate = result.purchaseOrder.OrderDate;
                 if (ModifyorderDate) {
                     const dateObject = new Date(ModifyorderDate);
@@ -929,14 +910,13 @@ $(function () {
                     html += '<td><div class="form-group"><input type="text" class="form-control" id=""  value=' + item.Amount + '></div></td>';
                     html += '<td><button class="btn btn-primary btn-link deleteBtn" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button></td>';
                     html += '</tr>';
-
                     PurchaseTable.row.add($(html)).draw(false).node();
                     var selectProductElement = $('#ddnProduct_' + item.PurchaseId);
                     selectProductElement.empty();
                     var defaultProductOption = $('<option></option>').val('').text('--Select Option--');
                     selectProductElement.append(defaultProductOption);
                     $.ajax({
-                        url: '/Transaction/GetProductByType?ProductTypeId=' + result.purchaseOrder.Fk_ProductTypeId +'',
+                        url: '/Transaction/GetProductByType?ProductTypeId=' + result.purchaseOrder.Fk_ProductTypeId + '',
                         type: "GET",
                         contentType: "application/json;charset=utf-8",
                         dataType: "json",
@@ -1035,7 +1015,7 @@ $(function () {
         } else if (!invoiceDate.val()) {
             toastr.error('InvoiceDate Is Required.');
             return;
-        }  else if (!orderDate.val()) {
+        } else if (!orderDate.val()) {
             toastr.error('orderDate Is Required.');
             return;
         } else if (!vehicleNo.val()) {
@@ -1073,6 +1053,7 @@ $(function () {
                 Fk_SubLedgerId: ddlSupplyer.val(),
                 InvoiceNo: invoiceNo.val(),
                 InvoiceDate: invoiceDate.val(),
+
                 OrderDate: orderDate.val(),
                 TranspoterName: transpoterName.val(),
                 VehicleNo: vehicleNo.val(),
@@ -1095,11 +1076,13 @@ $(function () {
                     if (Response.ResponseCode == 200) {
                         toastr.success(Response.SuccessMsg);
                         PurchaseTable.clear().draw();
+
                         purchaseOrderId.val('');
                         transactionNo.val('');
                         transactionDate.val('');
                         invoiceNo.val('');
                         invoiceDate.val('');
+
                         orderDate.val('');
                         vehicleNo.val('');
                         transpoterName.val('');
@@ -1271,8 +1254,7 @@ $(function () {
             html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
             html += '<td><button class="btn btn-primary btn-link deleteBtnReturn" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button></td>';
             html += '</tr>';
-            //var newRow = PurchaseReturnTable.row.add($(html)).draw(false).node();
-            var newRow = $('#tblPurchaseReturn tbody').append(html);
+            var newRow = PurchaseReturnTable.row.add($(html)).draw(false).node();
             $.ajax({
                 url: '/Transaction/GetProductByType?ProductTypeId=' + Pr_ddlProductType.val() + '',
                 type: "GET",
@@ -1332,7 +1314,8 @@ $(function () {
         }
     });
     $(document).on('click', '.deleteBtnReturn', function () {
-        $(this).closest('tr').remove();
+        var row = PurchaseReturnTable.row($(this).closest('tr'));
+        row.remove().draw();
     });
     $(document).on('keydown', function (e) {
         if (e.which == 40) {
@@ -1512,7 +1495,7 @@ $(function () {
 
         }
     }
-    //-----------------------------------------------------Purchase Return List Scren --------------------------------------------------//
+    /*-----------------------------------------------------Purchase Return List Scren --------------------------------------------------*/
     $('a[href="#PurchaseReturnList"]').on('click', function () {
         GetPurchaseReturns();
     });
@@ -1565,7 +1548,6 @@ $(function () {
                         }
 
                         html += '<td>' + item.InvoiceNo + '</td>';
-                        
                         html += '<td>' + item.GrandTotal + '</td>';
                         html += '<td style="background-color:#ffe6e6;">';
                         html += '<button class="btn btn-primary btn-link btn-sm btn-purchase-return-edit"   id="btnPurchaseReturnEdit_' + item.PurchaseReturnOrderId + '"     data-id="' + item.PurchaseReturnOrderId + '" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-edit"></i></button>';
@@ -1754,7 +1736,7 @@ $(function () {
                     var defaultOption = $('<option></option>').val('').text('--Select Option--');
                     selectProductElement.append(defaultOption);
                     $.ajax({
-                        url: '/Transaction/GetProductByType?ProductTypeId=' + result.purchaseReturnOrder.Fk_ProductTypeId +'',
+                        url: '/Transaction/GetProductByType?ProductTypeId=' + result.purchaseReturnOrder.Fk_ProductTypeId + '',
                         type: "GET",
                         contentType: "application/json;charset=utf-8",
                         dataType: "json",
@@ -1852,7 +1834,7 @@ $(function () {
         } else if (!Pr_invoiceDate.val()) {
             toastr.error('InvoiceDate Is Required.');
             return;
-        }  else if (!Pr_orderDate.val()) {
+        } else if (!Pr_orderDate.val()) {
             toastr.error('orderDate Is Required.');
             return;
         } else if (!Pr_vehicleNo.val()) {
