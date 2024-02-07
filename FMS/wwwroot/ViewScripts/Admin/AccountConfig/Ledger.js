@@ -98,8 +98,8 @@ $(function () {
         var ledgerGroupName = $tr.find('td:eq(1)').text().trim();
         var ledgerSubGroupName = $tr.find('td:eq(2)').text().trim();
         var ledgerName = $tr.find('td:eq(3)').text().trim();
-        var ledgerType = $tr.find('td:eq(4)').text().trim();
-        var hasSubledger = $tr.find('td:eq(5)').text().trim();
+        //var ledgerType = $tr.find('td:eq(4)').text().trim();
+        //var hasSubledger = $tr.find('td:eq(5)').text().trim();
      
         //fill Modal data
         $('input[name="mdlLedgerId"]').val(Id);
@@ -140,12 +140,10 @@ $(function () {
             
                 if (result.ResponseCode == 302) {
 
-                    if (result.Ledger.LedgerType === ledgerType) {
-                        $('select[name="mdlLedgerType"]').val(ledgerType);
-                    }
-                    if (result.Ledger.HasSubLedger === hasSubledger) {
-                        $('select[name="mdlHasSubLedger"]').val(hasSubledger);
-                    }
+                    var ledgerType = result.Ledger.LedgerType;
+                    var hasSubledger = result.Ledger.HasSubLedger;
+                    $('select[name="mdlLedgerType"]').val(ledgerType).trigger('change');
+                    $('select[name="mdlHasSubLedger"]').val(hasSubledger).trigger('change');
                   
                 }
             },
