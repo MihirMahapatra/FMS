@@ -5,6 +5,7 @@
         public Guid LedgerId { get; set; }
         public string LedgerName { get; set; }
         public string LedgerType { get; set; }
+        public string HasSubLedger { get; set; }
         public Guid Fk_LedgerGroupId { get; set; }
         public Guid? Fk_LedgerSubGroupId { get; set; }
         public LedgerGroup LedgerGroup { get; set; }

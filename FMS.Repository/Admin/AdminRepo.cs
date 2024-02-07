@@ -2015,16 +2015,19 @@ namespace FMS.Repository.Admin
                 var ledgerDevs = await (from l in _appDbContext.LedgersDev
                                         select new LedgerModel
                                         {
+                                            HasSubLedger = l.HasSubLedger,
                                             LedgerId = l.LedgerId,
                                             LedgerName = l.LedgerName,
                                             LedgerType = l.LedgerType,
                                             LedgerGroup = l.LedgerGroup != null ? new LedgerGroupModel { GroupName = l.LedgerGroup.GroupName } : null,
                                             LedgerSubGroup = l.LedgerSubGroup != null ? new LedgerSubGroupModel { SubGroupName = l.LedgerSubGroup.SubGroupName } : null
+                                            
                                         }).ToListAsync();
                 models.Ledgers.AddRange(ledgerDevs);
                 var ledgers = await (from l in _appDbContext.Ledgers
                                      select new LedgerModel
                                      {
+                                         HasSubLedger = l.HasSubLedger,
                                          LedgerId = l.LedgerId,
                                          LedgerName = l.LedgerName,
                                          LedgerType = l.LedgerType,
@@ -2047,6 +2050,47 @@ namespace FMS.Repository.Admin
             }
             return _Result;
         }
+        public async Task<Result<LedgerModel>> GetLedgerById(Guid Id)
+        {
+            Result<LedgerModel> _Result = new();
+            try
+            {
+                Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
+                _Result.IsSuccess = false;
+                LedgerViewModel models = new();
+                var ledDevs = await (from l in _appDbContext.LedgersDev.Where(x => x.LedgerId == Id)
+                                        select new LedgerModel
+                                        {
+                                            HasSubLedger = l.HasSubLedger,
+                                            LedgerId = l.LedgerId, 
+                                            LedgerType = l.LedgerType
+                                        }).SingleOrDefaultAsync();
+            
+                var led = await (from l in _appDbContext.Ledgers.Where(x => x.LedgerId == Id)
+                                 select new LedgerModel
+                                     {
+                                         HasSubLedger = l.HasSubLedger,
+                                         LedgerId = l.LedgerId,
+                                         LedgerType = l.LedgerType
+                                     }).SingleOrDefaultAsync();
+              
+
+                var Ledger = ledDevs ?? led;
+
+                if (Ledger != null)
+                {
+                    _Result.SingleObjData = Ledger;
+                    _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
+                }
+                _Result.IsSuccess = true;
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("horizonexception@gmail.com", "FMS Excepion", $" AdminRepo/GetLedgers : {_Exception.Message}");
+            }
+            return _Result;
+        }
         public async Task<Result<LedgerModel>> GetLedgersHasSubLedger()
         {
             Result<LedgerModel> _Result = new();
@@ -2054,7 +2098,7 @@ namespace FMS.Repository.Admin
             {
                 Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
                 _Result.IsSuccess = false;
-                var ledgers = await (from l in _appDbContext.Ledgers.Where(x => x.HasSubLedger == "yes")
+                var ledgers = await (from l in _appDbContext.Ledgers.Where(x => x.HasSubLedger == "Yes")
                                      select new LedgerModel
                                      {
                                          LedgerId = l.LedgerId,
@@ -2083,14 +2127,14 @@ namespace FMS.Repository.Admin
                 Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
                 _Result.IsSuccess = false;
                 LedgerViewModel models = new();
-                var ledgerDevs = await (from l in _appDbContext.LedgersDev
+                var ledgerDevs = await (from l in _appDbContext.LedgersDev.Where(x => x.HasSubLedger == "No")
                                         select new LedgerModel
                                         {
                                             LedgerId = l.LedgerId,
                                             LedgerName = l.LedgerName,
                                         }).ToListAsync();
                 models.Ledgers.AddRange(ledgerDevs);
-                var ledgers = await (from l in _appDbContext.Ledgers.Where(x => x.HasSubLedger == "no")
+                var ledgers = await (from l in _appDbContext.Ledgers.Where(x => x.HasSubLedger == "No")
                                      select new LedgerModel
                                      {
                                          LedgerId = l.LedgerId,
@@ -2166,7 +2210,7 @@ namespace FMS.Repository.Admin
                 var ledger = await _appDbContext.Ledgers.Where(s => s.LedgerId == data.LedgerId).FirstOrDefaultAsync();
                 if (ledger != null)
                 {
-                    // ledger.HasSubLedger = data.HasSubLedger;
+                     ledger.HasSubLedger = data.HasSubLedger;
                     _mapper.Map(data, ledger);
                     int count = await _appDbContext.SaveChangesAsync();
                     _Result.Response = (count > 0) ? ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Modified) : ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Error);

@@ -18,6 +18,7 @@ $(function () {
                     html += '<th>SubGroup</th>'
                     html += '<th>Ledger</th>'
                     html += '<th>Ledger Type</th>'
+                    html += '<th>HasSubLedger </th>'
                     html += '<th>Action</th>'
                     html += '</tr>'
                     html += '</thead>'
@@ -38,6 +39,7 @@ $(function () {
                     html += '<th>SubGroup</th>'
                     html += '<th>Ledger</th>'
                     html += '<th>Ledger Type</th>'
+                    html += '<th>HasSub Ledger</th>'
                     html += '<th>Action</th>'
                     html += '</tr>'
                     html += '</thead>'
@@ -53,6 +55,7 @@ $(function () {
                         }
                         html += '<td>' + item.LedgerName + '</td>';
                         html += '<td>' + item.LedgerType + '</td>';
+                        html += '<td>' + item.HasSubLedger + '</td>';
                         html += '<td style="background-color:#ffe6e6;">';
                         html += '<button class="btn btn-primary btn-link btn-sm btn-ledger-edit"   id="btnLedgerEdit_' + item.LedgerId + '"     data-id="' + item.LedgerId + '" data-toggle="modal" data-target="#modal-edit-ledger" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-edit"></i></button>';
                         html += ' <button class="btn btn-primary btn-link btn-sm btn-ledger-delete" id="btnLedgerDelete_' + item.LedgerId + '"   data-id="' + item.LedgerId + '" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button>';
@@ -91,16 +94,16 @@ $(function () {
     });
     function EditLedger(Id) {
         var $tr = $('#btnLedgerEdit_' + Id + '').closest('tr');
+        var ledgerId = $tr.find('td:eq(0)').text().trim();
         var ledgerGroupName = $tr.find('td:eq(1)').text().trim();
         var ledgerSubGroupName = $tr.find('td:eq(2)').text().trim();
         var ledgerName = $tr.find('td:eq(3)').text().trim();
         var ledgerType = $tr.find('td:eq(4)').text().trim();
+        var hasSubledger = $tr.find('td:eq(5)').text().trim();
      
         //fill Modal data
         $('input[name="mdlLedgerId"]').val(Id);
         $('input[name="mdlLedgerName"]').val(ledgerName);
-        $('select[name="mdlLedgerType"]').val(ledgerType);
-        
         $.ajax({
             url: "/Admin/GetLedgerGroups",
             type: "GET",
@@ -118,9 +121,32 @@ $(function () {
                         if (item.GroupName === ledgerGroupName) {
                             option.attr('selected', 'selected');
                             getSubGroup(item.LedgerGroupId, ledgerSubGroupName);
+                            
                         }
                         selectElement.append(option);
                     });
+                }
+            },
+            error: function (errormessage) {
+                console.log(errormessage)
+            }
+        });
+        $.ajax({
+            url: '/Admin/GetLedgerById?Id=' + ledgerId + '',
+            type: "GET",
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            success: function (result) {
+            
+                if (result.ResponseCode == 302) {
+
+                    if (result.Ledger.LedgerType === ledgerType) {
+                        $('select[name="mdlLedgerType"]').val(ledgerType);
+                    }
+                    if (result.Ledger.HasSubLedger === hasSubledger) {
+                        $('select[name="mdlHasSubLedger"]').val(hasSubledger);
+                    }
+                  
                 }
             },
             error: function (errormessage) {
@@ -165,6 +191,7 @@ $(function () {
             Fk_LedgerGroupId: $('select[name="mdlLedgerGroupId"]').val(),
             Fk_LedgerSubGroupId: $('select[name="mdlLedgerSubGroupId"]').val(),
             LedgerType: $('select[name="mdlLedgerType"]').val(),
+            HasSubLedger: $('select[name="mdlHasSubLedger"]').val(),
             LedgerName: $('input[name="mdlLedgerName"]').val(),
         }
         $.ajax({

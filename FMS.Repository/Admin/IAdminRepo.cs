@@ -110,6 +110,7 @@ namespace FMS.Repository.Admin
         #endregion
         #region Ledger
         Task<Result<LedgerModel>> GetLedgers();
+        Task<Result<LedgerModel>> GetLedgerById(Guid Id);
         Task<Result<LedgerModel>> GetLedgersHasSubLedger();
         Task<Result<LedgerModel>> GetLedgersHasNoSubLedger();
         Task<Result<bool>> CreateLedger(LedgerViewModel listData);

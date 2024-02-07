@@ -15,7 +15,7 @@
     });
     //*********************************Variable Declaration**********************************************************************//
     const ddlFinishedGood = $('select[name="ddlFinishedGoodId"]');
-    const ddlSubfinishedGood = $('select[name="ddlSubfhishidGoodId"]');
+    const ddlSubfinishedGood = $('select[name="ddlSubFinishedGoodId"]');
     GetFinishedGoods();
     function GetFinishedGoods() {
         $.ajax({

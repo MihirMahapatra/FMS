@@ -217,7 +217,7 @@ $(function () {
         var newRowData = [
             '<div class="form-group"><select class="form-control select2bs4" style="width: 100%;"><option selected="selected" value="None">None</option><option value="Cash">Cash</option><option value="Bank">Bank</option></select></div>',
             '<div class="form-group"><input type="text" class="form-control" id=""></div>',
-            '<div class="form-group"><select class="form-control select2bs4" style="width: 100%;"><option selected="selected" value="no">No</option><option value="yes">Yes</option></select></div>',
+            '<div class="form-group"><select class="form-control select2bs4" style="width: 100%;"><option selected="selected" value="No">No</option><option value="Yes">Yes</option></select></div>',
         ];
         ledgerTable.row.add(newRowData).draw();
         $('#tblLedger tbody').find('.select2bs4').select2({

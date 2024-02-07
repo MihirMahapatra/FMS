@@ -371,7 +371,7 @@
                         contentType: "application/json;charset=utf-8",
                         dataType: "json",
                         success: function (result) {
-                            if (result.ResponseCode = 200) {
+                            if (result.ResponseCode == 200) {
                                 toastr.success(result.SuccessMsg);
                             }
                             else {

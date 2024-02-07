@@ -2636,6 +2636,43 @@ namespace FMS.Service.Admin
             }
             return Obj;
         }
+        public async Task<LedgerViewModel> GetLedgerById(Guid Id)
+        {
+            LedgerViewModel Obj;
+            var result = await _adminRepo.GetLedgerById(Id);
+            if (result.IsSuccess)
+            {
+                if (result.Response == "success")
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
+                        Ledger = result.SingleObjData,
+                    };
+                }
+                else
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.NotFound),
+                        Message = "No Record Found"
+                    };
+                }
+            }
+            else
+            {
+                Obj = new()
+                {
+                    ResponseStatus = result.Response,
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = result.Exception,
+                    Message = "Some Eroor Occoured"
+                };
+            }
+            return Obj;
+        }
         public async Task<LedgerViewModel> GetLedgersHasSubLedger()
         {
             LedgerViewModel Obj;

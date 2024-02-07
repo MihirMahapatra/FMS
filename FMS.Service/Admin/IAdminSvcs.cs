@@ -107,6 +107,7 @@ namespace FMS.Service.Admin
         #endregion
         #region Ledger
         Task<LedgerViewModel> GetLedgers();
+        Task<LedgerViewModel> GetLedgerById(Guid Id);
         Task<LedgerViewModel> GetLedgersHasSubLedger();
         Task<LedgerViewModel> GetLedgersHasNoSubLedger();
         Task<Base> CreateLedger(LedgerViewModel listData);

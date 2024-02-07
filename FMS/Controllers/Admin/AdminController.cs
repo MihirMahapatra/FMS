@@ -826,6 +826,12 @@ namespace FMS.Controllers.Admin
             var result = await _adminSvcs.GetLedgers();
             return new JsonResult(result);
         }
+        [HttpGet]
+        public async Task<IActionResult> GetLedgerById(Guid Id)
+        {
+            var result = await _adminSvcs.GetLedgerById(Id);
+            return new JsonResult(result);
+        }
         [HttpPost, Authorize(Policy = "Edit")]
         public async Task<IActionResult> UpdateLedger([FromBody] LedgerModel model)
         {
