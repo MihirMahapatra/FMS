@@ -1562,6 +1562,8 @@ namespace FMS.Repository.Transaction
                     LabourType = s.LabourType != null ? new LabourTypeModel { Labour_Type = s.LabourType.Labour_Type } : null,
                     Quantity = s.Quantity,
                     Rate = s.Rate,
+                    Narration = s.Narration,
+                    OTAmount = s.OTAmount,
                     Amount = s.Amount
                 }).ToListAsync();
                 if (Query.Count > 0)
@@ -1606,7 +1608,9 @@ namespace FMS.Repository.Transaction
                                 Fk_LabourTypeId = MappingLabourType.Production,
                                 Quantity = Convert.ToDecimal(item[1]),
                                 Rate = Convert.ToDecimal(item[2]),
-                                Amount = Convert.ToDecimal(item[3])
+                                OTAmount = Convert.ToDecimal(item[3]),
+                                Narration = item[4],
+                                Amount = Convert.ToDecimal(item[5])
                             };
                             await _appDbContext.LabourOrders.AddAsync(newProductionEntry);
                             await _appDbContext.SaveChangesAsync();
@@ -1987,6 +1991,8 @@ namespace FMS.Repository.Transaction
                             UpdateProductionEntry.Fk_LabourTypeId = MappingLabourType.Production;
                             UpdateProductionEntry.Quantity = data.Quantity;
                             UpdateProductionEntry.Rate = data.Rate;
+                            UpdateProductionEntry.Narration = data.Narration;
+                            UpdateProductionEntry.OTAmount = data.OTAmount;
                             UpdateProductionEntry.Amount = data.Amount;
                             await _appDbContext.SaveChangesAsync();
                             #endregion
@@ -2160,7 +2166,8 @@ namespace FMS.Repository.Transaction
                     Quantity = s.Quantity,
                     Rate = s.Rate,
                     OTAmount = s.OTAmount,
-                    Amount = s.Amount
+                    Amount = s.Amount,
+                    Narration = s.Narration
                 }).ToListAsync();
                 if (Query.Count > 0)
                 {
@@ -2205,7 +2212,8 @@ namespace FMS.Repository.Transaction
                                 Quantity = Convert.ToDecimal(item[1]),
                                 Rate = Convert.ToDecimal(item[2]),
                                 OTAmount = Convert.ToDecimal(item[3]),
-                                Amount = Convert.ToDecimal(item[4])
+                                Narration = item[4],
+                                Amount = Convert.ToDecimal(item[5])
                             };
                             await _appDbContext.LabourOrders.AddAsync(newProductionEntry);
                             await _appDbContext.SaveChangesAsync();
@@ -2388,6 +2396,7 @@ namespace FMS.Repository.Transaction
                             UpdateProductionEntry.Rate = data.Rate;
                             UpdateProductionEntry.Amount = data.Amount;
                             UpdateProductionEntry.OTAmount = data.OTAmount;
+                            UpdateProductionEntry.Narration = data.Narration;
                             await _appDbContext.SaveChangesAsync();
                             #endregion
                         }

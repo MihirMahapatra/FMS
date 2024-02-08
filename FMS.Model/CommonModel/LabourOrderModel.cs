@@ -16,6 +16,7 @@ namespace FMS.Model.CommonModel
         public decimal Rate { get; set; }
         public decimal Amount { get; set; }
         public decimal OTAmount { get; set; }
+        public string Narration { get; set; }
         public ProductModel Product { get; set; } 
         public LabourModel Labour { get; set; }
         public LabourTypeModel LabourType { get; set; }

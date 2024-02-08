@@ -14,6 +14,7 @@
         public decimal Rate { get; set; }
         public decimal Amount { get; set; }
         public decimal OTAmount { get; set; }
+        public string Narration { get; set; }
         public Product Product { get; set; }
         public Labour Labour { get; set; }
         public FinancialYear FinancialYear { get; set; }
