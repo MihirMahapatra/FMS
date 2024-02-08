@@ -31,6 +31,7 @@
     <link rel="stylesheet" href="~/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
     <!-- Toastr -->
     <link rel="stylesheet" href="~/plugins/toastr/toastr.min.css">
+    <link href="~/viewstyles/loader.css" rel="stylesheet" />
 }
 
 
@@ -206,20 +207,20 @@
                                                 <div class="col-md-4  table-responsive pt-1">
                                                     <table class="table">
                                                         <tr>
-                                                            <th>Discount</th>
-                                                            <td><input type="text" class="form-control form-control-sm" id="" value="0" name="TotalDiscountAmount" disabled></td>
-                                                        </tr>
-                                                        <tr>
                                                             <th style="width:40%">Sub total</th>
                                                             <td><input type="text" class="form-control form-control-sm" id="" name="SubTotal" value="0" disabled></td>
                                                         </tr>
-
                                                         <tr>
-                                                            <th>GST Amount</th>
-                                                            <td><input type="text" class="form-control form-control-sm" id="" value="0" name="GstAmount" disabled></td>
+                                                            <th>Discount (-)</th>
+                                                            <td><input type="text" class="form-control form-control-sm" id="" value="0" name="TotalDiscountAmount" disabled></td>
                                                         </tr>
                                                         <tr>
-                                                            <th>Transporting Charges</th>
+                                                            <th>GST Amount (+)</th>
+                                                            <td><input type="text" class="form-control form-control-sm" id="" value="0" name="GstAmount" disabled></td>
+                                                        </tr>
+
+                                                        <tr>
+                                                            <th>Transporting Charges (+)</th>
                                                             <td><input type="text" class="form-control form-control-sm" id="" value="0" name="TransportationCharges"></td>
                                                         </tr>
                                                         <tr>

@@ -143,7 +143,7 @@ namespace FMS.Repository.Transaction
                     TransactionDate = s.TransactionDate,
                     InvoiceNo = s.InvoiceNo,
                     InvoiceDate = s.InvoiceDate,
-                TransportationCharges=s.TransportationCharges,
+                    TransportationCharges = s.TransportationCharges,
                     VehicleNo = s.VehicleNo,
                     TranspoterName = s.TranspoterName,
                     ReceivingPerson = s.ReceivingPerson,
@@ -151,7 +151,6 @@ namespace FMS.Repository.Transaction
                     Discount = s.Discount,
                     SubTotal = s.SubTotal,
                     Gst = s.Gst,
-                  
                     GrandTotal = s.GrandTotal,
                     PurchaseTransactions = _appDbContext.PurchaseTransactions.Where(x => x.Fk_PurchaseOrderId == s.PurchaseOrderId && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).Select(x => new PurchaseTransactionModel
                     {
@@ -295,6 +294,29 @@ namespace FMS.Repository.Transaction
                                 Fk_BranchId = BranchId
                             };
                             await _appDbContext.SubLedgerBalances.AddAsync(newSubLedgerBalance);
+                            await _appDbContext.SaveChangesAsync();
+                        }
+                        //@TransportingChargePayment A/c--------Cr
+                        var updateTransportingChargePaymentBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.TransportingChargePayment && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                        if (updateTransportingChargePaymentBalance != null)
+                        {
+                            updateTransportingChargePaymentBalance.RunningBalance -= newPurchaseOrder.TransportationCharges;
+                            updateTransportingChargePaymentBalance.RunningBalanceType = (updatePurchaseledgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
+                            await _appDbContext.SaveChangesAsync();
+                        }
+                        else
+                        {
+                            var newLedgerBalance = new LedgerBalance
+                            {
+                                Fk_LedgerId = MappingLedgers.TransportingChargePayment,
+                                OpeningBalance = 0,
+                                OpeningBalanceType = "Cr",
+                                RunningBalance = -data.TransportationCharges,
+                                RunningBalanceType = "Cr",
+                                Fk_BranchId = BranchId,
+                                Fk_FinancialYear = FinancialYear
+                            };
+                            await _appDbContext.LedgerBalances.AddAsync(newLedgerBalance);
                             await _appDbContext.SaveChangesAsync();
                         }
                         #endregion

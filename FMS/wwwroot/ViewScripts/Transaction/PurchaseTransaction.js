@@ -39,7 +39,6 @@ $(function () {
         pageLength: 10,// Set the default page length to 5
     });
     transactionDate.val(todayDate);
-    orderDate.val(todayDate);
     invoiceDate.val(todayDate);
     //-----------------------------------Contorl Foucous Of Element Purchase----------------------------//
     ddlSupplyer.focus();
@@ -175,7 +174,6 @@ $(function () {
         pageLength: 10,// Set the default page length to 5
     });
     Pr_transactionDate.val(todayDate)
-    Pr_orderDate.val(todayDate);
     Pr_invoiceDate.val(todayDate);
     /*-----------------------------------Contorl Foucous Of Element Purchase Return----------------------------*/
     Pr_invoiceNo.on('focus', function () {
@@ -208,7 +206,6 @@ $(function () {
     Pr_receivingPerson.on('blur', function () {
         $(this).css('border-color', ''); // Reset background color on blur
     });
-
     $('a[href="#CreatePurchaseReturn"]').on('click', function () {
         chkPage = true;
     });
@@ -437,7 +434,7 @@ $(function () {
                             Textbox.eq(i).val('0');
                         }
                         /*  Textbox.eq(2).val(result.product.Price);*/
-                        Textbox.eq(5).val(result.product.GST);
+                        Textbox.eq(5).val(result.Product.GST);
                     }
                 },
                 error: function (errormessage) {
@@ -520,12 +517,18 @@ $(function () {
         row.find('input:eq(5)').val(discountAmount.toFixed(2));
 
         var totalAmount = 0;
+        var toalSubTotalAmount = 0;
         var totalGstAmount = 0;
         var totalDiscountAmount = 0;
         $('#tblPurchase tbody tr').each(function () {
+            var qty = parseFloat($(this).find('input:eq(1)').val());
+            var rate = parseFloat($(this).find('input:eq(3)').val());
             var amount = parseFloat($(this).find('input:eq(8)').val());
             var GstAmount = parseFloat($(this).find('input:eq(7)').val());
             var DiscountAmount = parseFloat($(this).find('input:eq(5)').val());
+            if (!isNaN(qty) && !isNaN(rate)) {
+                toalSubTotalAmount += (qty * rate)
+            }
             if (!isNaN(amount)) {
                 totalAmount += amount;
             }
@@ -536,11 +539,10 @@ $(function () {
                 totalDiscountAmount += DiscountAmount;
             }
         });
-        var subtotal = totalAmount - totalGstAmount;
-        $('input[name="SubTotal"]').val(subtotal.toFixed(2));
-        $('input[name="GrandTotal"]').val(totalAmount.toFixed(2));
-        $('input[name="GstAmount"]').val(totalGstAmount.toFixed(2));
+        $('input[name="SubTotal"]').val(toalSubTotalAmount.toFixed(2));
         $('input[name="TotalDiscountAmount"]').val(totalDiscountAmount.toFixed(2));
+        $('input[name="GstAmount"]').val(totalGstAmount.toFixed(2));
+        $('input[name="GrandTotal"]').val(totalAmount.toFixed(2));
 
         const gstDifferences = {};
         $('#tblPurchase tbody tr').each(function () {
@@ -560,6 +562,14 @@ $(function () {
             const row = $('<tr><td>GST ' + rate + ' % Amount: ' + gstDifferences[rate].toFixed(2) + '</td></tr>');
             gstDifferenceBody.append(row);
         }
+    });
+    transportationCharges.on('change', function () {
+        var tranportChgAmount = $(this).val();
+        subTotalAmount = subTotal.val();
+        discountAmount = discount.val();
+        gstAmount = gst.val();
+        updateGrandTotal = parseFloat(tranportChgAmount) + parseFloat(subTotalAmount) + parseFloat(gstAmount) - parseFloat(discountAmount);
+        grandTotal.val(updateGrandTotal.toFixed(2));
     });
     $('#btnSave').on('click', CreatePurchase);
     function CreatePurchase() {
@@ -583,7 +593,7 @@ $(function () {
         } else if (!invoiceDate.val()) {
             toastr.error('InvoiceDate Is Required.');
             return;
-        }  else if (!vehicleNo.val()) {
+        } else if (!vehicleNo.val()) {
             toastr.error('VehicleNo Is Required.');
             vehicleNo.focus();
             return;
@@ -874,6 +884,7 @@ $(function () {
                 }
                 subTotal.val(result.purchaseOrder.SubTotal);
                 discount.val(result.purchaseOrder.Discount);
+                transportationCharges.val(result.purchaseOrder.TransportationCharges)
                 grandTotal.val(result.purchaseOrder.GrandTotal);
                 gst.val(result.purchaseOrder.Gst);
                 PurchaseTable.clear().draw();//Fill Table Data
