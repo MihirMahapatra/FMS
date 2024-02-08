@@ -18,8 +18,6 @@ namespace FMS.Model.CommonModel
         public List<LedgerBalanceModel> LedgerBalances { get; set; }
         public List<SubLedgerModel> SubLedgers { get; set; }
         public List<SubLedgerBalanceModel> SubLedgerBalances { get; set; }
-        public List<StateModel> States { get; set; }
-        public List<CityModel> Cities { get; set; }
         public List<PurchaseOrderModel> PurchaseOrders { get; set; }
         public List<SalesOrderModel> SalesOrders { get; set; }
         public List<PurchaseTransactionModel> PurchaseTransactions { get; set; }

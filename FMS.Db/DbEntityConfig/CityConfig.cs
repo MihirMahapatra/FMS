@@ -12,9 +12,7 @@ namespace FMS.Db.DbEntityConfig
             builder.HasKey(e => e.CityId);
             builder.Property(e => e.CityId).HasDefaultValueSql("(newid())");
             builder.Property(e => e.Fk_StateId).IsRequired(true);
-            builder.Property(e => e.Fk_BranchId).IsRequired(true);
             builder.Property(e => e.CityName).HasMaxLength(100).IsRequired(true);
-            builder.HasOne(bs => bs.Branch).WithMany(b => b.Cities).HasForeignKey(bs => bs.Fk_BranchId).OnDelete(DeleteBehavior.Restrict);
             builder.HasOne(c => c.State).WithMany(s => s.Cities).HasForeignKey(c => c.Fk_StateId).OnDelete(DeleteBehavior.Restrict);
         }
     }

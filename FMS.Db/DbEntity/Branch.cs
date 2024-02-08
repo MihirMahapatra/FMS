@@ -16,8 +16,6 @@
         public ICollection<LedgerBalance> LedgerBalances { get; set; }
         public ICollection<SubLedger> SubLedgers { get; set; }
         public ICollection<SubLedgerBalance> SubLedgerBalances { get; set; }
-        public ICollection<State> States { get; set; }
-        public ICollection<City> Cities { get; set; }
         public ICollection<PurchaseOrder> PurchaseOrders { get; set;}
         public ICollection<SalesOrder> SalesOrders { get; set; }
         public ICollection<PurchaseTransaction> PurchaseTransactions { get; set; }

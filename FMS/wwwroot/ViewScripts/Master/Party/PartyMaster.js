@@ -338,37 +338,40 @@ $(function () {
                                 }
                                 ddlState.append(option);
                             });
-                            loadCities(selectedState);
+                            loadcities(selectedState);
+                            //LoadCity(selectedState);
                         }
                     },
                     error: function (errormessage) {
                         console.log(errormessage)
                     }
                 });
-                $.ajax({
-                    url: '/Master/GetCities?id=' + selectedState + '',
-                    type: "GET",
-                    contentType: "application/json;charset=utf-8",
-                    dataType: "json",
-                    success: function (result) {
-                        var ddlCity = $('select[name="mdlddnCityId"]');
-                        ddlCity.empty();
-                        var defaultOption = $('<option></option>').val('').text('--Select Option--');
-                        ddlCity.append(defaultOption);
-                        if (result.ResponseCode == 302) {
-                            $.each(result.Cities, function (key, item) {
-                                var option = $('<option></option>').val(item.CityId).text(item.CityName);
-                                if (item.CityName === City) {
-                                    option.attr('selected', 'selected');
-                                }
-                                ddlCity.append(option);
-                            });
+                function loadcities(selectedState) {
+                    $.ajax({
+                        url: '/Master/GetCities?id=' + selectedState + '',
+                        type: "GET",
+                        contentType: "application/json;charset=utf-8",
+                        dataType: "json",
+                        success: function (result) {
+                            var ddlCity = $('select[name="mdlddnCityId"]');
+                            ddlCity.empty();
+                            var defaultOption = $('<option></option>').val('').text('--Select Option--');
+                            ddlCity.append(defaultOption);
+                            if (result.ResponseCode == 302) {
+                                $.each(result.Cities, function (key, item) {
+                                    var option = $('<option></option>').val(item.CityId).text(item.CityName);
+                                    if (item.CityName === City) {
+                                        option.attr('selected', 'selected');
+                                    }
+                                    ddlCity.append(option);
+                                });
+                            }
+                        },
+                        error: function (errormessage) {
+                            console.log(errormessage)
                         }
-                    },
-                    error: function (errormessage) {
-                        console.log(errormessage)
-                    }
-                });
+                    });
+                }
             },
             error: function (errormessage) {
                 console.log(errormessage)
@@ -590,6 +593,33 @@ $(function () {
         var selectedState = $(this).val();
         LoadCity(selectedState);
     });
+    var editddlState = $('select[name="mdlddnStateId"]');
+    var editddlcity = $('select[name="mdlddnCityId"]');
+    editddlState.on("change", function () {
+        editddlcity.prop("disabled", false);
+        editddlcity.empty();
+        var selectedState = $(this).val();
+        $.ajax({
+            url: '/Master/GetCities?id=' + selectedState + '',
+            type: "GET",
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            success: function (result) {
+                if (result.ResponseCode == 302) {
+                    editddlcity.empty();
+                    var defaultOption = $('<option></option>').val('').text('--Select Option--');
+                    editddlcity.append(defaultOption);
+                    $.each(result.Cities, function (key, item) {
+                        var option = $('<option></option>').val(item.CityId).text(item.CityName);
+                        editddlcity.append(option);
+                    });
+                }
+            },
+            error: function (errormessage) {
+                console.log(errormessage)
+            }
+        });
+    });
     function LoadCity(id) {
         ddlCity.empty();
         var defaultOption = $('<option></option>').val('').text('--Select Option--');
@@ -673,7 +703,7 @@ $(function () {
             var text = selectedCityOption.text();
             var cityvalue = selectedCityOption.val();
             $("input[name='mdlCityEdit']").val(text);
-            $("input[name='mdlCityId']").val(value);
+            $("input[name='mdlCityId']").val(cityvalue);
             $("input[name='mdlStateId']").val(selectedStateOption.val());
         }
     }

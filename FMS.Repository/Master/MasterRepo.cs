@@ -1120,7 +1120,6 @@ namespace FMS.Repository.Master
                 Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
                 _Result.IsSuccess = false;
                 var Query = await (from s in _appDbContext.States
-                                   where s.Fk_BranchId == BranchId
                                    select new StateModel
                                    {
                                        StateId = s.StateId,
@@ -1147,11 +1146,10 @@ namespace FMS.Repository.Master
             {
                 Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
                 _Result.IsSuccess = false;
-                var Query = await _appDbContext.States.FirstOrDefaultAsync(s => s.StateName == data.StateName && s.Fk_BranchId == BranchId);
+                var Query = await _appDbContext.States.FirstOrDefaultAsync(s => s.StateName == data.StateName);
                 if (Query == null)
                 {
                     var newState = _mapper.Map<State>(data);
-                    newState.Fk_BranchId = BranchId;
                     await _appDbContext.States.AddAsync(newState);
                     int count = await _appDbContext.SaveChangesAsync();
                     _Result.Response = (count > 0) ? ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Created) : ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Error);
@@ -1172,10 +1170,10 @@ namespace FMS.Repository.Master
             {
                 _Result.IsSuccess = false;
                 Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
-                var Query = await _appDbContext.States.FirstOrDefaultAsync(s => s.StateId == data.StateId && s.Fk_BranchId == BranchId);
+                var Query = await _appDbContext.States.FirstOrDefaultAsync(s => s.StateId == data.StateId);
                 if (Query != null)
                 {
-                    data.Fk_BranchId = BranchId;
+                    
                     _mapper.Map(data, Query);
                     int count = await _appDbContext.SaveChangesAsync();
                     _Result.Response = (count > 0) ? ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Modified) : ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Error);
@@ -1236,7 +1234,7 @@ namespace FMS.Repository.Master
                 Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
                 _Result.IsSuccess = false;
                 var Query = await (from s in _appDbContext.Cities
-                                   where s.Fk_StateId == Id && s.Fk_BranchId == BranchId
+                                   where s.Fk_StateId == Id 
                                    select new CityModel
                                    {
                                        CityId = s.CityId,
@@ -1263,11 +1261,10 @@ namespace FMS.Repository.Master
             {
                 Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
                 _Result.IsSuccess = false;
-                var Query = await _appDbContext.Cities.FirstOrDefaultAsync(s => s.CityName == data.CityName && s.Fk_BranchId == BranchId);
+                var Query = await _appDbContext.Cities.FirstOrDefaultAsync(s => s.CityName == data.CityName );
                 if (Query == null)
                 {
                     var newCity = _mapper.Map<City>(data);
-                    newCity.Fk_BranchId = BranchId;
                     await _appDbContext.Cities.AddAsync(newCity);
                     int count = await _appDbContext.SaveChangesAsync();
                     _Result.Response = (count > 0) ? ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Created) : ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Error);
@@ -1288,10 +1285,9 @@ namespace FMS.Repository.Master
             {
                 _Result.IsSuccess = false;
                 Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
-                var Query = await _appDbContext.Cities.FirstOrDefaultAsync(s => s.CityId == data.CityId && s.Fk_BranchId == BranchId);
+                var Query = await _appDbContext.Cities.FirstOrDefaultAsync(s => s.CityId == data.CityId);
                 if (Query != null)
                 {
-                    data.Fk_BranchId = BranchId;
                     _mapper.Map(data, Query);
                     int count = await _appDbContext.SaveChangesAsync();
                     _Result.Response = (count > 0) ? ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Modified) : ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Error);
