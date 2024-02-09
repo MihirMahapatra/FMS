@@ -18,10 +18,31 @@ namespace FMS.Model.CommonModel
         public decimal Balance { get; set; }
         public string BalanceType { get; set; }
     }
+    public class PartyReportOrderModel
+    {
+        public DateTime TransactionDate { get; set; }
+        public string TransactionNo { get; set; }
+        public string TransactionType { get; set; }
+        public decimal GrandTotal { get; set; }
+        public decimal TransportCharges { get; set; }
+        public string Naration { get; set; }
+        public List<PartyReportTransactionModel> Transactions { get; set; } = new List<PartyReportTransactionModel>();
+
+    }
+    public class PartyReportTransactionModel
+    {
+        public string ProductName { get; set; }
+        public decimal Quantity { get; set; }
+        public decimal Rate { get; set; }
+        public decimal Amount { get; set; }
+    }
     public class PartyReportModel2
     {
-        public String BranchName;
-        public PartyModel PartyInfo { get; set; }
+        public string BranchName;
+        public decimal OpeningBal;
+        public string OpeningBalType;
+        public List<PartyReportOrderModel> Orders { get; set; } = new List<PartyReportOrderModel>();
+
     }
     public class PartyReportViewModel : Base
     {
