@@ -8,6 +8,8 @@
         public Guid FK_ProductId { get; set; }
         public Guid Fk_UnitId {  get; set; }
         public decimal UnitQuantity { get; set; }
+        public decimal WholeSalePrice { get; set; }
+        public decimal RetailPrice { get; set; }
         public Product Product { get; set; }
         public Unit Unit { get; set; }
         public  ICollection<PurchaseTransaction> PurchaseTransactions { get; set;}

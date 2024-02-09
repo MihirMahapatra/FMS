@@ -50,7 +50,7 @@
                 <div class="card-header">
                     <h3 class="card-title">
                         <i class="fas fa-edit"></i>
-                        Alternate Unit Setup
+                        Alternate Unit Setup For MouldMicinery & RawMatiriales
                     </h3>
                 </div>
                 <div class="card-body">
@@ -103,15 +103,90 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+            <div class="card card-primary card-outline">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-edit"></i>
+                        Alternate Unit Set Up For Finished Good
+                    </h3>
+                </div>
+                <div class="card-body">
                     <div class="card card-primary card-outline">
                         <div class="card-body">
                             <div class="row">
-                                <div id="loader" style="display:none;"></div>
-                                <div class="col-md-12">
-                                    <button class="btn btn-primary btn-link cust-btn" id="btnRefresh" style="float:right;border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-arrows-rotate"></i>Refresh</button>
-                                    <div class="tbAlternateUnit">
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label class="pt-2">Product  Type</label>
+                                        <select class="form-control select2bs4" style="width: 100%" name="fddlProductType" tabindex="1">
+                                        </select>
                                     </div>
                                 </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label class="pt-2">Product  Name</label>
+                                        <select class="form-control select2bs4" style="width: 100%;" name="fProductId" tabindex="2">
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="pt-2">Alternate Unit</label>
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" id=""  name="fAlternateQty">
+                                            <div class="input-group-prepend">
+                                                <input type="text" class="form-control" id="" name="fAlternateUnit" placeholder="Alternate Unit" tabindex="3">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-1">
+                                    <input type="hidden" class="form-control" id="fHdnUnitId">
+                                    <label class="pt-2">Unit</label>
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" value="1" disabled name="fUnitQty" tabindex="4">
+                                            <div class="input-group-append">
+                                                <span class="input-group-text" id="fUnit">N/A</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-1">
+                                    <div class="form-group">
+                                        <label class="pt-2">Retail Price</label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" id="" name="fRetailPrice">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-1">
+                                    <div class="form-group">
+                                        <label class="pt-2">Wh.sale Price</label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" id="" name="fWholesalePrice">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group" style="padding-top:37px">
+                                        <label></label>
+                                        <button type="button" id="fSubmit" tabindex="5" class="btn btn-block btn-outline-primary btn-falternateunit-create" style="float:right"><b>Submit</b></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card card-primary card-outline">
+                <div class="card-body">
+                    <div class="row">
+                        <div id="loader" style="display:none;"></div>
+                        <div class="col-md-12">
+                            <button class="btn btn-primary btn-link cust-btn" id="btnRefresh" style="float:right;border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-arrows-rotate"></i>Refresh</button>
+                            <div class="tbAlternateUnit">
                             </div>
                         </div>
                     </div>
