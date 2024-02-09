@@ -301,7 +301,7 @@ namespace FMS.Repository.Transaction
                         if (updateTransportingChargePaymentBalance != null)
                         {
                             updateTransportingChargePaymentBalance.RunningBalance -= newPurchaseOrder.TransportationCharges;
-                            updateTransportingChargePaymentBalance.RunningBalanceType = (updatePurchaseledgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
+                            updateTransportingChargePaymentBalance.RunningBalanceType = (updateTransportingChargePaymentBalance.RunningBalance >= 0) ? "Dr" : "Cr";
                             await _appDbContext.SaveChangesAsync();
                         }
                         else
@@ -492,6 +492,23 @@ namespace FMS.Repository.Transaction
                                     {
                                         _Result.WarningMessage = "SubLedger Balance Not Exist";
                                         return _Result;
+                                    }
+                                    if(UpdatePurchaseOrder.TransportationCharges != data.TransportationCharges)
+                                    {
+                                        var TransportChargedifference = data.TransportationCharges - UpdatePurchaseOrder.TransportationCharges;
+                                        //@TransportingChargePayment A/c--------Cr
+                                        var updateTransportingChargePaymentBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.TransportingChargePayment && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                        if (updateTransportingChargePaymentBalance != null)
+                                        {
+                                            updateTransportingChargePaymentBalance.RunningBalance -= TransportChargedifference;
+                                            updateTransportingChargePaymentBalance.RunningBalanceType = (updateTransportingChargePaymentBalance.RunningBalance >= 0) ? "Dr" : "Cr";
+                                            await _appDbContext.SaveChangesAsync();
+                                        }
+                                        else
+                                        {
+                                            _Result.WarningMessage = "Ledger Balance Not Exist";
+                                            return _Result;
+                                        }
                                     }
                                 }
                                 #endregion
@@ -983,6 +1000,29 @@ namespace FMS.Repository.Transaction
                             await _appDbContext.LedgerBalances.AddAsync(newLedgerBalance);
                             await _appDbContext.SaveChangesAsync();
                         }
+                        //@TransportingChargePayment A/c--------Cr
+                        /* var updateTransportingChargePaymentBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.TransportingChargePayment && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                        if (updateTransportingChargePaymentBalance != null)
+                        {
+                            updateTransportingChargePaymentBalance.RunningBalance -= newPurchaseReturnOrder.TransportationCharges;
+                            updateTransportingChargePaymentBalance.RunningBalanceType = (updateTransportingChargePaymentBalance.RunningBalance >= 0) ? "Dr" : "Cr";
+                            await _appDbContext.SaveChangesAsync();
+                        }
+                        else
+                        {
+                            var newLedgerBalance = new LedgerBalance
+                            {
+                                Fk_LedgerId = MappingLedgers.TransportingChargePayment,
+                                OpeningBalance = 0,
+                                OpeningBalanceType = "Cr",
+                                RunningBalance = -data.TransportationCharges,
+                                RunningBalanceType = "Cr",
+                                Fk_BranchId = BranchId,
+                                Fk_FinancialYear = FinancialYear
+                            };
+                            await _appDbContext.LedgerBalances.AddAsync(newLedgerBalance);
+                            await _appDbContext.SaveChangesAsync();
+                        }*/
                         // @SundryCreditor A/c ------------ Dr
                         var LedgerBalanceId = Guid.Empty;
                         var updateSundryCreditorLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.SundryCreditors && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
@@ -1032,6 +1072,7 @@ namespace FMS.Repository.Transaction
                             await _appDbContext.SubLedgerBalances.AddAsync(newSubLedgerBalance);
                             await _appDbContext.SaveChangesAsync();
                         }
+                        
                         #endregion
                         #region Journal
                         var JournalVoucherNo = await _appDbContext.Journals.Where(s => s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).Select(s => new { s.VouvherNo }).OrderByDescending(s => s.VouvherNo).FirstOrDefaultAsync();

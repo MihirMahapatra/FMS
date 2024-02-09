@@ -654,7 +654,6 @@ $(function () {
                         transactionDate.val('');
                         invoiceNo.val('');
                         invoiceDate.val('');
-                        orderDate.val('');
                         transpoterName.val('');
                         vehicleNo.val('');
                         receivingPerson.val('');
@@ -663,6 +662,7 @@ $(function () {
                         gst.val('0');
                         grandTotal.val('0');
                         Naration.val('');
+                        transportationCharges.val('0');
                         GetLastPurchaseTransaction();
                     }
                     else {
@@ -976,7 +976,7 @@ $(function () {
                 });
                 const gstDifferences = {};
                 $('#tblPurchase tbody tr').each(function () {
-                    const gstRate = parseFloat($(this).find('input:eq(5)').val());
+                    const gstRate = parseFloat($(this).find('input:eq(6)').val());
                     const amount = parseFloat($(this).find('input:eq(7)').val());
 
                     if (!isNaN(gstRate) && !isNaN(amount)) {
@@ -1026,9 +1026,6 @@ $(function () {
         } else if (!invoiceDate.val()) {
             toastr.error('InvoiceDate Is Required.');
             return;
-        } else if (!orderDate.val()) {
-            toastr.error('orderDate Is Required.');
-            return;
         } else if (!vehicleNo.val()) {
             toastr.error('VehicleNo Is Required.');
             vehicleNo.focus();
@@ -1064,8 +1061,7 @@ $(function () {
                 Fk_SubLedgerId: ddlSupplyer.val(),
                 InvoiceNo: invoiceNo.val(),
                 InvoiceDate: invoiceDate.val(),
-
-                OrderDate: orderDate.val(),
+                TransportationCharges: transportationCharges.val(),
                 TranspoterName: transpoterName.val(),
                 VehicleNo: vehicleNo.val(),
                 ReceivingPerson: receivingPerson.val(),
@@ -1087,18 +1083,16 @@ $(function () {
                     if (Response.ResponseCode == 200) {
                         toastr.success(Response.SuccessMsg);
                         PurchaseTable.clear().draw();
-
                         purchaseOrderId.val('');
                         transactionNo.val('');
                         transactionDate.val('');
                         invoiceNo.val('');
                         invoiceDate.val('');
-
-                        orderDate.val('');
                         vehicleNo.val('');
                         transpoterName.val('');
                         receivingPerson.val('');
                         subTotal.val('0');
+                        transportationCharges.val('0');
                         gst.val('0');
                         discount.val('0');
                         grandTotal.val('0');
@@ -1348,14 +1342,19 @@ $(function () {
         row.find('input:eq(8)').val(acctualAmount.toFixed(2));
         row.find('input:eq(7)').val(GstAmounts.toFixed(2));
         row.find('input:eq(5)').val(discountAmount);
-
         var totalAmount = 0;
+        var toalSubTotalAmount = 0;
         var totalGstAmount = 0;
         var totalDiscountAmount = 0;
         $('#tblPurchaseReturn tbody tr').each(function () {
+            var qty = parseFloat($(this).find('input:eq(1)').val());
+            var rate = parseFloat($(this).find('input:eq(3)').val());
             var amount = parseFloat($(this).find('input:eq(8)').val());
             var GstAmount = parseFloat($(this).find('input:eq(7)').val());
             var DiscountAmount = parseFloat($(this).find('input:eq(5)').val());
+            if (!isNaN(qty) && !isNaN(rate)) {
+                toalSubTotalAmount += (qty * rate)
+            }
             if (!isNaN(amount)) {
                 totalAmount += amount;
             }
@@ -1366,8 +1365,7 @@ $(function () {
                 totalDiscountAmount += DiscountAmount;
             }
         });
-        var subtotal = totalAmount - totalGstAmount;
-        $('input[name="Pr_SubTotal"]').val(subtotal.toFixed(2));
+        $('input[name="Pr_SubTotal"]').val(toalSubTotalAmount.toFixed(2));
         $('input[name="Pr_GrandTotal"]').val(totalAmount.toFixed(2));
         $('input[name="Pr_GstAmount"]').val(totalGstAmount.toFixed(2));
         $('input[name="Pr_DiscountAmount"]').val(totalDiscountAmount.toFixed(2));
@@ -1392,6 +1390,14 @@ $(function () {
             gstDifferenceBody.append(row);
         }
     });
+    Pr_transportationCharges.on('change', function () {
+        var tranportChgAmount = $(this).val();
+        subTotalAmount = Pr_subTotal.val();
+        discountAmount = Pr_discount.val();
+        gstAmount = Pr_gst.val();
+        updateGrandTotal = parseFloat(tranportChgAmount) + parseFloat(subTotalAmount) + parseFloat(gstAmount) - parseFloat(discountAmount);
+        Pr_grandTotal.val(updateGrandTotal.toFixed(2));
+    });
     $('#Pr_btnSave').on('click', CreatetPurchaseReturn);
     function CreatetPurchaseReturn() {
 
@@ -1414,9 +1420,6 @@ $(function () {
             return;
         } else if (!Pr_invoiceDate.val()) {
             toastr.error('InvoiceDate Is Required.');
-            return;
-        } else if (!Pr_orderDate.val()) {
-            toastr.error('orderDate Is Required.');
             return;
         } else if (!Pr_vehicleNo.val()) {
             toastr.error('VehicleNo Is Required.');
@@ -1453,11 +1456,11 @@ $(function () {
                     TransactionNo: Pr_transactionNo.val(),
                     InvoiceNo: Pr_invoiceNo.val(),
                     InvoiceDate: Pr_invoiceDate.val(),
-                    OrderDate: Pr_orderDate.val(),
                     SubTotal: Pr_subTotal.val(),
                     DiscountAmount: Pr_discount.val(),
                     GrandTotal: Pr_grandTotal.val(),
                     GstAmount: Pr_gst.val(),
+                    TransportationCharges: Pr_transportationCharges.val(),
                     TranspoterName: Pr_transpoterName.val(),
                     VehicleNo: Pr_vehicleNo.val(),
                     ReceivingPerson: Pr_receivingPerson.val(),
@@ -1475,11 +1478,9 @@ $(function () {
                         if (Response.ResponseCode == 201) {
                             toastr.success(Response.SuccessMsg);
                             PurchaseReturnTable.clear().draw();
-
                             Pr_transactionDate.val('');
                             Pr_invoiceNo.val('');
                             Pr_invoiceDate.val('');
-                            Pr_orderDate.val('');
                             Pr_transpoterName.val('');
                             Pr_vehicleNo.val('');
                             Pr_receivingPerson.val('');
@@ -1488,6 +1489,7 @@ $(function () {
                             Pr_discount.val('0');
                             Pr_grandTotal.val('0');
                             Pr_Narration.val('');
+                            Pr_transportationCharges.val('0');
                             GetLastPurchaseReturnTransaction();
                         }
                         else {
@@ -1710,6 +1712,7 @@ $(function () {
                 }
                 Pr_subTotal.val(result.purchaseReturnOrder.SubTotal);
                 Pr_discount.val(result.purchaseReturnOrder.Discount);
+                Pr_transportationCharges.val(result.purchaseReturnOrder.TransportationCharges)
                 Pr_gst.val(result.purchaseReturnOrder.Gst);
                 Pr_grandTotal.val(result.purchaseReturnOrder.GrandTotal);
                 PurchaseReturnTable.clear().draw();
@@ -1845,9 +1848,6 @@ $(function () {
         } else if (!Pr_invoiceDate.val()) {
             toastr.error('InvoiceDate Is Required.');
             return;
-        } else if (!Pr_orderDate.val()) {
-            toastr.error('orderDate Is Required.');
-            return;
         } else if (!Pr_vehicleNo.val()) {
             toastr.error('VehicleNo Is Required.');
             Pr_vehicleNo.focus();
@@ -1883,12 +1883,12 @@ $(function () {
                 Fk_SubLedgerId: Pr_ddlSupplyer.val(),
                 InvoiceNo: Pr_invoiceNo.val(),
                 InvoiceDate: Pr_invoiceDate.val(),
-                OrderDate: Pr_orderDate.val(),
                 TranspoterName: Pr_transpoterName.val(),
                 VehicleNo: Pr_vehicleNo.val(),
                 ReceivingPerson: Pr_receivingPerson.val(),
                 SubTotal: Pr_subTotal.val(),
                 DiscountAmount: Pr_discount.val(),
+                TransportationCharges: Pr_transportationCharges.val(),
                 GstAmount: Pr_gst.val(),
                 GrandTotal: Pr_grandTotal.val(),
                 Naration: Pr_Narration.val(),
@@ -1910,7 +1910,6 @@ $(function () {
                         Pr_transactionDate.val('');
                         Pr_invoiceNo.val('');
                         Pr_invoiceDate.val('');
-                        Pr_orderDate.val('');
                         Pr_transpoterName.val('');
                         Pr_vehicleNo.val('');
                         Pr_receivingPerson.val('');
@@ -1919,6 +1918,7 @@ $(function () {
                         Pr_gst.val('0');
                         Pr_grandTotal.val('0');
                         Pr_Narration.val('');
+                        Pr_transportationCharges.val('0');
                         GetLastPurchaseReturnTransaction();
                     }
                     else {
