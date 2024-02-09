@@ -489,6 +489,16 @@ namespace FMS.Controllers.Admin
             }
             return new JsonResult(result);
         }
+        public async Task<IActionResult> GetProductTypefinishedGood()
+        {
+            var result = await _adminSvcs.GetProductTypes();
+            var elementToRemove = result.ProductTypes.Where(x => x.ProductTypeId == MappingProductType.ServiceGoods || x.ProductTypeId == MappingProductType.RawMaterial || x.ProductTypeId == MappingProductType.MouldAndMechinary).ToList();
+            if (elementToRemove.Count > 0)
+            {
+                result.ProductTypes.RemoveAll(x => elementToRemove.Contains(x));
+            }
+            return new JsonResult(result);
+        }
         [HttpGet]
         public async Task<IActionResult> GetAlternateUnits()
         {

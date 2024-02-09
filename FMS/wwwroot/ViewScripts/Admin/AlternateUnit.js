@@ -269,4 +269,142 @@
             }
         });
     }
+
+    // ---------------------------------- fhinshed goods//----------------------------------------------------
+    const fddlProductType = $('select[name="fddlProductType"]');
+    const fProductId = $('select[name="fProductId"]');
+    const fHdnUnitId = $('#fHdnUnitId');
+    const fUnitName = $('#fUnit');
+    const fUnitQty = $('input[name = "fUnitQty"]');
+    const fAlternateQty = $('input[name = "fAlternateQty"]');
+    const fAlternateUnit = $('input[name = "fAlternateUnit"]');
+    const fWholesalePrice = $('input[name = "fWholesalePrice"]');
+    const fRetailPrice = $('input[name = "fRetailPrice"]');
+
+    GetProductTypesfinishedGood();
+    function GetProductTypesfinishedGood() {
+        $.ajax({
+            url: "/Admin/GetProductTypefinishedGood",
+            type: "GET",
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            success: function (result) {
+                if (result.ResponseCode == 302) {
+                    fddlProductType.empty();
+                    var defaultOption = $('<option></option>').val('').text('--Select Option--');
+                    fddlProductType.append(defaultOption);
+                    $.each(result.ProductTypes, function (key, item) {
+                        var option = $('<option></option>').val(item.ProductTypeId).text(item.Product_Type);
+                        fddlProductType.append(option);
+                    });
+                }
+                else {
+                    ddlProductType.empty();
+                    var defaultOption = $('<option></option>').val('').text('--Select Option--');
+                    ddlProductType.append(defaultOption);
+                }
+            },
+            error: function (errormessage) {
+                console.log(errormessage)
+            }
+        });
+    }
+    fddlProductType.on('change', function () {
+        var ProductTypeId = fddlProductType.val();
+        $.ajax({
+            url: '/Admin/GetProductByTypeId?ProductTypeId=' + ProductTypeId + '',
+            type: "GET",
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            success: function (result) {
+                if (result.ResponseCode == 302) {
+                    fProductId.empty();
+                    $.each(result.Products, function (key, item) {
+                        var option = $('<option></option>').val(item.ProductId).text(item.ProductName);
+                        fProductId.append(option);
+                    });
+                }
+            },
+            error: function (errormessage) {
+                Swal.fire(
+                    'Error!',
+                    'An error occurred',
+                    'error'
+                );
+            }
+        });
+    });
+    fProductId.on('change', function () {
+        var productId = fProductId.val();
+        $.ajax({
+            url: '/Admin/GetProductById?ProductId=' + productId + '',
+            type: "GET",
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            success: function (result) {
+                console.log(result);
+                if (result.ResponseCode == 302) {
+                    fUnitName.text(result.Product.Unit.UnitName);
+                    fHdnUnitId.val(result.Product.Unit.UnitId);
+                }
+            },
+            error: function (errormessage) {
+                console.log(errormessage)
+            }
+        });
+    });
+    $(document).on('click', '.btn-falternateunit-create', fCreateAlternateUnit);
+    function fCreateAlternateUnit() {
+        $('#loader').show();
+        if (!fProductId.val() || fProductId.val() === '--Select Option--') {
+            toastr.error('Plz Select Prosuct.');
+            fProductId.focus();f
+            return;
+        }
+        else if (!fUnitQty.val()) {
+            toastr.error('Quantity Is Required.');
+            fUnitQty.focus();
+            return;
+        }
+        else if (!fAlternateUnit.val()) {
+            toastr.error('Alternate Unit Is Required.');
+            fAlternateUnit.focus();
+            return;
+        }
+        else {
+            const data = {
+                FK_ProductId: fProductId.val(),
+                Fk_UnitId: fHdnUnitId.val(),
+                UnitQuantity: fUnitQty.val(),
+                AlternateUnitName: fAlternateUnit.val(),
+                AlternateQuantity: fAlternateQty.val(),
+                WholeSalePrice: fWholesalePrice.val(),
+                RetailPrice: fRetailPrice.val()
+            }
+            $.ajax({
+                type: "POST",
+                url: '/Admin/CreateAlternateUnit',
+                dataType: 'json',
+                data: JSON.stringify(data),
+                contentType: "application/json;charset=utf-8",
+                success: function (Response) {
+                    $('#loader').hide();
+                    if (Response.ResponseCode == 201) {
+                        toastr.success(Response.SuccessMsg);
+                    }
+                    else {
+                        toastr.error(Response.ErrorMsg);
+                    }
+                    fAlternateUnit.val('');
+                    //fUnitQty.val('0');
+                    fRetailPrice.val('');
+                    fWholesalePrice.val('');
+                },
+                error: function (error) {
+                    console.log(error);
+                    $('#loader').hide();
+                }
+            });
+        }
+    }
 });
