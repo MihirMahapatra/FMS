@@ -302,9 +302,9 @@ $(function () {
                                     html += '<td>-</td>';
                                     html += '<td>-</td>';
                                     html += '<td>-</td>';
-                                    html += '<td>' + Payment.Amount + '</td>';
+                                    html += '<td>' + Payment.Amount.toFixed(2) + '</td>';
                                     Balance -= Payment.Amount
-                                    html += '<td>' + Balance + '</td>';
+                                    html += '<td>' + Balance.toFixed(2) + '</td>';
                                     html += '</tr >';
                                 });
                             }
