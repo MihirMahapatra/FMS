@@ -26,6 +26,8 @@ namespace FMS.Model.CommonModel
         public decimal GrandTotal { get; set; }
         public decimal TransportCharges { get; set; }
         public string Naration { get; set; }
+        public string BranchName {  get; set; }
+        public string DrCr { get; set; }
         public List<PartyReportTransactionModel> Transactions { get; set; } = new List<PartyReportTransactionModel>();
 
     }
@@ -48,10 +50,10 @@ namespace FMS.Model.CommonModel
     {
         public PartyReportViewModel()
         {
-            PartyDetailed = new List<PartyReportModel2>();
+            PartyDetailed = new PartyReportModel2();
             PartySummerized = new List<PartyReportModel>();
         }
-        public List<PartyReportModel2> PartyDetailed { get; set; }
+        public PartyReportModel2 PartyDetailed { get; set; }
         public List<PartyReportModel> PartySummerized { get; set; }
     }
     public class PartyReportInfoModel

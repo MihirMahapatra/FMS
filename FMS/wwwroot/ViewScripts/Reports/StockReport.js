@@ -334,7 +334,7 @@
                         $.each(result.DetailedStock, function (key, item) {
                             var Stock = 0;
                             html += '<tr>';
-                            html += '<td colspan="6"  style="background-color:red">' + item.BranchName + '</td>';
+                            html += '<td colspan="6"  class="bg-primary">' + item.BranchName + '</td>';
                             html += '</tr >';
                             html += '<tr>';
                             html += '<td colspan="5">Opening Qty</td>';

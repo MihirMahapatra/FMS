@@ -146,7 +146,6 @@ $(function () {
                 contentType: "application/json;charset=utf-8",
                 dataType: "json",
                 success: function (result) {
-                    debugger;
                     if (result.ResponseCode == 302) {
                         html += '<div class="form-group row">';
                         html += '<label name="SubLadgerCurBal" for="SubLadgerCurBal_' + uniqueId + '" class="col-sm-2 col-form-label">Cur Bal: </label>';

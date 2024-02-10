@@ -288,7 +288,7 @@ namespace FMS.Service.Reports
                     {
                         ResponseStatus = Result.Response,
                         ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
-                        PartyDetailed = Result.CollectionObjData,
+                        PartyDetailed = Result.SingleObjData,
                     };
                 }
                 else

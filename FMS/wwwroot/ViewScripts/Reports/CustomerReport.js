@@ -238,160 +238,78 @@ $(function () {
                     html += '<table class="table table-bordered table-hover text-center mt-2 DetailedReportTable" style="width:100%">';
                     html += '<tbody>';
                     if (result.ResponseCode == 302) {
-                        $('#BtnPrintDetailed').show();
-                        $.each(result.PartyDetailed, function (key, item) {
+                        if (result.PartyDetailed !== null) {
+                            var balance =
                             html += '<tr>';
-                            html += '<td colspan="8"  class="bg-primary font-weight-bold">' + item.BranchName + '</td>';
+                            html += '<td colspan="7">Opening Bal.</td>';
+                            html += '<td >' + result.PartyDetailed.OpeningBal + ' ' + result.PartyDetailed.OpeningBalType + '</td>';
                             html += '</tr >';
-                            if (item.PartyInfo) {
-                                html += '<tr>';
-                                html += '<td colspan="4">Opening Bal</td>';
-                                html += '<td colspan="4"> ' + item.PartyInfo.OpeningBal + ' ' + item.PartyInfo.OpeningBalType + '</td>';
+                            var balance = result.PartyDetailed.OpeningBal;
+                            if (result.PartyDetailed.Orders.length > 0) {
+                                html += '<tr class="bg-primary">';
+                                html += '<td >Trxn Date </td>';
+                                html += '<td >Trxn No</td>';
+                                html += '<td >Branch</td>';
+                                html += '<td colspan="4">Details</td>';
+                                html += '<td></td>';
                                 html += '</tr >';
-                                var Balance = item.PartyInfo.OpeningBal;
-                                if (item.PartyInfo.SalesOrders.length > 0) {
-                                    html += '<tr>';
-                                    html += '<td colspan="8" class="text-success">Sales</td>';
-                                    html += '</tr >';
-                                    $.each(item.PartyInfo.SalesOrders, function (key, child1) {
-                                        html += '<tr>';
-                                        html += '<td colspan="2">Trxn Date</td>';
-                                        html += '<td colspan="2">Trxn No</td>';
-                                        html += '<td colspan="4">Narration</td>';
-                                        html += '</tr>';
-                                        const ModifyDate = child1.TransactionDate;
-                                        var formattedDate = '';
-                                        if (ModifyDate) {
-                                            const dateObject = new Date(ModifyDate);
-                                            if (!isNaN(dateObject)) {
-                                                const day = String(dateObject.getDate()).padStart(2, '0');
-                                                const month = String(dateObject.getMonth() + 1).padStart(2, '0');
-                                                const year = dateObject.getFullYear();
-                                                formattedDate = `${day}/${month}/${year}`;
-                                            }
+                                $.each(result.PartyDetailed.Orders, function (key, item) {
+                                    const ModifyedDate = item.TransactionDate;
+                                    var formattedDate;
+                                    if (ModifyedDate) {
+                                        const dateObject = new Date(ModifyedDate);
+                                        if (!isNaN(dateObject)) {
+                                            const day = String(dateObject.getDate()).padStart(2, '0');
+                                            const month = String(dateObject.getMonth() + 1).padStart(2, '0');
+                                            const year = dateObject.getFullYear();
+                                            formattedDate = `${day}/${month}/${year}`;
                                         }
+                                    }
+                                    html += '<tr>';
+                                    html += '<td >' + formattedDate + '</td>';
+                                    html += '<td >' + item.TransactionNo + '</td>';
+                                    html += '<td >' + item.BranchName + '</td>';
+                                    html += '<td colspan="4">' + item.Naration + '</td>';  
+                                    html += '<td>-</td>';  
+                                    html += '</tr >';
+                                    if (item.Transactions.length > 0) {
                                         html += '<tr>';
-                                        html += '<td colspan="2">' + formattedDate + '</td>';
-                                        html += '<td colspan="2">' + child1.TransactionNo + '</td>';
-                                        html += '<td colspan="4">' + child1.Naration + '</td>';
+                                        html += '<td >-</td>';
+                                        html += '<td >-</td>';
+                                        html += '<td >-</td>';
+                                        html += '<td >Product</td>';
+                                        html += '<td >Qty</td>';
+                                        html += '<td >Rate</td>';
+                                        html += '<td >Amount</td>';
+                                        html += '<td >-</td>';
                                         html += '</tr >';
-                                        html += '<tr>';
-                                        html += '<td colspan="2"></td>';
-                                        html += '<td>Product</td>';
-                                        html += '<td>Qty</td>';
-                                        html += '<td>Rate</td>';
-                                        html += '<td>Disc.</td>';
-                                        html += '<td>Gst</td>';
-                                        html += '<td>Amount</td>';
-                                        html += '</tr >';
-                                        $.each(child1.SalesTransactions, function (key, subchild1) {
-                                            html += '<td colspan="2"></td>';
-                                            html += '<td>' + subchild1.ProductName + '</td>';
-                                            html += '<td>' + subchild1.Quantity + '</td>';
-                                            html += '<td>' + subchild1.Rate + '</td>';
-                                            html += '<td>' + subchild1.DiscountAmount + '</td>';
-                                            html += '<td>' + subchild1.GstAmount + '</td>';
-                                            html += '<td>' + subchild1.Amount + '</td>';
+                                        $.each(item.Transactions, function (key, Transaction) {
+                                            html += '<tr>';
+                                            html += '<td >-</td>';
+                                            html += '<td >-</td>';
+                                            html += '<td >-</td>';
+                                            html += '<td >' + Transaction.ProductName +'</td>';
+                                            html += '<td >' + Transaction.Quantity +'</td>';
+                                            html += '<td >' + Transaction.Rate +'</td>';
+                                            html += '<td >' + Transaction.Amount +'</td>';
+                                            html += '<td >-</td>';
+                                            html += '</tr >';
                                         });
-                                        html += '<tr>';
-                                        html += '<td colspan="4">Grand Total</td>';
-                                        html += '<td colspan="4">' + child1.GrandTotal + '</td>';
-                                        html += '</tr>';
-                                        Balance += child1.GrandTotal
-                                    });
-                                }
-                                if (item.PartyInfo.SalesReturns.length > 0) {
+                                    }
                                     html += '<tr>';
-                                    html += '<td colspan="8"  class="text-success">Sales Return</td>';
+                                    html += '<td >-</td>';
+                                    html += '<td >-</td>';
+                                    html += '<td >-</td>';
+                                    html += '<td colspan="3">Grand Total</td>';
+                                    html += '<td>' + item.GrandTotal + '</td>';
+                                    balance += item.DrCr == "Dr" ? item.GrandTotal : -item.GrandTotal;
+                                    var DrCr = balance > 0 ? "Dr" : "Cr";
+                                    html += '<td>' + balance + ' ' + DrCr + '</td>';
                                     html += '</tr >';
-                                    $.each(item.PartyInfo.SalesReturns, function (key, child2) {
-                                        html += '<tr>';
-                                        html += '<td colspan="2">Trxn Date</td>';
-                                        html += '<td colspan="2">Trxn No</td>';
-                                        html += '<td colspan="4">Narration</td>';
-                                        html += '</tr>';
-                                        const ModifyDate = child2.TransactionDate;
-                                        var formattedDate = '';
-                                        if (ModifyDate) {
-                                            const dateObject = new Date(ModifyDate);
-                                            if (!isNaN(dateObject)) {
-                                                const day = String(dateObject.getDate()).padStart(2, '0');
-                                                const month = String(dateObject.getMonth() + 1).padStart(2, '0');
-                                                const year = dateObject.getFullYear();
-                                                formattedDate = `${day}/${month}/${year}`;
-                                            }
-                                        }
-                                        html += '<tr>';
-                                        html += '<td colspan="2">' + formattedDate + '</td>';
-                                        html += '<td colspan="2">' + child2.TransactionNo + '</td>';
-                                        html += '<td colspan="4">' + child2.Naration + '</td>';
-                                        html += '</tr >';
-                                        html += '<tr>';
-                                        html += '<td colspan="2"></td>';
-                                        html += '<td>Product</td>';
-                                        html += '<td>Qty</td>';
-                                        html += '<td>Rate</td>';
-                                        html += '<td>Disc.</td>';
-                                        html += '<td>Gst</td>';
-                                        html += '<td>Amount</td>';
-                                        html += '</tr >';
-                                        $.each(child2.SalesReturnTransactions, function (key, subchild2) {
-                                            html += '<td colspan="2"></td>';
-                                            html += '<td>' + subchild2.ProductName + '</td>';
-                                            html += '<td>' + subchild2.Quantity + '</td>';
-                                            html += '<td>' + subchild2.Rate + '</td>';
-                                            html += '<td>' + subchild2.DiscountAmount + '</td>';
-                                            html += '<td>' + subchild2.GstAmount + '</td>';
-                                            html += '<td>' + subchild2.Amount + '</td>';
-                                        });
-                                        html += '<tr>';
-                                        html += '<td colspan="4">Grand Total</td>';
-                                        html += '<td colspan="4">' + child2.GrandTotal + '</td>';
-                                        html += '</tr>';
-                                        Balance -= child2.GrandTotal
-                                    });
-                                }
-                                if (item.PartyInfo.Receipts.length > 0) {
-                                    html += '<tr>';
-                                    html += '<td colspan="8"  class="text-success">Receipts</td>';
-                                    html += '</tr >';
-                                    html += '<tr>';
-                                    html += '<td colspan="2">Voucher Date</td>';
-                                    html += '<td colspan="2">Voucher No</td>';
-                                    html += '<td colspan="3">Narration</td>';
-                                    html += '<td>Amount</td>';
-                                    html += '</tr>';
-                                    $.each(item.PartyInfo.Receipts, function (key, child3) {
-                                        const ModifyDate = child3.VoucherDate;
-                                        var formattedDate = '';
-                                        if (ModifyDate) {
-                                            const dateObject = new Date(ModifyDate);
-                                            if (!isNaN(dateObject)) {
-                                                const day = String(dateObject.getDate()).padStart(2, '0');
-                                                const month = String(dateObject.getMonth() + 1).padStart(2, '0');
-                                                const year = dateObject.getFullYear();
-                                                formattedDate = `${day}/${month}/${year}`;
-                                            }
-                                        }
-                                        html += '<tr>';
-                                        html += '<td colspan="2">' + formattedDate + '</td>';
-                                        html += '<td colspan="2">' + child3.VouvherNo + '</td>';
-                                        html += '<td colspan="3">' + child3.Narration + '</td>';
-                                        html += '<td>' + child3.Amount + '</td>';
-                                        html += '</tr>';
-                                        Balance -= child3.Amount
-                                    });
-                                }
-                                html += '<tr>';
-                                html += '<td colspan="4">Closing Bal</td>';
-                                if (Balance > 0) {
-                                    html += '<td colspan="4"> ' + Balance + ' Dr</td>';
-                                } else {
-                                    html += '<td colspan="4"> ' + Balance + ' Cr</td>';
-                                }
-                                html += '</tr >';
+                                });
                             }
-                        });
+                        }
+                        $('#BtnPrintDetailed').show();
                     }
                     else {
                         html += '<tr>';
