@@ -400,7 +400,7 @@ $(function () {
                                 html += '<td>' + journal.LedgerName + '</td>';
                             }
                             html += '<td>' + journal.SubLedgerName + '</td>';
-                            html += '<td>' + journal.narration + '</td>';
+                            html += '<td>' + journal.Narration + '</td>';
                             html += '<td>' + journal.Amount + '</td>';
                             html += '<td>' + journal.DrCr + '</td>';
                             if (firstRow) {

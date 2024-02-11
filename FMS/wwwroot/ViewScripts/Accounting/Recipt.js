@@ -417,7 +417,7 @@ $(function () {
                                 html += '<td>' + Receipt.LedgerName + '</td>';
                             }
                             html += '<td>' + Receipt.SubLedgerName + '</td>';
-                            html += '<td>' + Receipt.narration + '</td>';
+                            html += '<td>' + Receipt.Narration + '</td>';
                             html += '<td>' + Receipt.Amount + '</td>';
                             html += '<td>' + Receipt.DrCr + '</td>';
                             if (firstRow) {

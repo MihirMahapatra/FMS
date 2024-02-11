@@ -422,7 +422,7 @@ $(function () {
                                 html += '<td>' + Payment.LedgerName + '</td>';
                             }
                             html += '<td>' + Payment.SubLedgerName + '</td>';
-                            html += '<td>' + Payment.narration + '</td>';
+                            html += '<td>' + Payment.Narration + '</td>';
                             html += '<td>' + Payment.Amount + '</td>';
                             html += '<td>' + Payment.DrCr + '</td>';
                             if (firstRow) {
