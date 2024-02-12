@@ -1,11 +1,12 @@
 ﻿using FMS.Db.DbEntity;
 using FMS.Db.DbEntityConfig;
+using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace FMS.Db.Context;
 
-public partial class AppDbContext : IdentityDbContext<AppUser>
+public partial class AppDbContext : IdentityDbContext<AppUser>, IDataProtectionKeyContext
 {
     public AppDbContext()
     {
@@ -16,6 +17,7 @@ public partial class AppDbContext : IdentityDbContext<AppUser>
 
     }
     #region Entity
+    public DbSet<DataProtectionKey> DataProtectionKeys { get; set; } = null!;
     public  DbSet<AppUser> AppUsers { get; set; }
     public  DbSet<RegisterToken> RegisterTokens { get; set; }
     public DbSet<FinancialYear> FinancialYears { get; set; }

@@ -24,6 +24,7 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Serialization;
 using NLog;
@@ -37,9 +38,8 @@ try
     var builder = WebApplication.CreateBuilder(args);
     //***************************************************Add Connection to Db**************************************//
     builder.Services.AddDbContext<AppDbContext>(option =>
-    option.UseSqlServer(builder.Configuration.GetConnectionString("DBCS"))
-    .EnableSensitiveDataLogging()
-    .UseLoggerFactory(LoggerFactory.Create(builder => builder.AddConsole())) 
+    option.UseSqlServer(builder.Configuration.GetConnectionString("DBCS")).EnableSensitiveDataLogging(builder.Environment.IsDevelopment())
+    .UseLoggerFactory(LoggerFactory.Create(builder => builder.AddConsole()))
     );
     //****************************************************Email setup************************************************//
     builder.Services.Configure<SMTPConfigModel>(builder.Configuration.GetSection("SMTPConfig"));
@@ -113,17 +113,7 @@ try
         options.Cookie.Expiration = TimeSpan.FromDays(1);
     });
     //****************************************************Data Protection*******************************// 
-    if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-    {
-        var projectRootPath = AppDomain.CurrentDomain.BaseDirectory;
-        var keyPath = Path.Combine(projectRootPath, "DataProtectionKeys");
-        builder.Services.AddDataProtection().ProtectKeysWithDpapi(protectToLocalMachine: true).PersistKeysToFileSystem(new DirectoryInfo(keyPath)).SetDefaultKeyLifetime(TimeSpan.FromDays(90));
-    }
-    else
-    {
-        // Use an alternative method for non-Windows platforms For example, using an X.509 certificate:
-       builder.Services.AddDataProtection().ProtectKeysWithCertificate("thumbprint");
-    }
+    builder.Services.AddDataProtection().PersistKeysToDbContext<AppDbContext>();
     //****************************************************Global Autherization****************************************************//
     builder.Services.AddControllersWithViews(options =>
     {
