@@ -20,6 +20,7 @@ using FMS.Service.Reports;
 using FMS.Service.Transaction;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
@@ -109,6 +110,8 @@ try
         options.LoginPath = "/Account/Login";
         options.Cookie.Expiration = TimeSpan.FromDays(1);
     });
+    //****************************************************Data Protection*******************************// 
+    builder.Services.AddDataProtection().PersistKeysToFileSystem(new DirectoryInfo(@"C:\DataProtectionKeys")).SetDefaultKeyLifetime(TimeSpan.FromDays(90));
     //****************************************************Global Autherization****************************************************//
     builder.Services.AddControllersWithViews(options =>
     {
