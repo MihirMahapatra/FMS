@@ -28,6 +28,8 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Serialization;
 using NLog;
 using NLog.Web;
+using System.Configuration;
+using System.Runtime.InteropServices;
 
 var logger = LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
 try
@@ -111,7 +113,17 @@ try
         options.Cookie.Expiration = TimeSpan.FromDays(1);
     });
     //****************************************************Data Protection*******************************// 
-    builder.Services.AddDataProtection().PersistKeysToFileSystem(new DirectoryInfo(@"C:\DataProtectionKeys")).SetDefaultKeyLifetime(TimeSpan.FromDays(90));
+    if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+    {
+        var projectRootPath = AppDomain.CurrentDomain.BaseDirectory;
+        var keyPath = Path.Combine(projectRootPath, "DataProtectionKeys");
+        builder.Services.AddDataProtection().ProtectKeysWithDpapi(protectToLocalMachine: true).PersistKeysToFileSystem(new DirectoryInfo(keyPath)).SetDefaultKeyLifetime(TimeSpan.FromDays(90));
+    }
+    else
+    {
+        // Use an alternative method for non-Windows platforms For example, using an X.509 certificate:
+       builder.Services.AddDataProtection().ProtectKeysWithCertificate("thumbprint");
+    }
     //****************************************************Global Autherization****************************************************//
     builder.Services.AddControllersWithViews(options =>
     {
