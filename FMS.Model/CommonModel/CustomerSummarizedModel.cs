@@ -11,6 +11,7 @@ namespace FMS.Model.CommonModel
         public string FromDate { get; set; }
         public string ToDate { get; set; }
         public string PartyName { get; set; }
+        public PartyReportModel2 PartyDetailedReports { get; set; }
         public List<PartyReportModel> PartyReports { get; set; }
         public List<PartyModel> Party { get; set; }
     }

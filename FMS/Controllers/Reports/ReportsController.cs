@@ -173,6 +173,16 @@ namespace FMS.Controllers.Reports
             return BadRequest(ModelState);
         }
         [HttpPost]
+        public async Task<IActionResult> GetBranchWiseSupllayerInfo([FromBody] PartyReportDataRequest requestData)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _reportSvcs.GetBranchWiseSupllayerInfo(requestData);
+                return new JsonResult(result);
+            }
+            return BadRequest(ModelState);
+        }
+        [HttpPost]
         public async Task<IActionResult> GetDetailedSupplyerReport([FromBody] PartyReportDataRequest requestData)
         {
             if (ModelState.IsValid)

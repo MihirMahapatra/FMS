@@ -20,7 +20,8 @@ namespace FMS.Repository.Reports
         #endregion
         #region Supplyer Report
         Task<Result<PartyReportModel>> GetSummerizedSupplyerReport(PartyReportDataRequest requestData);
-        Task<Result<PartyModel>> GetDetailedSupplyerReport(PartyReportDataRequest requestData);
+        Task<Result<PartyReportInfoModel>> GetBranchWiseSupllayerInfo(PartyReportDataRequest requestData);
+        Task<Result<PartyReportModel2>> GetDetailedSupplyerReport(PartyReportDataRequest requestData);
         #endregion
         #region DaySheet
         public Task<Result<DaySheetModel>> GetDaySheet(string Date);

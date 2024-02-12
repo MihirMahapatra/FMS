@@ -43,6 +43,7 @@ namespace FMS.Model.CommonModel
         public string BranchName;
         public decimal OpeningBal;
         public string OpeningBalType;
+        public string PartyName;
         public List<PartyReportOrderModel> Orders { get; set; } = new List<PartyReportOrderModel>();
 
     }

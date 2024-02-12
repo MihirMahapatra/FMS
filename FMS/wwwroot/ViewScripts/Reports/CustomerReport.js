@@ -73,11 +73,11 @@ $(function () {
                             html += '<td>' + balanceType + '</td>';
                             html += '<tr>';
                         })
-                        //PrintData = {
-                        //    FromDate: fromDateSummerized.val(),
-                        //    ToDate: toDateSummerized.val(),
-                        //    PartyReports: result.PartyReports
-                        //}
+                        PrintData = {
+                            FromDate: fromDateSummerized.val(),
+                            ToDate: toDateSummerized.val(),
+                            PartyReports: result.PartySummerized
+                        }
                     }
                     else {
                         html += '<tr>';
@@ -309,6 +309,11 @@ $(function () {
                                 });
                             }
                         }
+                        PrintDataDetailed = {
+                            FromDate: fromDateDetailed.val(),
+                            ToDate: toDateDetailed.val(),
+                            PartyDetailedReports: result.PartyDetailed
+                        }
                         $('#BtnPrintDetailed').show();
                     }
                     else {
@@ -332,7 +337,6 @@ $(function () {
         }
     })
     $('#BtnPrintDetailed').on('click', function () {
-        console.log(PrintDataDetailed);
         $.ajax({
             type: "POST",
             url: '/Print/CustomerDetailedPrintData',

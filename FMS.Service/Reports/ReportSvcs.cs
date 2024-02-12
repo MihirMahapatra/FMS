@@ -352,9 +352,46 @@ namespace FMS.Service.Reports
             }
             return Obj;
         }
-        public async Task<PartyViewModel> GetDetailedSupplyerReport(PartyReportDataRequest requestData)
+        public async Task<PartyReportInfoViewModel> GetBranchWiseSupllayerInfo(PartyReportDataRequest requestData)
         {
-            PartyViewModel Obj;
+            PartyReportInfoViewModel Obj;
+            var Result = await _reportRepo.GetBranchWiseSupllayerInfo(requestData);
+            if (Result.IsSuccess)
+            {
+                if (Result.Response == "success")
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
+                        PartyInfos = Result.CollectionObjData,
+                    };
+                }
+                else
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.NotFound),
+                        Message = "No Record Found"
+                    };
+                }
+            }
+            else
+            {
+                Obj = new()
+                {
+                    ResponseStatus = Result.Response,
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    Message = "Some Eroor Occoured"
+                };
+            }
+            return Obj;
+        }
+        public async Task<PartyReportViewModel> GetDetailedSupplyerReport(PartyReportDataRequest requestData)
+        {
+            PartyReportViewModel Obj;
             var Result = await _reportRepo.GetDetailedSupplyerReport(requestData);
             if (Result.IsSuccess)
             {
@@ -364,7 +401,7 @@ namespace FMS.Service.Reports
                     {
                         ResponseStatus = Result.Response,
                         ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
-                        Party = Result.SingleObjData,
+                        PartyDetailed = Result.SingleObjData,
                     };
                 }
                 else

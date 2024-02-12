@@ -10,7 +10,7 @@
         }
 
         .small-row td {
-            font-size: 0.9em !important;
+            font-size: 0.7em !important;
             padding: 0.1em !important;
             /* Adjust the font size as needed */
         }
@@ -23,8 +23,14 @@
             padding: 0.1em !important; /* Adjust the row height */
             font-size: 0.9em !important;
         }
-        body{
-            color:black!important;
+
+        .small-rows td {
+            padding: 0.1em !important; /* Adjust the row height */
+            font-size: 0.9em !important;
+        }
+
+        body {
+            color: black !important;
         }
 
     </style>
@@ -44,7 +50,7 @@
                                 <div class="col-auto">
                                     <div class="header-logo">
                                         <a href="index.html">
-                                            <img src="~/assets/images/logo/logo.png" alt="logo" style="width:30%; margin-left:25px;" />
+                                            <img src="~/landingpage/assets/images/logo/logo.png" alt="logo" style="width:30%; margin-left:25px;" />
                                         </a>
                                         <p style="font-family: Times,  Times New Roman, Georgia, serif; color:black; margin-left:30px;"> @Model.Cmopany.Name</p>
                                     </div>
@@ -62,109 +68,81 @@
                                         @Model.Cmopany.Adress<br>@Model.Cmopany.Email,<br>
                                         @Model.Cmopany.Phone,<br>Odisha
                                     </address>
+                                    <br>
+                                    <b>Customer Name : @Model.Customers.PartyDetailedReports.PartyName</b>
                                 </div>
                             </div>
                             <div class="col-auto" style="padding-right:20px!important;">
                                 GSTIN :  @Model.Cmopany.GSTIN<br />
                                 Report Date :  @DateTime.Now.ToString("dd/MM/yyyy") <br />
                                 From Date :  @Model.Customers.FromDate<br />
-                                To Date :  @Model.Customers.ToDate<br/>
-                                <b style="display:none">Opening Bal: @Model.Customers.Party[0].OpeningBal</b>
+                                To Date :  @Model.Customers.ToDate<br /><br />
                             </div>
                         </div>
                         <table class="invoice-table">
                             <thead>
+                                <tr class="small-rows">
+                                    <td colspan="7">Opening Bal.</td>
+                                    <td style="text-align:center;">@Model.Customers.PartyDetailedReports.OpeningBal  @Model.Customers.PartyDetailedReports.OpeningBalType</td>
+                                </tr>
                                 <tr class="small-row">
-                                    <th style="width:15%;">Date</th>
-                                    <th style="width:20%;">TrnxNo</th>
-                                    <th style="width:20%;">Particulars</th>
-                                    <th style="width:20%;">Billing Amt</th>
-                                    <th style="width:10%;">Paid Amt</th>
-                                    <th style="width:10%;">Balance</th>
-                                    <th style="width:5%;text-align:center;">Type</th>
-
+                                    <th style="width:10%!important;">Trxn Date</th>
+                                    <th style="width:15%!important;">Trxn No</th>
+                                    <th style="width:20%!important;">Branch</th>
+                                    <th style="width:45%!important;text-align:center;" colspan="4">Details</th>
+                                    <th style="width:10%!important;text-align:center;"> - </th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @if (Model.Customers != null)
+                                @{
+                                    var balance = @Model.Customers.PartyDetailedReports.OpeningBal;
+                                }
+                                @foreach (var item in Model.Customers.PartyDetailedReports.Orders)
                                 {
-                                    <tr class="small-row">
-                                        <td>-</td>
-                                        <td>-</td>
-                                        <td>Opening Bal</td>
-                                        <td>-</td>
-                                        <td>-</td>
-                                        <td>@Model.Customers.Party[0].OpeningBal</td>
-                                        @if (@Model.Customers.Party[0].OpeningBal > 0)
-                                        {
-
-                                            <td style="text-align:center">Cr</td>
-                                        }
-                                        else
-                                        {
-
-                                            <td style="text-align:center">Dr</td>
-                                        }
+                                    <tr class="small-rows">
+                                        <td>@item.TransactionDate.ToString("dd/MM/yyyy")</td>
+                                        <td>@item.TransactionNo</td>
+                                        <td>@item.BranchName</td>
+                                        <td colspan="4">@item.Naration</td>
+                                        <td style="text-align:center;"> - </td>
                                     </tr>
-                                    @foreach (var report in Model.Customers.Party)
+                                    @if (item.Transactions.Any())
                                     {
-                                        decimal Balance = @Model.Customers.Party[0].OpeningBal;
-
-                                        if (report.PurchaseOrders != null)
+                                        <tr class="small-row">
+                                            <td>-</td>
+                                            <td>-</td>
+                                            <td>-</td>
+                                            <td>Product</td>
+                                            <td>Qty</td>
+                                            <td>Rate</td>
+                                            <td>Amount</td>
+                                            <td style="text-align:center;">-</td>
+                                        </tr>
+                                        @foreach (var transaction in item.Transactions)
                                         {
-                                            foreach (var item in report.PurchaseOrders)
-                                            {
-
-                                                Balance += @item.GrandTotal;
-                                                <tr class="small-row">
-                                                    <td>@item.TransactionDate.ToString("dd/MM/yyyy")</td>
-                                                    <td>@item.TransactionNo</td>
-                                                    <td>Credit Purchase</td>
-                                                    <td>@item.GrandTotal</td>
-                                                    <td>-</td>
-                                                    <td>@Balance</td>
-                                                    @if (@Balance > 0) {
-                                                   
-                                                          <td style="text-align:center">Cr</td>
-                                                    }
-                                                    else {
-                                                         
-                                                         <td style="text-align:center">Dr</td>
-                                                    }
-                                                </tr>
-                                            }
-                                        }
-                                        if (report.Payments != null)
-                                        {
-                                            foreach (var item in report.Payments)
-                                            {
-
-                                                Balance -= item.Amount;
-                                                <tr class="small-row">
-                                                    <td>@item.VoucherDate.ToString("dd/MM/yyyy")</td>
-                                                    <td>@item.VouvherNo</td>
-                                                    <td>@item.Narration</td>
-                                                    <td>-</td>
-                                                    <td>@item.Amount</td>
-                                                    <td>@Math.Abs(@Balance).ToString("0.00")</td>
-                                                    @if (@Balance > 0)
-                                                    {
-                                                        <td style="text-align:center">Cr</td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td style="text-align:center">Dr</td>
-                                                    }
-                                                </tr>
-                                            }
+                                            <tr class="small-row">
+                                                <td>-</td>
+                                                <td>-</td>
+                                                <td>-</td>
+                                                <td>@transaction.ProductName</td>
+                                                <td>@transaction.Quantity</td>
+                                                <td>@transaction.Rate</td>
+                                                <td>@transaction.Amount</td>
+                                                <td style="text-align:center;">-</td>
+                                            </tr>
                                         }
                                     }
-                                 
-                                }
-                                else
-                                {
-                                    <tr class="small-row">
-                                        <td colspan="6">No purchases available</td>
+                                    <tr class="small-rows">
+                                        <td>-</td>
+                                        <td>-</td>
+                                        <td>-</td>
+                                        <td colspan="3">Grand Total</td>
+                                        <td>@item.GrandTotal</td>
+                                        @{
+                                            balance += item.DrCr == "Dr" ? item.GrandTotal : -item.GrandTotal;
+                                            var DrCr = balance > 0 ? "Dr" : "Cr";
+                                        }
+                                        <td style="text-align:center;">@balance @DrCr</td>
                                     </tr>
                                 }
                             </tbody>

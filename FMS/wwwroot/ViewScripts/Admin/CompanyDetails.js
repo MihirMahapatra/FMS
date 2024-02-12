@@ -60,7 +60,6 @@
             GSTIN: GSTIN.val(),
             Adress: address.val(),
             logo: logo.val(),
-            Fk_BranchId: ddlBranch.val(),
 
         };
         $.ajax({
