@@ -66,7 +66,6 @@
                                 </div>
                             </div>
                             <div class="col-auto" style="padding-right:20px!important;">
-                                GSTIN :  @Model.Cmopany.GSTIN<br />
                                 Report Date :  @DateTime.Now.ToString("dd/MM/yyyy") <br />
                                 From Date :  @Model.Customers.FromDate<br />
                                 To Date :  @Model.Customers.ToDate     
@@ -91,8 +90,6 @@
                                     @foreach (var item in Model.Customers.PartyReports)
                                     {
                                         var balance = item.Balance + item.OpeningBal;
-
-
                                         <tr class="small-row">
                                             <td>@item.PartyName</td>
                                             <td>@item.OpeningBal</td>
