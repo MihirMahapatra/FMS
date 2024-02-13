@@ -339,14 +339,14 @@ $(function () {
                         });
 
                         $('#BtnPrint').show();
-                        //LabourName = result.Labours[0].LabourName
-                        //PrintData = {
-                        //    LaborReports: result.Labours,
-                        //    FromDate: fromDateDetailed.val(),
-                        //    LabourName: LabourName,
-                        //    ToDate: toDateDetailed.val(),
-                        //    OpeningBal: result.Labours[0].OpeningBalance
-                        //};
+                        LabourName = result.Labours[0].LabourName
+                        PrintData = {
+                            LaborReports: result.Labours,
+                            FromDate: fromDateDetailed.val(),
+                            LabourName: LabourName,
+                            ToDate: toDateDetailed.val(),
+                            OpeningBal: result.Labours[0].OpeningBalance
+                        };
                     }
                     else {
                         html += '<tr>';

@@ -372,28 +372,54 @@ namespace FMS.Repository.Admin
         }
         public async Task<Result<CompanyModel>> GetCompany()
         {
-            Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
-            string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
+            
             Result<CompanyModel> _Result = new();
             try
             {
-                var Query = await _appDbContext.Companies.Where(s => s.Fk_BranchId == BranchId).Select(s => new CompanyModel
+                
+                if (_HttpContextAccessor.HttpContext.Session.GetString("BranchId") != "All")
                 {
-                    Name = s.Name,
-                    GSTIN = s.GSTIN,
-                    Adress = s.Adress,
-                    Email = s.Email,
-                    Phone = s.Phone,
-                    State = s.State,
-                    logo = s.Logo,
-                    CompanyId = Convert.ToString(s.CompanyId),
-                    BranchName = branchName
-                }).SingleOrDefaultAsync();
-                if (Query != null)
-                {
-                    _Result.SingleObjData = Query;
-                    _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
+                    Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
+                    string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
+                    var Query = await _appDbContext.Companies.Where(s => s.Fk_BranchId == BranchId).Select(s => new CompanyModel
+                    {
+                        Name = s.Name,
+                        GSTIN = s.GSTIN,
+                        Adress = s.Adress,
+                        Email = s.Email,
+                        Phone = s.Phone,
+                        State = s.State,
+                        logo = s.Logo,
+                        CompanyId = Convert.ToString(s.CompanyId),
+                        BranchName = branchName
+                    }).SingleOrDefaultAsync();
+                    if (Query != null)
+                    {
+                        _Result.SingleObjData = Query;
+                        _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
+                    }
                 }
+                else
+                {
+                    var Query = await _appDbContext.Companies.Where(s => s.Name == "TESTING BRANCH").Select(s => new CompanyModel
+                    {
+                        Name = s.Name,
+                        GSTIN = s.GSTIN,
+                        Adress = s.Adress,
+                        Email = s.Email,
+                        Phone = s.Phone,
+                        State = s.State,
+                        logo = s.Logo,
+                        CompanyId = Convert.ToString(s.CompanyId),
+                        BranchName = "TESTING BRANCH"
+                    }).SingleOrDefaultAsync();
+                    if (Query != null)
+                    {
+                        _Result.SingleObjData = Query;
+                        _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
+                    }
+                }
+               
                 _Result.IsSuccess = true;
             }
             catch (Exception _Exception)

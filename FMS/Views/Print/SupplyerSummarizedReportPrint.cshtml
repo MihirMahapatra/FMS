@@ -74,24 +74,32 @@
                         <table class="invoice-table">
                             <thead>
                                 <tr class="small-row">
-                                    <th style="width:20%">Name</th>
+                                    <th style="width:25%">Name</th>
                                     <th style="width:10%">Opn bal</th>
                                     <th style="width:10%">Opn Type</th>
                                     <th style="width:10%">Billing Amt</th>
                                     <th style="width:10%">Paid Amt</th>
                                     <th style="width:10%">Balance</th>
-                                    <th style="width:10%; text-align:center;">Type</th>
+                                    <th style="width:5%; text-align:center;">Type</th>
 
                                 </tr>
                             </thead>
                             <tbody>
                                 @if (Model.Customers != null)
                                 {
+                                    decimal totalOpeningBal = 0;
+                                    decimal totalDrAmt = 0;
+                                    decimal totalCrAmt = 0;
+                                    decimal totalBalance = 0;
                                     @foreach (var item in Model.Customers.PartyReports)
                                     {
                                         var balance = item.Balance + item.OpeningBal;
+                                        totalOpeningBal += item.OpeningBal;
+                                        totalDrAmt += item.DrAmt;
+                                        totalCrAmt += item.CrAmt;
+                                        totalBalance += balance;
                                         <tr class="small-row">
-                                            <td>@item.PartyName</td>
+                                            <td style="text-align:left !important;">@item.PartyName</td>
                                             <td>@item.OpeningBal</td>
                                             <td>@item.OpeningBalType</td>
                                             <td>@item.DrAmt</td>
@@ -99,7 +107,31 @@
                                             <td>@Math.Abs(@balance)</td>
                                             <td style="text-align:center;">@item.BalanceType</td>
                                         </tr>
+                                        
                                     }
+                                    <tr class="small-row">
+                                        <th style="text-align:left !important;">Grand Totals</th>
+                                        <th>@totalOpeningBal</th>
+                                        @if (@totalOpeningBal > 0)
+                                        {
+                                            <th>Cr</th>
+                                        }
+                                        else
+                                        {
+                                            <th>Dr</th>
+                                        }
+                                        <th>@totalDrAmt</th>
+                                        <th>@totalCrAmt</th>
+                                        <th>@Math.Abs(@totalBalance)</th>
+                                        @if (@totalBalance > 0)
+                                        {
+                                            <th style="text-align:center;">Cr</th>
+                                        }
+                                        else
+                                        {
+                                            <th style="text-align:center;">Dr</th>
+                                        }
+                                    </tr>
                                 }
                                 else
                                 {

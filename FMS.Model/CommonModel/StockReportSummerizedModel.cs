@@ -48,6 +48,7 @@
         }
         public decimal OpeningQty { get; set; }
         public string BranchName { get; set; }
+        public string ProductName { get; set; }
         public List<StockReportDetailedModel> Stocks { get; set; }
     }
     public class StockReportDetailedViewModel : Base

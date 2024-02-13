@@ -304,7 +304,7 @@ $(function () {
                                     html += '<td>' + item.GrandTotal + '</td>';
                                     balance += item.DrCr == "Dr" ? item.GrandTotal : -item.GrandTotal;
                                     var DrCr = balance > 0 ? "Dr" : "Cr";
-                                    html += '<td>' + balance + ' ' + DrCr + '</td>';
+                                    html += '<td>' + balance.toFixed(2) + ' ' + DrCr + '</td>';
                                     html += '</tr >';
                                 });
                             }

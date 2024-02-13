@@ -44,7 +44,7 @@
                                 <div class="col-auto">
                                     <div class="header-logo">
                                         <a href="index.html">
-                                            <img src="~/assets/images/logo/logo.png" alt="logo" style="width:30%; margin-left:25px;" />
+                                            <img src="~/landingpage/assets/images/logo/logo.png" alt="logo" style="width:30%; margin-left:25px;" />
                                         </a>
                                         <p style=" color:black; font-family: Times,  Times New Roman, Georgia, serif; margin-left:30px;"> @Model.Cmopany.Name</p>
                                     </div>
@@ -62,13 +62,13 @@
                                         @Model.Cmopany.Adress<br>@Model.Cmopany.Email,<br>
                                         @Model.Cmopany.Phone,<br>Odisha
                                     </address>
-                                    <br /> <b>Product Name : @Model.StockReports.ProductName</b>
+                                    <br /> <b>Product Name : @Model.StockReports.Stocks[0].ProductName</b> 
                                 </div>
                             </div>
                             <div class="col-auto" style="padding-right:20px">
                                 Report Date :  @DateTime.Now.ToString("dd/MM/yyyy") <br />
                                 From Date :  @Model.StockReports.FromDate<br />
-                                To Date :  @Model.StockReports.ToDate<br />   
+                                To Date :  @Model.StockReports.ToDate<br />
                             </div>
                         </div>
                         <table class="invoice-table">
@@ -83,170 +83,44 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @if (Model.StockReports != null)
+
+                                @if(Model.StockReports != null)
                                 {
-                                    var OpeningStock = (@Model.StockReports.Product.OpeningStock) + (@Model.StockReports.Product.OpeningQty);
-                                    <tr class="small-row">
-                                        <td colspan="5">Opening Qty</td>
-                                        <td style="text-align:center">@OpeningStock</td>
-                                    </tr>
-                                    decimal Stock = 0;
-                                    if (Model.StockReports.Product.LabourOrders != null)
+                                    @foreach (var item in @Model.StockReports.Stocks)
                                     {
-                                        foreach (var item in Model.StockReports.Product.LabourOrders)
-                                        {
+                                        decimal stock = 0;
+                                        <tr class="small-row">
+                                            <td colspan="6" style="text-align:center">@item.BranchName</td>
+                                        </tr>
+                                        <tr class="small-row">
+                                            <td colspan="5" style="text-align:right;">Opening Qty</td>
+                                            <td style="text-align:center">@item.OpeningQty</td>
+                                        </tr>
 
-                                            Stock += @item.Quantity;
-                                            <tr class="small-row">
-                                                <td>@item.TransactionDate.ToString("dd/MM/yyyy")</td>
-                                                <td>@item.TransactionNo</td>
-                                                <td>Production</td>
-                                                <td>-</td>
-                                                <td>@item.Quantity</td>
-                                                <td style="text-align:center">@Stock</td>
-                                            </tr>
-                                        }
-                                    }
-                                    if (Model.StockReports.Product.LabourTransactions != null)
-                                    {
-                                        foreach (var item in Model.StockReports.Product.LabourTransactions)
-                                        {
+                                        stock = item.OpeningQty;
 
-                                            Stock -= @item.Quantity;
-                                            <tr class="small-row">
-                                                <td>@item.TransactionDate.ToString("dd/MM/yyyy")</td>
-                                                <td>@item.TransactionNo</td>
-                                                <td>RawMaterial Used For Production</td>
-                                                <td>-</td>
-                                                <td>@item.Quantity</td>
-                                                <td style="text-align:center">@Stock</td>
-                                            </tr>
-                                        }
-                                    }
-                                    if (Model.StockReports.Product.DamageTransactions != null)
-                                    {
-                                        foreach (var item in Model.StockReports.Product.DamageTransactions)
+                                        @foreach (var item2 in item.Stocks)
                                         {
-
-                                            Stock -= @item.Quantity;
+                                            var formattedDate = item2.TransactionDate.ToString("dd/MM/yyyy");
                                             <tr class="small-row">
-                                                <td>@item.TransactionDate.ToString("dd/MM/yyyy")</td>
-                                                <td>@item.TransactionNo</td>
-                                                <td>Damage</td>
-                                                <td>-</td>
-                                                <td>@item.Quantity</td>
-                                                <td style="text-align:center">@Stock</td>
-                                            </tr>
-                                        }
-                                    }
-                                    if (Model.StockReports.Product.SalesTransactions != null)
-                                    {
-                                        foreach (var item in Model.StockReports.Product.SalesTransactions)
-                                        {
-
-                                            Stock -= @item.Quantity;
-                                            <tr class="small-row">
-                                                <td>@item.TransactionDate</td>
-                                                <td>@item.TransactionNo</td>
-                                                <td>Sales</td>
-                                                <td>-</td>
-                                                <td>@item.Quantity</td>
-                                                <td style="text-align:center">@Stock</td>
-                                            </tr>
-                                        }
-                                    }
-                                    if (Model.StockReports.Product.SalesReturnTransactions != null)
-                                    {
-                                        foreach (var item in Model.StockReports.Product.SalesReturnTransactions)
-                                        {
-
-                                            Stock += @item.Quantity;
-                                            <tr class="small-row">
-                                                <td>@item.TransactionDate.ToString("dd/MM/yyyy")</td>
-                                                <td>@item.TransactionNo</td>
-                                                <td>Sales Return</td>
-                                                <td>-</td>
-                                                <td>@item.Quantity</td>
-                                                <td style="text-align:center">@Stock</td>
-                                            </tr>
-                                        }
-                                    }
-                                    if (Model.StockReports.Product.PurchaseTransactions != null)
-                                    {
-                                        foreach (var item in Model.StockReports.Product.PurchaseTransactions)
-                                        {
-
-                                            Stock += @item.AlternateQuantity;
-                                            <tr class="small-row">
-                                                @if (DateTime.TryParse(item.TransactionDate.ToString(), out DateTime transactionDate))
-                                                {
-                                                    <td>@transactionDate.ToString("dd/MM/yyyy")</td>
+                                                <td>@formattedDate</td>
+                                                <td>@item2.TransactionNo</td>
+                                                <td>@item2.Particular</td>
+                                                <td>@(item2.IncrementStock ? item2.Quantity.ToString() : "-")</td>
+                                                <td>@(!item2.IncrementStock ? item2.Quantity.ToString() : "-")</td>
+                                                @{
+                                                    stock += item2.IncrementStock ? item2.Quantity : -item2.Quantity;
                                                 }
-                                               
-                                                <td>@item.TransactionNo</td>
-                                                <td>Purchase</td>
-                                               
-                                                <td>@item.AlternateQuantity</td>
-                                                <td>-</td>
-                                                <td style="text-align:center">@Stock</td>
+                                                <td style="text-align:center">@stock</td>
                                             </tr>
                                         }
                                     }
-                                    if (Model.StockReports.Product.PurchaseReturnTransactions != null)
-                                    {
-                                        foreach (var item in Model.StockReports.Product.PurchaseReturnTransactions)
-                                        {
-                                            Stock -= @item.UnitQuantity;
-                                            <tr class="small-row">
-                                                @if (DateTime.TryParse(item.TransactionDate.ToString(), out DateTime transactionDate))
-                                                {
-                                                    <td>@transactionDate.ToString("dd/MM/yyyy")</td>
-                                                }
-                                                <td>@item.TransactionNo</td>
-                                                <td>Purchase Return</td>
-                                                <td>-</td>
-                                                <td>@item.UnitQuantity</td>
-                                                <td style="text-align:center">@Stock</td>
-                                            </tr>
-                                        }
-                                    }
-                                    if (Model.StockReports.Product.InwardSupplyTransactions != null)
-                                    {
-                                        foreach (var item in Model.StockReports.Product.InwardSupplyTransactions)
-                                        {
-                                            Stock += @item.Quantity;
-                                            <tr class="small-row">
-                                                <td>@item.TransactionDate.ToString("dd/MM/yyyy")</td>
-                                                <td>@item.TransactionNo</td>
-                                                <td>Inward Supply</td>
-                                                <td>-</td>
-                                                <td>@item.Quantity</td>
-                                                <td style="text-align:center">@Stock</td>
-                                            </tr>
-                                        }
-                                    }
-                                    if (Model.StockReports.Product.OutwardSupplyTransactions != null)
-                                    {
-                                        foreach (var item in Model.StockReports.Product.OutwardSupplyTransactions)
-                                        {
-                                            Stock -= @item.Quantity;
-                                            <tr class="small-row">
-                                                <td>@item.TransactionDate.ToString("dd/MM/yyyy")</td>
-                                                <td>@item.TransactionNo</td>
-                                                <td>OutWard suplly</td>
-                                                <td>-</td>
-                                                <td>@item.Quantity</td>
-                                                <td style="text-align:center">@Stock</td>
-                                            </tr>
-                                        }
-                                    }
-
                                 }
                                 else
                                 {
-                                    <tr class="small-row">
-                                        <td colspan="6">No purchases available</td>
-                                    </tr>
+                                <tr>
+                                    <td colspan="6">No Record</td>
+                                </tr>
                                 }
                             </tbody>
                         </table>

@@ -233,7 +233,7 @@ namespace FMS.Repository.Reports
                         string BranchName = await _appDbContext.Branches.Where(s => s.BranchId == BranchId).Select(s => s.BranchName).SingleOrDefaultAsync();
                         Result.BranchName = BranchName;
                         #region Opening Quantity
-
+                        Result.ProductName = _appDbContext.Products.Where(x => x.ProductId == requestData.ProductId).Select(s => s.ProductName).FirstOrDefault();
                         Result.OpeningQty = await _appDbContext.Products
                             .Where(p => p.Fk_ProductTypeId == requestData.ProductTypeId && p.ProductId == requestData.ProductId)
                              .Select(s =>
@@ -387,6 +387,7 @@ namespace FMS.Repository.Reports
                             Result.BranchName = item.BranchName;
                             #endregion
                             #region Opening Quantity
+                            Result.ProductName =  _appDbContext.Products.Where(x => x.ProductId == requestData.ProductId).Select(s => s.ProductName).FirstOrDefault();
                             Result.OpeningQty = await _appDbContext.Products
                                 .Where(p => p.Fk_ProductTypeId == requestData.ProductTypeId && p.ProductId == requestData.ProductId)
                                  .Select(s =>
@@ -1269,6 +1270,7 @@ namespace FMS.Repository.Reports
                     }
                     else
                     {
+                        SupllyerInfos.PartyName = _appDbContext.SubLedgers.Where(x => x.SubLedgerId == requestData.PartyId).Select(x => x.SubLedgerName).FirstOrDefault();
                         SupllyerInfos.OpeningBal = _appDbContext.SubLedgerBalances.Where(x => x.Fk_SubLedgerId == requestData.PartyId && x.Fk_FinancialYearId == FinancialYearId).Select(t => t.OpeningBalance).Sum()
                                           + _appDbContext.SalesOrders.Where(p => p.Fk_FinancialYearId == FinancialYearId && p.TransactionDate < convertedFromDate && p.Fk_SubLedgerId == requestData.PartyId).Select(t => t.GrandTotal).Sum()
                                           - _appDbContext.SalesReturnOrders.Where(so => so.Fk_FinancialYearId == FinancialYearId && so.TransactionDate < convertedFromDate && so.Fk_SubLedgerId == requestData.PartyId).Select(t => t.GrandTotal).Sum()

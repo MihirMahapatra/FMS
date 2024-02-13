@@ -22,7 +22,7 @@
     toDateDetailed.val(todayDate);
     const ddlZeroValuedDetailed = $('select[name="ddlDetailedZerovalued"]');
     var PrintData = {};
-    var PrintDataDetailed = {};
+    //var PrintDataDetailed = {};
     //-----------------------------------stock Report Summerized---------------------------------------//
     GetAllProductTypes();
     function GetAllProductTypes() {
@@ -121,11 +121,11 @@
                             html += '</tr >';
                         });
                         $('#BtnPrintSummarized').show();
-                        //PrintData = {
-                        //    FromDate: fromDate.val(),
-                        //    ToDate: toDate.val(),
-                        //    StockReport: result.StockReports
-                        //};
+                        PrintData = {
+                            FromDate: fromDate.val(),
+                            ToDate: toDate.val(),
+                            StockReport: result.StockReports
+                        };
                     }
                     else {
                         html += '<tr>';
@@ -284,6 +284,7 @@
             }
         });
     }
+    var PrintDataDetailed = {};
     $('#btnViewDetailed').on('click', function () {
         $('#loader').show();
         $('.DetailedStockReportTable').empty();
@@ -360,19 +361,17 @@
                                 html += item2.IncrementStock === true ? '<td>' + item2.Quantity + '</td>' : '<td>-</td>';
                                 html += item2.IncrementStock === false ? '<td>' + item2.Quantity + '</td>' : '<td>-</td>';
                                 Stock += item2.IncrementStock === true ? item2.Quantity : -item2.Quantity;
-                                html += '<td>' + Stock + '</td>';
+                                html += '<td>' + Stock.toFixed(2) + '</td>';
                                 html += '</tr >';
                             });
 
                         });
-
                         $('#BtnPrintDetailed').show();
-                        //PrintDataDetailed = {
-                        //    FromDate: fromDateDetailed.val(),
-                        //    ToDate: toDateDetailed.val(),
-                        //    Product: result.Product,
-                        //    ProductName: result.Product.ProductName
-                        //}
+                        PrintDataDetailed = {
+                            FromDate: fromDateDetailed.val(),
+                            ToDate: toDateDetailed.val(),
+                            Stocks: result.DetailedStock
+                        }
                     }
                     else {
                         html += '<tr>';
@@ -392,11 +391,10 @@
                     );
                 }
             });
-
         }
-
     })
     $('#BtnPrintDetailed').on('click', function () {
+        console.log(PrintDataDetailed);
         $.ajax({
             type: "POST",
             url: '/Print/StockDetailedPrintData',
