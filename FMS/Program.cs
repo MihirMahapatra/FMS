@@ -65,7 +65,7 @@ try
     builder.Services.AddSingleton(mapper);
     //*******************************************************Session********************************************//
     builder.Services.AddDistributedMemoryCache();
-    builder.Services.AddSession(option => option.IdleTimeout = TimeSpan.FromDays(1));
+    builder.Services.AddSession(/*option => option.IdleTimeout = TimeSpan.FromDays(1)*/);
     builder.Services.AddHttpContextAccessor();
     builder.Services.AddSingleton(option => option.GetService<IHttpContextAccessor>().HttpContext.Session);
     //*******************************************************Identity*********************************************//
@@ -110,7 +110,7 @@ try
     builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options =>
     {
         options.LoginPath = "/Account/Login";
-        options.Cookie.Expiration = TimeSpan.FromDays(1);
+       //options.Cookie.Expiration = TimeSpan.FromDays(1);
     });
     //****************************************************Data Protection*******************************// 
     builder.Services.AddDataProtection().PersistKeysToDbContext<AppDbContext>();
