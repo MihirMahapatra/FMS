@@ -10,7 +10,9 @@
         public Guid Fk_ProductId { get; set; }
         public Guid Fk_BranchId { get; set; }
         public Guid Fk_FinancialYearId { get; set; }
-        public decimal Quantity { get; set; }
+        public decimal UnitQuantity { get; set; }
+        public decimal AlternateQuantity { get; set; }
+        public Guid Fk_AlternateUnitId { get; set; }
         public decimal Rate { get; set; }
         public decimal Discount { get; set; }
         public decimal DiscountAmount { get; set; }
@@ -21,8 +23,11 @@
         public ProductModel Product { get; set; }
         public BranchModel Branch { get; set; }
         public FinancialYearModel FinancialYear { get; set; }
+        public AlternateUnitModel AlternateUnit { get; set; }
+        public string UnitName { get; set; }
 
         //Others
         public string ProductName { get; set; }
+        
     }
 }

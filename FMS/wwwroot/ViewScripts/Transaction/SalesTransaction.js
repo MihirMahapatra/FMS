@@ -402,6 +402,12 @@ $(function () {
         var html = '<tr>';
         html += '<td hidden><input type="hidden" class="form-control" value="0"></td>';
         html += '<td><div class="form-group"><select class="form-control form-control-sm select2bs4 FinishedGood" style="width: 100%;" id="' + uniqueId + '"></select></div></td>';
+        html += '<td style="width:8%"><div class="form-group"><input type="text" id="txtAlternateQty" class="form-control" value="0"></div></td>';
+        html += '<td style="width:12%">' +
+            '<div class="form-group">' +
+            '<select class="form-control form-control select2bs4 selectedUnit" style="width:100%" disabled></select>' +
+            '</div>' +
+            '</td>';
         html += '<td>' +
             '<div class="form-group">' +
             '<div class="input-group">' +
@@ -480,33 +486,91 @@ $(function () {
                     console.log(errormessage);
                 }
             });
+            $.ajax({
+                url: '/Transaction/GetProductAlternateUnit?ProductId=' + selectedProductId,
+                type: "GET",
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    var selectBox = selectElement.closest('tr').find('select').eq(1);
+                    if (result.ResponseCode == 302) {
+                        selectBox.empty();
+                        var defaultOption = $('<option></option>').val('').text('--Select Option--');
+                        selectBox.append(defaultOption);
+                        $.each(result.AlternateUnits, function (key, item) {
+                            var option = $('<option></option>').val(item.AlternateUnitId).text(item.AlternateUnitName);
+                            selectBox.append(option);
+                        });
+                    }
+                    else {
+                        selectBox.empty();
+                        var defaultOption = $('<option></option>').val('').text('--Select Option--');
+                        selectBox.append(defaultOption);
+                    }
+                },
+                error: function (errormessage) {
+                    console.log(errormessage)
+                }
+            });
+        }
+       
+    });
+    $(document).on('change', '#txtAlternateQty', function () {
+        var row = $(this).closest('tr');
+        var alternateQty = $(this).val();
+        var alternateUnitDropDown = row.find('select:eq(1)');
+        parseFloat(alternateQty) !== 0 ? alternateUnitDropDown.prop('disabled', false) : alternateUnitDropDown.prop('disabled', true);
+    });
+    $(document).on('change', '.selectedUnit', function () {
+        var row = $(this).closest('tr');
+        var SelectedAlternateUnitId = $(this).val();
+        if (SelectedAlternateUnitId) {
+            $.ajax({
+                url: '/Transaction/GetAlternateUnitByAlternateUnitId?AlternateUnitId=' + SelectedAlternateUnitId,
+                type: "GET",
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    if (result.ResponseCode == 302) {
+                        var alternateUnitQty = row.find('input:eq(1)').val();
+                        var TotalUnitQty = parseFloat(alternateUnitQty) !== 0 ? alternateUnitQty * result.AlternateUnit.UnitQuantity : result.AlternateUnit.UnitQuantity;
+                        row.find('input:eq(2)').val(TotalUnitQty);
+                        row.find('span#Unit').text(result.AlternateUnit.Unit.UnitName);
+                    }
+                },
+                error: function (errormessage) {
+                    console.log(errormessage);
+                }
+            });
         }
     });
     $('#tblSales tbody').on('change', 'input[type="text"]', function () {
         var row = $(this).closest('tr');
         var quantity = parseFloat(row.find('input:eq(1)').val());
-        var rate = parseFloat(row.find('input:eq(2)').val());
-        var discount = parseFloat(row.find('input:eq(3)').val());
-        var Gst = parseFloat(row.find('input:eq(5)').val());
-        var amount = quantity * rate * (1 - discount / 100);
-        //var GstAmounts = amount * Gst / (100 + Gst);
-        var GstAmounts = amount * Gst / 100;
-        var amountwithGst = amount + GstAmounts;
-        if (discount > 0) {
-            var DiscountAmount = (rate * quantity - amount);
-        } else {
-            var DiscountAmount = 0;
-        }
-        row.find('input:eq(7)').val(amountwithGst.toFixed(2));
-        row.find('input:eq(6)').val(GstAmounts.toFixed(2));
-        row.find('input:eq(4)').val(DiscountAmount);
+        var rate = parseFloat(row.find('input:eq(3)').val());
+        var discountPercentage = parseFloat(row.find('input:eq(4)').val());
+        var GstPercentage = parseFloat(row.find('input:eq(6)').val());
+        var amount = quantity * rate * (1 - discountPercentage / 100);
+        var GstAmounts = amount * GstPercentage / 100;
+        var AcctualAmount = amount + GstAmounts;
+        var discountAmount = (discountPercentage > 0) ? (rate * quantity - amount) : 0;
+        row.find('input:eq(8)').val(AcctualAmount.toFixed(2));
+        row.find('input:eq(7)').val(GstAmounts.toFixed(2));
+        row.find('input:eq(5)').val(discountAmount.toFixed(2));
+
         var totalAmount = 0;
+        var toalSubTotalAmount = 0;
         var totalGstAmount = 0;
         var totalDiscountAmount = 0;
         $('#tblSales tbody tr').each(function () {
-            var amount = parseFloat($(this).find('input:eq(7)').val());
-            var GstAmount = parseFloat($(this).find('input:eq(6)').val());
-            var DiscountAmount = parseFloat($(this).find('input:eq(4)').val());
+            var qty = parseFloat($(this).find('input:eq(1)').val());
+            var rate = parseFloat($(this).find('input:eq(3)').val());
+            var amount = parseFloat($(this).find('input:eq(8)').val());
+            var GstAmount = parseFloat($(this).find('input:eq(7)').val());
+            var DiscountAmount = parseFloat($(this).find('input:eq(5)').val());
+            if (!isNaN(qty) && !isNaN(rate)) {
+                toalSubTotalAmount += (qty * rate)
+            }
             if (!isNaN(amount)) {
                 totalAmount += amount;
             }
@@ -517,16 +581,14 @@ $(function () {
                 totalDiscountAmount += DiscountAmount;
             }
         });
-        var subtotal = totalAmount - totalGstAmount;
-        $('input[name="SubTotal"]').val(subtotal.toFixed(2));
-        $('input[name="GrandTotal"]').val(totalAmount.toFixed(2));
-        $('input[name="GstAmount"]').val(totalGstAmount.toFixed(2));
+        $('input[name="SubTotal"]').val(toalSubTotalAmount.toFixed(2));
         $('input[name="TotalDiscountAmount"]').val(totalDiscountAmount.toFixed(2));
-        // gst differance part //
+        $('input[name="GstAmount"]').val(totalGstAmount.toFixed(2));
+        $('input[name="GrandTotal"]').val(totalAmount.toFixed(2));
         const gstDifferences = {};
         $('#tblSales tbody tr').each(function () {
-            const gstRate = parseFloat($(this).find('input:eq(5)').val()); // Assuming GST rate is in the 6th input field (0-based index).
-            const amount = parseFloat($(this).find('input:eq(7)').val());   // Assuming the amount is in the 8th input field (0-based index).
+            const gstRate = parseFloat($(this).find('input:eq(6)').val());
+            const amount = parseFloat($(this).find('input:eq(7)').val());
             if (!isNaN(gstRate) && !isNaN(amount)) {
                 if (gstRate in gstDifferences) {
                     gstDifferences[gstRate] += amount;
@@ -860,7 +922,6 @@ $(function () {
                         const month = String(dateObject.getMonth() + 1).padStart(2, '0');
                         const year = dateObject.getFullYear();
                         const formattedDate = `${day}/${month}/${year}`;
-
                     }
                 }
                 orderNo.val(result.salesOrder.OrderNo);
@@ -885,12 +946,18 @@ $(function () {
                     var html = '<tr>';
                     html += '<td  hidden><input type="hidden" class="form-control"  value=' + item.SalesId + '></td>';
                     html += '<td><div class="form-group"><select class="form-control form-control-sm select2bs4 FinishedGood" style="width: 100%;" id="ddn_' + item.SalesId + '"> </select></div></td>';
+                    html += '<td style="width:8%"><div class="form-group"><input type="text" id="txtAlternateQty" class="form-control" value=' + item.AlternateQuantity + '></div></td>';
+                    html += '<td style="width:12%">' +
+                        '<div class="form-group">' +
+                        '<select class="form-control form-control select2bs4 selectedUnit" style="width:100%" id="ddnUnit_' + item.SalesId + '" disabled></select>' +
+                        '</div>' +
+                        '</td>';
                     html += '<td>' +
                         '<div class="form-group">' +
                         '<div class="input-group">' +
-                        '<input type="text" class="form-control" id="" value=' + item.Quantity + '>' +
+                        '<input type="text" class="form-control" id="" value=' + item.UnitQuantity + '>' +
                         ' <div class="input-group-append">' +
-                        ' <span class="input-group-text" id="Unit">' + item.Product.Unit.UnitName + '</span>' +
+                        ' <span class="input-group-text" id="Unit">' + item.UnitName + '</span>' +
                         '</div>' +
                         '</div>' +
                         '</div>' +
@@ -928,8 +995,31 @@ $(function () {
                             console.log(errormessage)
                         }
                     });
+                    var selectUnitElement = $('#ddnUnit_' + item.SalesId);
+                    selectUnitElement.empty();
+                    var defaultUnitOption = $('<option></option>').val('').text('--Select Option--');
+                    selectUnitElement.append(defaultUnitOption);
+                    $.ajax({
+                        url: '/Transaction/GetProductAlternateUnit?ProductId=' + item.Fk_ProductId,
+                        type: "GET",
+                        contentType: "application/json;charset=utf-8",
+                        dataType: "json",
+                        success: function (result) {
+                            if (result.ResponseCode == 302) {
+                                $.each(result.AlternateUnits, function (key, item1) {
+                                    var unitoption = $('<option></option>').val(item1.AlternateUnitId).text(item1.AlternateUnitName);
+                                    if (item.Fk_AlternateUnitId === item1.AlternateUnitId) {
+                                        unitoption.attr('selected', 'selected');
+                                    }
+                                    selectUnitElement.append(unitoption);
+                                });
+                            }
+                        },
+                        error: function (errormessage) {
+                            console.log(errormessage)
+                        }
+                    });
                 })
-
                 $('#tblSales tbody').find('.select2bs4').select2({
                     theme: 'bootstrap4'
                 });
@@ -1190,6 +1280,12 @@ $(function () {
         var html = '<tr>';
         html += '<td hidden><input type="hidden" class="form-control" value="0"></td>';
         html += '<td><div class="form-group"><select class="form-control form-control-sm select2bs4 GoodsFinishedReturn" style="width: 100%;" id="' + uniqueId + '"></select></div></td>';
+        html += '<td style="width:8%"><div class="form-group"><input type="text" class="form-control" id="Qtyrt" value="0"></div></td>';
+        html += '<td style="width:12%">' +
+            '<div class="form-group">' +
+            '<select class="form-control form-control select2bs4 selectedUnitRtn" style="width:100%" disabled></select>' +
+            '</div>' +
+            '</td>';
         html += '<td>' +
             '<div class="form-group">' +
             '<div class="input-group">' +
@@ -1239,19 +1335,6 @@ $(function () {
             theme: 'bootstrap4'
         });
     }
-    $(document).on('click', '.deleteBtnReturn', function () {
-        $(this).closest('tr').remove();
-    });
-    $(document).on('change', 'select[name="Sr_ddlPayment"]', function () {
-        selectedOption = Sr_ddlPayment.val();
-        if (selectedOption === 'credit') {
-            $('.Sr_hdnddn').show();
-            $('.Sr_hdntxt').hide();
-        } else {
-            $('.Sr_hdnddn').hide();
-            $('.Sr_hdntxt').show();
-        }
-    });
     $(document).on('change', '.GoodsFinishedReturn', function () {
         var selectElement = $(this);
         var selectedProductId = selectElement.val();
@@ -1278,33 +1361,107 @@ $(function () {
                     console.log(errormessage);
                 }
             });
+            $.ajax({
+                url: '/Transaction/GetProductAlternateUnit?ProductId=' + selectedProductId,
+                type: "GET",
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    var selectBox = selectElement.closest('tr').find('select').eq(1);
+                    if (result.ResponseCode == 302) {
+                        selectBox.empty();
+                        var defaultOption = $('<option></option>').val('').text('--Select Option--');
+                        selectBox.append(defaultOption);
+                        $.each(result.AlternateUnits, function (key, item) {
+                            var option = $('<option></option>').val(item.AlternateUnitId).text(item.AlternateUnitName);
+                            selectBox.append(option);
+                        });
+                    }
+                    else {
+                        selectBox.empty();
+                        var defaultOption = $('<option></option>').val('').text('--Select Option--');
+                        selectBox.append(defaultOption);
+                    }
+                },
+                error: function (errormessage) {
+                    console.log(errormessage)
+                }
+            });
         }
     });
+    $(document).on('change', '#Qtyrt', function () {
+        var row = $(this).closest('tr');
+        var alternateQty = $(this).val();
+        var alternateUnitDropDown = row.find('select:eq(1)');
+        parseFloat(alternateQty) !== 0 ? alternateUnitDropDown.prop('disabled', false) : alternateUnitDropDown.prop('disabled', true);
+    });
+    $(document).on('change', '.selectedUnitRtn', function () {
+        var selectElement = $(this);
+        var SelectedAlternateUnitId = selectElement.val();
+        if (SelectedAlternateUnitId) {
+            $.ajax({
+                url: '/Transaction/GetAlternateUnitByAlternateUnitId?AlternateUnitId=' + SelectedAlternateUnitId,
+                type: "GET",
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    if (result.ResponseCode == 302) {
+                        var Textbox = selectElement.closest('tr').find('input[type="text"]');
+                        var qtyprElement = $('#Qtyrt');
+                        var qty = qtyprElement.val();
+                        TotalUnits = qty * result.AlternateUnit.UnitQuantity
+                        Textbox.eq(1).val(TotalUnits);
+                        var span = selectElement.closest('tr').find('span#Unit');
+                        span.text(result.AlternateUnit.Unit.UnitName)
+                    }
+                },
+                error: function (errormessage) {
+                    console.log(errormessage);
+                }
+            });
+        }
+    });
+    $(document).on('click', '.deleteBtnReturn', function () {
+        $(this).closest('tr').remove();
+    });
+    $(document).on('change', 'select[name="Sr_ddlPayment"]', function () {
+        selectedOption = Sr_ddlPayment.val();
+        if (selectedOption === 'credit') {
+            $('.Sr_hdnddn').show();
+            $('.Sr_hdntxt').hide();
+        } else {
+            $('.Sr_hdnddn').hide();
+            $('.Sr_hdntxt').show();
+        }
+    });
+  
     $('#tblSalesReturn tbody').on('change', 'input[type="text"]', function () {
         var row = $(this).closest('tr');
         var quantity = parseFloat(row.find('input:eq(1)').val());
-        var rate = parseFloat(row.find('input:eq(2)').val());
-        var discount = parseFloat(row.find('input:eq(3)').val());
-        var Gst = parseFloat(row.find('input:eq(5)').val());
-        var amount = quantity * rate * (1 - discount / 100);
-        //var GstAmounts = amount * Gst / (100 + Gst);
-        var GstAmounts = amount * Gst / 100;
-        var AcctualAmount = amount + GstAmounts;
-        if (discount > 0) {
-            var DiscountAmount = (rate * quantity - amount);
-        } else {
-            var DiscountAmount = 0;
-        }
-        row.find('input:eq(7)').val(AcctualAmount.toFixed(2));
-        row.find('input:eq(6)').val(GstAmounts.toFixed(2));
-        row.find('input:eq(4)').val(DiscountAmount);
+        var rate = parseFloat(row.find('input:eq(3)').val());
+        var discountPercentage = parseFloat(row.find('input:eq(4)').val());
+        var GstPercentage = parseFloat(row.find('input:eq(6)').val());
+        var amount = quantity * rate * (1 - discountPercentage / 100);
+        //var GstAmounts = amount * GstPercentage / (100 + GstPercentage);
+        var GstAmounts = amount * GstPercentage / 100;
+        var acctualAmount = amount + GstAmounts;
+        var discountAmount = (discountPercentage > 0) ? (rate * quantity - amount) : 0;
+        row.find('input:eq(8)').val(acctualAmount.toFixed(2));
+        row.find('input:eq(7)').val(GstAmounts.toFixed(2));
+        row.find('input:eq(5)').val(discountAmount);
         var totalAmount = 0;
+        var toalSubTotalAmount = 0;
         var totalGstAmount = 0;
         var totalDiscountAmount = 0;
         $('#tblSalesReturn tbody tr').each(function () {
-            var amount = parseFloat($(this).find('input:eq(7)').val());
-            var GstAmount = parseFloat($(this).find('input:eq(6)').val());
-            var DiscountAmount = parseFloat($(this).find('input:eq(4)').val());
+            var qty = parseFloat($(this).find('input:eq(1)').val());
+            var rate = parseFloat($(this).find('input:eq(3)').val());
+            var amount = parseFloat($(this).find('input:eq(8)').val());
+            var GstAmount = parseFloat($(this).find('input:eq(7)').val());
+            var DiscountAmount = parseFloat($(this).find('input:eq(5)').val());
+            if (!isNaN(qty) && !isNaN(rate)) {
+                toalSubTotalAmount += (qty * rate)
+            }
             if (!isNaN(amount)) {
                 totalAmount += amount;
             }
@@ -1315,16 +1472,15 @@ $(function () {
                 totalDiscountAmount += DiscountAmount;
             }
         });
-        var subtotal = totalAmount - totalGstAmount;
-        $('input[name="Sr_SubTotal"]').val(subtotal.toFixed(2));
+        $('input[name="Sr_SubTotal"]').val(toalSubTotalAmount.toFixed(2));
         $('input[name="Sr_GrandTotal"]').val(totalAmount.toFixed(2));
         $('input[name="Sr_GstAmount"]').val(totalGstAmount.toFixed(2));
         $('input[name="Sr_DiscountAmount"]').val(totalDiscountAmount.toFixed(2));
-        // gst differance part //
         const gstDifferences = {};
         $('#tblSalesReturn tbody tr').each(function () {
-            const gstRate = parseFloat($(this).find('input:eq(5)').val()); // Assuming GST rate is in the 6th input field (0-based index).
+            const gstRate = parseFloat($(this).find('input:eq(6)').val()); // Assuming GST rate is in the 6th input field (0-based index).
             const amount = parseFloat($(this).find('input:eq(7)').val());   // Assuming the amount is in the 8th input field (0-based index).
+
             if (!isNaN(gstRate) && !isNaN(amount)) {
                 if (gstRate in gstDifferences) {
                     gstDifferences[gstRate] += amount;
@@ -1670,12 +1826,18 @@ $(function () {
                     var html = '<tr>';
                     html += '<td  hidden><input type="hidden" class="form-control"  value=' + item.SalesReturnId + '></td>';
                     html += '<td><div class="form-group"><select class="form-control form-control-sm select2bs4" style="width: 100%;" id="ddn_' + item.SalesReturnId + '"> </select></div></td>';
+                    html += '<td style="width:8%"><div class="form-group"><input type="text" class="form-control" id="Qtyrt" value=' + item.AlternateQuantity + '></div></td>';
+                    html += '<td style="width:12%">' +
+                        '<div class="form-group">' +
+                        '<select class="form-control form-control select2bs4 selectedUnitRtn" style="width:100%" id="ddnUnit_' + item.SalesReturnId + '" disabled></select>' +
+                        '</div>' +
+                        '</td>';
                     html += '<td>' +
                         '<div class="form-group">' +
                         '<div class="input-group">' +
-                        '<input type="text" class="form-control" value=' + item.Quantity + '>' +
+                        '<input type="text" class="form-control" value=' + item.UnitQuantity + '>' +
                         ' <div class="input-group-append">' +
-                        ' <span class="input-group-text" id="Unitrtn" value="N/A">' + "N/A" + '</span>' +
+                        ' <span class="input-group-text" id="Unitrtn" value="N/A">' + item.UnitName + '</span>' +
                         '</div>' +
                         '</div>' +
                         '</div>' +
@@ -1706,6 +1868,30 @@ $(function () {
                                         option.attr('selected', 'selected');
                                     }
                                     selectElement.append(option);
+                                });
+                            }
+                        },
+                        error: function (errormessage) {
+                            console.log(errormessage)
+                        }
+                    });
+                    var selectUnitElement = $('#ddnUnit_' + item.SalesReturnId);
+                    selectUnitElement.empty();
+                    var defaultUnitOption = $('<option></option>').val('').text('--Select Option--');
+                    selectUnitElement.append(defaultUnitOption);
+                    $.ajax({
+                        url: '/Transaction/GetProductAlternateUnit?ProductId=' + item.Fk_ProductId,
+                        type: "GET",
+                        contentType: "application/json;charset=utf-8",
+                        dataType: "json",
+                        success: function (result) {
+                            if (result.ResponseCode == 302) {
+                                $.each(result.AlternateUnits, function (key, item1) {
+                                    var unitoption = $('<option></option>').val(item1.AlternateUnitId).text(item1.AlternateUnitName);
+                                    if (item.Fk_AlternateUnitId === item1.AlternateUnitId) {
+                                        unitoption.attr('selected', 'selected');
+                                    }
+                                    selectUnitElement.append(unitoption);
                                 });
                             }
                         },

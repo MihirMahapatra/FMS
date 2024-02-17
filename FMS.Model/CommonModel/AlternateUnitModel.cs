@@ -21,6 +21,8 @@ namespace FMS.Model.CommonModel
         public ProductModel Product { get; set; }
         public List<PurchaseTransactionModel> PurchaseTransactions { get; set; }
         public List<PurchaseReturnTransactionModel> PurchaseReturnTransactions { get; set; }
+        public List<SalesTransactionModel> SalesTransactions { get; set; }
+        public List<SalesReturnTransactionModel> SalesReturnTransactions { get; set; }
 
     }
 }
