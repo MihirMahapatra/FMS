@@ -458,7 +458,8 @@ $(function () {
         });
     });
     $(document).on('click', '.deleteBtn', function () {
-        $(this).closest('tr').remove();
+        var row = SalesTable.row($(this).closest('tr'));
+        row.remove().draw();
     });
     $(document).on('change', '.FinishedGood', function () {
         var selectElement = $(this);
@@ -1422,7 +1423,9 @@ $(function () {
         }
     });
     $(document).on('click', '.deleteBtnReturn', function () {
-        $(this).closest('tr').remove();
+        // $(this).closest('tr').remove();
+        var row = SalesReturnTable.row($(this).closest('tr'));
+        row.remove().draw();
     });
     $(document).on('change', 'select[name="Sr_ddlPayment"]', function () {
         selectedOption = Sr_ddlPayment.val();
