@@ -2218,6 +2218,11 @@ namespace FMS.Db.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasDefaultValueSql("NEWID()");
 
+                    b.Property<decimal>("AlternateQuantity")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("decimal(18, 5)")
+                        .HasDefaultValue(0m);
+
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(18,2)");
 
@@ -2226,6 +2231,9 @@ namespace FMS.Db.Migrations
 
                     b.Property<decimal>("DiscountAmount")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<Guid>("Fk_AlternateUnitId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("Fk_BranchId")
                         .HasColumnType("uniqueidentifier");
@@ -2245,9 +2253,6 @@ namespace FMS.Db.Migrations
                     b.Property<decimal>("GstAmount")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<decimal>("Quantity")
-                        .HasColumnType("decimal(18,5)");
-
                     b.Property<decimal>("Rate")
                         .HasColumnType("decimal(18,2)");
 
@@ -2263,7 +2268,14 @@ namespace FMS.Db.Migrations
                         .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)");
 
+                    b.Property<decimal>("UnitQuantity")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("decimal(18, 5)")
+                        .HasDefaultValue(0m);
+
                     b.HasKey("SalesReturnId");
+
+                    b.HasIndex("Fk_AlternateUnitId");
 
                     b.HasIndex("Fk_BranchId");
 
@@ -2283,6 +2295,9 @@ namespace FMS.Db.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasDefaultValueSql("NEWID()");
 
+                    b.Property<decimal>("AlternateQuantity")
+                        .HasColumnType("decimal(18,5)");
+
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(18,2)");
 
@@ -2291,6 +2306,9 @@ namespace FMS.Db.Migrations
 
                     b.Property<decimal>("DiscountAmount")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<Guid>("Fk_AlternateUnitId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("Fk_BranchId")
                         .HasColumnType("uniqueidentifier");
@@ -2310,9 +2328,6 @@ namespace FMS.Db.Migrations
                     b.Property<decimal>("GstAmount")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<decimal>("Quantity")
-                        .HasColumnType("decimal(18,5)");
-
                     b.Property<decimal>("Rate")
                         .HasColumnType("decimal(18,2)");
 
@@ -2327,7 +2342,12 @@ namespace FMS.Db.Migrations
                     b.Property<string>("TransactionType")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<decimal>("UnitQuantity")
+                        .HasColumnType("decimal(18,5)");
+
                     b.HasKey("SalesId");
+
+                    b.HasIndex("Fk_AlternateUnitId");
 
                     b.HasIndex("Fk_BranchId");
 
@@ -3643,6 +3663,12 @@ namespace FMS.Db.Migrations
 
             modelBuilder.Entity("FMS.Db.DbEntity.SalesReturnTransaction", b =>
                 {
+                    b.HasOne("FMS.Db.DbEntity.AlternateUnit", "AlternateUnit")
+                        .WithMany("SalesReturnTransactions")
+                        .HasForeignKey("Fk_AlternateUnitId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("FMS.Db.DbEntity.Branch", "Branch")
                         .WithMany("SalesReturnTransactions")
                         .HasForeignKey("Fk_BranchId")
@@ -3667,6 +3693,8 @@ namespace FMS.Db.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.Navigation("AlternateUnit");
+
                     b.Navigation("Branch");
 
                     b.Navigation("FinancialYear");
@@ -3678,6 +3706,12 @@ namespace FMS.Db.Migrations
 
             modelBuilder.Entity("FMS.Db.DbEntity.SalesTransaction", b =>
                 {
+                    b.HasOne("FMS.Db.DbEntity.AlternateUnit", "AlternateUnit")
+                        .WithMany("SalesTransactions")
+                        .HasForeignKey("Fk_AlternateUnitId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("FMS.Db.DbEntity.Branch", "Branch")
                         .WithMany("SalesTransactions")
                         .HasForeignKey("Fk_BranchId")
@@ -3701,6 +3735,8 @@ namespace FMS.Db.Migrations
                         .HasForeignKey("Fk_SalesOrderId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("AlternateUnit");
 
                     b.Navigation("Branch");
 
@@ -3869,6 +3905,10 @@ namespace FMS.Db.Migrations
                     b.Navigation("PurchaseReturnTransactions");
 
                     b.Navigation("PurchaseTransactions");
+
+                    b.Navigation("SalesReturnTransactions");
+
+                    b.Navigation("SalesTransactions");
                 });
 
             modelBuilder.Entity("FMS.Db.DbEntity.AppUser", b =>
