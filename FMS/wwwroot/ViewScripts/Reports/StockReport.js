@@ -52,6 +52,7 @@
             }
         });
     }
+    var Data = {};
     $('#btnViewSummerized').on('click', function () {
         $('#loader').show();
         $('.SummerizedStockReportTable').empty();
@@ -73,6 +74,12 @@
                 ZeroValued: ddlZeroValued.val(),
                 ProductTypeId: ddlProductType.val(),
             };
+            Data = {
+                FromDate: fromDate.val(),
+                ToDate: toDate.val(),
+                ZeroValued: ddlZeroValued.val(),
+                ProductTypeId: ddlProductType.val(),
+            }
             $.ajax({
                 url: "/Reports/GetSummerizedStockReports",
                 type: "POST",
@@ -106,18 +113,18 @@
                             html += '<tr>';
                             html += '<td><button  class="btn btn-primary btn-sm toggleColumnsBtn" id="btn-info-' + item.ProductId + '"  data-id="' + item.ProductId + '" style=" border-radius: 50%;" ><i class="fa-solid fa-circle-info"></i></button></td>'
                             html += '<td>' + item.ProductName + '</td>';
-                            html += '<td>' + item.OpeningQty + '  ' + item.UnitName + '</td>';
-                            html += '<td>' + item.PurchaseQty + '</td>';
-                            html += '<td>' + item.PurchaseReturnQty + '</td>';
-                            html += '<td>' + item.ProductionQty + '</td>';
-                            html += '<td>' + item.ProductionEntryQty + '</td>';
-                            html += '<td>' + item.SalesQty + '</td>';
-                            html += '<td>' + item.SalesReturnQty + '</td>';
-                            html += '<td>' + item.DamageQty + '</td>';
-                            html += '<td>' + item.OutwardQty + '</td>';
-                            html += '<td>' + item.InwardQty + '</td>';
+                            html += '<td>' + item.OpeningQty.toFixed(2) + '  ' + item.UnitName + '</td>';
+                            html += '<td>' + item.PurchaseQty.toFixed(2) + '</td>';
+                            html += '<td>' + item.PurchaseReturnQty.toFixed(2) + '</td>';
+                            html += '<td>' + item.ProductionQty.toFixed(2) + '</td>';
+                            html += '<td>' + item.ProductionEntryQty.toFixed(2) + '</td>';
+                            html += '<td>' + item.SalesQty.toFixed(2) + '</td>';
+                            html += '<td>' + item.SalesReturnQty.toFixed(2) + '</td>';
+                            html += '<td>' + item.DamageQty.toFixed(2) + '</td>';
+                            html += '<td>' + item.OutwardQty.toFixed(2) + '</td>';
+                            html += '<td>' + item.InwardQty.toFixed(2) + '</td>';
                             var closing = item.OpeningQty + item.PurchaseQty + item.ProductionQty + item.SalesReturnQty + item.InwardQty - item.PurchaseReturnQty - item.SalesQty - item.DamageQty - item.OutwardQty - item.ProductionEntryQty;
-                            html += '<td>' + closing + ' ' + item.UnitName + '</td>';
+                            html += '<td>' + closing.toFixed(2) + ' ' + item.UnitName + '</td>';
                             html += '</tr >';
                         });
                         $('#BtnPrintSummarized').show();
@@ -155,16 +162,9 @@
 
     })
     $('#BtnPrintSummarized').on('click', function () {
-        $.ajax({
-            type: "POST",
-            url: '/Print/StockSumrizedPrintData',
-            dataType: 'json',
-            data: JSON.stringify(PrintData),
-            contentType: "application/json;charset=utf-8",
-            success: function (Response) {
-                window.open(Response.redirectTo, '_blank');
-            },
-        });
+        var queryString = $.param(Data); // Serialize object to query string
+        var url = '/Print/StockSumrizedReportPrint?' + queryString; // Append query string to URL
+        window.open(url, '_blank');
     });
     $(document).on('click', '.toggleColumnsBtn', (event) => {
         const value = $(event.currentTarget).data('id');
@@ -197,15 +197,15 @@
                     $.each(result.StockInfos, function (key, item) {
                         html += '<tr>';
                         html += '<td>' + item.BranchName + '</td>';
-                        html += '<td>' + item.OpeningStock + '</td>';
+                        html += '<td>' + item.OpeningStock.toFixed(2) + '</td>';
                         let closingStock = item.OpeningStock + item.RunningStock;
                         totalClosing += closingStock;
-                        html += '<td>' + closingStock + '</td>';
+                        html += '<td>' + closingStock.toFixed(2) + '</td>';
                         html += '</tr >';
                     });
                     html += '<tr>';
                     html += '<td colspan=2> Total Closing</td>';
-                    html += '<td >' + totalClosing +' </td>';
+                    html += '<td >' + totalClosing.toFixed(2) +' </td>';
                     html +='</tr> ';
                 }
                 else {
@@ -284,7 +284,7 @@
             }
         });
     }
-    var PrintDataDetailed = {};
+    var requestData = {};
     $('#btnViewDetailed').on('click', function () {
         $('#loader').show();
         $('.DetailedStockReportTable').empty();
@@ -303,7 +303,7 @@
             return;
         }
         else {
-            var requestData = {
+             requestData = {
                 FromDate: fromDateDetailed.val(),
                 ToDate: toDateDetailed.val(),
                 ZeroValued: ddlZeroValuedDetailed.val(),
@@ -358,8 +358,8 @@
                                 html += '<td>' + formattedDate + '</td>';
                                 html += '<td>' + item2.TransactionNo + '</td>';
                                 html += '<td>' + item2.Particular + '</td>';
-                                html += item2.IncrementStock === true ? '<td>' + item2.Quantity + '</td>' : '<td>-</td>';
-                                html += item2.IncrementStock === false ? '<td>' + item2.Quantity + '</td>' : '<td>-</td>';
+                                html += item2.IncrementStock === true ? '<td>' + item2.Quantity.toFixed(2) + '</td>' : '<td>-</td>';
+                                html += item2.IncrementStock === false ? '<td>' + item2.Quantity.toFixed(2) + '</td>' : '<td>-</td>';
                                 Stock += item2.IncrementStock === true ? item2.Quantity : -item2.Quantity;
                                 html += '<td>' + Stock.toFixed(2) + '</td>';
                                 html += '</tr >';
@@ -394,16 +394,9 @@
         }
     })
     $('#BtnPrintDetailed').on('click', function () {
-        console.log(PrintDataDetailed);
-        $.ajax({
-            type: "POST",
-            url: '/Print/StockDetailedPrintData',
-            dataType: 'json',
-            data: JSON.stringify(PrintDataDetailed),
-            contentType: "application/json;charset=utf-8",
-            success: function (Response) {
-                window.open(Response.redirectTo, '_blank');
-            },
-        });
+        console.log(requestData);
+        var queryString = $.param(requestData); // Serialize object to query string
+        var url = '/Print/StockDetailedReportPrint?' + queryString; // Append query string to URL
+        window.open(url, '_blank');
     });
 });

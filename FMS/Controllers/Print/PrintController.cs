@@ -226,48 +226,36 @@ namespace FMS.Controllers.Print
         }
         #endregion
         #region Stock Reports
-        [HttpPost]
-        public IActionResult StockSumrizedPrintData([FromBody] StockReportDataModel requestData)
-        {
-            TempData["StockSumrizedData"] = JsonConvert.SerializeObject(requestData);
-            return Json(new { redirectTo = Url.Action("StockSumrizedReportPrint", "Print") });
-        }
         [HttpGet]
-        public IActionResult StockSumrizedReportPrint()
+        public async Task<IActionResult> StockSumrizedReportPrint([FromQuery] StockReportDataRequest requestData)
         {
-            if (TempData.TryGetValue("StockSumrizedData", out object tempData) && tempData is string jsonData)
-            {
-                var requestPrintData = JsonConvert.DeserializeObject<StockReportDataModel>(jsonData);
-                var StockSumrizedReportModal = new StockSumrizedReportModal()
-                {
-                    Cmopany = _adminSvcs.GetCompany().Result.GetCompany,
-                    StockReports = requestPrintData
-                };
-                return View(StockSumrizedReportModal);
-            }
-            return RedirectToAction("Error");
 
-        }
-        [HttpPost]
-        public IActionResult StockDetailedPrintData([FromBody] StockReportDataModel requestData)
-        {
-            TempData["StockDetailedData"] = JsonConvert.SerializeObject(requestData);
-            return Json(new { redirectTo = Url.Action("StockDetailedReportPrint", "Print") });
-        }
-        [HttpGet]
-        public IActionResult StockDetailedReportPrint()
-        {
-            if (TempData.TryGetValue("StockDetailedData", out object tempData) && tempData is string jsonData)
-            {
-                var requestPrintData = JsonConvert.DeserializeObject<StockReportDataModel>(jsonData);
-                var StockDetailedReportModal = new StockSumrizedReportModal()
+            var result = await _reportSvcs.GetSummerizedStockReports(requestData);
+            var StockReportData = new StockReportDataModel();
+            StockReportData.FromDate = requestData.FromDate;
+            StockReportData.ToDate = requestData.ToDate;
+            StockReportData.StockReport = result.StockReports;
+            var StockSumrizedReportModal = new StockSumrizedReportModal()
                 {
                     Cmopany = _adminSvcs.GetCompany().Result.GetCompany,
-                    StockReports = requestPrintData
-                };
-                return View(StockDetailedReportModal);
-            }
-            return RedirectToAction("Error");
+                    StockReports = StockReportData
+            };
+            return View(StockSumrizedReportModal);
+        }
+
+        public async Task<IActionResult> StockDetailedReportPrint([FromQuery] StockReportDataRequest requestData)
+        {
+            var result = await _reportSvcs.GetDetailedStockReport(requestData);
+            var StockReportData = new StockReportDataModel();
+            StockReportData.FromDate = requestData.FromDate;
+            StockReportData.ToDate = requestData.ToDate;
+            StockReportData.Stocks = result.DetailedStock;
+            var StockDetailedReportModal = new StockSumrizedReportModal()
+            {
+                Cmopany = _adminSvcs.GetCompany().Result.GetCompany,
+                StockReports = StockReportData
+            };
+            return View(StockDetailedReportModal);
 
         }
         #endregion

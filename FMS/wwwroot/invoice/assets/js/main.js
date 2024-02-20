@@ -1,1 +1,61 @@
-!function(t){"use strict";t("#download_btn").on("click",(function(){var e=t("#download_section"),n=e.width(),a=e.height(),o=n+80,d=1.5*o+80,c=n,i=a,r=Math.ceil(a/d)-1;html2canvas(e[0],{allowTaint:!0}).then((function(t){t.getContext("2d");var e=t.toDataURL("image/jpeg",1),n=new jsPDF("p","pt",[o,d]);n.addImage(e,"JPG",40,40,c,i);for(var a=1;a<=r;a++)n.addPage(o,d),n.addImage(e,"JPG",40,-d*a+0,c,i);n.save("th-invoice.pdf")}))})),t(".print_btn").on("click",(function(t){window.print()})),t("[data-bg-src]").length>0&&t("[data-bg-src]").each((function(){var e=t(this).attr("data-bg-src");t(this).css("background-image","url("+e+")"),t(this).removeAttr("data-bg-src").addClass("background-image")})),window.addEventListener("contextmenu",(function(t){t.preventDefault()}),!1),document.onkeydown=function(t){return 123!=event.keyCode&&((!t.ctrlKey||!t.shiftKey||t.keyCode!="I".charCodeAt(0))&&((!t.ctrlKey||!t.shiftKey||t.keyCode!="C".charCodeAt(0))&&((!t.ctrlKey||!t.shiftKey||t.keyCode!="J".charCodeAt(0))&&((!t.ctrlKey||t.keyCode!="U".charCodeAt(0))&&void 0))))}}(jQuery);
+(function ($) {
+    "use strict";
+
+    $("#download_btn").on("click", function () {
+        var $downloadSection = $("#download_section"),
+            sectionWidth = $downloadSection.width(),
+            sectionHeight = $downloadSection.height(),
+            pageWidth = sectionWidth + 80,
+            pageHeight = 1.5 * pageWidth + 80,
+            totalPages = Math.ceil(sectionHeight / pageHeight),
+            currentPage = 1;
+
+        html2canvas($downloadSection[0], { allowTaint: true }).then(function (canvas) {
+            var context = canvas.getContext("2d"),
+                imageData = canvas.toDataURL("image/jpeg", 1),
+                pdf = new jsPDF("p", "pt", [pageWidth, pageHeight]);
+
+            addImageAndPageNumbers(0);
+
+            function addImageAndPageNumbers(offset) {
+                // Add page number
+                pdf.text(580, pageHeight - 20, "Page " + currentPage + " of " + totalPages);
+
+                // Add the image
+                pdf.addImage(imageData, "JPG", 40, 40 + offset, sectionWidth, sectionHeight);
+
+                // If there are more pages, add a new page and repeat
+                if (currentPage < totalPages) {
+                    pdf.addPage();
+                    currentPage++;
+                    addImageAndPageNumbers(offset + pageHeight);
+                } else {
+                    pdf.save("th-invoice.pdf");
+                }
+            }
+        });
+    });
+
+    $(".print_btn").on("click", function () {
+        window.print();
+    });
+
+    // Background image handling
+    $("[data-bg-src]").each(function () {
+        var $element = $(this),
+            bgSrc = $element.attr("data-bg-src");
+
+        $element.css("background-image", "url(" + bgSrc + ")")
+            .removeAttr("data-bg-src")
+            .addClass("background-image");
+    });
+
+    // Preventing context menu and keyboard shortcuts
+    window.addEventListener("contextmenu", function (event) {
+        event.preventDefault();
+    }, false);
+
+    document.onkeydown = function (event) {
+        return !(event.keyCode == 123 || (event.ctrlKey && event.shiftKey && event.keyCode == "I".charCodeAt(0)) || (event.ctrlKey && event.shiftKey && event.keyCode == "C".charCodeAt(0)) || (event.ctrlKey && event.shiftKey && event.keyCode == "J".charCodeAt(0)) || (event.ctrlKey && event.keyCode == "U".charCodeAt(0)));
+    };
+})(jQuery);

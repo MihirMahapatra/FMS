@@ -92,17 +92,17 @@
                                         var closing = item.OpeningQty + item.PurchaseQty + item.ProductionQty + item.SalesReturnQty + item.InwardQty - item.PurchaseReturnQty - item.SalesQty - item.DamageQty - item.OutwardQty - item.ProductionEntryQty;
                                         <tr class="small-row">
                                             <td>@item.ProductName</td>
-                                            <td>@item.OpeningQty</td>
-                                            <td>@item.ProductionEntryQty</td>
-                                            <td>@item.PurchaseReturnQty</td>
-                                            <td>@item.ProductionQty</td>
-                                            <td>@item.ProductionEntryQty</td>
-                                            <td>@item.SalesQty</td>
-                                            <td>@item.SalesReturnQty</td>
-                                            <td>@item.DamageQty</td>
-                                            <td>@item.OutwardQty</td>
-                                            <td>@item.InwardQty</td>
-                                            <td style="text-align:center">@closing</td>
+                                            <td>@item.OpeningQty.ToString("N2")</td>
+                                            <td>@item.ProductionEntryQty.ToString("N2")</td>
+                                            <td>@item.PurchaseReturnQty.ToString("N2")</td>
+                                            <td>@item.ProductionQty.ToString("N2")</td>
+                                            <td>@item.ProductionEntryQty.ToString("N2")</td>
+                                            <td>@item.SalesQty.ToString("N2")</td>
+                                            <td>@item.SalesReturnQty.ToString("N2")</td>
+                                            <td>@item.DamageQty.ToString("N2")</td>
+                                            <td>@item.OutwardQty.ToString("N2")</td>
+                                            <td>@item.InwardQty.ToString("N2")</td>
+                                            <td style="text-align:center">@closing.ToString("N2")</td>
                                         </tr>
                                     }
                                 }

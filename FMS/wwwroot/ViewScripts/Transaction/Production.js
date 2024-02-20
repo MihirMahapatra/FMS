@@ -297,6 +297,7 @@ $(function () {
                     else {
                         toastr.error(Response.ErrorMsg);
                     }
+                    
                     GetLastProductionNo();
                 },
                 error: function (error) {

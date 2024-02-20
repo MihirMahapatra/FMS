@@ -106,12 +106,12 @@
                                                 <td>@formattedDate</td>
                                                 <td>@item2.TransactionNo</td>
                                                 <td>@item2.Particular</td>
-                                                <td>@(item2.IncrementStock ? item2.Quantity.ToString() : "-")</td>
-                                                <td>@(!item2.IncrementStock ? item2.Quantity.ToString() : "-")</td>
+                                                <td>@(item2.IncrementStock ? item2.Quantity.ToString("N2") : "-")</td>
+                                                <td>@(!item2.IncrementStock ? item2.Quantity.ToString("N2") : "-")</td>
                                                 @{
                                                     stock += item2.IncrementStock ? item2.Quantity : -item2.Quantity;
                                                 }
-                                                <td style="text-align:center">@stock</td>
+                                                <td style="text-align:center">@stock.ToString("N2")</td>
                                             </tr>
                                         }
                                     }
