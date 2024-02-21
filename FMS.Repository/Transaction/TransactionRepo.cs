@@ -493,7 +493,7 @@ namespace FMS.Repository.Transaction
                                         _Result.WarningMessage = "SubLedger Balance Not Exist";
                                         return _Result;
                                     }
-                                    if(UpdatePurchaseOrder.TransportationCharges != data.TransportationCharges)
+                                    if (UpdatePurchaseOrder.TransportationCharges != data.TransportationCharges)
                                     {
                                         var TransportChargedifference = data.TransportationCharges - UpdatePurchaseOrder.TransportationCharges;
                                         //@TransportingChargePayment A/c--------Cr
@@ -1072,7 +1072,7 @@ namespace FMS.Repository.Transaction
                             await _appDbContext.SubLedgerBalances.AddAsync(newSubLedgerBalance);
                             await _appDbContext.SaveChangesAsync();
                         }
-                        
+
                         #endregion
                         #region Journal
                         var JournalVoucherNo = await _appDbContext.Journals.Where(s => s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).Select(s => new { s.VouvherNo }).OrderByDescending(s => s.VouvherNo).FirstOrDefaultAsync();
@@ -2987,22 +2987,38 @@ namespace FMS.Repository.Transaction
                                     var UpdateFhinishedGoodStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == item1.Fk_SubFinishedGoodId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
                                     if (UpdateFhinishedGoodStock != null)
                                     {
-                                        var Unit =  _appDbContext.AlternateUnits.Where(s => s.FK_ProductId == item1.Fk_SubFinishedGoodId).FirstOrDefault();
-                                        UpdateFhinishedGoodStock.AvilableStock -= (newSalesTransaction.AlternateQuantity * Unit.UnitQuantity);
+                                        var Unit = _appDbContext.AlternateUnits.Where(s => s.FK_ProductId == item1.Fk_SubFinishedGoodId).FirstOrDefault();
+                                        UpdateFhinishedGoodStock.AvilableStock -= Unit != null ? (newSalesTransaction.AlternateQuantity * Unit.UnitQuantity) : newSalesTransaction.AlternateQuantity;
                                         await _appDbContext.SaveChangesAsync();
+
                                     }
                                     else
                                     {
                                         var Unit = _appDbContext.AlternateUnits.Where(s => s.FK_ProductId == item1.Fk_SubFinishedGoodId).FirstOrDefault();
-                                        var AddNewFhinishedGoodStock = new Stock
+                                        if (Unit != null)
                                         {
-                                            Fk_BranchId = BranchId,
-                                            Fk_ProductId = item1.Fk_SubFinishedGoodId,
-                                            Fk_FinancialYear = FinancialYear,
-                                           AvilableStock = -(newSalesTransaction.AlternateQuantity * Unit.UnitQuantity)
-                                        };
-                                        await _appDbContext.Stocks.AddAsync(AddNewFhinishedGoodStock);
-                                        await _appDbContext.SaveChangesAsync();
+                                            var AddNewFhinishedGoodStock = new Stock
+                                            {
+                                                Fk_BranchId = BranchId,
+                                                Fk_ProductId = item1.Fk_SubFinishedGoodId,
+                                                Fk_FinancialYear = FinancialYear,
+                                                AvilableStock = -(newSalesTransaction.AlternateQuantity * Unit.UnitQuantity)
+                                            };
+                                            await _appDbContext.Stocks.AddAsync(AddNewFhinishedGoodStock);
+                                            await _appDbContext.SaveChangesAsync();
+                                        }
+                                        else
+                                        {
+                                            var AddNewFhinishedGoodStock = new Stock
+                                            {
+                                                Fk_BranchId = BranchId,
+                                                Fk_ProductId = item1.Fk_SubFinishedGoodId,
+                                                Fk_FinancialYear = FinancialYear,
+                                                AvilableStock = -(newSalesTransaction.AlternateQuantity)
+                                            };
+                                            await _appDbContext.Stocks.AddAsync(AddNewFhinishedGoodStock);
+                                            await _appDbContext.SaveChangesAsync();
+                                        }
                                     }
                                 }
                             }
@@ -3424,29 +3440,78 @@ namespace FMS.Repository.Transaction
                                 if (UpdateSalesTransaction != null)
                                 {
                                     #region Update Stock
-                                    var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == UpdateSalesTransaction.Fk_ProductId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
-                                    if (UpdateSalesTransaction.Fk_ProductId != Guid.Parse(item[1]))
+                                    //Start testing
+                                    var getFinishedGoodSalesConfig = await _appDbContext.SalesConfigs.Where(s => s.Fk_FinishedGoodId == UpdateSalesTransaction.Fk_ProductId).ToListAsync();
+                                    if (getFinishedGoodSalesConfig.Count > 0)
                                     {
-                                        UpdateStock.AvilableStock += UpdateSalesTransaction.UnitQuantity;
-                                        await _appDbContext.SaveChangesAsync();
-                                        var UpdateNewStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == Guid.Parse(item[1]) && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
-                                        if (UpdateNewStock != null)
+                                        foreach (var item1 in getFinishedGoodSalesConfig)
                                         {
-                                            UpdateNewStock.AvilableStock -= Convert.ToDecimal(item[4]);
+                                            var UpdateFhinishedGoodStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == item1.Fk_SubFinishedGoodId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                            if (UpdateFhinishedGoodStock != null)
+                                            {
+                                                var Unit = _appDbContext.AlternateUnits.Where(s => s.FK_ProductId == item1.Fk_SubFinishedGoodId).FirstOrDefault();
+                                                if (Unit != null)
+                                                {
+                                                    if (UpdateSalesTransaction.UnitQuantity != Convert.ToDecimal(item[4]))
+                                                    {
+                                                        decimal quantityDifference = UpdateSalesTransaction.UnitQuantity - Convert.ToDecimal(item[2]);
+                                                        UpdateFhinishedGoodStock.AvilableStock += quantityDifference * Unit.UnitQuantity;
+                                                        await _appDbContext.SaveChangesAsync();
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    if (UpdateSalesTransaction.UnitQuantity != Convert.ToDecimal(item[4]))
+                                                    {
+                                                        decimal quantityDifference = UpdateSalesTransaction.UnitQuantity - Convert.ToDecimal(item[2]);
+                                                        UpdateFhinishedGoodStock.AvilableStock += quantityDifference;
+                                                        await _appDbContext.SaveChangesAsync();
+
+                                                    }
+                                                }
+                                            }
+                                            else
+                                            {
+                                                var Unit = _appDbContext.AlternateUnits.Where(s => s.FK_ProductId == item1.Fk_SubFinishedGoodId).FirstOrDefault();
+                                                var AddNewFhinishedGoodStock = new Stock
+                                                {
+                                                    Fk_BranchId = BranchId,
+                                                    Fk_ProductId = item1.Fk_SubFinishedGoodId,
+                                                    Fk_FinancialYear = FinancialYear,
+                                                    AvilableStock = +(UpdateSalesTransaction.AlternateQuantity * Unit.UnitQuantity)
+                                                };
+                                                await _appDbContext.Stocks.AddAsync(AddNewFhinishedGoodStock);
+                                                await _appDbContext.SaveChangesAsync();
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == UpdateSalesTransaction.Fk_ProductId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                        if (UpdateSalesTransaction.Fk_ProductId != Guid.Parse(item[1]))
+                                        {
+                                            UpdateStock.AvilableStock += UpdateSalesTransaction.UnitQuantity;
+                                            await _appDbContext.SaveChangesAsync();
+                                            var UpdateNewStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == Guid.Parse(item[1]) && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                            if (UpdateNewStock != null)
+                                            {
+                                                UpdateNewStock.AvilableStock -= Convert.ToDecimal(item[4]);
+                                                await _appDbContext.SaveChangesAsync();
+                                            }
+                                            else
+                                            {
+                                                _Result.WarningMessage = "Stock Not Avilable";
+                                                return _Result;
+                                            }
+                                        }
+                                        if (UpdateSalesTransaction.UnitQuantity != Convert.ToDecimal(item[4]))
+                                        {
+                                            decimal quantityDifference = UpdateSalesTransaction.UnitQuantity - Convert.ToDecimal(item[4]);
+                                            UpdateStock.AvilableStock += quantityDifference;
                                             await _appDbContext.SaveChangesAsync();
                                         }
-                                        else
-                                        {
-                                            _Result.WarningMessage = "Stock Not Avilable";
-                                            return _Result;
-                                        }
                                     }
-                                    if (UpdateSalesTransaction.UnitQuantity != Convert.ToDecimal(item[4]))
-                                    {
-                                        decimal quantityDifference = UpdateSalesTransaction.UnitQuantity - Convert.ToDecimal(item[4]);
-                                        UpdateStock.AvilableStock += quantityDifference;
-                                        await _appDbContext.SaveChangesAsync();
-                                    }
+                                    //end
                                     #endregion
                                     #region Update Journal
                                     if (data.TransactionType == "credit")
@@ -3520,23 +3585,61 @@ namespace FMS.Repository.Transaction
                                     await _appDbContext.SaveChangesAsync();
                                     #endregion
                                     #region Update Stock
-                                    var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == newSalesTransaction.Fk_ProductId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
-                                    if (UpdateStock != null)
+                                    var getFinishedGoodSalesConfig = await _appDbContext.SalesConfigs.Where(s => s.Fk_FinishedGoodId == newSalesTransaction.Fk_ProductId).ToListAsync();
+                                    if (getFinishedGoodSalesConfig.Count > 0)
                                     {
-                                        UpdateStock.AvilableStock -= newSalesTransaction.UnitQuantity;
-                                        await _appDbContext.SaveChangesAsync();
+                                        foreach (var item1 in getFinishedGoodSalesConfig)
+                                        {
+                                            var UpdateFhinishedGoodStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == item1.Fk_SubFinishedGoodId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                            if (UpdateFhinishedGoodStock != null)
+                                            {
+                                                var Unit = _appDbContext.AlternateUnits.Where(s => s.FK_ProductId == item1.Fk_SubFinishedGoodId).FirstOrDefault();
+                                                if (Unit != null)
+                                                {
+                                                    UpdateFhinishedGoodStock.AvilableStock -= (newSalesTransaction.AlternateQuantity * Unit.UnitQuantity);
+                                                    await _appDbContext.SaveChangesAsync();
+                                                }
+                                                else
+                                                {
+                                                    UpdateFhinishedGoodStock.AvilableStock -= (newSalesTransaction.AlternateQuantity);
+                                                    await _appDbContext.SaveChangesAsync();
+                                                }
+                                            }
+                                            else
+                                            {
+                                                var Unit = _appDbContext.AlternateUnits.Where(s => s.FK_ProductId == item1.Fk_SubFinishedGoodId).FirstOrDefault();
+                                                var AddNewFhinishedGoodStock = new Stock
+                                                {
+                                                    Fk_BranchId = BranchId,
+                                                    Fk_ProductId = item1.Fk_SubFinishedGoodId,
+                                                    Fk_FinancialYear = FinancialYear,
+                                                    AvilableStock = Unit != null ? -(newSalesTransaction.AlternateQuantity * Unit.UnitQuantity) : -(newSalesTransaction.AlternateQuantity)
+                                                };
+                                                await _appDbContext.Stocks.AddAsync(AddNewFhinishedGoodStock);
+                                                await _appDbContext.SaveChangesAsync();
+                                            }
+                                        }
                                     }
                                     else
                                     {
-                                        var AddNewStock = new Stock
+                                        var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == newSalesTransaction.Fk_ProductId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                        if (UpdateStock != null)
                                         {
-                                            Fk_BranchId = BranchId,
-                                            Fk_ProductId = newSalesTransaction.Fk_ProductId,
-                                            Fk_FinancialYear = FinancialYear,
-                                            AvilableStock = -newSalesTransaction.UnitQuantity
-                                        };
-                                        await _appDbContext.Stocks.AddAsync(AddNewStock);
-                                        await _appDbContext.SaveChangesAsync();
+                                            UpdateStock.AvilableStock -= newSalesTransaction.UnitQuantity;
+                                            await _appDbContext.SaveChangesAsync();
+                                        }
+                                        else
+                                        {
+                                            var AddNewStock = new Stock
+                                            {
+                                                Fk_BranchId = BranchId,
+                                                Fk_ProductId = newSalesTransaction.Fk_ProductId,
+                                                Fk_FinancialYear = FinancialYear,
+                                                AvilableStock = -newSalesTransaction.UnitQuantity
+                                            };
+                                            await _appDbContext.Stocks.AddAsync(AddNewStock);
+                                            await _appDbContext.SaveChangesAsync();
+                                        }
                                     }
                                     #endregion
                                     #region Create Journal
@@ -3619,11 +3722,28 @@ namespace FMS.Repository.Transaction
                             foreach (var item in deleteSalesTransaction)
                             {
                                 #region Update Stock
-                                var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == item.Fk_ProductId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
-                                if (UpdateStock != null)
+                                var getFinishedGoodSalesConfig = await _appDbContext.SalesConfigs.Where(s => s.Fk_FinishedGoodId == item.Fk_ProductId).ToListAsync();
+                                if (getFinishedGoodSalesConfig.Count > 0)
                                 {
-                                    UpdateStock.AvilableStock += item.UnitQuantity;
-                                    await _appDbContext.SaveChangesAsync();
+                                    foreach (var item1 in getFinishedGoodSalesConfig)
+                                    {
+                                        var UpdateFhinishedGoodStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == item1.Fk_SubFinishedGoodId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                        if (UpdateFhinishedGoodStock != null)
+                                        {
+                                            var Unit = _appDbContext.AlternateUnits.Where(s => s.FK_ProductId == item1.Fk_SubFinishedGoodId).FirstOrDefault();
+                                            UpdateFhinishedGoodStock.AvilableStock += Unit != null ? (item.AlternateQuantity * Unit.UnitQuantity) : item.AlternateQuantity;
+                                            await _appDbContext.SaveChangesAsync();
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == item.Fk_ProductId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                    if (UpdateStock != null)
+                                    {
+                                        UpdateStock.AvilableStock += item.UnitQuantity;
+                                        await _appDbContext.SaveChangesAsync();
+                                    }
                                 }
                                 #endregion
                                 _appDbContext.SalesTransaction.Remove(item);

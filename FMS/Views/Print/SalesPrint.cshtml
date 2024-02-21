@@ -1,5 +1,5 @@
-﻿@using FMS.Model.CommonModel
-@model SalesDataRequest
+﻿@using FMS.Model.ViewModel
+@model SalesPrintModel
 @{
     Layout = null;
 }
@@ -8,6 +8,31 @@
 
 <html>
 <head>
+    <style>
+        .small-text {
+            font-size: 0.9em !important;
+            /* Adjust the font size as needed */
+        }
+
+        .small-row td {
+            font-size: 0.9em !important;
+            padding: 0.1em !important;
+            /* Adjust the font size as needed */
+        }
+
+        .small-row tr {
+            height: 0.4em !important; /* Adjust the row height */
+        }
+
+        .small-row th {
+            padding: 0.1em !important; /* Adjust the row height */
+            font-size: 0.8em !important;
+        }
+
+        body {
+            color: black !important;
+        }
+    </style>
     <meta name="viewport" content="width=device-width" />
     <title>SalesPrint</title>
     <link rel="stylesheet" href="~/invoice/assets/css/app.min.css">
@@ -20,41 +45,38 @@
                 <div class="th-invoice invoice_style8" data-bg-src="~/invoice/assets/img/template/hospital_bg.png">
                     <div class="download-inner" id="download_section">
                         <header class="th-header header-layout5">
-                            <div class="row justify-content-between">
+                            <div class="row justify-content-between" style="margin-bottom:-20px; margin-top:-20px;">
                                 <div class="col-auto">
                                     <div class="header-logo">
                                         <a href="index.html">
-                                            <img src="~/invoice/assets/img/logo-hospital.svg" alt="Invar">
+                                            <img src="~/landingpage/assets/images/logo/logo.png" alt="logo" style="width:30%; margin-left:25px;" />
                                         </a>
+                                        <p style=" color:black; font-family: Times,  Times New Roman, Georgia, serif; margin-left:30px;"> @Model.Cmopany.Name</p>
                                     </div>
                                 </div>
                                 <div class="col-auto">
-                                    <h1 class="big-title">Sales Invoice</h1>
-                                    <p class="invoice-number mb-2"><b>Invoice No: </b>@Model.TransactionNo</p>
-                                    <p class="invoice-date"><b>Date: </b>@Model.TransactionDate</p>
+                                    <h6 style="padding-top:20px; text-decoration:underline;font-family: cursive;padding-right:40px">Sale Report</h6>
                                 </div>
                             </div>
                         </header>
                         <div class="row justify-content-between my-4">
                             <div class="col-auto">
-                                <div class="invoice-left">
+                                <div class="invoice-left" style="margin-left:30px;">
                                     <b>Address:</b>
                                     <address>
-                                        Alex Farnandes<br>450 E 96th St, Indianapolis,<br>WRHX+8Q IN
-                                        46240,<br>United States
+                                        @Model.Cmopany.Adress<br>@Model.Cmopany.Email,<br>
+                                        @Model.Cmopany.Phone,<br>Odisha
                                     </address>
+                                    <br /> <b>Customer Name : @Model.SalesData.CustomerName</b>
                                 </div>
                             </div>
-                            <div class="col-auto">
-                                <div class="invoice-right">
-                                    <b>Bill Details</b>
-                                    <p class="mb-2">Customer Name: @Model.CustomerName</p>
-                                </div>
+                            <div class="col-auto" style="padding-right:20px">
+                                Print Date :  @DateTime.Now.ToString("dd/MM/yyyy") <br />
                             </div>
                         </div>
                         <table class="invoice-table table-stripe-column">
                             <thead>
-                                <tr>
+                                <tr class="small-row">
                                     <th style="width:30%">Product</th>
                                     <th style="width:10%">Qty</th>
                                     <th style="width:10%">Rate</th>
@@ -66,9 +88,9 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var Item in Model.PrintData)
+                                @foreach (var Item in Model.SalesData.PrintData)
                                 {
-                                    <tr>
+                                    <tr class="small-row">
                                         <td>@Item[1]</td>
                                         <td>@Item[2]</td>
                                         <td>@Item[3]</td>
@@ -92,19 +114,19 @@
                                 <table class="total-table3">
                                     <tr>
                                         <th>Discount:</th>
-                                        <td>@Model.Discount</td>
+                                        <td>@Model.SalesData.Discount</td>
                                     </tr>
                                     <tr>
                                         <th>SubTotal:</th>
-                                        <td>@Model.SubTotal</td>
+                                        <td>@Model.SalesData.SubTotal</td>
                                     </tr>
                                     <tr>
                                         <th>Gst Amount:</th>
-                                        <td>@Model.Gst</td>
+                                        <td>@Model.SalesData.Gst</td>
                                     </tr>
                                     <tr>
                                         <th>Grant Amount:</th>
-                                        <td>@Model.GrandTotal</td>
+                                        <td>@Model.SalesData.GrandTotal</td>
                                     </tr>
                                 </table>
                             </div>

@@ -21,15 +21,25 @@ namespace FMS.Controllers.Print
         [HttpPost]
         public IActionResult SalesPrintData([FromBody] SalesDataRequest requestData)
         {
-            var json = JsonConvert.SerializeObject(requestData);
-            var url = Url.Action("SalesPrint", "Print", new { data = json });
-            return Json(new { redirectTo = url });
+
+            TempData["SalesPrintData"] = JsonConvert.SerializeObject(requestData);
+            return Json(new { redirectTo = Url.Action("SalesPrint", "Print") });
         }
         [HttpGet]
-        public IActionResult SalesPrint(string data)
+        public IActionResult SalesPrint()
         {
-            var requestData = JsonConvert.DeserializeObject<SalesDataRequest>(data);
-            return View(requestData);
+            if (TempData.TryGetValue("SalesPrintData", out object tempData) && tempData is string jsonData)
+            {
+                var requestPrintData = JsonConvert.DeserializeObject<SalesDataRequest>(jsonData);
+                var SalesPrintModel = new SalesPrintModel()
+                {
+                    Cmopany = _adminSvcs.GetCompany().Result.GetCompany,
+                    SalesData = requestPrintData
+                };
+
+                return View(SalesPrintModel);
+            }
+            return RedirectToAction("Error");
         }
         #endregion
         #region Daysheet Report

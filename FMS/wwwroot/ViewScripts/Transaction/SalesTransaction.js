@@ -699,6 +699,16 @@ $(function () {
                     $('#loader').hide();
                     if (Response.ResponseCode == 201) {
                         toastr.success(Response.SuccessMsg);
+                        $.ajax({
+                            type: "POST",
+                            url: '/Print/SalesPrintData',
+                            dataType: 'json',
+                            data: JSON.stringify(requestData),
+                            contentType: "application/json;charset=utf-8",
+                            success: function (Response) {
+                                window.open(Response.redirectTo, '_blank');
+                            },
+                        });
                         SalesTable.clear().draw();
                         CustomerName.val('');
                         orderNo.val('');
@@ -711,17 +721,6 @@ $(function () {
                         grandTotal.val('0');
                         Narration.val('');
                         GetLastSalesTransaction();
-                        GstTable.clear().draw();
-                        $.ajax({
-                            type: "POST",
-                            url: '/Print/SalesPrintData',
-                            dataType: 'json',
-                            data: JSON.stringify(requestData),
-                            contentType: "application/json;charset=utf-8",
-                            success: function (Response) {
-                                window.open(Response.redirectTo, '_blank');
-                            },
-                        });
                     }
                     else {
                         toastr.error(Response.ErrorMsg);
