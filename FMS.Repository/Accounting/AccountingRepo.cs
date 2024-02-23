@@ -1005,84 +1005,86 @@ namespace FMS.Repository.Accounting
                         {
                             if (item.subledgerData.Count > 0)
                             {
-                                int i = 0;
                                 foreach (var data in item.subledgerData)
                                 {
-                                    #region  Receipt
-                                    var ledDev = await _appDbContext.LedgersDev.Where(x => x.LedgerId == Guid.Parse(item.ddlLedgerId)).Select(x => x.Fk_LedgerGroupId).SingleOrDefaultAsync();
-                                    var led = await _appDbContext.Ledgers.Where(x => x.LedgerId == Guid.Parse(item.ddlLedgerId)).Select(x => x.Fk_LedgerGroupId).SingleOrDefaultAsync();
-                                    var newRecipts = new Receipt()
+                                    for (int j = 0; j < data.ddlSubledgerId.Count; j++)
                                     {
-                                        CashBank = requestData.CashBank,
-                                        CashBankLedgerId = requestData.BankLedgerId != null ? Guid.Parse(requestData.BankLedgerId) : null,
-                                        VouvherNo = requestData.VoucherNo,
-                                        VoucherDate = convertedVoucherDate,
-                                        ChequeNo = requestData.ChqNo,
-                                        ChequeDate = convertedChqDate,
-                                        Narration = requestData.Narration,
-                                        DrCr = "Cr",
-                                        Fk_LedgerId = Guid.Parse(item.ddlLedgerId),
-                                        Fk_LedgerGroupId = ledDev != Guid.Empty ? ledDev : led,
-                                        Fk_SubLedgerId = Guid.Parse(data.ddlSubledgerId[i]),
-                                        Amount = Convert.ToDecimal(data.SubledgerAmunt[i]),
-                                        Fk_BranchId = BranchId,
-                                        Fk_FinancialYearId = FinancialYear
-                                    };
-                                    await _appDbContext.Receipts.AddAsync(newRecipts);
-                                    await _appDbContext.SaveChangesAsync();
-                                    #endregion
-                                    #region Ledger & SubLedger Balance
-                                    //@AnyLedger --------------Cr
-                                    var LedgerBalanceId = Guid.Empty;
-                                    var updateLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == newRecipts.Fk_LedgerId && s.Fk_FinancialYear == FinancialYear && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
-                                    if (updateLedgerBalance != null)
-                                    {
-                                        updateLedgerBalance.RunningBalance -= newRecipts.Amount;
-                                        updateLedgerBalance.RunningBalanceType = (updateLedgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
-                                        await _appDbContext.SaveChangesAsync();
-                                        LedgerBalanceId = updateLedgerBalance.LedgerBalanceId;
-                                    }
-                                    else
-                                    {
-                                        var newLedgerBalance = new LedgerBalance
+                                        #region Receipt
+                                        var ledDev = await _appDbContext.LedgersDev.Where(x => x.LedgerId == Guid.Parse(item.ddlLedgerId)).Select(x => x.Fk_LedgerGroupId).SingleOrDefaultAsync();
+                                        var led = await _appDbContext.Ledgers.Where(x => x.LedgerId == Guid.Parse(item.ddlLedgerId)).Select(x => x.Fk_LedgerGroupId).SingleOrDefaultAsync();
+                                        var newReceipts = new Receipt()
                                         {
-                                            Fk_LedgerId = newRecipts.Fk_LedgerId,
-                                            OpeningBalance = 0,
-                                            OpeningBalanceType = "Cr",
-                                            RunningBalance = -newRecipts.Amount,
-                                            RunningBalanceType = "Cr",
+                                            CashBank = requestData.CashBank,
+                                            CashBankLedgerId = requestData.BankLedgerId != null ? Guid.Parse(requestData.BankLedgerId) : null,
+                                            VouvherNo = requestData.VoucherNo,
+                                            VoucherDate = convertedVoucherDate,
+                                            ChequeNo = requestData.ChqNo,
+                                            ChequeDate = convertedChqDate,
+                                            Narration = requestData.Narration,
+                                            DrCr = "Cr",
+                                            Fk_LedgerId = Guid.Parse(item.ddlLedgerId),
+                                            Fk_LedgerGroupId = ledDev != Guid.Empty ? ledDev : led,
+                                            Fk_SubLedgerId = Guid.Parse(data.ddlSubledgerId[j]),
+                                            Amount = Convert.ToDecimal(data.SubledgerAmunt[j]),
                                             Fk_BranchId = BranchId,
-                                            Fk_FinancialYear = FinancialYear
+                                            Fk_FinancialYearId = FinancialYear
                                         };
-                                        await _appDbContext.LedgerBalances.AddAsync(newLedgerBalance);
+                                        await _appDbContext.Receipts.AddAsync(newReceipts);
                                         await _appDbContext.SaveChangesAsync();
-                                        LedgerBalanceId = newLedgerBalance.LedgerBalanceId;
-                                    }
-                                    var updateSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == newRecipts.Fk_SubLedgerId && s.Fk_FinancialYearId == FinancialYear && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
-                                    if (updateSubledgerBalance != null)
-                                    {
-                                        updateSubledgerBalance.RunningBalance -= newRecipts.Amount;
-                                        updateSubledgerBalance.RunningBalanceType = (updateSubledgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
-                                        await _appDbContext.SaveChangesAsync();
-                                    }
-                                    else
-                                    {
-                                        var newSubLedgerBalance = new SubLedgerBalance
+                                        #endregion
+
+                                        #region Ledger & SubLedger Balance
+                                        //@AnyLedger --------------Cr
+                                        var LedgerBalanceId = Guid.Empty;
+                                        var updateLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == newReceipts.Fk_LedgerId && s.Fk_FinancialYear == FinancialYear && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
+                                        if (updateLedgerBalance != null)
                                         {
-                                            Fk_LedgerBalanceId = LedgerBalanceId,
-                                            Fk_SubLedgerId = Guid.Parse(data.ddlSubledgerId[i]),
-                                            OpeningBalanceType = "Cr",
-                                            OpeningBalance = 0,
-                                            RunningBalanceType = "Cr",
-                                            RunningBalance = -newRecipts.Amount,
-                                            Fk_FinancialYearId = FinancialYear,
-                                            Fk_BranchId = BranchId
-                                        };
-                                        await _appDbContext.SubLedgerBalances.AddAsync(newSubLedgerBalance);
-                                        await _appDbContext.SaveChangesAsync();
+                                            updateLedgerBalance.RunningBalance -= newReceipts.Amount;
+                                            updateLedgerBalance.RunningBalanceType = (updateLedgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
+                                            await _appDbContext.SaveChangesAsync();
+                                            LedgerBalanceId = updateLedgerBalance.LedgerBalanceId;
+                                        }
+                                        else
+                                        {
+                                            var newLedgerBalance = new LedgerBalance
+                                            {
+                                                Fk_LedgerId = newReceipts.Fk_LedgerId,
+                                                OpeningBalance = 0,
+                                                OpeningBalanceType = "Cr",
+                                                RunningBalance = -newReceipts.Amount,
+                                                RunningBalanceType = "Cr",
+                                                Fk_BranchId = BranchId,
+                                                Fk_FinancialYear = FinancialYear
+                                            };
+                                            await _appDbContext.LedgerBalances.AddAsync(newLedgerBalance);
+                                            await _appDbContext.SaveChangesAsync();
+                                            LedgerBalanceId = newLedgerBalance.LedgerBalanceId;
+                                        }
+                                        var updateSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == newReceipts.Fk_SubLedgerId && s.Fk_FinancialYearId == FinancialYear && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
+                                        if (updateSubledgerBalance != null)
+                                        {
+                                            updateSubledgerBalance.RunningBalance -= newReceipts.Amount;
+                                            updateSubledgerBalance.RunningBalanceType = (updateSubledgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
+                                            await _appDbContext.SaveChangesAsync();
+                                        }
+                                        else
+                                        {
+                                            var newSubLedgerBalance = new SubLedgerBalance
+                                            {
+                                                Fk_LedgerBalanceId = LedgerBalanceId,
+                                                Fk_SubLedgerId = Guid.Parse(data.ddlSubledgerId[j]),
+                                                OpeningBalanceType = "Cr",
+                                                OpeningBalance = 0,
+                                                RunningBalanceType = "Cr",
+                                                RunningBalance = -newReceipts.Amount,
+                                                Fk_FinancialYearId = FinancialYear,
+                                                Fk_BranchId = BranchId
+                                            };
+                                            await _appDbContext.SubLedgerBalances.AddAsync(newSubLedgerBalance);
+                                            await _appDbContext.SaveChangesAsync();
+                                        }
+                                        #endregion
                                     }
-                                    #endregion
-                                    i++;
                                 }
                             }
                             else

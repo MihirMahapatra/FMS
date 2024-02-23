@@ -1,4 +1,5 @@
-﻿using FMS.Model.CommonModel;
+﻿using FMS.Db.Context;
+using FMS.Model.CommonModel;
 using FMS.Model.ViewModel;
 using FMS.Service.Admin;
 using FMS.Service.Reports;
@@ -10,18 +11,24 @@ namespace FMS.Controllers.Print
 {
     public class PrintController : Controller
     {
+        private readonly AppDbContext _appDbContext;
         private readonly IAdminSvcs _adminSvcs;
         private readonly IReportSvcs _reportSvcs;
-        public PrintController(IAdminSvcs adminSvcs, IReportSvcs reportSvcs)
+        public PrintController(IAdminSvcs adminSvcs, IReportSvcs reportSvcs, AppDbContext appDbContext)
         {
             _adminSvcs = adminSvcs;
             _reportSvcs = reportSvcs;
+            _appDbContext = appDbContext;
         }
         #region Sales Print
         [HttpPost]
         public IActionResult SalesPrintData([FromBody] SalesDataRequest requestData)
         {
-
+            if(requestData.CustomerName == "")
+            {
+                var SundrydebitorName = _appDbContext.SubLedgers.Where(s => s.SubLedgerId == requestData.Fk_SubLedgerId).FirstOrDefault();
+                requestData.CustomerName = SundrydebitorName.SubLedgerName;
+            }
             TempData["SalesPrintData"] = JsonConvert.SerializeObject(requestData);
             return Json(new { redirectTo = Url.Action("SalesPrint", "Print") });
         }

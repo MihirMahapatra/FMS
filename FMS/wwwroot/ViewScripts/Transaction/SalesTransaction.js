@@ -660,7 +660,7 @@ $(function () {
                 var PrintCelles = [];
                 row.find('td').each(function () {
                     var cell = $(this);
-                    var input = cell.find('input,select');
+                    var input = cell.find('input,select,span');
                     if (input.is('select')) {
                         value = input.find('option:selected').text();
                     } else {

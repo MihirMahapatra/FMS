@@ -275,7 +275,7 @@
                     else {
                         toastr.error(Response.ErrorMsg);
                     }
-                    GetLastProductionNo();
+                    GetServicesGoods();
                 },
                 error: function (error) {
                     console.log(error);

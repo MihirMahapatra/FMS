@@ -502,9 +502,9 @@ $(function () {
             const data = {
                 StockId: $('input[name="mdlStockId"]').val(),
                 Fk_ProductId: $('select[name="mdlProductId"]').val(),
-                OpeningStock: $('input[name="mdlOpeningQty"]').val().replace(/[^0-9.]/g, ''),
+                OpeningStock: $('input[name="mdlOpeningQty"]').val().replace(/[^0-9.-]/g, ''),
                 Rate: $('input[name="mdlOpeningRate"]').val(),
-                AvilableStock: $('input[name="mdlAvilableQty"]').val().replace(/[^0-9.]/g, ''),
+                AvilableStock: $('input[name="mdlAvilableQty"]').val().replace(/[^0-9.-]/g, ''),
                 MinQty: $('input[name="mdlMinQty"]').val(),
                 MaxQty: $('input[name="mdlMaxQty"]').val(),
             }
