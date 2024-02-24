@@ -37,6 +37,10 @@ namespace FMS.Service.Reports
         #region LedgerBook
         public Task<LedgerBookViewModal> LagderBookReport(LedgerbookDataRequest requestData);
         #endregion
+        #region SubLadgerLedgerBook
+        Task<SubLedgerViewModel> GetSubLadgers();
+        public Task<PartyReportViewModel> SubLadgerDetailedBookReport(LedgerbookDataRequest requestData);
+        #endregion
         #region TrialBalances
         public Task<LedgerTrialBalanceViewModel> TrialBalanceReport(LedgerbookDataRequest requestData);
         #endregion

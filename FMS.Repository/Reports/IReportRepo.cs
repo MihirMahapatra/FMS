@@ -39,6 +39,11 @@ namespace FMS.Repository.Reports
         Task<Result<LedgerBookModel>> LedgerBookReport(LedgerbookDataRequest requestData);
 
         #endregion
+        #region SubLadgerLadgerBook
+        Task<Result<SubLedgerModel>> GetSubLadgers();
+        Task<Result<PartyReportModel2>> SubLadgerDetailedBookReport(LedgerbookDataRequest requestData);
+
+        #endregion
         #region Trial balance
         Task<Result<LedgerTrialBalanceModel>> TrialbalanceReport(LedgerbookDataRequest requestData);
 

@@ -261,6 +261,33 @@ namespace FMS.Controllers.Reports
             return BadRequest(ModelState);
         }
         #endregion
+        #region LedgerBook
+        [HttpGet]
+        public IActionResult SubLadgerBook()
+        {
+            string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
+            string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
+            ViewBag.BranchName = branchName;
+            ViewBag.FinancialYear = FinancialYear;
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> SubLedgerDetailedBookReport([FromBody] LedgerbookDataRequest requestData)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _reportSvcs.SubLadgerDetailedBookReport(requestData);
+                return new JsonResult(result);
+            }
+            return BadRequest(ModelState);
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetSubLadgers()
+        {
+            var result = await _reportSvcs.GetSubLadgers();
+            return new JsonResult(result);
+        }
+        #endregion
         #region TrialBalance
         [HttpGet]
         public IActionResult TrialBalance()

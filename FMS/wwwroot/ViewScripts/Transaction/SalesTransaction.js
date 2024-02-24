@@ -1142,7 +1142,6 @@ $(function () {
                         gst.val('0');
                         grandTotal.val('0');
                         GetLastSalesTransaction();
-                        GstTable.clear().draw();
                     }
                     else {
                         toastr.error(Response.ErrorMsg);
