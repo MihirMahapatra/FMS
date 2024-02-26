@@ -1755,7 +1755,7 @@ namespace FMS.Repository.Reports
             {
                 _Result.IsSuccess = false;
                 _Result.CollectionObjData = await (from s in _appDbContext.SubLedgers
-                                                   select new SubLedgerModel
+                                                   select new SubLedgerModel 
                                                    {
                                                        SubLedgerId = s.SubLedgerId,
                                                        SubLedgerName = s.SubLedgerName,
@@ -1844,17 +1844,29 @@ namespace FMS.Repository.Reports
                                                   Amount = s.Amount,
                                               }).ToList()
                                               }).ToList());
+                            SubLadegerInfos.Orders.AddRange(_appDbContext.Payments.Where(r => r.Fk_FinancialYearId == FinancialYearId && r.Fk_BranchId == BranchId && r.VoucherDate >= convertedFromDate && r.VoucherDate <= convertedToDate && r.Fk_SubLedgerId == requestData.LedgerId)
+                                 .OrderBy(t => t.VoucherDate)
+                                 .Select(t => new PartyReportOrderModel
+                                 {
+                                     TransactionDate = t.VoucherDate,
+                                     TransactionNo = t.VouvherNo,
+                                     Naration = t.Narration,
+                                     GrandTotal = t.Amount,
+                                     BranchName = t.Branch.BranchName,
+                                     DrCr = "Dr",
+                                 }).ToList());
                             SubLadegerInfos.Orders.AddRange(_appDbContext.Receipts.Where(r => r.Fk_FinancialYearId == FinancialYearId && r.Fk_BranchId == BranchId && r.VoucherDate >= convertedFromDate && r.VoucherDate <= convertedToDate && r.Fk_SubLedgerId == requestData.LedgerId)
-                                .OrderBy(t => t.VoucherDate)
-                                .Select(t => new PartyReportOrderModel
-                                {
-                                    TransactionDate = t.VoucherDate,
-                                    TransactionNo = t.VouvherNo,
-                                    Naration = t.Narration,
-                                    GrandTotal = t.Amount,
-                                    BranchName = t.Branch.BranchName,
-                                    DrCr = "Cr",
-                                }).ToList());
+                             .OrderBy(t => t.VoucherDate)
+                             .Select(t => new PartyReportOrderModel
+                             {
+                                 TransactionDate = t.VoucherDate,
+                                 TransactionNo = t.VouvherNo,
+                                 Naration = t.Narration,
+                                 GrandTotal = t.Amount,
+                                 BranchName = t.Branch.BranchName,
+                                 DrCr = "Cr",
+                             }).ToList());
+                            
                             SubLadegerInfos.Orders = SubLadegerInfos.Orders.OrderBy(t => t.TransactionDate).ToList();
                         }
                         else
@@ -1910,6 +1922,17 @@ namespace FMS.Repository.Reports
                                                   Amount = s.Amount,
                                               }).ToList()
                                               }).ToList());
+                            SubLadegerInfos.Orders.AddRange(_appDbContext.Payments.Where(r => r.Fk_FinancialYearId == FinancialYearId && r.VoucherDate >= convertedFromDate && r.VoucherDate <= convertedToDate && r.Fk_SubLedgerId == requestData.LedgerId)
+                                .OrderBy(t => t.VoucherDate)
+                                .Select(t => new PartyReportOrderModel
+                                {
+                                    TransactionDate = t.VoucherDate,
+                                    TransactionNo = t.VouvherNo,
+                                    Naration = t.Narration,
+                                    GrandTotal = t.Amount,
+                                    DrCr = "Cr",
+                                    BranchName = t.Branch.BranchName,
+                                }).ToList());
                             SubLadegerInfos.Orders.AddRange(_appDbContext.Receipts.Where(r => r.Fk_FinancialYearId == FinancialYearId && r.VoucherDate >= convertedFromDate && r.VoucherDate <= convertedToDate && r.Fk_SubLedgerId == requestData.LedgerId)
                                 .OrderBy(t => t.VoucherDate)
                                 .Select(t => new PartyReportOrderModel

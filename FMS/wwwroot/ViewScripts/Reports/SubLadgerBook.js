@@ -13,6 +13,7 @@
     fromDateSummerized.val(todayDate);
     const toDateSummerized = $('input[name="ToDateSummerized"]');
     toDateSummerized.val(todayDate);
+    var Ladger = $('select[name="ddlLadgerId"]');
     const ddlSubLadger = $('select[name="ddlSubLadgerId"]');
     const fromDateDetailed = $('input[name="FromDateDetailed"]');
     fromDateDetailed.val(todayDate);
@@ -106,34 +107,91 @@
         }
     });
     //--------------------------------Customer Report Detailed------------------------------------------------//
-    GetSubLadgersDebtors();
-    function GetSubLadgersDebtors() {
+    GetLadgers();
+    function GetLadgers() {
         $.ajax({
-            url: "/Reports/GetSubLadgers",
+            url: '/Accounting/GetLedgers',
             type: "GET",
             contentType: "application/json;charset=utf-8",
             dataType: "json",
             success: function (result) {
+                Ladger.empty();
+                var defaultOption = $('<option></option>').val('').text('--Select Option--');
+                Ladger.append(defaultOption);
                 if (result.ResponseCode == 302) {
-                    ddlSubLadger.empty();
-                    var defaultOption = $('<option></option>').val('').text('--Select Option--');
-                    ddlSubLadger.append(defaultOption);
-                    $.each(result.SubLedgers, function (key, item) {
-                        var option = $('<option></option>').val(item.SubLedgerId).text(item.SubLedgerName);
-                        ddlSubLadger.append(option);
+                    $.each(result.Ledgers, function (key, item) {
+                        var option = $('<option></option>').val(item.LedgerId).text(item.LedgerName);
+                        Ladger.append(option);
                     });
-                }
-                else {
-                    ddlSubLadger.empty();
-                    var defaultOption = $('<option></option>').val('').text('--Select Option--');
-                    ddlSubLadger.append(defaultOption);
                 }
             },
             error: function (errormessage) {
                 console.log(errormessage)
             }
-        });
+        })
     }
+    var selectedOption = "";
+    $(document).on('change', '.ledgerType', function () {
+        selectedOption = $(this).val();
+        if (selectedOption) {
+            $.ajax({
+                url: '/Accounting/GetSubLedgersById?LedgerId=' + selectedOption + '',
+                type: "GET",
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    if (result.ResponseCode == 302) {
+                        ddlSubLadger.empty();
+                        var defaultOption = $('<option></option>').val('').text('--Select Option--');
+                        ddlSubLadger.append(defaultOption);
+                        $.each(result.SubLedgers, function (key, item) {
+                            var option = $('<option></option>').val(item.SubLedgerId).text(item.SubLedgerName);
+                            ddlSubLadger.append(option);
+                        });
+                        ddlSubLadger.prop('disabled', false);
+                    }
+                    else {
+                        ddlSubLadger.empty();
+                        var defaultOption = $('<option></option>').val('').text('--Select Option--');
+                        ddlSubLadger.append(defaultOption);
+                        ddlSubLadger.prop('disabled', false);
+                    }
+
+                },
+                error: function (errormessage) {
+                    console.log(errormessage)
+                }
+            });
+           
+        }
+    });
+    //function GetSubLadgersDebtors() {
+    //    $.ajax({
+    //        url: "/Reports/GetSubLadgers",
+    //        type: "GET",
+    //        contentType: "application/json;charset=utf-8",
+    //        dataType: "json",
+    //        success: function (result) {
+    //            if (result.ResponseCode == 302) {
+    //                ddlSubLadger.empty();
+    //                var defaultOption = $('<option></option>').val('').text('--Select Option--');
+    //                ddlSubLadger.append(defaultOption);
+    //                $.each(result.SubLedgers, function (key, item) {
+    //                    var option = $('<option></option>').val(item.SubLedgerId).text(item.SubLedgerName);
+    //                    ddlSubLadger.append(option);
+    //                });
+    //            }
+    //            else {
+    //                ddlSubLadger.empty();
+    //                var defaultOption = $('<option></option>').val('').text('--Select Option--');
+    //                ddlSubLadger.append(defaultOption);
+    //            }
+    //        },
+    //        error: function (errormessage) {
+    //            console.log(errormessage)
+    //        }
+    //    });
+    //}
     var PrintDataDetailed = {};
     $('#btnViewDetailed').on('click', function () {
         $('#loader').show();
@@ -178,9 +236,9 @@
                                 html += '<tr class="bg-primary">';
                                 html += '<td >Trxn Date </td>';
                                 html += '<td >Trxn No</td>';
-                                html += '<td >Branch</td>';
                                 html += '<td colspan="4">Details</td>';
-                                html += '<td></td>';
+                                html += '<td>Amount</td>';
+                                html += '<td>Runnig Bal</td>';
                                 html += '</tr >';
                                 $.each(result.PartyDetailed.Orders, function (key, item) {
                                     const ModifyedDate = item.TransactionDate;
@@ -197,46 +255,25 @@
                                     html += '<tr>';
                                     html += '<td >' + formattedDate + '</td>';
                                     html += '<td >' + item.TransactionNo + '</td>';
-                                    html += '<td >' + item.BranchName + '</td>';
                                     html += '<td colspan="4">' + item.Naration + '</td>';
-                                    html += '<td>-</td>';
-                                    html += '</tr >';
-                                    if (item.Transactions.length > 0) {
-                                        html += '<tr>';
-                                        html += '<td >-</td>';
-                                        html += '<td >-</td>';
-                                        html += '<td >-</td>';
-                                        html += '<td >Product</td>';
-                                        html += '<td >Qty</td>';
-                                        html += '<td >Rate</td>';
-                                        html += '<td >Amount</td>';
-                                        html += '<td >-</td>';
-                                        html += '</tr >';
-                                        $.each(item.Transactions, function (key, Transaction) {
-                                            html += '<tr>';
-                                            html += '<td >-</td>';
-                                            html += '<td >-</td>';
-                                            html += '<td >-</td>';
-                                            html += '<td >' + Transaction.ProductName + '</td>';
-                                            html += '<td >' + Transaction.Quantity + '</td>';
-                                            html += '<td >' + Transaction.Rate + '</td>';
-                                            html += '<td >' + Transaction.Amount + '</td>';
-                                            html += '<td >-</td>';
-                                            html += '</tr >';
-                                        });
-                                    }
-                                    html += '<tr>';
-                                    html += '<td >-</td>';
-                                    html += '<td >-</td>';
-                                    html += '<td >-</td>';
-                                    html += '<td colspan="3">Grand Total</td>';
                                     html += '<td>' + item.GrandTotal + '</td>';
-                                    balance += item.DrCr == "Dr" ? item.GrandTotal : -item.GrandTotal;
-                                    var DrCr = balance > 0 ? "Dr" : "Cr";
+                                    if (item.DrCr === "Dr") {
+                                        balance += item.GrandTotal;
+                                    } else if (item.DrCr === "Cr") {
+                                        balance -= item.GrandTotal;
+                                    }
+
+                                    var DrCr = balance >= 0 ? "Dr" : "Cr";
                                     html += '<td>' + balance.toFixed(2) + ' ' + DrCr + '</td>';
                                     html += '</tr >';
                                 });
                             }
+                            
+                            html += '<tr style="Background-color:cyan;">';
+                            html += '<td colspan="7">Closing Bal.</td>';
+                            var DrCr = balance > 0 ? "Dr" : "Cr";
+                            html += '<td>' + balance.toFixed(2) + ' ' + DrCr + '</td>';
+                            html += '</tr >';
                         }
                         PrintDataDetailed = {
                             FromDate: fromDateDetailed.val(),

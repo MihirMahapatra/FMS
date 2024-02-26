@@ -415,7 +415,7 @@ $(function () {
                                 }
                             }
                             html += '<td>' + formattedDate + '</td>';
-                            if (item.LedgerDevName !== null) {
+                            if (Payment.LedgerDevName !== null) {
                                 html += '<td>' + Payment.LedgerDevName + '</td>';
                             }
                             else {
