@@ -737,6 +737,44 @@ namespace FMS.Service.Reports
             }
             return Obj;
         }
+
+        public async Task<PartyReportViewModel> GetSummerizedSubLadgerReport(LedgerbookDataRequest requestData)
+        {
+            PartyReportViewModel Obj;
+            var Result = await _reportRepo.GetSummerizedSubLadgerReport(requestData);
+            if (Result.IsSuccess)
+            {
+                if (Result.Response == "success")
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
+                        PartySummerized = Result.CollectionObjData,
+                    };
+                }
+                else
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.NotFound),
+                        Message = "No Record Found"
+                    };
+                }
+            }
+            else
+            {
+                Obj = new()
+                {
+                    ResponseStatus = Result.Response,
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    Message = "Some Eroor Occoured"
+                };
+            }
+            return Obj;
+        }
         #endregion
     }
 }

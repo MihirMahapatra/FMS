@@ -13,6 +13,7 @@
     fromDateSummerized.val(todayDate);
     const toDateSummerized = $('input[name="ToDateSummerized"]');
     toDateSummerized.val(todayDate);
+    var SLadger = $('select[name="ddlSummrizedLadgerId"]');
     var Ladger = $('select[name="ddlLadgerId"]');
     const ddlSubLadger = $('select[name="ddlSubLadgerId"]');
     const fromDateDetailed = $('input[name="FromDateDetailed"]');
@@ -21,6 +22,29 @@
     toDateDetailed.val(todayDate);
     //--------------------------------Customer Report Summerized------------------------------------------------//
     var PrintData = {}
+    GetSummrizedLadgers();
+    function GetSummrizedLadgers() {
+        $.ajax({
+            url: '/Accounting/GetLedgers',
+            type: "GET",
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            success: function (result) {
+                SLadger.empty();
+                var defaultOption = $('<option></option>').val('').text('--Select Option--');
+                SLadger.append(defaultOption);
+                if (result.ResponseCode == 302) {
+                    $.each(result.Ledgers, function (key, item) {
+                        var option = $('<option></option>').val(item.LedgerId).text(item.LedgerName);
+                        SLadger.append(option);
+                    });
+                }
+            },
+            error: function (errormessage) {
+                console.log(errormessage)
+            }
+        })
+    }
     $('#btnViewSummerized').on('click', function () {
         $('#loader').show();
         $('.SummerizedReportTable').empty();
@@ -34,9 +58,10 @@
             var requestData = {
                 FromDate: fromDateSummerized.val(),
                 ToDate: toDateSummerized.val(),
+                LedgerId: SLadger.val()
             };
             $.ajax({
-                url: "/Reports/GetSummerizedCustomerReport",
+                url: "/Reports/GetSummerizedSubLadgerReport",
                 type: "POST",
                 contentType: "application/json;charset=utf-8",
                 dataType: "json",
@@ -47,12 +72,11 @@
                     html += '<table class="table table-bordered table-hover text-center mt-2 SummerizedReportTable" style="width:100%">';
                     html += '<thead>'
                     html += '<tr>'
-                    html += '<th></th>'
                     html += '<th>Name</th>'
                     html += '<th>Opn Bal</th>'
                     html += '<th>Opn Type</th>'
-                    html += '<th>Billing Amt</th>'
-                    html += '<th>Paid Amt</th>'
+                    html += '<th>Dr Amt</th>'
+                    html += '<th>Cr Amt</th>'
                     html += '<th>Balance</th>'
                     html += '<th>Type</th>'
                     html += '</tr>'
@@ -62,7 +86,6 @@
                         $('#BtnPrintSummarized').show();
                         $.each(result.PartySummerized, function (key, item) {
                             html += '<tr>';
-                            html += '<td><button  class="btn btn-primary btn-sm toggleColumnsBtn" id="btn-info-' + item.Fk_SubledgerId + '"  data-id="' + item.Fk_SubledgerId + '" style=" border-radius: 50%;" ><i class="fa-solid fa-circle-info"></i></button></td>'
                             html += '<td>' + item.PartyName + '</td>';
                             html += '<td>' + item.OpeningBal + '</td>';
                             html += '<td>' + item.OpeningBalType + '</td>';
@@ -192,7 +215,7 @@
     //        }
     //    });
     //}
-    var PrintDataDetailed = {};
+    var requestData = {};
     $('#btnViewDetailed').on('click', function () {
         $('#loader').show();
         $('.DetailedReportTable').empty();
@@ -208,7 +231,7 @@
             return;
         }
         else {
-            var requestData = {
+             requestData = {
                 FromDate: fromDateDetailed.val(),
                 ToDate: toDateDetailed.val(),
                 LedgerId: ddlSubLadger.val()
@@ -228,7 +251,7 @@
                         if (result.PartyDetailed !== null) {
                             var balance =
                                 html += '<tr>';
-                            html += '<td colspan="7">Opening Bal.</td>';
+                            html += '<td colspan="8">Opening Bal.</td>';
                             html += '<td >' + result.PartyDetailed.OpeningBal + ' ' + result.PartyDetailed.OpeningBalType + '</td>';
                             html += '</tr >';
                             var balance = result.PartyDetailed.OpeningBal;
@@ -236,8 +259,9 @@
                                 html += '<tr class="bg-primary">';
                                 html += '<td >Trxn Date </td>';
                                 html += '<td >Trxn No</td>';
-                                html += '<td colspan="4">Details</td>';
-                                html += '<td>Amount</td>';
+                                html += '<td colspan="4">Narration</td>';
+                                html += '<td>Dr</td>';
+                                html += '<td>Cr</td>';
                                 html += '<td>Runnig Bal</td>';
                                 html += '</tr >';
                                 $.each(result.PartyDetailed.Orders, function (key, item) {
@@ -256,13 +280,16 @@
                                     html += '<td >' + formattedDate + '</td>';
                                     html += '<td >' + item.TransactionNo + '</td>';
                                     html += '<td colspan="4">' + item.Naration + '</td>';
-                                    html += '<td>' + item.GrandTotal + '</td>';
+                                   
                                     if (item.DrCr === "Dr") {
+                                        html += '<td>' + item.GrandTotal + '</td>';
+                                        html += '<td>'+0.00 +'</td>';
                                         balance += item.GrandTotal;
                                     } else if (item.DrCr === "Cr") {
+                                        html += '<td>'+0.00 +'</td>';
+                                        html += '<td>' + item.GrandTotal + '</td>';
                                         balance -= item.GrandTotal;
                                     }
-
                                     var DrCr = balance >= 0 ? "Dr" : "Cr";
                                     html += '<td>' + balance.toFixed(2) + ' ' + DrCr + '</td>';
                                     html += '</tr >';
@@ -270,16 +297,16 @@
                             }
                             
                             html += '<tr style="Background-color:cyan;">';
-                            html += '<td colspan="7">Closing Bal.</td>';
+                            html += '<td colspan="8">Closing Bal.</td>';
                             var DrCr = balance > 0 ? "Dr" : "Cr";
                             html += '<td>' + balance.toFixed(2) + ' ' + DrCr + '</td>';
                             html += '</tr >';
                         }
-                        PrintDataDetailed = {
-                            FromDate: fromDateDetailed.val(),
-                            ToDate: toDateDetailed.val(),
-                            PartyDetailedReports: result.PartyDetailed
-                        }
+                        //PrintDataDetailed = {
+                        //    FromDate: fromDateDetailed.val(),
+                        //    ToDate: toDateDetailed.val(),
+                        //    PartyDetailedReports: result.PartyDetailed
+                        //}
                         $('#BtnPrintDetailed').show();
                     }
                     else {
@@ -303,15 +330,9 @@
         }
     })
     $('#BtnPrintDetailed').on('click', function () {
-        $.ajax({
-            type: "POST",
-            url: '/Print/CustomerDetailedPrintData',
-            dataType: 'json',
-            data: JSON.stringify(PrintDataDetailed),
-            contentType: "application/json;charset=utf-8",
-            success: function (Response) {
-                window.open(Response.redirectTo, '_blank');
-            },
-        });
+        console.log(requestData);
+        var queryString = $.param(requestData); // Serialize object to query string
+        var url = '/Print/SubLadgerDetailedReportPrint?' + queryString; // Append query string to URL
+        window.open(url, '_blank');
     });
 })

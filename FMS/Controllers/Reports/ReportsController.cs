@@ -261,7 +261,8 @@ namespace FMS.Controllers.Reports
             return BadRequest(ModelState);
         }
         #endregion
-        #region LedgerBook
+        #region SubLedgerBook
+
         [HttpGet]
         public IActionResult SubLadgerBook()
         {
@@ -270,6 +271,16 @@ namespace FMS.Controllers.Reports
             ViewBag.BranchName = branchName;
             ViewBag.FinancialYear = FinancialYear;
             return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> GetSummerizedSubLadgerReport([FromBody] LedgerbookDataRequest requestData)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _reportSvcs.GetSummerizedSubLadgerReport(requestData);
+                return new JsonResult(result);
+            }
+            return BadRequest(ModelState);
         }
         [HttpPost]
         public async Task<IActionResult> SubLedgerDetailedBookReport([FromBody] LedgerbookDataRequest requestData)

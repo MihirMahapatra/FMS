@@ -259,7 +259,7 @@ namespace FMS.Controllers.Print
             };
             return View(StockSumrizedReportModal);
         }
-
+        [HttpGet]
         public async Task<IActionResult> StockDetailedReportPrint([FromQuery] StockReportDataRequest requestData)
         {
             var result = await _reportSvcs.GetDetailedStockReport(requestData);
@@ -273,6 +273,40 @@ namespace FMS.Controllers.Print
                 StockReports = StockReportData
             };
             return View(StockDetailedReportModal);
+
+        }
+        #endregion
+        #region SubLadger Reports
+        [HttpGet]
+        public async Task<IActionResult> SubladgerSumrizedReportPrint([FromQuery] StockReportDataRequest requestData)
+        {
+
+            var result = await _reportSvcs.GetSummerizedStockReports(requestData);
+            var StockReportData = new StockReportDataModel();
+            StockReportData.FromDate = requestData.FromDate;
+            StockReportData.ToDate = requestData.ToDate;
+            StockReportData.StockReport = result.StockReports;
+            var StockSumrizedReportModal = new StockSumrizedReportModal()
+            {
+                Cmopany = _adminSvcs.GetCompany().Result.GetCompany,
+                StockReports = StockReportData
+            };
+            return View(StockSumrizedReportModal);
+        }
+        [HttpGet]
+        public async Task<IActionResult> SubLadgerDetailedReportPrint([FromQuery] LedgerbookDataRequest requestData)
+        {
+            var result = await _reportSvcs.SubLadgerDetailedBookReport(requestData);
+            var SubladgerModel = new CustomerSummarizedModel();
+            SubladgerModel.FromDate = requestData.FromDate;
+            SubladgerModel.ToDate = requestData.ToDate;
+            SubladgerModel.PartyDetailedReports = result.PartyDetailed;
+            var SubLadgerDetailedReportModal = new CustomerReportDataModel()
+            {
+                Cmopany = _adminSvcs.GetCompany().Result.GetCompany,
+                Customers = SubladgerModel
+            };
+            return View(SubLadgerDetailedReportModal);
 
         }
         #endregion
