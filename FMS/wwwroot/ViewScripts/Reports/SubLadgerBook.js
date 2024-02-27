@@ -84,7 +84,15 @@
                     html += '<tbody>';
                     if (result.ResponseCode == 302) {
                         $('#BtnPrintSummarized').show();
+                        var OpeningBal = 0;
+                        var DrAmt = 0;
+                        var CrAmt = 0;
+                        var TotalBalance = 0;
                         $.each(result.PartySummerized, function (key, item) {
+                            OpeningBal += item.OpeningBal;
+                            DrAmt += item.DrAmt;
+                            CrAmt += item.CrAmt;
+                            TotalBalance += item.Balance + item.OpeningBal;
                             html += '<tr>';
                             html += '<td>' + item.PartyName + '</td>';
                             html += '<td>' + item.OpeningBal + '</td>';
@@ -97,6 +105,17 @@
                             html += '<td>' + balanceType + '</td>';
                             html += '<tr>';
                         })
+                        html += '<tr style="Background-color:cyan;">';
+                        html += '<td>' + "Totals" + '</td>';
+                        html += '<td>' + OpeningBal + '</td>';
+                        var balanceTypeop = OpeningBal >= 0 ? "Dr" : "Cr";
+                        html += '<td>' + balanceTypeop + '</td>';
+                        html += '<td>' + DrAmt + '</td>';
+                        html += '<td>' + CrAmt + '</td>';
+                        var balanceType = TotalBalance >= 0 ? "Dr" : "Cr";
+                        html += '<td>' + Math.abs(TotalBalance) + '</td>';
+                        html += '<td>' + balanceType + '</td>';
+                        html += '<tr>';
                         PrintData = {
                             FromDate: fromDateSummerized.val(),
                             ToDate: toDateSummerized.val(),
