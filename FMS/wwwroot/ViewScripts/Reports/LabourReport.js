@@ -107,13 +107,13 @@ $(function () {
                         $.each(result.LaborReports, function (key, item) {
                             html += '<tr>';
                             html += '<td>' + item.LabourName + '</td>';
-                            html += '<td>' + item.OpeningBal + '</td>';
-                            html += '<td>' + item.OpeningBalType + '</td>';
-                            html += '<td>' + item.BillingAmt + '</td>';
-                            html += '<td>' + item.DamageAmt + '</td>';
-                            html += '<td>' + item.PaymentAmt + '</td>';
+                            html += '<td>' + item.OpeningBal.toFixed(2) + '</td>';
+                            html += '<td>' + item.OpeningBalType.toFixed(2) + '</td>';
+                            html += '<td>' + item.BillingAmt.toFixed(2) + '</td>';
+                            html += '<td>' + item.DamageAmt.toFixed(2) + '</td>';
+                            html += '<td>' + item.PaymentAmt.toFixed(2) + '</td>';
                             var Balance = item.OpeningBal + (item.BillingAmt - item.DamageAmt - item.PaymentAmt);
-                            html += '<td>' + Balance + '</td>';
+                            html += '<td>' + Balance.toFixed(2) + '</td>';
                             html += '</tr >';
                         });
                         PrintDataSummarized = {
@@ -269,13 +269,13 @@ $(function () {
                                     html += '<td>' + Production.TransactionNo + '</td>';
                                     html += '<td>' + Production.Product.ProductName + '</td>';
                                     html += '<td>' + Production.Quantity + '</td>';
-                                    html += '<td>' + Production.Rate + '</td>';
-                                    html += '<td>' + Production.OTAmount + '</td>';
-                                    html += '<td>' + Production.Amount + '</td>';
+                                    html += '<td>' + Production.Rate.toFixed(2) + '</td>';
+                                    html += '<td>' + Production.OTAmount.toFixed(2) + '</td>';
+                                    html += '<td>' + Production.Amount.toFixed(2) + '</td>';
                                     html += '<td>-</td>';
                                     html += '<td>-</td>';
                                     Balance += Production.Amount
-                                    html += '<td>' + Balance + '</td>';
+                                    html += '<td>' + Balance.toFixed(2) + '</td>';
                                     html += '</tr >';
 
                                 });
@@ -329,10 +329,10 @@ $(function () {
                                     html += '<td>-</td>';
                                     html += '<td>-</td>';
                                     html += '<td>-</td>';
-                                    html += '<td>' + Damage.TotalAmount + '</td>';
+                                    html += '<td>' + Damage.TotalAmounttoFixed(2) + '</td>';
                                     html += '<td>-</td>';
                                     Balance -= Damage.TotalAmount
-                                    html += '<td>' + Balance + '</td>';
+                                    html += '<td>' + BalancetoFixed(2) + '</td>';
                                     html += '</tr >';
                                 });
                             }
