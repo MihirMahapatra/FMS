@@ -15,10 +15,12 @@ namespace FMS.Db.DbEntityConfig
             builder.Property(e => e.TransactionNo).IsRequired(true).HasMaxLength(10);
             builder.Property(e => e.TransactionDate).HasColumnType("datetime").IsRequired(true);
             builder.Property(e => e.Fk_ProductId).IsRequired(true);
+            builder.Property(e => e.Fk_SubProductId).IsRequired(false);
             builder.Property(e => e.Fk_BranchId).IsRequired(true);
             builder.Property(e => e.Fk_FinancialYearId).IsRequired(true);
-            builder.Property(e => e.AlternateQuantity).HasColumnType("decimal(18,5)").IsRequired(true);
+            builder.Property(e => e.AlternateQuantity).HasColumnType("decimal(18,5)").IsRequired(false);
             builder.Property(e => e.UnitQuantity).HasColumnType("decimal(18,5)").IsRequired(true);
+            builder.Property(e => e.Fk_AlternateUnitId).IsRequired(false);
             builder.Property(e => e.Rate).HasColumnType("decimal(18,2)").IsRequired(true);
             builder.Property(e => e.Discount).HasColumnType("decimal(18,2)").IsRequired(true);
             builder.Property(e => e.DiscountAmount).HasColumnType("decimal(18,2)").IsRequired(true);
@@ -28,6 +30,7 @@ namespace FMS.Db.DbEntityConfig
             builder.HasOne(p => p.SalesOrder).WithMany(po => po.SalesTransactions).HasForeignKey(po => po.Fk_SalesOrderId).OnDelete(DeleteBehavior.Restrict);
             builder.HasOne(p => p.AlternateUnit).WithMany(po => po.SalesTransactions).HasForeignKey(po => po.Fk_AlternateUnitId).OnDelete(DeleteBehavior.Restrict);
             builder.HasOne(p => p.Product).WithMany(po => po.SalesTransactions).HasForeignKey(po => po.Fk_ProductId).OnDelete(DeleteBehavior.Restrict);
+            builder.HasOne(p => p.Product).WithMany(po => po.SalesTransactions).HasForeignKey(po => po.Fk_SubProductId).OnDelete(DeleteBehavior.Restrict);
             builder.HasOne(p => p.Branch).WithMany(po => po.SalesTransactions).HasForeignKey(po => po.Fk_BranchId).OnDelete(DeleteBehavior.Restrict);
             builder.HasOne(p => p.FinancialYear).WithMany(po => po.SalesTransactions).HasForeignKey(po => po.Fk_FinancialYearId).OnDelete(DeleteBehavior.Restrict);
         }

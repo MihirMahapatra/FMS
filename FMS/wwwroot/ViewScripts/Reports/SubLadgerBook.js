@@ -45,6 +45,7 @@
             }
         })
     }
+    var PrintData = {};
     $('#btnViewSummerized').on('click', function () {
         $('#loader').show();
         $('.SummerizedReportTable').empty();

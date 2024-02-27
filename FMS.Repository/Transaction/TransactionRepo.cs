@@ -2670,7 +2670,7 @@ namespace FMS.Repository.Transaction
                         AlternateQuantity = x.AlternateQuantity,
                         UnitQuantity = x.UnitQuantity,
                         UnitName = x.Product.Unit.UnitName,
-                        Fk_AlternateUnitId = x.Fk_AlternateUnitId,
+                        Fk_AlternateUnitId =  x.Fk_AlternateUnitId,
                         AlternateUnit = x.AlternateUnit != null ? new AlternateUnitModel { AlternateUnitName = x.AlternateUnit.AlternateUnitName } : null,
                         Rate = x.Rate,
                         Discount = x.Discount,
