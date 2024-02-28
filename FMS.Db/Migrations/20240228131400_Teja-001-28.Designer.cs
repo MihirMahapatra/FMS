@@ -4,6 +4,7 @@ using FMS.Db.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FMS.Db.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240228131400_Teja-001-28")]
+    partial class Teja00128
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2356,9 +2359,9 @@ namespace FMS.Db.Migrations
 
                     b.HasIndex("Fk_FinancialYearId");
 
-                    b.HasIndex("Fk_SalesOrderId");
+                    b.HasIndex("Fk_ProductId");
 
-                    b.HasIndex("Fk_SubProductId");
+                    b.HasIndex("Fk_SalesOrderId");
 
                     b.ToTable("SalesTransaction", "dbo");
                 });
@@ -3726,16 +3729,17 @@ namespace FMS.Db.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("FMS.Db.DbEntity.Product", "Product")
+                        .WithMany("SalesTransactions")
+                        .HasForeignKey("Fk_ProductId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("FMS.Db.DbEntity.SalesOrder", "SalesOrder")
                         .WithMany("SalesTransactions")
                         .HasForeignKey("Fk_SalesOrderId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.HasOne("FMS.Db.DbEntity.Product", "Product")
-                        .WithMany("SalesTransactions")
-                        .HasForeignKey("Fk_SubProductId")
-                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("AlternateUnit");
 

@@ -477,8 +477,8 @@ $(function () {
                         for (var i = 0; i < 7; i++) {
                             Textbox.eq(i).val('0');
                         }
-                        Textbox.eq(4).val(result.Product.GST);
-                        Textbox.eq(1).val(result.Product.Price);
+                        Textbox.eq(5).val(result.Product.GST);
+                        Textbox.eq(2).val(result.Product.Price);
                         var span = selectElement.closest('tr').find('span#Unit');
                         span.text(result.Product.Unit.UnitName);
                     }

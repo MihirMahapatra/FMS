@@ -18,7 +18,7 @@ namespace FMS.Db.DbEntityConfig
             builder.Property(e => e.Fk_SubProductId).IsRequired(false);
             builder.Property(e => e.Fk_BranchId).IsRequired(true);
             builder.Property(e => e.Fk_FinancialYearId).IsRequired(true);
-            builder.Property(e => e.AlternateQuantity).HasColumnType("decimal(18,5)").IsRequired(false);
+            builder.Property(e => e.AlternateQuantity).HasColumnType("decimal(18,5)");
             builder.Property(e => e.UnitQuantity).HasColumnType("decimal(18,5)").IsRequired(true);
             builder.Property(e => e.Fk_AlternateUnitId).IsRequired(false);
             builder.Property(e => e.Rate).HasColumnType("decimal(18,2)").IsRequired(true);
