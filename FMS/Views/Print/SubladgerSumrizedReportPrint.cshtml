@@ -10,7 +10,7 @@
         }
 
         .small-row td {
-            font-size: 0.7em !important;
+            font-size: 0.9em !important;
             padding: 0.1em !important;
             /* Adjust the font size as needed */
         }
@@ -24,18 +24,13 @@
             font-size: 0.9em !important;
         }
 
-        .small-rows td {
-            padding: 0.1em !important; /* Adjust the row height */
-            font-size: 0.9em !important;
-        }
-
         body {
             color: black !important;
         }
 
     </style>
     <meta name="viewport" content="width=device-width" />
-    <title>Customers Detailed Print</title>
+    <title>Customers Summarized Print</title>
     <link rel="stylesheet" href="~/invoice/assets/css/app.min.css">
     <link rel="stylesheet" href="~/invoice/assets/css/style.css">
 </head>
@@ -44,92 +39,106 @@
         <div class="invoice-container">
             <main>
                 <div class="th-invoice invoice_style8" data-bg-src="~/invoice/assets/img/template/hospital_bg.png">
+
                     <div class="download-inner" id="download_section">
                         <header class="th-header header-layout5">
-                            <div class="row justify-content-between" style="margin-bottom:-20px; margin-top:-30px;">
+                            <div class="row justify-content-between">
                                 <div class="col-auto">
                                     <div class="header-logo">
                                         <a href="index.html">
                                             <img src="~/landingpage/assets/images/logo/logo.png" alt="logo" style="width:30%; margin-left:25px;" />
-
                                         </a>
-                                        <P style="font-family: Times,  Times New Roman, Georgia, serif; color:black; margin-left:30px;"> @Model.Cmopany.Name</P>
+                                        <p style="font-family: Times,  Times New Roman, Georgia, serif; color:black; margin-left:30px;"> @Model.Cmopany.Name</p>
                                     </div>
                                 </div>
                                 <div class="col-auto">
-                                    <h6 style="padding-top:20px; padding-right:20px;text-decoration:underline;font-family: cursive;padding-right:20px; margin-top:-10px;">SubLadger Report (Detail)</h6>
+                                    <h6 style="padding-top:20px;padding-right:20px; text-decoration:underline;font-family: cursive;padding-right:20px">SubLadger Book (Summary)</h6>
                                 </div>
                             </div>
                         </header>
                         <div class="row justify-content-between my-4">
                             <div class="col-auto">
-                                <div class="invoice-left" style="margin-left:30px; margin-top:-20px;">
+                                <div class="invoice-left" style="margin-left:30px;">
                                     <b>Address:</b>
                                     <address>
                                         @Model.Cmopany.Adress<br>@Model.Cmopany.Email,<br>
                                         @Model.Cmopany.Phone,<br>Odisha
                                     </address>
-                                    <br>
-                                    <b>Customer Name : @Model.Customers.PartyDetailedReports.PartyName</b>
                                 </div>
                             </div>
-                            <div class="col-auto" style="padding-right:30px; margin-top:-20px;">
+                            <div class="col-auto" style="padding-right:30px">
                                 Report Date :  @DateTime.Now.ToString("dd/MM/yyyy") <br />
                                 From Date :  @Model.Customers.FromDate<br />
-                                To Date :  @Model.Customers.ToDate<br /><br />
+                                To Date :  @Model.Customers.ToDate<br />
                             </div>
                         </div>
                         <table class="invoice-table">
                             <thead>
-                                <tr class="small-rows">
-                                    <td colspan="5">Opening Bal.</td>
-                                    <td style="text-align:center;">@Model.Customers.PartyDetailedReports.OpeningBal  @Model.Customers.PartyDetailedReports.OpeningBalType</td>
-                                </tr>
                                 <tr class="small-row">
-                                    <th style="width:10%!important;">Trxn Date</th>
-                                    <th style="width:15%!important;">Trxn No</th>
-                                    <th style="width:20%!important;text-align:center;">Narration</th>
-                                    <th style="width:15%!important;text-align:center;">Dr Amt</th>
-                                    <th style="width:15%!important;text-align:center;">Cr Amt</th>
-                                    <th style="width:25%!important;text-align:center;">Runnig Bal </th>
+                                    <th style="width:20%!important; text-align:left;">Name</th>
+                                    <th style="width:10%!important;">Opn bal</th>
+                                    <th style="width:10%!important;">Opn Type</th>
+                                    <th style="width:10%!important;">Billing Amt</th>
+                                    <th style="width:10%!important;">Paid Amt</th>
+                                    <th style="width:10%!important;">Bal</th>
+                                    <th style="width:10%!important; text-align:center">Type</th>
+
                                 </tr>
-                               
                             </thead>
                             <tbody>
-                                @{
-                                    var balance = @Model.Customers.PartyDetailedReports.OpeningBal;
-                                }
-                                @foreach (var item in Model.Customers.PartyDetailedReports.Orders)
+                                @if (Model.Customers != null)
                                 {
-                                    <tr class="small-rows">
-                                        <td>@item.TransactionDate.ToString("dd/MM/yyyy")</td>
-                                        <td>@item.TransactionNo</td>
-                                        <td>@item.Naration</td>
-                                        @if (item.DrCr == "Dr")
+                                    decimal totalOpeningBal = 0;
+                                    decimal totalDrAmt = 0;
+                                    decimal totalCrAmt = 0;
+                                    decimal totalBalance = 0;
+                                    @foreach (var item in Model.Customers.PartyReports)
+                                    {
+                                        var balance = item.Balance + item.OpeningBal;
+                                        totalOpeningBal += item.OpeningBal;
+                                        totalDrAmt += item.DrAmt;
+                                        totalCrAmt += item.CrAmt;
+                                        totalBalance += balance;
+                                        <tr class="small-row">
+                                            <td style="text-align:left;">@item.PartyName</td>
+                                            <td>@item.OpeningBal</td>
+                                            <td>@item.OpeningBalType</td>
+                                            <td>@item.DrAmt</td>
+                                            <td>@item.CrAmt</td>
+                                            <td>@Math.Abs(@balance)</td>
+                                            <td style=" text-align:center">@item.BalanceType</td>
+                                        </tr>
+                                    }
+                                    <tr class="small-row">
+                                        <th style="text-align:left !important;">Grand Totals</th>
+                                        <th>@totalOpeningBal</th>
+                                        @if (@totalOpeningBal >= 0)
                                         {
-                                            <td>@item.GrandTotal.ToString("0.00")</td>
-                                            <td>0.00</td>
-                                            balance += item.GrandTotal;
+                                            <th>Cr</th>
                                         }
-                                        else if (item.DrCr == "Cr")
+                                        else
                                         {
-                                            <td>0.00</td>
-                                            <td>@item.GrandTotal.ToString("0.00")</td>
-                                            balance -= item.GrandTotal;
+                                            <th>Dr</th>
                                         }
-                                        @{
-                                            var DrCr = balance > 0 ? "Dr" : "Cr";
+                                        <th>@totalDrAmt</th>
+                                        <th>@totalCrAmt</th>
+                                        <th>@Math.Abs(@totalBalance)</th>
+                                        @if (@totalBalance >= 0)
+                                        {
+                                            <th style="text-align:center;">Cr</th>
                                         }
-                                        <td style="text-align:center;">@balance @DrCr</td>
+                                        else
+                                        {
+                                            <th style="text-align:center;">Dr</th>
+                                        }
                                     </tr>
                                 }
-                                <tr class="small-rows">
-                                    <td colspan="5">Closing  Bal.</td>
-                                    @{
-                                        var DrCrs = balance > 0 ? "Dr" : "Cr";
-                                    }
-                                    <td style="text-align:center;">@balance.ToString("0.00") @DrCrs </td>
-                                </tr>
+                                else
+                                {
+                                    <tr class="small-row">
+                                        <td colspan="8">No purchases available</td>
+                                    </tr>
+                                }
                             </tbody>
                         </table>
                         <div class="row justify-content-between">
@@ -145,8 +154,8 @@
                             </div>
                         </div>
                         <p class="invoice-note mt-3">
-                            <b>NOTE: </b>This is computer generated receipt and does not
-                            require physical signature.
+                            <b>This is The End </b>
+
                         </p>
                     </div>
                     <div class="invoice-buttons">

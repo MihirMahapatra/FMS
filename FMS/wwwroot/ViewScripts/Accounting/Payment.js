@@ -21,15 +21,15 @@ $(function () {
         }
     });
     //----------------------------------------varible declaration-----------------------------------------//
-    //var PaymentTable = $('#tblPayment').DataTable({
-    //    "paging": false,
-    //    "lengthChange": false,
-    //    "searching": false,
-    //    "ordering": true,
-    //    "info": false,
-    //    "autoWidth": false,
-    //    "responsive": true,
-    //});
+    var PaymentTable = $('#tblPayment').DataTable({
+        "paging": false,
+        "lengthChange": false,
+        "searching": false,
+        "ordering": true,
+        "info": false,
+        "autoWidth": false,
+        "responsive": true,
+    });
     var CashBank = $('select[name="PaymentMode"]');
     var Bank = $('select[name="ddlBankId"]');
     var ChqNo = $('input[name="ChqNo"]');
@@ -118,8 +118,8 @@ $(function () {
                     html += '</div>';
                     html += '</td>';
                     html += '</tr>';
-                    //var newRow = PaymentTable.row.add($(html)).draw(false).node();
-                    var newRow = $('#tblPayment tbody').append(html);
+                    var newRow = PaymentTable.row.add($(html)).draw(false).node();
+                    //var newRow = $('#tblPayment tbody').append(html);
                     
                     $(newRow).find('.select2bs4').select2({
                         theme: 'bootstrap4'
@@ -235,7 +235,9 @@ $(function () {
         }
     });
     $(document).on('click', '.deleteBtns', function () {
-        $(this).closest('.form-group.row').remove();
+        $(this).closest().remove();
+        var row = PaymentTable.row($(this).closest('.form-group.row'));
+        row.remove().draw();
     });
     $(document).on('click', '.addSubLedgerBtn', function () {
         var clickedButton = $(this);

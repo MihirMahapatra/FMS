@@ -21,15 +21,15 @@ $(function () {
         }
     });
     //----------------------------------------varible declaration-----------------------------------------//
-    //var ReciptTable = $('#tblReceipt').DataTable({
-    //    "paging": false,
-    //    "lengthChange": false,
-    //    "searching": false,
-    //    "ordering": true,
-    //    "info": false,
-    //    "autoWidth": false,
-    //    "responsive": true,
-    //});
+    var ReciptTable = $('#tblReceipt').DataTable({
+        "paging": false,
+        "lengthChange": false,
+        "searching": false,
+        "ordering": true,
+        "info": false,
+        "autoWidth": false,
+        "responsive": true,
+    });
     var CashBank = $('select[name="ReceiptMode"]');
     var Bank = $('select[name="ddlBankId"]');
     var ChqNo = $('input[name="ChqNo"]');
@@ -117,8 +117,8 @@ $(function () {
                     html += '</div>';
                     html += '</td>';
                     html += '</tr>';
-                    //var newRow = ReciptTable.row.add($(html)).draw(false).node();
-                    var newRow = $('#tblReceipt tbody').append(html);
+                    var newRow = ReciptTable.row.add($(html)).draw(false).node();
+                    //var newRow = $('#tblReceipt tbody').append(html);
                     $(newRow).find('.select2bs4').select2({
                         theme: 'bootstrap4'
                     });
@@ -194,9 +194,9 @@ $(function () {
             });
         }
     });
-    $(document).on('change', 'input[name="SubledgerAmunt"]', function () {
+    $(document).on('change', 'input[name="SubledgerAmount"]', function () {
         var totalSum = 0;
-        $('input[name="SubledgerAmunt"]').each(function () {
+        $('input[name="SubledgerAmount"]').each(function () {
             var inputValue = parseFloat($(this).val());
             if (!isNaN(inputValue)) {
                 totalSum += inputValue;
@@ -233,7 +233,9 @@ $(function () {
         }
     });
     $(document).on('click', '.deleteBtn', function () {
-        $(this).closest('.form-group.row').remove();
+        $(this).closest().remove();
+        var row = $(this).closest('.form-group.row').remove();
+        row.remove().draw();
     });
     $(document).on('click', '.addSubLedgerBtn', function () {
         var clickedButton = $(this);
@@ -276,7 +278,10 @@ $(function () {
         });
     });
     $(document).on('click', '.deleteBtns', function () {
-        $(this).closest('.form-group.row').remove();
+       
+        $(this).closest().remove();
+        var row = $(this).closest('.form-group.row').remove();
+        row.remove().draw();
     });
     $('#btnSave').on('click', function () {
         if (CashBank.val() === "Bank") {
@@ -410,7 +415,7 @@ $(function () {
                                 }
                             }
                             html += '<td>' + formattedDate + '</td>';
-                            if (item.LedgerDevName !== null) {
+                            if (Receipt.LedgerDevName !== null) {
                                 html += '<td>' + Receipt.LedgerDevName + '</td>';
                             }
                             else {

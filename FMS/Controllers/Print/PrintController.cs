@@ -278,20 +278,21 @@ namespace FMS.Controllers.Print
         #endregion
         #region SubLadger Reports
         [HttpGet]
-        public async Task<IActionResult> SubladgerSumrizedReportPrint([FromQuery] StockReportDataRequest requestData)
+        public async Task<IActionResult> SubladgerSumrizedReportPrint([FromQuery] LedgerbookDataRequest requestData)
         {
 
-            var result = await _reportSvcs.GetSummerizedStockReports(requestData);
-            var StockReportData = new StockReportDataModel();
-            StockReportData.FromDate = requestData.FromDate;
-            StockReportData.ToDate = requestData.ToDate;
-            StockReportData.StockReport = result.StockReports;
-            var StockSumrizedReportModal = new StockSumrizedReportModal()
+            var result = await _reportSvcs.GetSummerizedSubLadgerReport(requestData);
+            var SubLedgerReportData = new CustomerSummarizedModel();
+            SubLedgerReportData.FromDate = requestData.FromDate;
+            SubLedgerReportData.ToDate = requestData.ToDate;
+            SubLedgerReportData.PartyReports = result.PartySummerized;
+
+            var SubLedgerSumrizedReportModal = new CustomerReportDataModel()
             {
                 Cmopany = _adminSvcs.GetCompany().Result.GetCompany,
-                StockReports = StockReportData
+                Customers = SubLedgerReportData
             };
-            return View(StockSumrizedReportModal);
+            return View(SubLedgerSumrizedReportModal);
         }
         [HttpGet]
         public async Task<IActionResult> SubLadgerDetailedReportPrint([FromQuery] LedgerbookDataRequest requestData)

@@ -45,7 +45,7 @@
             }
         })
     }
-    var PrintData = {};
+    var requestData = {};
     $('#btnViewSummerized').on('click', function () {
         $('#loader').show();
         $('.SummerizedReportTable').empty();
@@ -56,7 +56,7 @@
             toastr.error('ToDate Is Required.');
             return;
         } else {
-            var requestData = {
+             requestData = {
                 FromDate: fromDateSummerized.val(),
                 ToDate: toDateSummerized.val(),
                 LedgerId: SLadger.val()
@@ -102,9 +102,9 @@
                             html += '<td>' + item.CrAmt + '</td>';
                             var balance = item.Balance + item.OpeningBal;
                             var balanceType = balance >= 0 ? "Dr" : "Cr";
-                            html += '<td>' + Math.abs(balance) + '</td>';
+                            html += '<td>' + balance.toFixed(2) + '</td>';
                             html += '<td>' + balanceType + '</td>';
-                            html += '<tr>';
+                            html += '</tr>';
                         })
                         html += '<tr style="Background-color:cyan;">';
                         html += '<td>' + "Totals" + '</td>';
@@ -116,7 +116,7 @@
                         var balanceType = TotalBalance >= 0 ? "Dr" : "Cr";
                         html += '<td>' + Math.abs(TotalBalance) + '</td>';
                         html += '<td>' + balanceType + '</td>';
-                        html += '<tr>';
+                        html += '</tr>';
                         PrintData = {
                             FromDate: fromDateSummerized.val(),
                             ToDate: toDateSummerized.val(),
@@ -148,6 +148,11 @@
                 }
             });
         }
+    });
+    $('#BtnPrintSummarized').on('click', function () {
+        var queryString = $.param(requestData); // Serialize object to query string
+        var url = '/Print/SubladgerSumrizedReportPrint?' + queryString; // Append query string to URL
+        window.open(url, '_blank');
     });
     //--------------------------------Customer Report Detailed------------------------------------------------//
     GetLadgers();
@@ -208,34 +213,7 @@
            
         }
     });
-    //function GetSubLadgersDebtors() {
-    //    $.ajax({
-    //        url: "/Reports/GetSubLadgers",
-    //        type: "GET",
-    //        contentType: "application/json;charset=utf-8",
-    //        dataType: "json",
-    //        success: function (result) {
-    //            if (result.ResponseCode == 302) {
-    //                ddlSubLadger.empty();
-    //                var defaultOption = $('<option></option>').val('').text('--Select Option--');
-    //                ddlSubLadger.append(defaultOption);
-    //                $.each(result.SubLedgers, function (key, item) {
-    //                    var option = $('<option></option>').val(item.SubLedgerId).text(item.SubLedgerName);
-    //                    ddlSubLadger.append(option);
-    //                });
-    //            }
-    //            else {
-    //                ddlSubLadger.empty();
-    //                var defaultOption = $('<option></option>').val('').text('--Select Option--');
-    //                ddlSubLadger.append(defaultOption);
-    //            }
-    //        },
-    //        error: function (errormessage) {
-    //            console.log(errormessage)
-    //        }
-    //    });
-    //}
-    var requestData = {};
+    var Data = {};
     $('#btnViewDetailed').on('click', function () {
         $('#loader').show();
         $('.DetailedReportTable').empty();
@@ -251,7 +229,7 @@
             return;
         }
         else {
-             requestData = {
+             Data = {
                 FromDate: fromDateDetailed.val(),
                 ToDate: toDateDetailed.val(),
                 LedgerId: ddlSubLadger.val()
@@ -261,7 +239,7 @@
                 type: "POST",
                 contentType: "application/json;charset=utf-8",
                 dataType: "json",
-                data: JSON.stringify(requestData),
+                data: JSON.stringify(Data),
                 success: function (result) {
                     $('#loader').hide();
                     var html = '';
@@ -300,14 +278,14 @@
                                     html += '<td >' + formattedDate + '</td>';
                                     html += '<td >' + item.TransactionNo + '</td>';
                                     html += '<td colspan="4">' + item.Naration + '</td>';
-                                   
+
                                     if (item.DrCr === "Dr") {
-                                        html += '<td>' + item.GrandTotal + '</td>';
+                                        html += '<td>' + item.GrandTotal.toFixed(2) + '</td>';
                                         html += '<td>'+0.00 +'</td>';
                                         balance += item.GrandTotal;
                                     } else if (item.DrCr === "Cr") {
-                                        html += '<td>'+0.00 +'</td>';
-                                        html += '<td>' + item.GrandTotal + '</td>';
+                                        html += '<td>' + 0.00 + '</td>';
+                                        html += '<td>' + item.GrandTotal.toFixed(2) + '</td>';
                                         balance -= item.GrandTotal;
                                     }
                                     var DrCr = balance >= 0 ? "Dr" : "Cr";
@@ -322,11 +300,6 @@
                             html += '<td>' + balance.toFixed(2) + ' ' + DrCr + '</td>';
                             html += '</tr >';
                         }
-                        //PrintDataDetailed = {
-                        //    FromDate: fromDateDetailed.val(),
-                        //    ToDate: toDateDetailed.val(),
-                        //    PartyDetailedReports: result.PartyDetailed
-                        //}
                         $('#BtnPrintDetailed').show();
                     }
                     else {
@@ -350,9 +323,8 @@
         }
     })
     $('#BtnPrintDetailed').on('click', function () {
-        console.log(requestData);
-        var queryString = $.param(requestData); // Serialize object to query string
-        var url = '/Print/SubLadgerDetailedReportPrint?' + queryString; // Append query string to URL
+        var queryString = $.param(Data);
+        var url = '/Print/SubLadgerDetailedReportPrint?' + queryString;
         window.open(url, '_blank');
     });
 })

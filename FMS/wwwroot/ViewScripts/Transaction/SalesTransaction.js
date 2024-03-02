@@ -1025,7 +1025,7 @@ $(function () {
                 });
                 const gstDifferences = {};
                 $('#tblSales tbody tr').each(function () {
-                    const gstRate = parseFloat($(this).find('input:eq(5)').val());
+                    const gstRate = parseFloat($(this).find('input:eq(6)').val());
                     const amount = parseFloat($(this).find('input:eq(7)').val());
                     if (!isNaN(gstRate) && !isNaN(amount)) {
                         if (gstRate in gstDifferences) {
@@ -1334,6 +1334,15 @@ $(function () {
             theme: 'bootstrap4'
         });
     }
+
+    $(document).on('change', 'select[name = "Sr_ddlRate"]', function () {
+        selectedOption = Sr_ddlRate.val();
+        if (selectedOption === 'wholesalerate') {
+            $('.sr_rate').prop('disabled', true);
+        } else {
+            $('.sr_rate').prop('disabled', false);
+        }
+    });
     $(document).on('change', '.GoodsFinishedReturn', function () {
         var selectElement = $(this);
         var selectedProductId = selectElement.val();
@@ -1350,8 +1359,8 @@ $(function () {
                         for (var i = 0; i < 7; i++) {
                             Textbox.eq(i).val('0');
                         }
-                        Textbox.eq(4).val(result.Product.GST);
-                        Textbox.eq(1).val(result.Product.Price);
+                        Textbox.eq(5).val(result.Product.GST);
+                        Textbox.eq(2).val(result.Product.Price);
                         var span = selectElement.closest('tr').find('span#Unitrtn');
                         span.text(result.Product.Unit.UnitName);
                     }
