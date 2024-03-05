@@ -2733,7 +2733,11 @@ namespace FMS.Repository.Transaction
     {
         SalesId = x.SalesId,
         AlternateQuantity = x.AlternateQuantity,
-        UnitQuantity = x.UnitQuantity,
+        UnitQuantity = x.Fk_SubProductId != null ?
+                    _appDbContext.SalesConfigs
+                        .Where(sc => sc.Fk_FinishedGoodId == x.Fk_SubProductId && sc.Fk_SubFinishedGoodId == x.Fk_ProductId)
+                        .Select(sc => x.UnitQuantity / sc.Quantity)
+                        .FirstOrDefault() : x.UnitQuantity,
         UnitName = x.Fk_SubProductId == null ? _appDbContext.Products
                     .Where(p => p.ProductId == x.Fk_ProductId)
                     .Select(p => p.Unit.UnitName)

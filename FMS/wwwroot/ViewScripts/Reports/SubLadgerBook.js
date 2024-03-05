@@ -100,7 +100,7 @@
                             html += '<td>' + item.OpeningBalType + '</td>';
                             html += '<td>' + item.DrAmt + '</td>';
                             html += '<td>' + item.CrAmt + '</td>';
-                            var balance = item.Balance + item.OpeningBal;
+                            var balance = item.OpeningBal + item.DrAmt - item.CrAmt ;
                             var balanceType = balance >= 0 ? "Dr" : "Cr";
                             html += '<td>' + balance.toFixed(2) + '</td>';
                             html += '<td>' + balanceType + '</td>';

@@ -71,7 +71,7 @@ $(function () {
                             var balanceType = balance >= 0 ? "Dr" : "Cr";
                             html += '<td>' + Math.abs(balance) + '</td>';
                             html += '<td>' + balanceType + '</td>';
-                            html += '<tr>';
+                            html += '</tr>';
                         })
                         PrintData = {
                             FromDate: fromDateSummerized.val(),
@@ -266,9 +266,9 @@ $(function () {
                                         }
                                     }
                                     html += '<tr>';
-                                    html += '<td >' + formattedDate + '</td>';
-                                    html += '<td >' + item.TransactionNo + '</td>';
-                                    html += '<td >' + item.BranchName + '</td>';
+                                    html += '<td>' + formattedDate + '</td>';
+                                    html += '<td>' + item.TransactionNo + '</td>';
+                                    html += '<td>' + item.BranchName + '</td>';
                                     html += '<td colspan="4">' + item.Naration + '</td>';  
                                     html += '<td>-</td>';  
                                     html += '</tr >';
@@ -300,7 +300,7 @@ $(function () {
                                     html += '<td >-</td>';
                                     html += '<td >-</td>';
                                     html += '<td >-</td>';
-                                    html += '<td colspan="3">Grand Total</td>';
+                                    html += '<td colspan="4">Grand Total</td>';
                                     html += '<td>' + item.GrandTotal + '</td>';
                                     balance += item.DrCr == "Dr" ? item.GrandTotal : -item.GrandTotal;
                                     var DrCr = balance > 0 ? "Dr" : "Cr";
@@ -319,7 +319,7 @@ $(function () {
                     else {
                         html += '<tr>';
                         html += '<td colspan="8">No Record</td>';
-                        html += '</tr >';
+                        html += '</tr>';
                     }
                     html += ' </tbody>';
                     html += '</table >';

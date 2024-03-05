@@ -254,7 +254,6 @@ $(function () {
     $('#Sr_btnUpdate').on('blur', function () {
         $(this).css('background-color', '');
     });
-
     //--------------------------------------- sales Return validation-------------------------------------//
     Sr_CustomerName.on('keydown', function (event) {
         const keyCode = event.keyCode || event.which;
@@ -548,6 +547,10 @@ $(function () {
     $('#tblSales tbody').on('change', 'input[type="text"]', function () {
         var row = $(this).closest('tr');
         var quantity = parseFloat(row.find('input:eq(1)').val());
+        var select = row.find('select.selectedUnit').text();
+        if (select === '--Select Option--') {
+            row.find('input:eq(2)').val(quantity); 
+        }
         var rate = parseFloat(row.find('input:eq(3)').val());
         var discountPercentage = parseFloat(row.find('input:eq(4)').val());
         var GstPercentage = parseFloat(row.find('input:eq(6)').val());
@@ -558,7 +561,6 @@ $(function () {
         row.find('input:eq(8)').val(AcctualAmount.toFixed(2));
         row.find('input:eq(7)').val(GstAmounts.toFixed(2));
         row.find('input:eq(5)').val(discountAmount.toFixed(2));
-
         var totalAmount = 0;
         var toalSubTotalAmount = 0;
         var totalGstAmount = 0;
@@ -1334,7 +1336,6 @@ $(function () {
             theme: 'bootstrap4'
         });
     }
-
     $(document).on('change', 'select[name = "Sr_ddlRate"]', function () {
         selectedOption = Sr_ddlRate.val();
         if (selectedOption === 'wholesalerate') {
@@ -1448,6 +1449,10 @@ $(function () {
     $('#tblSalesReturn tbody').on('change', 'input[type="text"]', function () {
         var row = $(this).closest('tr');
         var quantity = parseFloat(row.find('input:eq(1)').val());
+        var select = row.find('select.selectedUnitRtn').text();
+        if (select === '--Select Option--') {
+            row.find('input:eq(2)').val(quantity);
+        }
         var rate = parseFloat(row.find('input:eq(3)').val());
         var discountPercentage = parseFloat(row.find('input:eq(4)').val());
         var GstPercentage = parseFloat(row.find('input:eq(6)').val());
