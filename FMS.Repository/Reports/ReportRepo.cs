@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Drawing;
 using System.Globalization;
+using System.Linq;
 using System.Text;
 
 namespace FMS.Repository.Reports
@@ -367,7 +368,7 @@ namespace FMS.Repository.Reports
                                 IncrementStock = true
                             }).ToListAsync());
                         #endregion
-                        Result.Stocks.OrderBy(s => s.TransactionDate);
+                        Result.Stocks = Result.Stocks.OrderBy(s => s.TransactionDate).ToList();
                         ListItems.Add(Result);
                         if (ListItems.Count > 0)
                         {
@@ -529,7 +530,7 @@ namespace FMS.Repository.Reports
                                  }).ToListAsync();
                             Result.Stocks.AddRange(labourOrders);
                             #endregion
-                            Result.Stocks.OrderBy(s => s.TransactionDate);
+                            Result.Stocks = Result.Stocks.OrderBy(s => s.TransactionDate).ToList();
                             #endregion
                             ListItems.Add(Result);
                         }
@@ -618,66 +619,176 @@ namespace FMS.Repository.Reports
             }
             return _Result;
         }
-        public async Task<Result<LabourModel>> GetDetailedLabourReport(LabourReportDataRequest requestData)
+        public async Task<Result<LabourReportDetailedModel2>> GetDetailedLabourReport(LabourReportDataRequest requestData)
         {
-            Result<LabourModel> _Result = new();
+            Result<LabourReportDetailedModel2> _Result = new();
             try
             {
                 _Result.IsSuccess = false;
-                List<LabourModel> Models = new();
+                List<LabourReportDetailedModel2> ListItems = new();
                 if (DateTime.TryParseExact(requestData.FromDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedFromDate) && DateTime.TryParseExact(requestData.ToDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedToDate))
                 {
                     if (_HttpContextAccessor.HttpContext.Session.GetString("BranchId") != "All")
                     {
+                        LabourReportDetailedModel2 Result = new();
                         Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
                         Guid FinancialYearId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
-                        Models = await _appDbContext.Labours
-                            .Where(s => s.LabourId == requestData.LabourId && s.Fk_Labour_TypeId == requestData.LabourTypeId && s.Fk_BranchId == BranchId)
-                            .Select(s => new LabourModel
+                        string BranchName = await _appDbContext.Branches.Where(s => s.BranchId == BranchId).Select(s => s.BranchName).SingleOrDefaultAsync();
+                        Guid LabourSubLadgerId = _appDbContext.Labours.Where(x => x.LabourId == requestData.LabourId).Select(s => s.Fk_SubLedgerId).FirstOrDefault();
+                        Result.BranchName = BranchName;
+                        Result.LabourName = _appDbContext.Labours.Where(x => x.LabourId == requestData.LabourId).Select(s => s.LabourName).FirstOrDefault();
+                        #region OpeningBalance
+                        Result.OpeningBalance =
+                               _appDbContext.SubLedgerBalances.Where(l => l.Fk_SubLedgerId == LabourSubLadgerId && l.Fk_FinancialYearId == FinancialYearId).Select(t => t.OpeningBalance).SingleOrDefault()
+                             + _appDbContext.LabourOrders.Where(x => x.Fk_LabourId == requestData.LabourId && x.Fk_FinancialYearId == FinancialYearId && x.FK_BranchId == BranchId && x.TransactionDate < convertedFromDate).Sum(x => x.Amount)
+                             - _appDbContext.DamageOrders.Where(x => x.Fk_LabourId == requestData.LabourId && x.Fk_FinancialYearId == FinancialYearId && x.Fk_BranchId == BranchId && x.TransactionDate < convertedFromDate).Sum(x => x.TotalAmount)
+                             - _appDbContext.Payments.Where(x => x.Fk_SubLedgerId == LabourSubLadgerId && x.Fk_FinancialYearId == FinancialYearId && x.Fk_BranchId == BranchId && x.VoucherDate < convertedFromDate).Sum(x => x.Amount);
+                        #endregion
+                        #region OpeningBalType
+                        Result.BalanceType =
+                            (_appDbContext.SubLedgerBalances.Where(l => l.Fk_SubLedgerId == LabourSubLadgerId).Select(t => t.OpeningBalance).SingleOrDefault()
+                            + _appDbContext.LabourOrders.Where(x => x.Fk_LabourId == requestData.LabourId && x.Fk_FinancialYearId == FinancialYearId && x.FK_BranchId == BranchId && x.TransactionDate < convertedFromDate).Sum(x => x.Amount)
+                             - _appDbContext.DamageOrders.Where(x => x.Fk_LabourId == requestData.LabourId && x.Fk_FinancialYearId == FinancialYearId && x.Fk_BranchId == BranchId && x.TransactionDate < convertedFromDate).Sum(x => x.TotalAmount)
+                            - _appDbContext.Payments.Where(x => x.Fk_SubLedgerId == LabourSubLadgerId && x.Fk_FinancialYearId == FinancialYearId && x.Fk_BranchId == BranchId && x.VoucherDate < convertedFromDate).Sum(x => x.Amount)) > 0 ? "Cr" : "Dr";
+                        #endregion
+                        #region LabourOrders
+                        Result.Orders.AddRange(await _appDbContext.LabourOrders
+                            .Where(d => d.Fk_LabourTypeId == requestData.LabourTypeId && d.Fk_LabourId == requestData.LabourId && d.Fk_FinancialYearId == FinancialYearId && d.FK_BranchId == BranchId && d.TransactionDate >= convertedFromDate && d.TransactionDate <= convertedToDate)
+                            .Select(pe => new LobourReportDetailedModel
                             {
-                                LabourName = s.LabourName,
-                                LabourOrders = s.LabourOrders.Where(d => d.Fk_FinancialYearId == FinancialYearId && d.FK_BranchId == BranchId && d.TransactionDate >= convertedFromDate && d.TransactionDate <= convertedToDate).Select(d => new LabourOrderModel { TransactionDate = d.TransactionDate, TransactionNo = d.TransactionNo, OTAmount = d.OTAmount, Quantity = d.Quantity, Rate = d.Rate, Amount = d.Amount, Product = new ProductModel { ProductName = d.Product.ProductName } }).ToList(),
-                                Payment = _appDbContext.Payments.Where(l => l.Fk_SubLedgerId == s.Fk_SubLedgerId && l.Fk_FinancialYearId == FinancialYearId && l.Fk_BranchId == BranchId && l.VoucherDate >= convertedFromDate && l.VoucherDate <= convertedToDate).Select(t => new PaymentModel { VoucherDate = t.VoucherDate, VouvherNo = t.VouvherNo, Amount = t.Amount }).ToList(),
-                                DamageOrders = s.DamageOrders.Where(l => l.Fk_LabourId == s.LabourId && l.Fk_FinancialYearId == FinancialYearId && l.Fk_BranchId == BranchId && l.TransactionDate >= convertedFromDate && l.TransactionDate <= convertedToDate).Select(d => new DamageOrderModel { TransactionDate = d.TransactionDate, TransactionNo = d.TransactionNo, TotalAmount = d.TotalAmount }).ToList(),
-                                OpeningBalance =
-                                _appDbContext.SubLedgerBalances.Where(l => l.Fk_SubLedgerId == s.Fk_SubLedgerId && l.Fk_FinancialYearId == FinancialYearId).Select(t => t.OpeningBalance).SingleOrDefault()
-                              + s.LabourOrders.Where(x => x.Fk_LabourId == s.LabourId && x.Fk_FinancialYearId == FinancialYearId && x.FK_BranchId == BranchId && x.TransactionDate < convertedFromDate).Sum(x => x.Amount)
-                              - s.DamageOrders.Where(x => x.Fk_LabourId == s.LabourId && x.Fk_FinancialYearId == FinancialYearId && x.Fk_BranchId == BranchId && x.TransactionDate < convertedFromDate).Sum(x => x.TotalAmount)
-                              - _appDbContext.Payments.Where(x => x.Fk_SubLedgerId == s.Fk_SubLedgerId && x.Fk_FinancialYearId == FinancialYearId && x.Fk_BranchId == BranchId && x.VoucherDate < convertedFromDate).Sum(x => x.Amount),
-                                BalanceType = (_appDbContext.SubLedgerBalances.Where(l => l.Fk_SubLedgerId == s.Fk_SubLedgerId).Select(t => t.OpeningBalance).SingleOrDefault()
-                            + s.LabourOrders.Where(x => x.Fk_LabourId == s.LabourId && x.Fk_FinancialYearId == FinancialYearId && x.FK_BranchId == BranchId && x.TransactionDate < convertedFromDate).Sum(x => x.Amount)
-                             - s.DamageOrders.Where(x => x.Fk_LabourId == s.LabourId && x.Fk_FinancialYearId == FinancialYearId && x.Fk_BranchId == BranchId && x.TransactionDate < convertedFromDate).Sum(x => x.TotalAmount)
-                            - _appDbContext.Payments.Where(x => x.Fk_SubLedgerId == s.Fk_SubLedgerId && x.Fk_FinancialYearId == FinancialYearId && x.Fk_BranchId == BranchId && x.VoucherDate < convertedFromDate).Sum(x => x.Amount)) > 0 ? "Cr" : "Dr",
-                            }).ToListAsync();
+                                TransactionDate = pe.TransactionDate,
+                                TransactionNo = pe.TransactionNo,
+                                BranchName = pe.Branch.BranchName,
+                                Quantity = pe.Quantity,
+                                OTAmount = pe.OTAmount,
+                                Rate = pe.Rate,
+                                Amount = pe.Amount,
+                                Product = new ProductModel { ProductName = pe.Product.ProductName },
+                                Particular = "LabourOrders",
+                                IncrementStock = true
+                            }).ToListAsync());
+                        #endregion
+                        #region Payments
+                        Result.Orders.AddRange(await _appDbContext.Payments
+                            .Where(d => d.Fk_SubLedgerId == LabourSubLadgerId && d.Fk_FinancialYearId == FinancialYearId && d.Fk_BranchId == BranchId && d.VoucherDate >= convertedFromDate && d.VoucherDate <= convertedToDate)
+                            .Select(pe => new LobourReportDetailedModel
+                            {
+                                TransactionDate = pe.VoucherDate,
+                                TransactionNo = pe.VouvherNo,
+                                BranchName = pe.Branch.BranchName,
+                                Amount = pe.Amount,
+                                Particular = "Payments",
+                                IncrementStock = true
+                            }).ToListAsync());
+                        #endregion
+                        #region DamageOrders 
+                        Result.Orders.AddRange(await _appDbContext.DamageOrders
+                            .Where(d => d.Fk_LabourId == requestData.LabourId && d.Fk_FinancialYearId == FinancialYearId && d.Fk_BranchId == BranchId && d.TransactionDate >= convertedFromDate && d.TransactionDate <= convertedToDate)
+                            .Select(pe => new LobourReportDetailedModel
+                            {
+                                TransactionDate = pe.TransactionDate,
+                                TransactionNo = pe.TransactionNo,
+                                BranchName = pe.Branch.BranchName,
+                                Amount = pe.TotalAmount,
+                                Particular = "DamageOrders",
+                                IncrementStock = true
+                            }).ToListAsync());
+                        #endregion   
+                        Result.Orders = Result.Orders.OrderBy(s => s.TransactionDate).ToList();
+                        ListItems.Add(Result);
                     }
                     else
                     {
-                        var ListFinancialYearId = await _appDbContext.FinancialYears.Where(x => x.Financial_Year == _HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId")).Select(x => x.FinancialYearId).ToListAsync();
-                        Models = await _appDbContext.Labours
-                            .Where(s => s.LabourId == requestData.LabourId && s.Fk_Labour_TypeId == requestData.LabourTypeId)
-                            .Select(s => new LabourModel
-                            {
 
-                                LabourName = s.LabourName,
-                                LabourOrders = s.LabourOrders.Where(d => d.Fk_LabourId == s.LabourId && ListFinancialYearId.Contains(d.Fk_FinancialYearId) && d.TransactionDate >= convertedFromDate && d.TransactionDate <= convertedToDate).Select(d => new LabourOrderModel { TransactionDate = d.TransactionDate, TransactionNo = d.TransactionNo, Quantity = d.Quantity, Rate = d.Rate, OTAmount = d.OTAmount, Amount = d.Amount, Product = new ProductModel { ProductName = d.Product.ProductName } }).ToList(),
-                                Payment = _appDbContext.Payments.Where(l => l.Fk_SubLedgerId == s.Fk_SubLedgerId && ListFinancialYearId.Contains(l.Fk_FinancialYearId) && l.VoucherDate >= convertedFromDate && l.VoucherDate <= convertedToDate).Select(t => new PaymentModel { VoucherDate = t.VoucherDate, VouvherNo = t.VouvherNo, Amount = t.Amount }).ToList(),
-                                DamageOrders = s.DamageOrders.Where(l => l.Fk_LabourId == s.LabourId && ListFinancialYearId.Contains(l.Fk_FinancialYearId) && l.TransactionDate >= convertedFromDate && l.TransactionDate <= convertedToDate).Select(d => new DamageOrderModel { TransactionDate = d.TransactionDate, TransactionNo = d.TransactionNo, TotalAmount = d.TotalAmount }).ToList(),
-                                OpeningBalance =
-                                _appDbContext.SubLedgerBalances.Where(l => l.Fk_SubLedgerId == s.Fk_SubLedgerId && ListFinancialYearId.Contains(l.Fk_FinancialYearId)).Select(t => t.OpeningBalance).SingleOrDefault()
-                              + s.LabourOrders.Where(x => x.Fk_LabourId == s.LabourId && ListFinancialYearId.Contains(x.Fk_FinancialYearId) && x.TransactionDate < convertedFromDate).Sum(x => x.Amount)
-                              - s.DamageOrders.Where(x => x.Fk_LabourId == s.LabourId && ListFinancialYearId.Contains(x.Fk_FinancialYearId) && x.TransactionDate < convertedFromDate).Sum(x => x.TotalAmount)
-                              - _appDbContext.Payments.Where(x => x.Fk_SubLedgerId == s.Fk_SubLedgerId && ListFinancialYearId.Contains(x.Fk_FinancialYearId) && x.VoucherDate < convertedFromDate).Sum(x => x.Amount),
-                                BalanceType = (
-                            _appDbContext.SubLedgerBalances.Where(l => l.Fk_SubLedgerId == s.Fk_SubLedgerId && ListFinancialYearId.Contains(l.Fk_FinancialYearId)).Select(t => t.OpeningBalance).SingleOrDefault()
-                              + s.LabourOrders.Where(x => x.Fk_LabourId == s.LabourId && ListFinancialYearId.Contains(x.Fk_FinancialYearId) && x.TransactionDate < convertedFromDate).Sum(x => x.Amount)
-                              - s.DamageOrders.Where(x => x.Fk_LabourId == s.LabourId && ListFinancialYearId.Contains(x.Fk_FinancialYearId) && x.TransactionDate < convertedFromDate).Sum(x => x.TotalAmount)
-                              - _appDbContext.Payments.Where(x => x.Fk_SubLedgerId == s.Fk_SubLedgerId && ListFinancialYearId.Contains(x.Fk_FinancialYearId) && x.VoucherDate < convertedFromDate).Sum(x => x.Amount)
-                              ) > 0 ? "Cr" : "Dr",
-                            }).ToListAsync();
+                        LabourReportDetailedModel2 Result = new();
+                        Guid FinancialYearId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
+                        Result.LabourName = _appDbContext.Labours.Where(x => x.LabourId == requestData.LabourId).Select(s => s.LabourName).FirstOrDefault();
+                        Guid LabourSubLadgerId = _appDbContext.Labours.Where(x => x.LabourId == requestData.LabourId).Select(s => s.Fk_SubLedgerId).FirstOrDefault();
+                        #region OpeningBalance
+                        Result.OpeningBalance =
+                               _appDbContext.SubLedgerBalances.Where(l => l.Fk_SubLedgerId == LabourSubLadgerId && l.Fk_FinancialYearId == FinancialYearId).Select(t => t.OpeningBalance).SingleOrDefault()
+                             + _appDbContext.LabourOrders.Where(x => x.Fk_LabourId == requestData.LabourId && x.Fk_FinancialYearId == FinancialYearId  && x.TransactionDate < convertedFromDate).Sum(x => x.Amount)
+                             - _appDbContext.DamageOrders.Where(x => x.Fk_LabourId == requestData.LabourId && x.Fk_FinancialYearId == FinancialYearId  && x.TransactionDate < convertedFromDate).Sum(x => x.TotalAmount)
+                             - _appDbContext.Payments.Where(x => x.Fk_SubLedgerId == LabourSubLadgerId && x.Fk_FinancialYearId == FinancialYearId  && x.VoucherDate < convertedFromDate).Sum(x => x.Amount);
+                        #endregion
+                        #region OpeningBalType
+                        Result.BalanceType =
+                            (_appDbContext.SubLedgerBalances.Where(l => l.Fk_SubLedgerId == LabourSubLadgerId).Select(t => t.OpeningBalance).SingleOrDefault()
+                            + _appDbContext.LabourOrders.Where(x => x.Fk_LabourId == requestData.LabourId && x.Fk_FinancialYearId == FinancialYearId  && x.TransactionDate < convertedFromDate).Sum(x => x.Amount)
+                             - _appDbContext.DamageOrders.Where(x => x.Fk_LabourId == requestData.LabourId && x.Fk_FinancialYearId == FinancialYearId  && x.TransactionDate < convertedFromDate).Sum(x => x.TotalAmount)
+                            - _appDbContext.Payments.Where(x => x.Fk_SubLedgerId == LabourSubLadgerId && x.Fk_FinancialYearId == FinancialYearId  && x.VoucherDate < convertedFromDate).Sum(x => x.Amount)) > 0 ? "Cr" : "Dr";
+                        #endregion
+                        #region LabourOrders
+                        Result.Orders.AddRange(await _appDbContext.LabourOrders
+                            .Where(d => d.Fk_LabourTypeId == requestData.LabourTypeId && d.Fk_LabourId == requestData.LabourId && d.Fk_FinancialYearId == FinancialYearId  && d.TransactionDate >= convertedFromDate && d.TransactionDate <= convertedToDate)
+                            .Select(pe => new LobourReportDetailedModel
+                            {
+                                TransactionDate = pe.TransactionDate,
+                                TransactionNo = pe.TransactionNo,
+                                BranchName = pe.Branch.BranchName,
+                                Rate = pe.Rate,
+                                Quantity = pe.Quantity,
+                                OTAmount = pe.OTAmount,
+                                Amount = pe.Amount,
+                                Product = new ProductModel { ProductName = pe.Product.ProductName },
+                                Particular = "LabourOrders",
+                                IncrementStock = true
+                            }).ToListAsync());
+                        #endregion
+                        #region Payments
+                        Result.Orders.AddRange(await _appDbContext.Payments
+                            .Where(d => d.Fk_SubLedgerId == LabourSubLadgerId && d.Fk_FinancialYearId == FinancialYearId  && d.VoucherDate >= convertedFromDate && d.VoucherDate <= convertedToDate)
+                            .Select(pe => new LobourReportDetailedModel
+                            {
+                                TransactionDate = pe.VoucherDate,
+                                TransactionNo = pe.VouvherNo,
+                                BranchName = pe.Branch.BranchName,
+                                Amount = pe.Amount,
+                                Particular = "Payments",
+                                IncrementStock = true
+                            }).ToListAsync());
+                        #endregion
+                        #region DamageOrders 
+                        Result.Orders.AddRange(await _appDbContext.DamageOrders
+                            .Where(d => d.Fk_LabourId == requestData.LabourId && d.Fk_FinancialYearId == FinancialYearId  && d.TransactionDate >= convertedFromDate && d.TransactionDate <= convertedToDate)
+                            .Select(pe => new LobourReportDetailedModel
+                            {
+                                TransactionDate = pe.TransactionDate,
+                                TransactionNo = pe.TransactionNo,
+                                BranchName = pe.Branch.BranchName,
+                                Amount = pe.TotalAmount,
+                                Particular = "DamageOrders",
+                                IncrementStock = true
+                            }).ToListAsync());
+                        #endregion   
+                        Result.Orders = Result.Orders.OrderBy(s => s.TransactionDate).ToList();
+                        ListItems.Add(Result);
+                        //var ListFinancialYearId = await _appDbContext.FinancialYears.Where(x => x.Financial_Year == _HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId")).Select(x => x.FinancialYearId).ToListAsync();
+                        //Models = await _appDbContext.Labours
+                        //    .Where(s => s.LabourId == requestData.LabourId && s.Fk_Labour_TypeId == requestData.LabourTypeId)
+                        //    .Select(s => new LabourModel
+                        //    {
+
+                        //        LabourName = s.LabourName,
+                        //        LabourOrders = s.LabourOrders.Where(d => d.Fk_LabourId == s.LabourId && ListFinancialYearId.Contains(d.Fk_FinancialYearId) && d.TransactionDate >= convertedFromDate && d.TransactionDate <= convertedToDate).Select(d => new LabourOrderModel { TransactionDate = d.TransactionDate, TransactionNo = d.TransactionNo, Quantity = d.Quantity, Rate = d.Rate, OTAmount = d.OTAmount, Amount = d.Amount, Product = new ProductModel { ProductName = d.Product.ProductName } }).ToList(),
+                        //        Payment = _appDbContext.Payments.Where(l => l.Fk_SubLedgerId == s.Fk_SubLedgerId && ListFinancialYearId.Contains(l.Fk_FinancialYearId) && l.VoucherDate >= convertedFromDate && l.VoucherDate <= convertedToDate).Select(t => new PaymentModel { VoucherDate = t.VoucherDate, VouvherNo = t.VouvherNo, Amount = t.Amount }).ToList(),
+                        //        DamageOrders = s.DamageOrders.Where(l => l.Fk_LabourId == s.LabourId && ListFinancialYearId.Contains(l.Fk_FinancialYearId) && l.TransactionDate >= convertedFromDate && l.TransactionDate <= convertedToDate).Select(d => new DamageOrderModel { TransactionDate = d.TransactionDate, TransactionNo = d.TransactionNo, TotalAmount = d.TotalAmount }).ToList(),
+                        //        OpeningBalance =
+                        //        _appDbContext.SubLedgerBalances.Where(l => l.Fk_SubLedgerId == s.Fk_SubLedgerId && ListFinancialYearId.Contains(l.Fk_FinancialYearId)).Select(t => t.OpeningBalance).SingleOrDefault()
+                        //      + s.LabourOrders.Where(x => x.Fk_LabourId == s.LabourId && ListFinancialYearId.Contains(x.Fk_FinancialYearId) && x.TransactionDate < convertedFromDate).Sum(x => x.Amount)
+                        //      - s.DamageOrders.Where(x => x.Fk_LabourId == s.LabourId && ListFinancialYearId.Contains(x.Fk_FinancialYearId) && x.TransactionDate < convertedFromDate).Sum(x => x.TotalAmount)
+                        //      - _appDbContext.Payments.Where(x => x.Fk_SubLedgerId == s.Fk_SubLedgerId && ListFinancialYearId.Contains(x.Fk_FinancialYearId) && x.VoucherDate < convertedFromDate).Sum(x => x.Amount),
+                        //        BalanceType = (
+                        //    _appDbContext.SubLedgerBalances.Where(l => l.Fk_SubLedgerId == s.Fk_SubLedgerId && ListFinancialYearId.Contains(l.Fk_FinancialYearId)).Select(t => t.OpeningBalance).SingleOrDefault()
+                        //      + s.LabourOrders.Where(x => x.Fk_LabourId == s.LabourId && ListFinancialYearId.Contains(x.Fk_FinancialYearId) && x.TransactionDate < convertedFromDate).Sum(x => x.Amount)
+                        //      - s.DamageOrders.Where(x => x.Fk_LabourId == s.LabourId && ListFinancialYearId.Contains(x.Fk_FinancialYearId) && x.TransactionDate < convertedFromDate).Sum(x => x.TotalAmount)
+                        //      - _appDbContext.Payments.Where(x => x.Fk_SubLedgerId == s.Fk_SubLedgerId && ListFinancialYearId.Contains(x.Fk_FinancialYearId) && x.VoucherDate < convertedFromDate).Sum(x => x.Amount)
+                        //      ) > 0 ? "Cr" : "Dr",
+                        //    }).ToListAsync();
                     }
-                    if (Models.Count > 0)
+                    if (ListItems.Count > 0)
                     {
-                        _Result.CollectionObjData = Models;
+                        _Result.CollectionObjData = ListItems;
                         _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
                     }
                 }

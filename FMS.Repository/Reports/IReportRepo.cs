@@ -11,7 +11,7 @@ namespace FMS.Repository.Reports
         #endregion
         #region Labour Report
         Task<Result<LaborReportModel>> GetSummerizedLabourReport(LabourReportDataRequest requestData);
-        Task<Result<LabourModel>> GetDetailedLabourReport(LabourReportDataRequest requestData);
+        Task<Result<LabourReportDetailedModel2>> GetDetailedLabourReport(LabourReportDataRequest requestData);
         #endregion
         #region Customer Report
         Task<Result<PartyReportModel>> GetSummerizedCustomerReport(PartyReportDataRequest requestData);

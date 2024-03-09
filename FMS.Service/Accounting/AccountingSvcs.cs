@@ -319,7 +319,7 @@ namespace FMS.Service.Accounting
         public async Task<PaymentViewModel> GetPaymentById(string Id)
         {
             PaymentViewModel Obj;
-            var Result = await _accountingRepo.GetPayments();
+            var Result = await _accountingRepo.GetPaymentById(Id);
             if (Result.IsSuccess)
             {
                 if (Result.Response == "success")
@@ -328,7 +328,7 @@ namespace FMS.Service.Accounting
                     {
                         ResponseStatus = Result.Response,
                         ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
-                        GroupedPayments = Result.CollectionObjData,
+                        GroupedLederwisePayments = Result.CollectionObjData,
                     };
                 }
                 else

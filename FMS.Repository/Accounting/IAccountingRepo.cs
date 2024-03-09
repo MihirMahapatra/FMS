@@ -20,7 +20,7 @@ namespace FMS.Repository.Accounting
         Task<Result<LedgerModel>> GetBankLedgers(); 
         Task<Result<bool>> CreatePayment(PaymentDataRequest requestData);
         Task<Result<GroupedPaymentModel>> GetPayments();
-        Task<Result<GroupedPaymentModel>> GetPaymentById(string Id);
+        Task<Result<GroupedLederwisePayments>> GetPaymentById(string Id);
         Task<Result<bool>> DeletePayment(string Id, IDbContextTransaction transaction);
         #endregion
         #region Receipt

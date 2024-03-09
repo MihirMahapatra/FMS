@@ -17,5 +17,6 @@ namespace FMS.Model.ViewModel
         public List<PaymentModel> Payments { get; set; }
         public PaymentModel Payment { get; set; }
         public List<GroupedPaymentModel> GroupedPayments { get; set; }
+        public List<GroupedLederwisePayments> GroupedLederwisePayments { get; set; }
     }
 }

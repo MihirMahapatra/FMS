@@ -10,7 +10,7 @@
 <head>
     <style>
         .small-text {
-            font-size: 0.7em !important;
+            font-size: 0.9em !important;
             /* Adjust the font size as needed */
         }
 
@@ -26,7 +26,7 @@
 
         .small-row th {
             padding: 0.1em !important; /* Adjust the row height */
-            font-size: 0.9em !important;
+            font-size: 0.8em !important;
         }
 
         body {
@@ -67,30 +67,28 @@
                                         @Model.Cmopany.Adress<br>@Model.Cmopany.Email,<br>
                                         @Model.Cmopany.Phone,<br>Odisha
                                     </address>
-                                    <b> Labour Name : @Model.LabourDetails.LabourName</b>
+                                    <b> Labour Name : @Model.LabourDetails.LaborReportDetailed[0].LabourName</b>
                                    
                                 </div>
                             </div>
                             <div class="col-auto" style="padding-right:30px">
-                                GSTIN :  @Model.Cmopany.GSTIN<br />
                                 Report Date :  @DateTime.Now.ToString("dd/MM/yyyy") <br />
                                 From Date :  @Model.LabourDetails.FromDate<br />
                                 To Date :  @Model.LabourDetails.ToDate<br />
-                                Opening bal : @Model.LabourDetails.OpeningBal
                             </div>
                         </div>
                         <table class="invoice-table justify-content-between" id="CashPayments">
                             <thead style="height: 10px;">
                                 <tr class="small-row">
                                     <th style="width:10%">Date</th>
-                                    <th style="width:15%">Item</th>
+                                    <th style="width:20%">Item</th>
                                     <th style="width:10%">TrnxNo</th>
                                     <th style="width:10%">Qty</th>
                                     <th style="width:10%">Rate</th>
                                     <th style="width:5%">OTAmnt</th>
                                     <th style="width:10%">Bill</th>
                                     <th style="width:10%">Dmg</th>
-                                    <th style="width:15%">Pmnt</th>
+                                    <th style="width:10%">Pmnt</th>
                                     <th style="width:15%; text-align:center">Bal</th>
                                 </tr>
                             </thead>
@@ -109,86 +107,60 @@
                                         <td>-</td>
                                         <td>-</td>
                                         <td>-</td>
-                                        <td style="text-align:center;">@Model.LabourDetails.OpeningBal</td>
+                                        <td style="text-align:center;">@Model.LabourDetails.LaborReportDetailed[0].OpeningBalance</td>
                                     </tr>
                                    
-                                    @foreach (var report in Model.LabourDetails.LaborReports)
+                                    @foreach (var report in Model.LabourDetails.LaborReportDetailed)
                                     {
-                                        decimal Balance = @Model.LabourDetails.OpeningBal;
-                                        if(report.ProductionEntries != null)
+                                        decimal Balance = @Model.LabourDetails.LaborReportDetailed[0].OpeningBalance;
+                                        if(report.Orders != null)
                                         {
-                                            foreach (var item in report.ProductionEntries)
+                                            foreach (var item in report.Orders)
                                             {
                                               
                                                 Balance += @item.Amount;
                                                 <tr class="small-row">
                                                     <td>@item.TransactionDate.ToString("dd/MM/yyyy")</td>
-                                                    <td>@item.Product.ProductName</td>
+                                                    @if (item.Particular == "LabourOrders")
+                                                    {
+                                                        <td>@item.Product.ProductName</td>
+                                                    }
+
+                                                    else{
+                                                        <td>@item.Particular</td>
+                                                    }
                                                     <td>@item.TransactionNo</td>
-                                                    <td>@item.Quantity</td>
-                                                    <td>@item.Rate</td>
-                                                    <td>@item.OTAmount</td>
-                                                    <td>@item.Amount</td>
-                                                    <td>-</td>
-                                                    <td>-</td>
+                                                    <td>@item.Quantity.ToString("N2")</td>
+                                                    <td>@item.Rate.ToString("N2")</td>
+                                                    <td>@item.OTAmount.ToString("N2")</td>
+                                                    @if (item.Particular == "LabourOrders")
+                                                    {
+                                                        <td>@item.Amount.ToString("N2")</td>
+                                                        <td>0.00</td>
+                                                        <td>0.00</td>
+                                                        Balance += @item.Amount;
+                                                       
+                                                    }
+
+                                                    else if (item.Particular == "DamageOrders")
+                                                    {
+                                                        <td>0.00</td>
+                                                        <td>@item.Amount.ToString("N2")</td>
+                                                        <td>0.00</td>
+                                                        Balance -= @item.Amount;
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>0.00</td>
+                                                        <td>0.00</td>
+                                                        <td>@item.Amount</td>
+                                                        Balance -= @item.Amount;
+                                                    }
                                                     <td style="text-align:center">@Balance</td>
                                                 </tr>
                                             }
                                         }
-                                        if(report.DamageOrders != null)
-                                        {
-                                            foreach (var item in report.DamageOrders)
-                                            {
-                                             
-                                                Balance -= (item.TotalAmount);
-                                                <tr class="small-row">
-                                                    <td>@item.TransactionDate.ToString("dd/MM/yyyy")</td>
-                                                    @if(item.ProductTypeName != null)
-                                                    {
-                                                        <td>@item.ProductTypeName</td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td>Damage</td>
-                                                    }    
-                                                     <td>@item.TransactionNo</td>
-                                                    <td>-</td>
-                                                    <td>-</td>
-                                                    <td>-</td>
-                                                    <td>-</td>
-                                                    <td>@item.TotalAmount</td>
-                                                    <td>-</td>
-                                                    <td style="text-align:center">@Balance.ToString("0.00")</td>
-                                                </tr>
-                                            }
-                                        }
-                                        if (report.Payment != null)
-                                        {
-                                            foreach (var item in report.Payment)
-                                            {
-                                               
-                                                Balance -= (item.Amount);
-                                                <tr class="small-row">
-                                                    <td>@item.VoucherDate.ToString("dd/MM/yyyy")</td>
-                                                    @if (item.LedgerName != null)
-                                                    {
-                                                        <td>@item.LedgerName</td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td>Payment</td>
-                                                    }
-                                                    <td>@item.VouvherNo</td>
-                                                    <td>-</td>
-                                                    <td>-</td>
-                                                    <td>-</td>
-                                                    <td>-</td>
-                                                    <td>-</td>
-                                                    <td>@item.Amount</td>
-                                                    <td style="text-align:center">@Balance.ToString("0.00")</td>
-                                                </tr>
-                                            }
-                                        }
+                                        
                                         
                                     }
                                     

@@ -73,128 +73,6 @@ namespace FMS.Controllers.Print
             return RedirectToAction("Error");
         }
         #endregion
-        #region Cash Book
-        [HttpPost]
-        public IActionResult CashBookPrintData([FromBody] CashBookModal requestData)
-        {
-            TempData["CashBookData"] = JsonConvert.SerializeObject(requestData);
-            return Json(new { redirectTo = Url.Action("CashBookPrint", "Print") });
-        }
-        [HttpGet]
-        public IActionResult CashBookPrint()
-        {
-            if (TempData.TryGetValue("CashBookData", out object tempData) && tempData is string jsonData)
-            {
-                var requestPrintData = JsonConvert.DeserializeObject<CashBookModal>(jsonData);
-                var CashBookPrintModel = new CashBookPrintModel()
-                {
-                    Cmopany = _adminSvcs.GetCompany().Result.GetCompany,
-                    cashbook = requestPrintData
-                };
-
-                return View(CashBookPrintModel);
-            }
-            return RedirectToAction("Error");
-        }
-        #endregion
-        #region Bank Book Reports
-        [HttpPost]
-        public IActionResult BankBookPrintData([FromBody] BankBookModal requestData)
-        {
-            TempData["BankBookData"] = JsonConvert.SerializeObject(requestData);
-            return Json(new { redirectTo = Url.Action("BankBookPrint", "Print") });
-        }
-        [HttpGet]
-        public IActionResult BankBookPrint()
-        {
-            if (TempData.TryGetValue("BankBookData", out object tempData) && tempData is string jsonData)
-            {
-                var requestPrintData = JsonConvert.DeserializeObject<BankBookModal>(jsonData);
-                var BankBookPrintModel = new BankBookPrintModel()
-                {
-                    Cmopany = _adminSvcs.GetCompany().Result.GetCompany,
-                    bankbook = requestPrintData
-                };
-
-                return View(BankBookPrintModel);
-            }
-            return RedirectToAction("Error");
-
-        }
-        #endregion
-        #region Ledger Book Reports
-        [HttpPost]
-        public IActionResult LedgerBookPrintData([FromBody] LedgerBookModel requestData)
-        {
-            TempData["LedgerBookData"] = JsonConvert.SerializeObject(requestData);
-            return Json(new { redirectTo = Url.Action("LedgerBookPrint", "Print") });
-        }
-        [HttpGet]
-        public IActionResult LedgerBookPrint()
-        {
-            if (TempData.TryGetValue("LedgerBookData", out object tempData) && tempData is string jsonData)
-            {
-                var requestPrintData = JsonConvert.DeserializeObject<LedgerBookModel>(jsonData);
-                var LedgerBookPrintModel = new LedgerBookPrintModel()
-                {
-                    Cmopany = _adminSvcs.GetCompany().Result.GetCompany,
-                    ledgerBook = requestPrintData
-                };
-                return View(LedgerBookPrintModel);
-            }
-            return RedirectToAction("Error");
-
-        }
-        #endregion
-        #region TrialBalance Reports
-        [HttpPost]
-        public IActionResult TrialBalancePrintData([FromBody] TrailBalancesModel requestData)
-        {
-            TempData["TrialBalanceData"] = JsonConvert.SerializeObject(requestData);
-            return Json(new { redirectTo = Url.Action("TrialBalancePrint", "Print") });
-        }
-        [HttpGet]
-        public IActionResult TrialBalancePrint()
-        {
-            if (TempData.TryGetValue("TrialBalanceData", out object tempData) && tempData is string jsonData)
-            {
-                var requestPrintData = JsonConvert.DeserializeObject<TrailBalancesModel>(jsonData);
-                var TrialBalancePrintModel = new TrialBalancePrintModel()
-                {
-                    Cmopany = _adminSvcs.GetCompany().Result.GetCompany,
-                    Balances = requestPrintData
-                };
-                return View(TrialBalancePrintModel);
-            }
-            return RedirectToAction("Error");
-
-        }
-        #endregion
-        #region Journal Book 
-        [HttpPost]
-        public IActionResult JournalBookPrintData([FromBody] JournalBookModel requestData)
-        {
-            TempData["JournalBookData"] = JsonConvert.SerializeObject(requestData);
-            return Json(new { redirectTo = Url.Action("JournalBookPrint", "Print") });
-        }
-        [HttpGet]
-        public IActionResult JournalBookPrint()
-        {
-            if (TempData.TryGetValue("JournalBookData", out object tempData) && tempData is string jsonData)
-            {
-                var requestPrintData = JsonConvert.DeserializeObject<JournalBookModel>(jsonData);
-                var JournalBookPrintModel = new JournalBookPrintModel()
-                {
-                    Cmopany = _adminSvcs.GetCompany().Result.GetCompany,
-                    JournalBook = requestPrintData
-                };
-
-                return View(JournalBookPrintModel);
-            }
-            return RedirectToAction("Error");
-
-        }
-        #endregion
         #region Labour Reports
         [HttpPost]
         public IActionResult LabourDetailedPrintData([FromBody] LabourDetailsModal requestData)
@@ -203,7 +81,7 @@ namespace FMS.Controllers.Print
             return Json(new { redirectTo = Url.Action("LabourDetailedPrint", "Print") });
         }
         [HttpGet]
-        public IActionResult LabourDetailedPrint()
+        public IActionResult LabourDetailedPrints()
         {
 
             if (TempData.TryGetValue("LabourDetailedData", out object tempData) && tempData is string jsonData)
@@ -241,6 +119,23 @@ namespace FMS.Controllers.Print
             return RedirectToAction("Error");
 
         }
+
+        [HttpGet]
+        public async Task<IActionResult> LabourDetailedPrint([FromQuery] LabourReportDataRequest requestData)
+        {
+            var result = await _reportSvcs.GetDetailedLabourReport(requestData);
+            var LabourReportData = new LabourDetailsModal();
+            LabourReportData.FromDate = requestData.FromDate;
+            LabourReportData.ToDate = requestData.ToDate;
+            LabourReportData.LaborReportDetailed = result.DetailedLabour;
+            var LabourDetailedReportModal = new LabourDetailedReportModal()
+            {
+                Cmopany = _adminSvcs.GetCompany().Result.GetCompany,
+                LabourDetails = LabourReportData
+            };
+            return View(LabourDetailedReportModal);
+
+        }
         #endregion
         #region Stock Reports
         [HttpGet]
@@ -273,41 +168,6 @@ namespace FMS.Controllers.Print
                 StockReports = StockReportData
             };
             return View(StockDetailedReportModal);
-
-        }
-        #endregion
-        #region SubLadger Reports
-        [HttpGet]
-        public async Task<IActionResult> SubladgerSumrizedReportPrint([FromQuery] LedgerbookDataRequest requestData)
-        {
-
-            var result = await _reportSvcs.GetSummerizedSubLadgerReport(requestData);
-            var SubLedgerReportData = new CustomerSummarizedModel();
-            SubLedgerReportData.FromDate = requestData.FromDate;
-            SubLedgerReportData.ToDate = requestData.ToDate;
-            SubLedgerReportData.PartyReports = result.PartySummerized;
-
-            var SubLedgerSumrizedReportModal = new CustomerReportDataModel()
-            {
-                Cmopany = _adminSvcs.GetCompany().Result.GetCompany,
-                Customers = SubLedgerReportData
-            };
-            return View(SubLedgerSumrizedReportModal);
-        }
-        [HttpGet]
-        public async Task<IActionResult> SubLadgerDetailedReportPrint([FromQuery] LedgerbookDataRequest requestData)
-        {
-            var result = await _reportSvcs.SubLadgerDetailedBookReport(requestData);
-            var SubladgerModel = new CustomerSummarizedModel();
-            SubladgerModel.FromDate = requestData.FromDate;
-            SubladgerModel.ToDate = requestData.ToDate;
-            SubladgerModel.PartyDetailedReports = result.PartyDetailed;
-            var SubLadgerDetailedReportModal = new CustomerReportDataModel()
-            {
-                Cmopany = _adminSvcs.GetCompany().Result.GetCompany,
-                Customers = SubladgerModel
-            };
-            return View(SubLadgerDetailedReportModal);
 
         }
         #endregion
@@ -404,5 +264,163 @@ namespace FMS.Controllers.Print
 
         }
         #endregion
+        #region Cash Book
+        [HttpPost]
+        public IActionResult CashBookPrintData([FromBody] CashBookModal requestData)
+        {
+            TempData["CashBookData"] = JsonConvert.SerializeObject(requestData);
+            return Json(new { redirectTo = Url.Action("CashBookPrint", "Print") });
+        }
+        [HttpGet]
+        public IActionResult CashBookPrint()
+        {
+            if (TempData.TryGetValue("CashBookData", out object tempData) && tempData is string jsonData)
+            {
+                var requestPrintData = JsonConvert.DeserializeObject<CashBookModal>(jsonData);
+                var CashBookPrintModel = new CashBookPrintModel()
+                {
+                    Cmopany = _adminSvcs.GetCompany().Result.GetCompany,
+                    cashbook = requestPrintData
+                };
+
+                return View(CashBookPrintModel);
+            }
+            return RedirectToAction("Error");
+        }
+        #endregion
+        #region Bank Book Reports
+        [HttpPost]
+        public IActionResult BankBookPrintData([FromBody] BankBookModal requestData)
+        {
+            TempData["BankBookData"] = JsonConvert.SerializeObject(requestData);
+            return Json(new { redirectTo = Url.Action("BankBookPrint", "Print") });
+        }
+        [HttpGet]
+        public IActionResult BankBookPrint()
+        {
+            if (TempData.TryGetValue("BankBookData", out object tempData) && tempData is string jsonData)
+            {
+                var requestPrintData = JsonConvert.DeserializeObject<BankBookModal>(jsonData);
+                var BankBookPrintModel = new BankBookPrintModel()
+                {
+                    Cmopany = _adminSvcs.GetCompany().Result.GetCompany,
+                    bankbook = requestPrintData
+                };
+
+                return View(BankBookPrintModel);
+            }
+            return RedirectToAction("Error");
+
+        }
+        #endregion
+        #region Ledger Book Reports
+        [HttpPost]
+        public IActionResult LedgerBookPrintData([FromBody] LedgerBookModel requestData)
+        {
+            TempData["LedgerBookData"] = JsonConvert.SerializeObject(requestData);
+            return Json(new { redirectTo = Url.Action("LedgerBookPrint", "Print") });
+        }
+        [HttpGet]
+        public IActionResult LedgerBookPrint()
+        {
+            if (TempData.TryGetValue("LedgerBookData", out object tempData) && tempData is string jsonData)
+            {
+                var requestPrintData = JsonConvert.DeserializeObject<LedgerBookModel>(jsonData);
+                var LedgerBookPrintModel = new LedgerBookPrintModel()
+                {
+                    Cmopany = _adminSvcs.GetCompany().Result.GetCompany,
+                    ledgerBook = requestPrintData
+                };
+                return View(LedgerBookPrintModel);
+            }
+            return RedirectToAction("Error");
+
+        }
+        #endregion
+        #region SubLadger Reports
+        [HttpGet]
+        public async Task<IActionResult> SubladgerSumrizedReportPrint([FromQuery] LedgerbookDataRequest requestData)
+        {
+
+            var result = await _reportSvcs.GetSummerizedSubLadgerReport(requestData);
+            var SubLedgerReportData = new CustomerSummarizedModel();
+            SubLedgerReportData.FromDate = requestData.FromDate;
+            SubLedgerReportData.ToDate = requestData.ToDate;
+            SubLedgerReportData.PartyReports = result.PartySummerized;
+
+            var SubLedgerSumrizedReportModal = new CustomerReportDataModel()
+            {
+                Cmopany = _adminSvcs.GetCompany().Result.GetCompany,
+                Customers = SubLedgerReportData
+            };
+            return View(SubLedgerSumrizedReportModal);
+        }
+        [HttpGet]
+        public async Task<IActionResult> SubLadgerDetailedReportPrint([FromQuery] LedgerbookDataRequest requestData)
+        {
+            var result = await _reportSvcs.SubLadgerDetailedBookReport(requestData);
+            var SubladgerModel = new CustomerSummarizedModel();
+            SubladgerModel.FromDate = requestData.FromDate;
+            SubladgerModel.ToDate = requestData.ToDate;
+            SubladgerModel.PartyDetailedReports = result.PartyDetailed;
+            var SubLadgerDetailedReportModal = new CustomerReportDataModel()
+            {
+                Cmopany = _adminSvcs.GetCompany().Result.GetCompany,
+                Customers = SubladgerModel
+            };
+            return View(SubLadgerDetailedReportModal);
+
+        }
+        #endregion
+        #region TrialBalance Reports
+        [HttpPost]
+        public IActionResult TrialBalancePrintData([FromBody] TrailBalancesModel requestData)
+        {
+            TempData["TrialBalanceData"] = JsonConvert.SerializeObject(requestData);
+            return Json(new { redirectTo = Url.Action("TrialBalancePrint", "Print") });
+        }
+        [HttpGet]
+        public IActionResult TrialBalancePrint()
+        {
+            if (TempData.TryGetValue("TrialBalanceData", out object tempData) && tempData is string jsonData)
+            {
+                var requestPrintData = JsonConvert.DeserializeObject<TrailBalancesModel>(jsonData);
+                var TrialBalancePrintModel = new TrialBalancePrintModel()
+                {
+                    Cmopany = _adminSvcs.GetCompany().Result.GetCompany,
+                    Balances = requestPrintData
+                };
+                return View(TrialBalancePrintModel);
+            }
+            return RedirectToAction("Error");
+
+        }
+        #endregion
+        #region Journal Book 
+        [HttpPost]
+        public IActionResult JournalBookPrintData([FromBody] JournalBookModel requestData)
+        {
+            TempData["JournalBookData"] = JsonConvert.SerializeObject(requestData);
+            return Json(new { redirectTo = Url.Action("JournalBookPrint", "Print") });
+        }
+        [HttpGet]
+        public IActionResult JournalBookPrint()
+        {
+            if (TempData.TryGetValue("JournalBookData", out object tempData) && tempData is string jsonData)
+            {
+                var requestPrintData = JsonConvert.DeserializeObject<JournalBookModel>(jsonData);
+                var JournalBookPrintModel = new JournalBookPrintModel()
+                {
+                    Cmopany = _adminSvcs.GetCompany().Result.GetCompany,
+                    JournalBook = requestPrintData
+                };
+
+                return View(JournalBookPrintModel);
+            }
+            return RedirectToAction("Error");
+
+        }
+        #endregion
+
     }
 }

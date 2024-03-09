@@ -446,9 +446,9 @@ namespace FMS.Repository.Accounting
             }
             return _Result;
         }
-        public async Task<Result<GroupedPaymentModel>> GetPaymentById(string Id)
+        public async Task<Result<GroupedLederwisePayments>> GetPaymentById(string Id)
         {
-            Result<GroupedPaymentModel> _Result = new();
+            Result<GroupedLederwisePayments> _Result = new();
             try
             {
                 _Result.IsSuccess = false;
@@ -458,20 +458,29 @@ namespace FMS.Repository.Accounting
                                    new PaymentModel()
                                    {
                                        PaymentId = s.PaymentId,
+                                       CashBankLedgerId = s.CashBankLedgerId,
+                                       CashBank = s.CashBank,
                                        VouvherNo = s.VouvherNo,
                                        VoucherDate = s.VoucherDate,
                                        LedgerDevName = _appDbContext.LedgersDev.Where(l => l.LedgerId == s.Fk_LedgerId).Select(l => l.LedgerName).SingleOrDefault(),
                                        LedgerName = _appDbContext.Ledgers.Where(l => l.LedgerId == s.Fk_LedgerId).Select(l => l.LedgerName).SingleOrDefault(),
                                        SubLedgerName = s.SubLedger != null ? s.SubLedger.SubLedgerName : "-",
                                        Narration = s.Narration,
+                                       Fk_LedgerId = s.Fk_LedgerId,
+                                       Fk_SubLedgerId = s.Fk_SubLedgerId,
                                        Amount = s.Amount,
                                        DrCr = s.DrCr
                                    }).ToListAsync();
                 var groupedQuery = Query.GroupBy(Payment => Payment.VouvherNo)
-                        .Select(group => new GroupedPaymentModel
+                        .Select(group => new GroupedLederwisePayments
                         {
                             VoucherNo = group.Key,
-                            Payments = group.ToList()
+                            LederwisePayments = group.GroupBy(payment => payment.Fk_LedgerId)
+                                 .Select(ledgerGroup => new LederwisePayments
+                                 {
+                                     Fk_LedgerId = ledgerGroup.Key,
+                                     Payments = ledgerGroup.ToList()
+                                 }).ToList()
                         }).ToList();
                 if (groupedQuery.Count > 0)
                 {

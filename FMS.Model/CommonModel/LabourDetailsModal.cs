@@ -12,6 +12,7 @@ namespace FMS.Model.CommonModel
         public decimal OpeningBal { get; set; }
         public string FromDate { get; set; }
         public string ToDate { get; set; }
-        public List<LaborReportModel> LaborReports { get; set; }    
+        public List<LaborReportModel> LaborReports { get; set; }
+        public List<LabourReportDetailedModel2> LaborReportDetailed { get; set; }
     }
 }

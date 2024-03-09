@@ -108,7 +108,7 @@ $(function () {
                             html += '<tr>';
                             html += '<td>' + item.LabourName + '</td>';
                             html += '<td>' + item.OpeningBal.toFixed(2) + '</td>';
-                            html += '<td>' + item.OpeningBalType.toFixed(2) + '</td>';
+                            html += '<td>' + item.OpeningBalType + '</td>';
                             html += '<td>' + item.BillingAmt.toFixed(2) + '</td>';
                             html += '<td>' + item.DamageAmt.toFixed(2) + '</td>';
                             html += '<td>' + item.PaymentAmt.toFixed(2) + '</td>';
@@ -194,6 +194,7 @@ $(function () {
             }
         });
     }
+    var requestData = {};
     $('#btnViewDetailed').on('click', function () {
         $('#loader').show();
         $('.DetailedLabourReportTable').empty();
@@ -211,7 +212,7 @@ $(function () {
             return;
         }
         else {
-            var requestData = {
+             requestData = {
                 FromDate: fromDateDetailed.val(),
                 ToDate: toDateDetailed.val(),
                 LabourId: ddlLabour.val(),
@@ -244,16 +245,16 @@ $(function () {
                     html += '</thead>'
                     html += '<tbody>';
                     if (result.ResponseCode == 302) {
-                        $.each(result.Labours, function (key, item) {
-                            console.log(result.Labours)
+                        $.each(result.DetailedLabour, function (key, item) {
+                            console.log(result.DetailedLabour)
                             var Balance = item.OpeningBalance;
                             html += '<tr>';
                             html += '<td colspan=9>Opening Bal.</td>';
                             html += '<td>' + item.OpeningBalance + '</td>';
                             html += '</tr >';
-                            if (item.LabourOrders !== null) {
-                                $.each(item.LabourOrders, function (key, Production) {
-                                    const ModifyDate = Production.TransactionDate;
+                            if (item !== null) {
+                                $.each(item.Orders, function (key, transation) {
+                                    const ModifyDate = transation.TransactionDate;
                                     var formattedDate = '';
                                     if (ModifyDate) {
                                         const dateObject = new Date(ModifyDate);
@@ -266,87 +267,107 @@ $(function () {
                                     }
                                     html += '<tr>';
                                     html += '<td>' + formattedDate + '</td>';
-                                    html += '<td>' + Production.TransactionNo + '</td>';
-                                    html += '<td>' + Production.Product.ProductName + '</td>';
-                                    html += '<td>' + Production.Quantity + '</td>';
-                                    html += '<td>' + Production.Rate.toFixed(2) + '</td>';
-                                    html += '<td>' + Production.OTAmount.toFixed(2) + '</td>';
-                                    html += '<td>' + Production.Amount.toFixed(2) + '</td>';
-                                    html += '<td>-</td>';
-                                    html += '<td>-</td>';
-                                    Balance += Production.Amount
+                                    html += '<td>' + transation.TransactionNo + '</td>';
+                                    if (transation.Particular == "LabourOrders") {
+                                        html += '<td>' + transation.Product.ProductName + '</td>';
+                                    } else {
+                                        html += '<td>' + transation.Particular + '</td>';
+                                    }
+                                    html += '<td>' + transation.Quantity + '</td>';
+                                    html += '<td>' + transation.Rate.toFixed(2) + '</td>';
+                                    html += '<td>' + transation.OTAmount.toFixed(2) + '</td>';
+                                   
+                                    if (transation.Particular == "LabourOrders") {
+                                        html += '<td>' + transation.Amount.toFixed(2) + '</td>';
+                                        html += '<td>-</td>';
+                                        html += '<td>-</td>';
+                                        Balance += transation.Amount
+                                        
+                                    } else if (transation.Particular == "DamageOrders") {
+                                        html += '<td>-</td>';
+                                        html += '<td>' + transation.Amount.toFixed(2) + '</td>';
+                                        html += '<td>-</td>';
+                                        Balance -= transation.Amount
+                                    } else {
+                                        html += '<td>-</td>';
+                                        html += '<td>-</td>';
+                                        html += '<td>' + transation.Amount.toFixed(2) + '</td>';
+                                        Balance -= transation.Amount
+                                    }
+                                    
+                                    
                                     html += '<td>' + Balance.toFixed(2) + '</td>';
                                     html += '</tr >';
 
                                 });
                             }
-                            if (item.Payment !== null) {
-                                $.each(item.Payment, function (key, Payment) {
-                                    const ModifyDate = Payment.VoucherDate;
-                                    var formattedDate = '';
-                                    if (ModifyDate) {
-                                        const dateObject = new Date(ModifyDate);
-                                        if (!isNaN(dateObject)) {
-                                            const day = String(dateObject.getDate()).padStart(2, '0');
-                                            const month = String(dateObject.getMonth() + 1).padStart(2, '0');
-                                            const year = dateObject.getFullYear();
-                                            formattedDate = `${day}/${month}/${year}`;
-                                        }
-                                    }
-                                    html += '<tr>';
-                                    html += '<td>' + formattedDate + '</td>';
-                                    html += '<td>' + Payment.VouvherNo + '</td>';
-                                    html += '<td>Payment</td>';
-                                    html += '<td>-</td>';
-                                    html += '<td>-</td>';
-                                    html += '<td>-</td>';
-                                    html += '<td>-</td>';
-                                    html += '<td>-</td>';
-                                    html += '<td>' + Payment.Amount.toFixed(2) + '</td>';
-                                    Balance -= Payment.Amount
-                                    html += '<td>' + Balance.toFixed(2) + '</td>';
-                                    html += '</tr >';
-                                });
-                            }
-                            if (item.DamageOrders !== null) {
-                                $.each(item.DamageOrders, function (key, Damage) {
-                                    const ModifyDate = Damage.TransactionDate;
-                                    var formattedDate = '';
-                                    if (ModifyDate) {
-                                        const dateObject = new Date(ModifyDate);
-                                        if (!isNaN(dateObject)) {
-                                            const day = String(dateObject.getDate()).padStart(2, '0');
-                                            const month = String(dateObject.getMonth() + 1).padStart(2, '0');
-                                            const year = dateObject.getFullYear();
-                                            formattedDate = `${day}/${month}/${year}`;
-                                        }
-                                    }
-                                    html += '<tr>';
-                                    html += '<td>' + formattedDate + '</td>';
-                                    html += '<td>' + Damage.TransactionNo + '</td>';
-                                    html += '<td>Damage</td>';
-                                    html += '<td>-</td>';
-                                    html += '<td>-</td>';
-                                    html += '<td>-</td>';
-                                    html += '<td>-</td>';
-                                    html += '<td>' + Damage.TotalAmounttoFixed(2) + '</td>';
-                                    html += '<td>-</td>';
-                                    Balance -= Damage.TotalAmount
-                                    html += '<td>' + BalancetoFixed(2) + '</td>';
-                                    html += '</tr >';
-                                });
-                            }
+                            //if (item.Payment !== null) {
+                            //    $.each(item.Payment, function (key, Payment) {
+                            //        const ModifyDate = Payment.VoucherDate;
+                            //        var formattedDate = '';
+                            //        if (ModifyDate) {
+                            //            const dateObject = new Date(ModifyDate);
+                            //            if (!isNaN(dateObject)) {
+                            //                const day = String(dateObject.getDate()).padStart(2, '0');
+                            //                const month = String(dateObject.getMonth() + 1).padStart(2, '0');
+                            //                const year = dateObject.getFullYear();
+                            //                formattedDate = `${day}/${month}/${year}`;
+                            //            }
+                            //        }
+                            //        html += '<tr>';
+                            //        html += '<td>' + formattedDate + '</td>';
+                            //        html += '<td>' + Payment.VouvherNo + '</td>';
+                            //        html += '<td>Payment</td>';
+                            //        html += '<td>-</td>';
+                            //        html += '<td>-</td>';
+                            //        html += '<td>-</td>';
+                            //        html += '<td>-</td>';
+                            //        html += '<td>-</td>';
+                            //        html += '<td>' + Payment.Amount.toFixed(2) + '</td>';
+                            //        Balance -= Payment.Amount
+                            //        html += '<td>' + Balance.toFixed(2) + '</td>';
+                            //        html += '</tr >';
+                            //    });
+                            //}
+                            //if (item.DamageOrders !== null) {
+                            //    $.each(item.DamageOrders, function (key, Damage) {
+                            //        const ModifyDate = Damage.TransactionDate;
+                            //        var formattedDate = '';
+                            //        if (ModifyDate) {
+                            //            const dateObject = new Date(ModifyDate);
+                            //            if (!isNaN(dateObject)) {
+                            //                const day = String(dateObject.getDate()).padStart(2, '0');
+                            //                const month = String(dateObject.getMonth() + 1).padStart(2, '0');
+                            //                const year = dateObject.getFullYear();
+                            //                formattedDate = `${day}/${month}/${year}`;
+                            //            }
+                            //        }
+                            //        html += '<tr>';
+                            //        html += '<td>' + formattedDate + '</td>';
+                            //        html += '<td>' + Damage.TransactionNo + '</td>';
+                            //        html += '<td>Damage</td>';
+                            //        html += '<td>-</td>';
+                            //        html += '<td>-</td>';
+                            //        html += '<td>-</td>';
+                            //        html += '<td>-</td>';
+                            //        html += '<td>' + Damage.Amount.toFixed(2) + '</td>';
+                            //        html += '<td>-</td>';
+                            //        Balance -= Damage.TotalAmount
+                            //        html += '<td>' + BalancetoFixed(2) + '</td>';
+                            //        html += '</tr >';
+                            //    });
+                            //}
                         });
 
                         $('#BtnPrint').show();
-                        LabourName = result.Labours[0].LabourName
-                        PrintData = {
-                            LaborReports: result.Labours,
-                            FromDate: fromDateDetailed.val(),
-                            LabourName: LabourName,
-                            ToDate: toDateDetailed.val(),
-                            OpeningBal: result.Labours[0].OpeningBalance
-                        };
+                        //LabourName = result.Labours[0].LabourName
+                        //PrintData = {
+                        //    LaborReports: result.Labours,
+                        //    FromDate: fromDateDetailed.val(),
+                        //    LabourName: LabourName,
+                        //    ToDate: toDateDetailed.val(),
+                        //    OpeningBal: result.Labours[0].OpeningBalance
+                        //};
                     }
                     else {
                         html += '<tr>';
@@ -369,18 +390,21 @@ $(function () {
         }
     });
     $('#BtnPrint').on('click', function () {
-        console.log(PrintData);
-        $.ajax({
-            type: "POST",
-            url: '/Print/LabourDetailedPrintData',
-            dataType: 'json',
-            data: JSON.stringify(PrintData),
-            contentType: "application/json;charset=utf-8",
-            success: function (Response) {
-                window.open(Response.redirectTo, '_blank');
+        //console.log(PrintData);
+        //$.ajax({
+        //    type: "POST",
+        //    url: '/Print/LabourDetailedPrintData',
+        //    dataType: 'json',
+        //    data: JSON.stringify(PrintData),
+        //    contentType: "application/json;charset=utf-8",
+        //    success: function (Response) {
+        //        window.open(Response.redirectTo, '_blank');
 
-            },
-        });
+        //    },
+        //});
+        var queryString = $.param(requestData); // Serialize object to query string
+        var url = '/Print/LabourDetailedPrint?' + queryString; // Append query string to URL
+        window.open(url, '_blank');
     });
 
 });

@@ -476,6 +476,161 @@ $(function () {
         });
     }
 
+//-----------------------EditPayments-----------------------------------//
+    $(document).on('click', '.btn-payment-edit', (event) => {
+        const value = $(event.currentTarget).data('id');
+        GetPaymemtById(value);
+        $('#tab-Payment').trigger('click');
+        $('#btnSave').hide();
+        $('#btnUpdate').show();
+    });
+    function GetPaymemtById(Id) {
+        $.ajax({
+            url: '/Accounting/GetPaymentById?Id=' + Id + '',
+            type: "GET",
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            success: function (result) {
+                console.log(result);
+                const ModifytransactionDate = result.GroupedLederwisePayments[0].LederwisePayments[0].Payments[0].VoucherDate;
+                if (ModifytransactionDate) {
+                    const dateObject = new Date(ModifytransactionDate);
+                    if (!isNaN(dateObject)) {
+                        const day = String(dateObject.getDate()).padStart(2, '0');
+                        const month = String(dateObject.getMonth() + 1).padStart(2, '0');
+                        const year = dateObject.getFullYear();
+                        const formattedDate = `${day}/${month}/${year}`;
+                        VoucherDate.val(formattedDate);
+                    }
+                }
+                VoucherNo.val(result.GroupedLederwisePayments[0].VoucherNo);
+                Narration.val(result.GroupedLederwisePayments[0].LederwisePayments[0].Payments[0].Narration);
+                if (result.GroupedLederwisePayments[0].LederwisePayments[0].Payments[0].CashBank == 'Bank') {
+                    CashBank.val('Bank');
+                    CashBank.trigger('change.select2');
+                    $('.hdndiv').show();
+                    $.ajax({
+                        url: '/Accounting/GetBankLedgers',
+                        type: "GET",
+                        contentType: "application/json;charset=utf-8",
+                        dataType: "json",
+                        success: function (result1) {
+                            Bank.empty();
+                            var defaultOption = $('<option></option>').val('').text('--Select Option--');
+                            Bank.append(defaultOption);
+                            if (result1.ResponseCode == 302) {
+                                $.each(result1.Ledgers, function (key, item) {
+                                    var option = $('<option></option>').val(item.LedgerId).text(item.LedgerName);
+                                    if (item.LedgerId == result.GroupedLederwisePayments[0].LederwisePayments[0].Payments[0].CashBankLedgerId) {
+                                        option.attr('selected', 'selected');
+                                    }
+                                    Bank.append(option);
+                                });
+                            }
+                        },
+                        error: function (errormessage) {
+                            console.log(errormessage)
+                        }
+                    })
+                }
+                else {
+                    $('.hdndiv').hide();
+                    CashBank.val('Cash');
+                }
+                // Clear the table
+                PaymentTable.clear().draw();
+                var uniqueId = 0; // Unique ID counter for additionalDropdowns
+                result.GroupedLederwisePayments.forEach(function (group) {
+                    group.LederwisePayments.forEach(function (ledger) {
+                        var html = ''; // Build HTML for ledger dropdowns and associated subledgers
+                        var ledgerDropdownAdded = false; // Flag to track ledger dropdown addition
+                        ledger.Payments.forEach(function (payment) {
+                            if (!ledgerDropdownAdded) {
+                                // Add ledger dropdown if not added yet
+                                html += '<tr>';
+                                html += '<td style="width:60px">';
+                                html += '<div class="form-group row">';
+                                html += '<div class="col-sm-7">';
+                                html += '<select class="select2bs4 form-control ledgerType" style="width: 100%;" data-target="additionalDropdown_' + uniqueId + '" name="ddlLedgerId">';
+                                html += '<option>--Select Option--</option>';
+                                $.ajax({
+                                    url: "/Accounting/GetLedgers",
+                                    type: "GET",
+                                    contentType: "application/json;charset=utf-8",
+                                    dataType: "json",
+                                    success: function (result1) {
+                                        if (result1.ResponseCode == 302) {
+                                            $.each(result1.Ledgers, function (key, item1) {
+                                                var option = $('<option></option>').val(item1.LedgerId).text(item1.LedgerName);
+                                                if (item1.LedgerId == ledger.Fk_LedgerId) {
+                                                    option.attr('selected', 'selected');
+                                                }
+                                                html += option.prop('outerHTML');
+                                            });
+                                        }
+                                    },
+
+                                });
+                                // Close ledger dropdown
+                                html += '</select>';
+                                html += '</div>';
+                                html += '<label name="LadgerCurBal" class="col-sm-3 col-form-label">Cur Bal:</label>';
+                                html += '</div>';
+
+                                // Adding container for additional dropdowns
+                                html += '<div class="additionalDropdowns" data-id="additionalDropdown_' + uniqueId + '"></div>';
+
+                                // Increment uniqueId for the next set of additionalDropdowns
+                                uniqueId++;
+
+                                // Set the flag to true since ledger dropdown has been added
+                                ledgerDropdownAdded = true;
+                            }
+
+                            // Add subledger dropdowns for each payment
+                            html += '<div class="form-group row">';
+                            html += '<div class="col-sm-2">';
+                            html += '<label name="SubLadgerCurBal" class="col-form-label">Cur Bal: </label>';
+                            html += '</div>';
+                            html += '<div class="col-sm-5">';
+                            html += '<select class="select2bs4 form-control  SubledgerType" style="width: 100%;" name="ddlSubledgerId">';
+                            html += '<option>--Select Option--</option>';
+                            html += '<option value="' + payment.Fk_SubLedgerId + '">' + payment.SubLedgerName + '</option>';
+                            html += '</select>';
+                            html += '</div>';
+                            html += '<div class="col-sm-3">';
+                            html += '<input type="text" class="form-control" name="SubledgerAmount" value="' + payment.Amount + '">';
+                            html += '</div>';
+                            html += '<div class="col-sm-2">';
+                            html += '<button class="btn btn-primary btn-link addSubLedgerBtn" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-plus"></i></button>';
+                            html += ' <button class="btn btn-primary btn-link deleteBtns" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button>';
+                            html += '</div>';
+                            html += '</div>';
+                        });
+
+                        // Close the table row
+                        html += '</td>';
+                        html += '<td style="width:15px">';
+                        html += '<div class="form-group">';
+                        html += '<input type="text" class="form-control" id="txtDrAmount" name="DrBalance">';
+                        html += '</div>';
+                        html += '</td>';
+                        html += '</tr>';
+                        // Append generated HTML to PaymentTable
+                        var newRow = PaymentTable.row.add($(html)).draw(false).node();
+                        // Select2 initialization can be added here if needed
+                    });
+                });
+            }, 
+            error: function (errormessage) {
+                Swal.fire(
+                    'Error!',
+                    'An error occurred',
+                    'error'
+                );
+            }
+        });
+    }
     //------------------------------Delete Payments---------//
     $(document).on('click', '.btn-payment-delete', (event) => {
         const value = $(event.currentTarget).data('id');

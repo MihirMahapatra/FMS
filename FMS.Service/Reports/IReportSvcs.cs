@@ -13,7 +13,7 @@ namespace FMS.Service.Reports
         #endregion
         #region Labour Report
         Task<LaborReportViewModel> GetSummerizedLabourReport(LabourReportDataRequest requestData);
-        Task<LabourViewModel> GetDetailedLabourReport(LabourReportDataRequest requestData);
+        Task<LobourReportDetailedViewModel> GetDetailedLabourReport(LabourReportDataRequest requestData);
         #endregion
         #region Customer Report
         Task<PartyReportViewModel> GetSummerizedCustomerReport(PartyReportDataRequest requestData);

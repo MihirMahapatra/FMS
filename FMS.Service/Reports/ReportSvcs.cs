@@ -163,9 +163,9 @@ namespace FMS.Service.Reports
             }
             return Obj;
         }
-        public async Task<LabourViewModel> GetDetailedLabourReport(LabourReportDataRequest requestData)
+        public async Task<LobourReportDetailedViewModel> GetDetailedLabourReport(LabourReportDataRequest requestData)
         {
-            LabourViewModel Obj;
+            LobourReportDetailedViewModel Obj;
             var Result = await _reportRepo.GetDetailedLabourReport(requestData);
             if (Result.IsSuccess)
             {
@@ -175,7 +175,7 @@ namespace FMS.Service.Reports
                     {
                         ResponseStatus = Result.Response,
                         ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
-                        Labours = Result.CollectionObjData,
+                        DetailedLabour = Result.CollectionObjData,
                     };
                 }
                 else

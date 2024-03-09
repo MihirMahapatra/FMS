@@ -549,6 +549,35 @@ namespace FMS.Repository.Transaction
                                     if (PurchaseId != Guid.Empty)
                                     {
                                         var UpdatePurchaseTransaction = await _appDbContext.PurchaseTransactions.Where(s => s.PurchaseId == PurchaseId && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).SingleOrDefaultAsync();
+                                        
+                                        #region Update Journal
+                                        var UpdateTransactionJournal = await _appDbContext.Journals.Where(s => s.TransactionId == UpdatePurchaseTransaction.PurchaseId && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).SingleOrDefaultAsync();
+                                        if (UpdateTransactionJournal != null)
+                                        {
+                                            UpdateTransactionJournal.Amount = Convert.ToDecimal(item[10]);
+                                            UpdateTransactionJournal.VoucherDate = convertedTransactionDate;
+                                            await _appDbContext.SaveChangesAsync();
+                                        }
+                                        else
+                                        {
+                                            _Result.WarningMessage = "Journal Entry Not Exist";
+                                            return _Result;
+                                        }
+                                        #endregion
+                                        #region Update Purchase Trn
+                                        UpdatePurchaseTransaction.TransactionDate = convertedTransactionDate;
+                                        UpdatePurchaseTransaction.Fk_ProductId = Guid.Parse(item[1]);
+                                        UpdatePurchaseTransaction.AlternateQuantity = Convert.ToDecimal(item[2]);
+                                        UpdatePurchaseTransaction.Fk_AlternateUnitId = Guid.Parse(item[3]);
+                                        UpdatePurchaseTransaction.UnitQuantity = Convert.ToDecimal(item[4]);
+                                        UpdatePurchaseTransaction.Rate = Convert.ToDecimal(item[5]);
+                                        UpdatePurchaseTransaction.Discount = Convert.ToDecimal(item[6]);
+                                        UpdatePurchaseTransaction.DiscountAmount = Convert.ToDecimal(item[7]);
+                                        UpdatePurchaseTransaction.Gst = Convert.ToDecimal(item[8]);
+                                        UpdatePurchaseTransaction.GstAmount = Convert.ToDecimal(item[9]);
+                                        UpdatePurchaseTransaction.Amount = Convert.ToDecimal(item[10]);
+                                        await _appDbContext.SaveChangesAsync();
+                                        #endregion
                                         #region Update Stock
                                         var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == UpdatePurchaseTransaction.Fk_ProductId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
                                         if (UpdateStock != null)
@@ -586,34 +615,6 @@ namespace FMS.Repository.Transaction
                                                 continue;
                                             }
                                         }
-                                        #endregion
-                                        #region Update Journal
-                                        var UpdateTransactionJournal = await _appDbContext.Journals.Where(s => s.TransactionId == UpdatePurchaseTransaction.PurchaseId && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).SingleOrDefaultAsync();
-                                        if (UpdateTransactionJournal != null)
-                                        {
-                                            UpdateTransactionJournal.Amount = Convert.ToDecimal(item[10]);
-                                            UpdateTransactionJournal.VoucherDate = convertedTransactionDate;
-                                            await _appDbContext.SaveChangesAsync();
-                                        }
-                                        else
-                                        {
-                                            _Result.WarningMessage = "Journal Entry Not Exist";
-                                            return _Result;
-                                        }
-                                        #endregion
-                                        #region Update Purchase Trn
-                                        UpdatePurchaseTransaction.TransactionDate = convertedTransactionDate;
-                                        UpdatePurchaseTransaction.Fk_ProductId = Guid.Parse(item[1]);
-                                        UpdatePurchaseTransaction.AlternateQuantity = Convert.ToDecimal(item[2]);
-                                        UpdatePurchaseTransaction.Fk_AlternateUnitId = Guid.Parse(item[3]);
-                                        UpdatePurchaseTransaction.UnitQuantity = Convert.ToDecimal(item[4]);
-                                        UpdatePurchaseTransaction.Rate = Convert.ToDecimal(item[5]);
-                                        UpdatePurchaseTransaction.Discount = Convert.ToDecimal(item[6]);
-                                        UpdatePurchaseTransaction.DiscountAmount = Convert.ToDecimal(item[7]);
-                                        UpdatePurchaseTransaction.Gst = Convert.ToDecimal(item[8]);
-                                        UpdatePurchaseTransaction.GstAmount = Convert.ToDecimal(item[9]);
-                                        UpdatePurchaseTransaction.Amount = Convert.ToDecimal(item[10]);
-                                        await _appDbContext.SaveChangesAsync();
                                         #endregion
                                     }
                                     else
