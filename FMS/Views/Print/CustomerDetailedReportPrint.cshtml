@@ -70,7 +70,8 @@
                                         @Model.Cmopany.Phone,<br>Odisha
                                     </address>
                                     <br>
-                                    <b>Customer Name : @Model.Customers.PartyDetailedReports.PartyName</b>
+                                    <b>Customer Name : @Model.Customers.PartyDetailedReports.PartyName </b>
+                                    <br /> Adress: (@Model.Customers.PartyDetailedReports.Adress)
                                 </div>
                             </div>
                             <div class="col-auto" style="padding-right:30px; margin-top:-20px;">
@@ -83,14 +84,15 @@
                         <table class="invoice-table">
                             <thead>
                                  <tr class="small-rows">
-                                    <td colspan="7">Opening Bal.</td>
+                                    <td colspan="9">Opening Bal.</td>
                                     <td style="text-align:center;">@Model.Customers.PartyDetailedReports.OpeningBal  @Model.Customers.PartyDetailedReports.OpeningBalType</td>
                                 </tr>
                                 <tr class="small-row">
                                     <th style="width:10%!important;">Trxn Date</th>
-                                    <th style="width:15%!important;">Trxn No</th>
+                                    <th style="width:12%!important;">Challan No</th>
+                                    <th style="width:13%!important;">Site Adress</th>
                                     <th style="width:15%!important;">Branch</th>
-                                    <th style="width:50%!important;text-align:center;" colspan="4">Details</th>
+                                    <th style="width:40%!important;text-align:center;" colspan="5">Details</th>
                                     <th style="width:10%!important;text-align:center;"> - </th>
                                 </tr>
                             </thead>
@@ -102,9 +104,10 @@
                                 {
                                     <tr class="small-rows">
                                         <td>@item.TransactionDate.ToString("dd/MM/yyyy")</td>
-                                        <td>@item.TransactionNo</td>
+                                        <td>@item.ChallanNo</td>
+                                        <td>@item.SiteAdress</td>
                                         <td>@item.BranchName</td>
-                                        <td colspan="4">@item.Naration</td>
+                                        <td colspan="5">--</td>
                                         <td style ="text-align:center;"> - </td>
                                         
                                     </tr>
@@ -115,7 +118,9 @@
                                             <td>-</td>
                                             <td>-</td>
                                             <td>-</td>
+                                            <td>-</td>
                                             <td>Product</td>
+                                            <td>Unit</td>
                                             <td>Qty</td>
                                             <td>Rate</td>
                                             <td>Amount</td>
@@ -128,7 +133,9 @@
                                                 <td>-</td>
                                                 <td>-</td>
                                                 <td>-</td>
+                                                <td>-</td>
                                                 <td>@transaction.ProductName</td>
+                                                <td>@transaction.Unit</td>
                                                 <td>@transaction.Quantity</td>
                                                 <td>@transaction.Rate</td>
                                                 <td>@transaction.Amount</td>
@@ -141,7 +148,8 @@
                                         <td>-</td>
                                         <td>-</td>
                                         <td>-</td>
-                                        <td colspan="3">Grand Total</td>
+                                        <td>-</td>
+                                        <td colspan="4">Grand Total</td>
                                         <td>@item.GrandTotal</td>
                                         @{
                                             balance += item.DrCr == "Dr" ? item.GrandTotal : -item.GrandTotal;
@@ -165,8 +173,8 @@
                             </div>
                         </div>
                         <p class="invoice-note mt-3">
-                            <b>NOTE: </b>This is computer generated receipt and does not
-                            require physical signature.
+                            <b>Report End </b>
+                            
                         </p>
                     </div>
                     <div class="invoice-buttons">

@@ -17,6 +17,7 @@ namespace FMS.Model.CommonModel
         public decimal CrAmt { get; set; }
         public decimal Balance { get; set; }
         public string BalanceType { get; set; }
+        public string Adress { get; set; }
     }
     public class PartyReportOrderModel
     {
@@ -25,6 +26,8 @@ namespace FMS.Model.CommonModel
         public string TransactionType { get; set; }
         public decimal GrandTotal { get; set; }
         public decimal TransportCharges { get; set; }
+        public string SiteAdress { get; set; }
+        public string ChallanNo { get; set; }
         public string Naration { get; set; }
         public string BranchName {  get; set; }
         public string DrCr { get; set; }
@@ -35,15 +38,17 @@ namespace FMS.Model.CommonModel
     {
         public string ProductName { get; set; }
         public decimal Quantity { get; set; }
+        public string Unit { get; set; }
         public decimal Rate { get; set; }
         public decimal Amount { get; set; }
     }
     public class PartyReportModel2
     {
-        public string BranchName;
-        public decimal OpeningBal;
-        public string OpeningBalType;
-        public string PartyName;
+        public string BranchName { get; set; }
+        public decimal OpeningBal { get; set; }
+        public string OpeningBalType { get; set; }
+        public string PartyName { get; set; }
+        public string Adress { get; set; }
         public List<PartyReportOrderModel> Orders { get; set; } = new List<PartyReportOrderModel>();
 
     }

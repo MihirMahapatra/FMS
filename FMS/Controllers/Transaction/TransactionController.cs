@@ -50,7 +50,6 @@ namespace FMS.Controllers.Transaction
             }
             return new JsonResult(result);
         }
-
         [HttpGet]
         public async Task<IActionResult> GetProductByType(Guid ProductTypeId)
         {

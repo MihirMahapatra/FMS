@@ -17,8 +17,11 @@
         public decimal SubTotal { get; set; }
         public decimal Gst { get; set; }
         public decimal Discount { get; set; }
+        public decimal TransportationCharges { get; set; }
+        public decimal HandlingCharges { get; set; }
         public decimal GrandTotal { get; set; }
         public string Naration { get; set; } = null;
+        public string SiteAdress { get; set; } = null;
         public List<List<string>> RowData { get; set; }
         public List<List<string>> PrintData { get; set; }
     }

@@ -35,10 +35,13 @@ $(function () {
     const subTotal = $('input[name="SubTotal"]');
     const discount = $('input[name="TotalDiscountAmount"]');
     const gst = $('input[name="GstAmount"]');
+    const transportationCharges = $('input[name="TransportationCharges"]');
+    const siteAdress = $('input[name="SiteAdress"]');
     const vehicleNo = $('input[name="VehicleNo"]');
     const transpoterName = $('input[name="TranspoterName"]');
+    const handlingCharges = $('input[name="HandlingCharges"]');
     const grandTotal = $('input[name="GrandTotal"]');
-    const Narration = $('textarea[name="NarrationSales"]')
+    const Narration = $('textarea[name="NarrationSales"]');
     //---------------------------------Contorl Foucous Of Element Sale-------------------------------//
     ddlPayment.focus();
     CustomerName.on('focus', function () {
@@ -160,6 +163,8 @@ $(function () {
     Sr_orderDate.val(todayDate);
     const Sr_subTotal = $('input[name="Sr_SubTotal"]');
     const Sr_discount = $('input[name="Sr_DiscountAmount"]');
+    const Sr_transportationCharges = $('input[name="Sr_TransportationCharges"]');
+    const Sr_siteAdress = $('input[name="Sr_SiteAdress"]');
     const Sr_grandTotal = $('input[name="Sr_GrandTotal"]');
     const Sr_vehicleNo = $('input[name="Sr_VehicleNo"]');
     const Sr_transpoterName = $('input[name="Sr_TranspoterName"]');
@@ -362,7 +367,7 @@ $(function () {
                     var defaultOption = $('<option></option>').val('').text('--Select Option--');
                     ddlCustomer.append(defaultOption);
                     $.each(result.SubLedgers, function (key, item) {
-                        var option = $('<option></option>').val(item.SubLedgerId).text(item.SubLedgerName);
+                        var option = $('<option></option>').val(item.SubLedgerId).text(item.SubLedgerName + " (" + item.Adress + ")");
                         ddlCustomer.append(option);
                     });
                 }
@@ -608,6 +613,23 @@ $(function () {
         }
         // end //
     });
+    transportationCharges.on('change', function () {
+        var tranportChgAmount = $(this).val();
+        subTotalAmount = subTotal.val();
+        discountAmount = discount.val();
+        gstAmount = gst.val();
+        updateGrandTotal = parseFloat(tranportChgAmount) + parseFloat(subTotalAmount) + parseFloat(gstAmount) - parseFloat(discountAmount);
+        grandTotal.val(updateGrandTotal.toFixed(2));
+    });
+    handlingCharges.on('change', function () {
+        var handlingChgAmount = $(this).val();
+        tranportChgAmount = transportationCharges.val();
+        subTotalAmount = subTotal.val();
+        discountAmount = discount.val();
+        gstAmount = gst.val();
+        updateGrandTotal = parseFloat(handlingChgAmount) + parseFloat(tranportChgAmount) + parseFloat(subTotalAmount) + parseFloat(gstAmount) - parseFloat(discountAmount);
+        grandTotal.val(updateGrandTotal.toFixed(2));
+    });
     $('#btnSave').on('click', CreateSale);
     function CreateSale() {
         if (!transactionDate.val()) {
@@ -687,6 +709,9 @@ $(function () {
                 Discount: discount.val(),
                 Gst: gst.val(),
                 GrandTotal: grandTotal.val(),
+                TransportationCharges: transportationCharges.val(),
+                HandlingCharges: handlingCharges.val(),
+                SiteAdress: siteAdress.val(),
                 Naration: Narration.val(),
                 rowData: rowData,
                 PrintData: PrintData
@@ -722,6 +747,9 @@ $(function () {
                         gst.val('0');
                         grandTotal.val('0');
                         Narration.val('');
+                        siteAdress.val('');
+                        transportationCharges.val('0');
+                        handlingCharges.val('0');
                         GetLastSalesTransaction();
                     }
                     else {
@@ -914,7 +942,8 @@ $(function () {
                     });
                 }
                 transpoterName.val(result.salesOrder.TranspoterName);
-                Narration.val(result.salesOrder.Naration)
+                siteAdress.val(result.salesOrder.SiteAdress);
+                Narration.val(result.salesOrder.Naration);
                 vehicleNo.val(result.salesOrder.VehicleNo);
                 const ModifyinvoiceDate = result.salesOrder.InvoiceDate;
                 if (ModifyinvoiceDate) {
@@ -940,6 +969,8 @@ $(function () {
                 }
                 subTotal.val(result.salesOrder.SubTotal);
                 discount.val(result.salesOrder.Discount);
+                transportationCharges.val(result.salesOrder.TransportationCharges);
+                handlingCharges.val(result.salesOrder.HandlingCharges);
                 grandTotal.val(result.salesOrder.GrandTotal);
                 gst.val(result.salesOrder.Gst);
                 //Fill Table Data
@@ -1111,6 +1142,9 @@ $(function () {
                 OrderNo: orderNo.val(),
                 OrderDate: orderDate.val(),
                 TranspoterName: transpoterName.val(),
+                TransportationCharges: transportationCharges.val(),
+                HandlingCharges: handlingCharges.val(),
+                SiteAdress: siteAdress.val(),
                 VehicleNo: vehicleNo.val(),
                 SubTotal: subTotal.val(),
                 Discount: discount.val(),
@@ -1142,6 +1176,9 @@ $(function () {
                         discount.val('0');
                         Narration.val('');
                         gst.val('0');
+                        siteAdress.val('');
+                        transportationCharges.val('0');
+                        handlingCharges.val('0');
                         grandTotal.val('0');
                         GetLastSalesTransaction();
                     }
@@ -1208,7 +1245,7 @@ $(function () {
                     var defaultOption = $('<option></option>').val('').text('--Select Option--');
                     Sr_ddlCustomer.append(defaultOption);
                     $.each(result.SubLedgers, function (key, item) {
-                        var option = $('<option></option>').val(item.SubLedgerId).text(item.SubLedgerName);
+                        var option = $('<option></option>').val(item.SubLedgerId).text(item.SubLedgerName + " (" + item.Adress + ")" );
                         Sr_ddlCustomer.append(option);
                     });
                 }
@@ -1512,6 +1549,14 @@ $(function () {
         }
         // end //
     });
+    Sr_transportationCharges.on('change', function () {
+        var tranportChgAmount = $(this).val();
+        subTotalAmount = Sr_subTotal.val();
+        discountAmount = Sr_discount.val();
+        gstAmount = Sr_gst.val();
+        updateGrandTotal = parseFloat(tranportChgAmount) + parseFloat(subTotalAmount) + parseFloat(gstAmount) - parseFloat(discountAmount);
+        Sr_grandTotal.val(updateGrandTotal.toFixed(2));
+    });
     $('#Sr_btnSave').on('click', CreateSalesReturn);
     function CreateSalesReturn() {
         if (!Sr_transactionDate.val()) {
@@ -1578,6 +1623,8 @@ $(function () {
                 OrderDate: Sr_orderDate.val(),
                 SubTotal: Sr_subTotal.val(),
                 Discount: Sr_discount.val(),
+                SiteAdress :Sr_siteAdress.val(),
+                TransportationCharges: Sr_transportationCharges.val(),
                 GrandTotal: Sr_grandTotal.val(),
                 Gst: Sr_gst.val(),
                 TranspoterName: Sr_transpoterName.val(),
@@ -1820,6 +1867,7 @@ $(function () {
                 Sr_vehicleNo.val(result.SalesReturnOrder.VehicleNo);
                 Sr_orderNo.val(result.SalesReturnOrder.OrderNo);
                 Sr_receivingPerson.val(result.SalesReturnOrder.ReceivingPerson);
+                Sr_siteAdress.val(result.SalesReturnOrder.SiteAdress);
                 ModifyorderDate = result.SalesReturnOrder.OrderDate;
                 if (ModifyorderDate) {
                     const dateObject = new Date(ModifyorderDate);
@@ -2007,6 +2055,7 @@ $(function () {
                 TransactionNo: Sr_transactionNo.val(),
                 CustomerName: Sr_CustomerName.val(),
                 Fk_SubLedgerId: Sr_ddlCustomer.val(),
+                SiteAdress: Sr_siteAdress.val(),
                 OrderNo: Sr_orderNo.val(),
                 OrderDate: Sr_orderDate.val(),
                 SubTotal: Sr_subTotal.val(),
@@ -2016,6 +2065,7 @@ $(function () {
                 TranspoterName: Sr_transpoterName.val(),
                 VehicleNo: Sr_vehicleNo.val(),
                 Naration: Sr_Narration.val(),
+                TransportationCharges: Sr_transportationCharges.val(),
                 ReceivingPerson: Sr_receivingPerson.val(),
                 rowData: rowData
             };

@@ -248,7 +248,8 @@ $(function () {
                             if (result.PartyDetailed.Orders.length > 0) {
                                 html += '<tr class="bg-primary">';
                                 html += '<td >Trxn Date </td>';
-                                html += '<td >Trxn No</td>';
+                                html += '<td >Challan No</td>';
+                                html += '<td >Site Adress</td>';
                                 html += '<td >Branch</td>';
                                 html += '<td colspan="4">Details</td>';
                                 html += '<td></td>';
@@ -267,9 +268,10 @@ $(function () {
                                     }
                                     html += '<tr>';
                                     html += '<td>' + formattedDate + '</td>';
-                                    html += '<td>' + item.TransactionNo + '</td>';
+                                    html += '<td>' + item.ChallanNo + '</td>';
+                                    html += '<td>' + item.SiteAdress + '</td>';
                                     html += '<td>' + item.BranchName + '</td>';
-                                    html += '<td colspan="4">' + item.Naration + '</td>';  
+                                    html += '<td colspan="4">' + "----" + '</td>';  
                                     html += '<td>-</td>';  
                                     html += '</tr >';
                                     if (item.Transactions.length > 0) {
@@ -278,6 +280,7 @@ $(function () {
                                         html += '<td >-</td>';
                                         html += '<td >-</td>';
                                         html += '<td >Product</td>';
+                                        html += '<td >Unit</td>';
                                         html += '<td >Qty</td>';
                                         html += '<td >Rate</td>';
                                         html += '<td >Amount</td>';
@@ -288,7 +291,8 @@ $(function () {
                                             html += '<td >-</td>';
                                             html += '<td >-</td>';
                                             html += '<td >-</td>';
-                                            html += '<td >' + Transaction.ProductName +'</td>';
+                                            html += '<td >' + Transaction.ProductName + '</td>';
+                                            html += '<td >' + Transaction.Unit + '</td>';
                                             html += '<td >' + Transaction.Quantity +'</td>';
                                             html += '<td >' + Transaction.Rate +'</td>';
                                             html += '<td >' + Transaction.Amount +'</td>';

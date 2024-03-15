@@ -205,6 +205,7 @@
                         toastr.success(Response.SuccessMsg);
                         date.val(todayDate);
                         rate.val('0');
+                        loadLabourRates();
                     }
                     else {
                         toastr.error(Response.ErrorMsg);

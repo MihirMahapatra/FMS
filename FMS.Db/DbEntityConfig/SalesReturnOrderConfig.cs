@@ -23,11 +23,13 @@ namespace FMS.Db.DbEntityConfig
             builder.Property(e => e.OrderDate).HasColumnType("datetime").IsRequired(true);
             builder.Property(e => e.VehicleNo).HasMaxLength(100).IsRequired(true);
             builder.Property(e => e.ReceivingPerson).HasMaxLength(100).IsRequired(true);
+            builder.Property(e => e.SiteAdress).HasMaxLength(200).IsRequired(false);
             builder.Property(e => e.TranspoterName).HasMaxLength(100).IsRequired(true);
             builder.Property(e => e.Narration).HasMaxLength(500).IsRequired(false);
             builder.Property(e => e.SubTotal).HasColumnType("decimal(18, 2)").HasDefaultValue(0);
             builder.Property(e => e.Discount).HasColumnType("decimal(18, 2)").HasDefaultValue(0);
             builder.Property(e => e.Gst).HasColumnType("decimal(18, 2)").HasDefaultValue(0);
+            builder.Property(e => e.TransportationCharges).HasColumnType("decimal(18,2)").HasDefaultValue(0);
             builder.Property(e => e.GrandTotal).HasColumnType("decimal(18, 2)").HasDefaultValue(0);
             builder.HasOne(e => e.SubLedger).WithMany(s => s.SalesReturnOrders).HasForeignKey(e => e.Fk_SubLedgerId).OnDelete(DeleteBehavior.Restrict);
             builder.HasOne(e=>e.Branch).WithMany(s=>s.SalesReturnOrders).HasForeignKey(e=>e.Fk_BranchId).OnDelete(DeleteBehavior.Restrict);

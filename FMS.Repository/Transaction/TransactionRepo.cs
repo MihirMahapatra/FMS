@@ -41,6 +41,8 @@ namespace FMS.Repository.Transaction
                                                    {
                                                        SubLedgerId = s.SubLedgerId,
                                                        SubLedgerName = s.SubLedgerName,
+                                                       Adress =  _appDbContext.Parties.Where(a => a.Fk_SubledgerId == s.SubLedgerId).Select(s => s.Address).FirstOrDefault()
+
                                                    }).ToListAsync();
 
                 if (_Result.CollectionObjData.Count > 0)
@@ -2552,6 +2554,7 @@ namespace FMS.Repository.Transaction
                                                    {
                                                        SubLedgerId = s.SubLedgerId,
                                                        SubLedgerName = s.SubLedgerName,
+                                                       Adress = _appDbContext.Parties.Where(a => a.Fk_SubledgerId == s.SubLedgerId).Select(s => s.Address).FirstOrDefault()
                                                    }).ToListAsync();
                 if (_Result.CollectionObjData.Count > 0)
                 {
@@ -2720,6 +2723,9 @@ namespace FMS.Repository.Transaction
                         TransactionDate = s.TransactionDate,
                         OrderNo = s.OrderNo,
                         OrderDate = s.OrderDate,
+                        SiteAdress = s.SiteAdress,
+                        TransportationCharges = s.TransportationCharges,
+                        HandlingCharges = s.HandlingCharges,
                         TranspoterName = s.TranspoterName,
                         VehicleNo = s.VehicleNo,
                         ReceivingPerson = s.ReceivingPerson,
@@ -2808,14 +2814,17 @@ namespace FMS.Repository.Transaction
                             TransactionNo = data.TransactionNo,
                             TransactionType = data.TransactionType,
                             PriceType = data.RateType,
+                            HandlingCharges = data.HandlingCharges,
                             OrderNo = data.OrderNo,
                             OrderDate = convertedOrderDate,
                             TranspoterName = data.TranspoterName,
                             VehicleNo = data.VehicleNo,
                             ReceivingPerson = data.ReceivingPerson,
+                            SiteAdress = data.SiteAdress,
                             SubTotal = data.SubTotal,
                             Gst = data.Gst,
                             Discount = data.Discount,
+                            TransportationCharges = data.TransportationCharges,
                             GrandTotal = data.GrandTotal,
                             Narration = data.Naration
                         };
@@ -2900,6 +2909,29 @@ namespace FMS.Repository.Transaction
                                 await _appDbContext.LedgerBalances.AddAsync(newLedgerBalance);
                                 await _appDbContext.SaveChangesAsync();
                             }
+                            //@TransportingChargeRecive A/c--------Dr
+                            var updateTransportingChargeReciveBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.TransportingChargeRecive && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                            if (updateTransportingChargeReciveBalance != null)
+                            {
+                                updateTransportingChargeReciveBalance.RunningBalance += newSalesOrder.TransportationCharges;
+                                updateTransportingChargeReciveBalance.RunningBalanceType = (updateTransportingChargeReciveBalance.RunningBalance >= 0) ? "Dr" : "Cr";
+                                await _appDbContext.SaveChangesAsync();
+                            }
+                            else
+                            {
+                                var newLedgerBalance = new LedgerBalance
+                                {
+                                    Fk_LedgerId = MappingLedgers.TransportingChargeRecive,
+                                    OpeningBalance = 0,
+                                    OpeningBalanceType = "Cr",
+                                    RunningBalance = +data.TransportationCharges,
+                                    RunningBalanceType = "Cr",
+                                    Fk_BranchId = BranchId,
+                                    Fk_FinancialYear = FinancialYear
+                                };
+                                await _appDbContext.LedgerBalances.AddAsync(newLedgerBalance);
+                                await _appDbContext.SaveChangesAsync();
+                            }
                             #endregion
                             #region Journal 
                             var JournalVoucherNo = await _appDbContext.Journals.Where(s => s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).Select(s => new { s.VouvherNo }).OrderByDescending(s => s.VouvherNo).FirstOrDefaultAsync();
@@ -2977,6 +3009,29 @@ namespace FMS.Repository.Transaction
                                     OpeningBalance = 0,
                                     OpeningBalanceType = "Cr",
                                     RunningBalance = -newSalesOrder.GrandTotal,
+                                    RunningBalanceType = "Cr",
+                                    Fk_BranchId = BranchId,
+                                    Fk_FinancialYear = FinancialYear
+                                };
+                                await _appDbContext.LedgerBalances.AddAsync(newLedgerBalance);
+                                await _appDbContext.SaveChangesAsync();
+                            }
+                            //@TransportingChargeRecive A/c--------Dr
+                            var updateTransportingChargeReciveBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.TransportingChargeRecive && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                            if (updateTransportingChargeReciveBalance != null)
+                            {
+                                updateTransportingChargeReciveBalance.RunningBalance += newSalesOrder.TransportationCharges;
+                                updateTransportingChargeReciveBalance.RunningBalanceType = (updateTransportingChargeReciveBalance.RunningBalance >= 0) ? "Dr" : "Cr";
+                                await _appDbContext.SaveChangesAsync();
+                            }
+                            else
+                            {
+                                var newLedgerBalance = new LedgerBalance
+                                {
+                                    Fk_LedgerId = MappingLedgers.TransportingChargeRecive,
+                                    OpeningBalance = 0,
+                                    OpeningBalanceType = "Cr",
+                                    RunningBalance = +data.TransportationCharges,
                                     RunningBalanceType = "Cr",
                                     Fk_BranchId = BranchId,
                                     Fk_FinancialYear = FinancialYear
@@ -3355,6 +3410,23 @@ namespace FMS.Repository.Transaction
                                             _Result.WarningMessage = "Ledger Balance Not Exist";
                                             return _Result;
                                         }
+                                        if (UpdateSalesOrder.TransportationCharges != data.TransportationCharges)
+                                        {
+                                            var TransportChargedifference = data.TransportationCharges - UpdateSalesOrder.TransportationCharges;
+                                            //@TransportingChargeRecive A/c--------Cr
+                                            var updateTransportingChargeReciveBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.TransportingChargeRecive && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                            if (updateTransportingChargeReciveBalance != null)
+                                            {
+                                                updateTransportingChargeReciveBalance.RunningBalance += TransportChargedifference;
+                                                updateTransportingChargeReciveBalance.RunningBalanceType = (updateTransportingChargeReciveBalance.RunningBalance >= 0) ? "Dr" : "Cr";
+                                                await _appDbContext.SaveChangesAsync();
+                                            }
+                                            else
+                                            {
+                                                _Result.WarningMessage = "Ledger Balance Not Exist";
+                                                return _Result;
+                                            }
+                                        }
                                     }
                                     #endregion
                                     #region Journal Table
@@ -3397,6 +3469,23 @@ namespace FMS.Repository.Transaction
                                         {
                                             _Result.WarningMessage = "Ledger Balance Not Exist";
                                             return _Result;
+                                        }
+                                        if (UpdateSalesOrder.TransportationCharges != data.TransportationCharges)
+                                        {
+                                            var TransportChargedifference = data.TransportationCharges - UpdateSalesOrder.TransportationCharges;
+                                            //@TransportingChargeRecive A/c--------Cr
+                                            var updateTransportingChargeReciveBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.TransportingChargeRecive && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                            if (updateTransportingChargeReciveBalance != null)
+                                            {
+                                                updateTransportingChargeReciveBalance.RunningBalance += TransportChargedifference;
+                                                updateTransportingChargeReciveBalance.RunningBalanceType = (updateTransportingChargeReciveBalance.RunningBalance >= 0) ? "Dr" : "Cr";
+                                                await _appDbContext.SaveChangesAsync();
+                                            }
+                                            else
+                                            {
+                                                _Result.WarningMessage = "Ledger Balance Not Exist";
+                                                return _Result;
+                                            }
                                         }
                                     }
                                     #endregion
@@ -3651,9 +3740,12 @@ namespace FMS.Repository.Transaction
                             UpdateSalesOrder.OrderDate = convertedOrderDate;
                             UpdateSalesOrder.TranspoterName = data.TranspoterName;
                             UpdateSalesOrder.ReceivingPerson = data.ReceivingPerson;
+                            UpdateSalesOrder.SiteAdress = data.SiteAdress;
+                            UpdateSalesOrder.HandlingCharges = data.HandlingCharges;
                             UpdateSalesOrder.VehicleNo = data.VehicleNo;
                             UpdateSalesOrder.SubTotal = Convert.ToDecimal(data.SubTotal);
                             UpdateSalesOrder.Discount = Convert.ToDecimal(data.Discount);
+                            UpdateSalesOrder.TransportationCharges = Convert.ToDecimal(data.TransportationCharges);
                             UpdateSalesOrder.Gst = Convert.ToDecimal(data.Gst);
                             UpdateSalesOrder.GrandTotal = Convert.ToDecimal(data.GrandTotal);
                             UpdateSalesOrder.Narration = data.Naration;
@@ -4368,6 +4460,7 @@ namespace FMS.Repository.Transaction
                     TransactionDate = s.TransactionDate,
                     OrderNo = s.OrderNo,
                     OrderDate = s.OrderDate,
+                    SiteAdress = s.SiteAdress,
                     Discount = s.Discount,
                     Gst = s.Gst,
                     SubTotal = s.SubTotal,
@@ -4453,6 +4546,7 @@ namespace FMS.Repository.Transaction
                             OrderNo = data.OrderNo,
                             OrderDate = convertedOrderDate,
                             TranspoterName = data.TranspoterName,
+                            SiteAdress = data.SiteAdress,
                             VehicleNo = data.VehicleNo,
                             ReceivingPerson = data.ReceivingPerson,
                             Narration = data.Naration,
@@ -5289,6 +5383,7 @@ namespace FMS.Repository.Transaction
                             UpdateSalesReturnOrder.TranspoterName = data.TranspoterName;
                             UpdateSalesReturnOrder.ReceivingPerson = data.ReceivingPerson;
                             UpdateSalesReturnOrder.Narration = data.Naration;
+                            UpdateSalesReturnOrder.SiteAdress = data.SiteAdress;
                             UpdateSalesReturnOrder.VehicleNo = data.VehicleNo;
                             UpdateSalesReturnOrder.SubTotal = Convert.ToDecimal(data.SubTotal);
                             UpdateSalesReturnOrder.Discount = Convert.ToDecimal(data.Discount);

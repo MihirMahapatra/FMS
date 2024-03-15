@@ -75,29 +75,6 @@ namespace FMS.Controllers.Print
         #endregion
         #region Labour Reports
         [HttpPost]
-        public IActionResult LabourDetailedPrintData([FromBody] LabourDetailsModal requestData)
-        {
-            TempData["LabourDetailedData"] = JsonConvert.SerializeObject(requestData);
-            return Json(new { redirectTo = Url.Action("LabourDetailedPrint", "Print") });
-        }
-        [HttpGet]
-        public IActionResult LabourDetailedPrints()
-        {
-
-            if (TempData.TryGetValue("LabourDetailedData", out object tempData) && tempData is string jsonData)
-            {
-                var requestPrintData = JsonConvert.DeserializeObject<LabourDetailsModal>(jsonData);
-                var LabourDetailedReportModal = new LabourDetailedReportModal()
-                {
-                    Cmopany = _adminSvcs.GetCompany().Result.GetCompany,
-                    LabourDetails = requestPrintData
-                };
-                return View(LabourDetailedReportModal);
-            }
-            return RedirectToAction("Error");
-        }
-
-        [HttpPost]
         public IActionResult LabourSummarizedPrintData([FromBody] LabourDetailsModal requestData)
         {
             TempData["LabourSummarizedData"] = JsonConvert.SerializeObject(requestData);

@@ -20,6 +20,8 @@ namespace FMS.Model.CommonModel
         public string TranspoterName { get; set; }
         public string VehicleNo { get; set; } = null;
         public string ReceivingPerson { get; set; } = null;
+        public string SiteAdress { get; set; } = null;
+        public decimal TransportationCharges { get; set; }
         public string Naration { get; set; } = null;
         public decimal SubTotal { get; set; }
         public decimal Gst { get; set; }

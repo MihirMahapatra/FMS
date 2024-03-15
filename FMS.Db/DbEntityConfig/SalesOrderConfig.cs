@@ -25,7 +25,10 @@ namespace FMS.Db.DbEntityConfig
             builder.Property(e => e.ReceivingPerson).HasMaxLength(100).IsRequired(false);
             builder.Property(e => e.TranspoterName).HasMaxLength(100).IsRequired(true);
             builder.Property(e => e.Narration).HasMaxLength(500).IsRequired(false);
+            builder.Property(e => e.HandlingCharges).HasColumnType("decimal(18,2)").HasDefaultValue(0);
             builder.Property(e => e.SubTotal).HasColumnType("decimal(18,2)").IsRequired(true);
+            builder.Property(e => e.TransportationCharges).HasColumnType("decimal(18,2)").HasDefaultValue(0);
+            builder.Property(e => e.SiteAdress).HasMaxLength(200).IsRequired(false);
             builder.Property(e => e.Discount).HasColumnType("decimal(18,2)").IsRequired(true);
             builder.Property(e => e.Gst).HasColumnType("decimal(18, 2)").HasDefaultValue(0);
             builder.Property(e => e.GrandTotal).HasColumnType("decimal(18,2)").IsRequired(true);

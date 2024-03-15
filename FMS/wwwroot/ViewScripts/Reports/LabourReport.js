@@ -301,73 +301,9 @@ $(function () {
 
                                 });
                             }
-                            //if (item.Payment !== null) {
-                            //    $.each(item.Payment, function (key, Payment) {
-                            //        const ModifyDate = Payment.VoucherDate;
-                            //        var formattedDate = '';
-                            //        if (ModifyDate) {
-                            //            const dateObject = new Date(ModifyDate);
-                            //            if (!isNaN(dateObject)) {
-                            //                const day = String(dateObject.getDate()).padStart(2, '0');
-                            //                const month = String(dateObject.getMonth() + 1).padStart(2, '0');
-                            //                const year = dateObject.getFullYear();
-                            //                formattedDate = `${day}/${month}/${year}`;
-                            //            }
-                            //        }
-                            //        html += '<tr>';
-                            //        html += '<td>' + formattedDate + '</td>';
-                            //        html += '<td>' + Payment.VouvherNo + '</td>';
-                            //        html += '<td>Payment</td>';
-                            //        html += '<td>-</td>';
-                            //        html += '<td>-</td>';
-                            //        html += '<td>-</td>';
-                            //        html += '<td>-</td>';
-                            //        html += '<td>-</td>';
-                            //        html += '<td>' + Payment.Amount.toFixed(2) + '</td>';
-                            //        Balance -= Payment.Amount
-                            //        html += '<td>' + Balance.toFixed(2) + '</td>';
-                            //        html += '</tr >';
-                            //    });
-                            //}
-                            //if (item.DamageOrders !== null) {
-                            //    $.each(item.DamageOrders, function (key, Damage) {
-                            //        const ModifyDate = Damage.TransactionDate;
-                            //        var formattedDate = '';
-                            //        if (ModifyDate) {
-                            //            const dateObject = new Date(ModifyDate);
-                            //            if (!isNaN(dateObject)) {
-                            //                const day = String(dateObject.getDate()).padStart(2, '0');
-                            //                const month = String(dateObject.getMonth() + 1).padStart(2, '0');
-                            //                const year = dateObject.getFullYear();
-                            //                formattedDate = `${day}/${month}/${year}`;
-                            //            }
-                            //        }
-                            //        html += '<tr>';
-                            //        html += '<td>' + formattedDate + '</td>';
-                            //        html += '<td>' + Damage.TransactionNo + '</td>';
-                            //        html += '<td>Damage</td>';
-                            //        html += '<td>-</td>';
-                            //        html += '<td>-</td>';
-                            //        html += '<td>-</td>';
-                            //        html += '<td>-</td>';
-                            //        html += '<td>' + Damage.Amount.toFixed(2) + '</td>';
-                            //        html += '<td>-</td>';
-                            //        Balance -= Damage.TotalAmount
-                            //        html += '<td>' + BalancetoFixed(2) + '</td>';
-                            //        html += '</tr >';
-                            //    });
-                            //}
                         });
 
                         $('#BtnPrint').show();
-                        //LabourName = result.Labours[0].LabourName
-                        //PrintData = {
-                        //    LaborReports: result.Labours,
-                        //    FromDate: fromDateDetailed.val(),
-                        //    LabourName: LabourName,
-                        //    ToDate: toDateDetailed.val(),
-                        //    OpeningBal: result.Labours[0].OpeningBalance
-                        //};
                     }
                     else {
                         html += '<tr>';
@@ -390,18 +326,6 @@ $(function () {
         }
     });
     $('#BtnPrint').on('click', function () {
-        //console.log(PrintData);
-        //$.ajax({
-        //    type: "POST",
-        //    url: '/Print/LabourDetailedPrintData',
-        //    dataType: 'json',
-        //    data: JSON.stringify(PrintData),
-        //    contentType: "application/json;charset=utf-8",
-        //    success: function (Response) {
-        //        window.open(Response.redirectTo, '_blank');
-
-        //    },
-        //});
         var queryString = $.param(requestData); // Serialize object to query string
         var url = '/Print/LabourDetailedPrint?' + queryString; // Append query string to URL
         window.open(url, '_blank');

@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
@@ -823,6 +824,7 @@ namespace FMS.Repository.Reports
                         {
                             Fk_SubledgerId = s.SubLedgerId,
                             PartyName = s.SubLedgerName,
+                            Adress = _appDbContext.Parties.Where(a => a.Fk_SubledgerId == s.SubLedgerId).Select(s => s.Address).FirstOrDefault(),
                             OpeningBal = _appDbContext.SubLedgerBalances.Where(x => x.Fk_SubLedgerId == s.SubLedgerId && x.Fk_FinancialYearId == FinancialYearId && x.Fk_BranchId == BranchId).Select(t => t.OpeningBalance).Sum()
                             + _appDbContext.SalesOrders.Where(p => p.Fk_FinancialYearId == FinancialYearId && p.Fk_BranchId == BranchId && p.TransactionDate < convertedFromDate && p.Fk_SubLedgerId == s.SubLedgerId).Select(t => t.GrandTotal).Sum()
                             - _appDbContext.SalesReturnOrders.Where(so => so.Fk_FinancialYearId == FinancialYearId && so.Fk_BranchId == BranchId && so.TransactionDate < convertedFromDate && so.Fk_SubLedgerId == s.SubLedgerId).Select(t => t.GrandTotal).Sum()
@@ -987,6 +989,7 @@ namespace FMS.Repository.Reports
                     {
                         Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
                         PartyInfos.PartyName = _appDbContext.SubLedgers.Where(x => x.SubLedgerId == requestData.PartyId).Select(x => x.SubLedgerName).FirstOrDefault();
+                        PartyInfos.Adress = _appDbContext.Parties.Where(a => a.Fk_SubledgerId == requestData.PartyId).Select(s => s.Address).FirstOrDefault();
                         PartyInfos.OpeningBal = _appDbContext.SubLedgerBalances.Where(x => x.Fk_SubLedgerId == requestData.PartyId && x.Fk_FinancialYearId == FinancialYearId && x.Fk_BranchId == BranchId).Select(t => t.OpeningBalance).Sum()
                                               + _appDbContext.SalesOrders.Where(p => p.Fk_FinancialYearId == FinancialYearId && p.Fk_BranchId == BranchId && p.TransactionDate < convertedFromDate && p.Fk_SubLedgerId == requestData.PartyId).Select(t => t.GrandTotal).Sum()
                                               - _appDbContext.SalesReturnOrders.Where(so => so.Fk_FinancialYearId == FinancialYearId && so.Fk_BranchId == BranchId && so.TransactionDate < convertedFromDate && so.Fk_SubLedgerId == requestData.PartyId).Select(t => t.GrandTotal).Sum()
@@ -1004,18 +1007,25 @@ namespace FMS.Repository.Reports
                                                    TransactionDate = t.TransactionDate,
                                                    TransactionNo = t.TransactionNo,
                                                    GrandTotal = t.GrandTotal,
+                                                   SiteAdress = t.SiteAdress,
+                                                   ChallanNo = t.OrderNo,
                                                    Naration = t.Narration,
                                                    BranchName = t.Branch.BranchName,
-                                                   DrCr="Dr",
+                                                   DrCr = "Dr",
                                                    Transactions = t.SalesTransactions.Where(s => s.Fk_SalesOrderId == t.SalesOrderId)
+
                                                    .Select(s => new PartyReportTransactionModel
                                                    {
                                                        ProductName = _appDbContext.Products.Where(p => p.ProductId == s.Fk_ProductId).Select(p => p.ProductName).FirstOrDefault(),
                                                        Quantity = s.UnitQuantity,
                                                        Rate = s.Rate,
+                                                       Unit = (from p in _appDbContext.Products
+                                                               join u in _appDbContext.Units on p.Fk_UnitId equals u.UnitId
+                                                               where p.ProductId == s.Fk_ProductId
+                                                               select u.UnitName).FirstOrDefault(),
                                                        Amount = s.Amount
                                                    }).ToList()
-                                               }).ToList());
+                                               }).ToList()) ;
                         PartyInfos.Orders.AddRange(_appDbContext.SalesReturnOrders
                                           .Where(p => p.Fk_FinancialYearId == FinancialYearId && p.Fk_BranchId == BranchId && p.TransactionDate >= convertedFromDate && p.TransactionDate <= convertedToDate && p.Fk_SubLedgerId == requestData.PartyId)
                                           .OrderBy(t => t.TransactionDate)
@@ -1024,6 +1034,8 @@ namespace FMS.Repository.Reports
                                               TransactionDate = t.TransactionDate,
                                               TransactionNo = t.TransactionNo,
                                               GrandTotal = t.GrandTotal,
+                                              SiteAdress = t.SiteAdress,
+                                              ChallanNo = t.OrderNo,
                                               Naration = t.Narration,
                                               DrCr = "Cr",
                                               BranchName = t.Branch.BranchName,
@@ -1033,6 +1045,10 @@ namespace FMS.Repository.Reports
                                               ProductName = _appDbContext.Products.Where(p => p.ProductId == s.Fk_ProductId).Select(p => p.ProductName).FirstOrDefault(),
                                               Quantity = s.UnitQuantity,
                                               Rate = s.Rate,
+                                              Unit = (from p in _appDbContext.Products
+                                                      join u in _appDbContext.Units on p.Fk_UnitId equals u.UnitId
+                                                      where p.ProductId == s.Fk_ProductId
+                                                      select u.UnitName).FirstOrDefault(),
                                               Amount = s.Amount,
                                           }).ToList()
                                           }).ToList());
@@ -1042,7 +1058,9 @@ namespace FMS.Repository.Reports
                             {
                                 TransactionDate = t.VoucherDate,
                                 TransactionNo = t.VouvherNo,
+                                ChallanNo = t.VouvherNo,
                                 Naration = t.Narration,
+                                SiteAdress = "_",
                                 GrandTotal = t.Amount,
                                 BranchName = t.Branch.BranchName,
                                 DrCr = "Cr",
@@ -1069,6 +1087,7 @@ namespace FMS.Repository.Reports
                                                TransactionNo = t.TransactionNo,
                                                TransactionType = t.TransactionType,
                                                GrandTotal = t.GrandTotal,
+                                               SiteAdress =t.SiteAdress,
                                                Naration = t.Narration,
                                                DrCr = "Dr",
                                                BranchName = t.Branch.BranchName,
@@ -1077,6 +1096,10 @@ namespace FMS.Repository.Reports
                                                {
                                                    ProductName = _appDbContext.Products.Where(p => p.ProductId == s.Fk_ProductId).Select(p => p.ProductName).FirstOrDefault(),
                                                    Quantity = s.UnitQuantity,
+                                                   Unit = (from p in _appDbContext.Products
+                                                           join u in _appDbContext.Units on p.Fk_UnitId equals u.UnitId
+                                                           where p.ProductId == s.Fk_ProductId
+                                                           select u.UnitName).FirstOrDefault(),
                                                    Rate = s.Rate,
                                                    Amount = s.Amount
                                                }).ToList()
@@ -1090,6 +1113,7 @@ namespace FMS.Repository.Reports
                                               TransactionNo = t.TransactionNo,
                                               TransactionType = t.TransactionType,
                                               GrandTotal = t.GrandTotal,
+                                              SiteAdress = t.SiteAdress,
                                               Naration = t.Narration,
                                               DrCr = "Cr",
                                               BranchName = t.Branch.BranchName,
@@ -1099,6 +1123,7 @@ namespace FMS.Repository.Reports
                                               ProductName = _appDbContext.Products.Where(p => p.ProductId == s.Fk_ProductId).Select(p => p.ProductName).FirstOrDefault(),
                                               Quantity = s.UnitQuantity,
                                               Rate = s.Rate,
+                                              Unit = _appDbContext.Products.Where(p => p.ProductId == s.Fk_ProductId).Select(p => new ProductModel { ProductName = p.ProductName, Unit = new UnitModel { UnitName = p.Unit.UnitName } }).FirstOrDefault().Unit.UnitName,
                                               Amount = s.Amount,
                                           }).ToList()
                                           }).ToList());
@@ -1109,6 +1134,7 @@ namespace FMS.Repository.Reports
                                 TransactionDate = t.VoucherDate,
                                 TransactionNo = t.VouvherNo,
                                 Naration = t.Narration,
+                                SiteAdress = "-",
                                 GrandTotal = t.Amount,
                                 DrCr = "Cr",
                                 BranchName = t.Branch.BranchName,
