@@ -1018,6 +1018,7 @@ namespace FMS.Repository.Reports
                                                    {
                                                        ProductName = _appDbContext.Products.Where(p => p.ProductId == s.Fk_ProductId).Select(p => p.ProductName).FirstOrDefault(),
                                                        Quantity = s.UnitQuantity,
+                                                       AlternateUnit = _appDbContext.AlternateUnits.Where(a => a.FK_ProductId == s.Fk_ProductId).Select(a => a.AlternateUnitName).FirstOrDefault(),
                                                        Rate = s.Rate,
                                                        Unit = (from p in _appDbContext.Products
                                                                join u in _appDbContext.Units on p.Fk_UnitId equals u.UnitId
@@ -1044,6 +1045,7 @@ namespace FMS.Repository.Reports
                                           {
                                               ProductName = _appDbContext.Products.Where(p => p.ProductId == s.Fk_ProductId).Select(p => p.ProductName).FirstOrDefault(),
                                               Quantity = s.UnitQuantity,
+                                              AlternateUnit = _appDbContext.AlternateUnits.Where(a => a.FK_ProductId == s.Fk_ProductId).Select(a => a.AlternateUnitName ).FirstOrDefault(),
                                               Rate = s.Rate,
                                               Unit = (from p in _appDbContext.Products
                                                       join u in _appDbContext.Units on p.Fk_UnitId equals u.UnitId
@@ -1096,6 +1098,7 @@ namespace FMS.Repository.Reports
                                                {
                                                    ProductName = _appDbContext.Products.Where(p => p.ProductId == s.Fk_ProductId).Select(p => p.ProductName).FirstOrDefault(),
                                                    Quantity = s.UnitQuantity,
+                                                   AlternateUnit = _appDbContext.AlternateUnits.Where(a => a.FK_ProductId == s.Fk_ProductId).Select(a => a.AlternateUnitName).FirstOrDefault(),
                                                    Unit = (from p in _appDbContext.Products
                                                            join u in _appDbContext.Units on p.Fk_UnitId equals u.UnitId
                                                            where p.ProductId == s.Fk_ProductId
@@ -1122,8 +1125,12 @@ namespace FMS.Repository.Reports
                                           {
                                               ProductName = _appDbContext.Products.Where(p => p.ProductId == s.Fk_ProductId).Select(p => p.ProductName).FirstOrDefault(),
                                               Quantity = s.UnitQuantity,
+                                              AlternateUnit = _appDbContext.AlternateUnits.Where(a => a.FK_ProductId == s.Fk_ProductId).Select(a => a.AlternateUnitName).FirstOrDefault(),
                                               Rate = s.Rate,
-                                              Unit = _appDbContext.Products.Where(p => p.ProductId == s.Fk_ProductId).Select(p => new ProductModel { ProductName = p.ProductName, Unit = new UnitModel { UnitName = p.Unit.UnitName } }).FirstOrDefault().Unit.UnitName,
+                                              Unit = (from p in _appDbContext.Products
+                                                      join u in _appDbContext.Units on p.Fk_UnitId equals u.UnitId
+                                                      where p.ProductId == s.Fk_ProductId
+                                                      select u.UnitName).FirstOrDefault(),
                                               Amount = s.Amount,
                                           }).ToList()
                                           }).ToList());
@@ -1367,6 +1374,7 @@ namespace FMS.Repository.Reports
                                                      {
                                                          ProductName = s.Product.ProductName,
                                                          Quantity = s.UnitQuantity,
+                                                         AlternateQuantity = s.AlternateQuantity,
                                                          Rate = s.Rate,
                                                          Amount = s.Amount
                                                      }).ToList()
@@ -1387,6 +1395,7 @@ namespace FMS.Repository.Reports
                                              {
                                                  ProductName = s.Product.ProductName,
                                                  Quantity = s.UnitQuantity,
+                                                 AlternateQuantity = s.AlternateQuantity,
                                                  Rate = s.Rate,
                                                  Amount = s.Amount,
                                              }).ToList()
@@ -1433,6 +1442,7 @@ namespace FMS.Repository.Reports
                                                {
                                                    ProductName = s.Product.ProductName,
                                                    Quantity = s.UnitQuantity,
+                                                   AlternateQuantity = s.AlternateQuantity,
                                                    Rate = s.Rate,
                                                    Amount = s.Amount
                                                }).ToList()
@@ -1454,6 +1464,7 @@ namespace FMS.Repository.Reports
                                           {
                                               ProductName = s.Product.ProductName,
                                               Quantity = s.UnitQuantity,
+                                              AlternateQuantity = s.AlternateQuantity,
                                               Rate = s.Rate,
                                               Amount = s.Amount,
                                           }).ToList()

@@ -284,6 +284,7 @@ $(function () {
                                         html += '<td >-</td>';
                                         html += '<td >Product</td>';
                                         html += '<td >Qty</td>';
+                                        html += '<td >Alt Qty</td>';
                                         html += '<td >Rate</td>';
                                         html += '<td >Amount</td>';
                                         html += '<td >-</td>';
@@ -295,6 +296,7 @@ $(function () {
                                             html += '<td >-</td>';
                                             html += '<td >' + Transaction.ProductName + '</td>';
                                             html += '<td >' + Transaction.Quantity + '</td>';
+                                            html += '<td >' + Transaction.AlternateQuantity + '</td>';
                                             html += '<td >' + Transaction.Rate + '</td>';
                                             html += '<td >' + Transaction.Amount + '</td>';
                                             html += '<td >-</td>';

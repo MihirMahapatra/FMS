@@ -12,6 +12,7 @@
     toDate.val(todayDate);
     const ClosingBal = $('input[name="ClosingBal"]');
     //-----------------------------------------------------Stock Report Scren --------------------------------------------------//
+    var PrintData = {};
     $('#btnView').on('click', function () {
         $('#loader').show();
         $('.SummerizedLabourReportTable').empty();
@@ -152,7 +153,6 @@
                         });
 
                         // Append buttons container to the desired location
-                        table.buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
                     }
                     PrintData = {
                         OpeningBal: parseFloat((Math.abs(result.CashBook.OpeningBal))),

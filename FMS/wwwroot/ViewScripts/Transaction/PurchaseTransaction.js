@@ -418,6 +418,57 @@ $(function () {
             });
         }
     });
+    $(document).on('change', '.Rawmaterial', function () {
+        var selectElement = $(this);
+        var selectedProductId = selectElement.val();
+        if (selectedProductId) {
+            $.ajax({
+                url: '/Transaction/GetProductGstWithRate?id=' + selectedProductId,
+                type: "GET",
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    if (result.ResponseCode == 302) {
+                        var Textbox = selectElement.closest('tr').find('input[type="text"]');
+                        for (var i = 0; i < 7; i++) {
+                            Textbox.eq(i).val('0');
+                        }
+                        /*  Textbox.eq(2).val(result.product.Price);*/
+                        Textbox.eq(5).val(result.Product.GST);
+                    }
+                },
+                error: function (errormessage) {
+                    console.log(errormessage);
+                }
+            });
+            $.ajax({
+                url: '/Transaction/GetProductAlternateUnit?ProductId=' + selectedProductId,
+                type: "GET",
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    var selectBox = selectElement.closest('tr').find('select').eq(1);
+                    if (result.ResponseCode == 302) {
+                        selectBox.empty();
+                        var defaultOption = $('<option></option>').val('').text('--Select Option--');
+                        selectBox.append(defaultOption);
+                        $.each(result.AlternateUnits, function (key, item) {
+                            var option = $('<option></option>').val(item.AlternateUnitId).text(item.AlternateUnitName);
+                            selectBox.append(option);
+                        });
+                    }
+                    else {
+                        selectBox.empty();
+                        var defaultOption = $('<option></option>').val('').text('--Select Option--');
+                        selectBox.append(defaultOption);
+                    }
+                },
+                error: function (errormessage) {
+                    console.log(errormessage)
+                }
+            });
+        }
+    });
     $(document).on('change', '#txtAlternateQty', function () {
         var row = $(this).closest('tr');
         var alternateQty = $(this).val();

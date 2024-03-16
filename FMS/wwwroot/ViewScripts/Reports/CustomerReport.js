@@ -280,8 +280,9 @@ $(function () {
                                         html += '<td >-</td>';
                                         html += '<td >-</td>';
                                         html += '<td >Product</td>';
-                                        html += '<td >Unit</td>';
                                         html += '<td >Qty</td>';
+                                        html += '<td >Unit</td>';
+                                        html += '<td >Alternate Unit</td>';
                                         html += '<td >Rate</td>';
                                         html += '<td >Amount</td>';
                                         html += '<td >-</td>';
@@ -292,8 +293,13 @@ $(function () {
                                             html += '<td >-</td>';
                                             html += '<td >-</td>';
                                             html += '<td >' + Transaction.ProductName + '</td>';
+                                            html += '<td >' + Transaction.Quantity + '</td>';
                                             html += '<td >' + Transaction.Unit + '</td>';
-                                            html += '<td >' + Transaction.Quantity +'</td>';
+                                            if (Transaction.AlternateUnit != null) {
+                                                html += '<td >' + Transaction.AlternateUnit + '</td>';
+                                            } else {
+                                                html += '<td >-</td>';
+                                            }
                                             html += '<td >' + Transaction.Rate +'</td>';
                                             html += '<td >' + Transaction.Amount +'</td>';
                                             html += '<td >-</td>';

@@ -51,7 +51,6 @@
                                     <div class="header-logo">
                                         <a href="index.html">
                                             <img src="~/landingpage/assets/images/logo/logo.png" alt="logo" style="width:30%; margin-left:25px;" />
-                                            
                                         </a>
                                         <P style="font-family: Times,  Times New Roman, Georgia, serif; color:black; margin-left:30px;"> @Model.Cmopany.Name</P>
                                     </div>
@@ -120,8 +119,9 @@
                                             <td>-</td>
                                             <td>-</td>
                                             <td>Product</td>
-                                            <td>Unit</td>
                                             <td>Qty</td>
+                                            <td>Unit</td>
+                                            <td>AltUnit</td>
                                             <td>Rate</td>
                                             <td>Amount</td>
                                             <td style="text-align:center;">-</td>
@@ -135,8 +135,16 @@
                                                 <td>-</td>
                                                 <td>-</td>
                                                 <td>@transaction.ProductName</td>
-                                                <td>@transaction.Unit</td>
                                                 <td>@transaction.Quantity</td>
+                                                <td>@transaction.Unit</td>
+                                                @if(transaction.AlternateUnit != null)
+                                                {
+                                                    <td>@transaction.AlternateUnit</td>
+                                                }
+                                                else
+                                                {
+                                                    <td>-</td>
+                                                }
                                                 <td>@transaction.Rate</td>
                                                 <td>@transaction.Amount</td>
                                                 <td style="text-align:center;">-</td>
