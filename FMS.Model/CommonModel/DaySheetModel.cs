@@ -14,6 +14,7 @@ namespace FMS.Model.CommonModel
         public decimal ClosingCashBal { get; set; }
         public decimal OpeningBankBal { get; set; }
         public decimal ClosingBankBal { get; set; }
+        public decimal ProductionAmount { get; set; }
         public List<PurchaseOrderModel> Purchases { get; set; }
         public List<SalesOrderModel> CashSales { get; set; }
         public List<SalesOrderModel> CreditSales { get; set; }

@@ -28,7 +28,9 @@ namespace FMS.Controllers.DashBoard
                 TempData["SuccessMsg"] = SuccessMsg;
             }
             DateTime currentDate = DateTime.Today;
-            string formattedDate = currentDate.ToString("dd/MM/yyyy");
+            string formattedDate1 = currentDate.ToString("dd/MM/yyyy");
+            string formattedDate = formattedDate1.Replace("-", "/");
+
             var daysheet = _reportSvcs.GetDaySheet(formattedDate);
             return PartialView(daysheet.Result.DaySheet);
         }

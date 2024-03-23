@@ -31,8 +31,8 @@
                     <!-- small box -->
                     <div class="small-box bg-info">
                         <div class="inner">
-                            <h3>@Model.CashSale</h3>
-                            <p>Cash Sale</p>
+                            <h3>@(Model.CashSale + Model.CreditSale)</h3>
+                            <p>Sale Amount</p>
                         </div>
                         <div class="icon">
                             <i class="fa-sharp fa-solid fa-people-group"></i>
@@ -44,8 +44,8 @@
                     <!-- small box -->
                     <div class="small-box bg-success">
                         <div class="inner">
-                            <h3>@Model.CreditSale</h3>
-                            <p>Credit Sale</p>
+                            <h3>@Model.ProductionAmount</h3>
+                            <p>Production Amount</p>
                         </div>
                         <div class="icon">
                             <i class="fa-solid fa-user-check"></i>
@@ -53,12 +53,11 @@
                         <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
                     </div>
                 </div>
-
                 <div class="col-lg-3 col-6">
                     <!-- small box -->
                     <div class="small-box bg-danger">
                         <div class="inner">
-                            <h3>@(Model.OpeningBankBal + Model.OpeningCashBal)</h3>
+                            <h3>@( Model.OpeningCashBal)</h3>
                             <p>Today Opening</p>
                         </div>
                         <div class="icon">
@@ -71,7 +70,7 @@
                     <!-- small box -->
                     <div class="small-box bg-warning ">
                         <div class="inner">
-                            <h3>@(Model.ClosingBankBal + Model.ClosingCashBal)</h3>
+                            <h3>@( Model.ClosingCashBal)</h3>
                             <p>Today Closing</p>
                         </div>
                         <div class="icon">
@@ -82,7 +81,8 @@
                 </div>
             </div>
             <div class="row">
-                <section class="col-lg-6">
+                <div class="col-md-1"></div>
+                <section class="col-md-10">
                     <div class="card bg-info">
                         <div class="card-header border-0">
                             <h3 class="card-title">
@@ -107,7 +107,8 @@
                         <!-- /.card-body -->
                     </div>
                 </section>
-                <section class="col-lg-6">
+                <div class="col-md-1"></div>
+               @*  <section class="col-lg-6">
                     <div class="card bg-info">
                         <div class="card-header border-0">
                             <h3 class="card-title">
@@ -131,7 +132,7 @@
                         </div>
                         <!-- /.card-body -->
                     </div>
-                </section>
+                </section> *@
             </div>
         </div>
     </section>

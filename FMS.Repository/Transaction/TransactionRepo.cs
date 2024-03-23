@@ -225,6 +225,7 @@ namespace FMS.Repository.Transaction
                         await _appDbContext.SaveChangesAsync();
                         #endregion
                         #region Ledger & Sub Ledger
+                        var datass = FinancialYear;
                         // @ Purchase A/c --------------- Dr
                         var updatePurchaseledgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.PurchaseAccount && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
                         if (updatePurchaseledgerBalance != null)
@@ -4457,6 +4458,7 @@ namespace FMS.Repository.Transaction
                     CustomerName = s.CustomerName,
                     TransactionNo = s.TransactionNo,
                     TransactionType = s.TransactionType,
+                    TransportationCharges = s.TransportationCharges,
                     TransactionDate = s.TransactionDate,
                     OrderNo = s.OrderNo,
                     OrderDate = s.OrderDate,
@@ -5466,6 +5468,7 @@ namespace FMS.Repository.Transaction
                             UpdateSalesReturnOrder.Narration = data.Naration;
                             UpdateSalesReturnOrder.SiteAdress = data.SiteAdress;
                             UpdateSalesReturnOrder.VehicleNo = data.VehicleNo;
+                            UpdateSalesReturnOrder.TransportationCharges = data.TransportationCharges;
                             UpdateSalesReturnOrder.SubTotal = Convert.ToDecimal(data.SubTotal);
                             UpdateSalesReturnOrder.Discount = Convert.ToDecimal(data.Discount);
                             UpdateSalesReturnOrder.Gst = Convert.ToDecimal(data.Gst);

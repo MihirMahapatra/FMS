@@ -4,6 +4,10 @@ namespace FMS.Repository.Reports
 {
     public interface IReportRepo
     {
+        #region GrapData
+        Task<Result<GraphDataModel>> GetGraphData();
+        
+        #endregion
         #region Stock Report
         Task<Result<StockReportSummerizedModel>> GetSummerizedStockReports(StockReportDataRequest requestData);
         Task<Result<StockReportSummerizedInfoModel>> GetBranchWiseStockInfo(StockReportDataRequest requestData);

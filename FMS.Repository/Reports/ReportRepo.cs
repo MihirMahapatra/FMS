@@ -33,6 +33,84 @@ namespace FMS.Repository.Reports
             _HttpContextAccessor = httpContextAccessor;
             _emailService = emailService;
         }
+        #region GrapData
+        public async Task<Result<GraphDataModel>> GetGraphData()
+        {
+            Result<GraphDataModel> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                GraphDataModel Model = new GraphDataModel();
+
+                if (_HttpContextAccessor.HttpContext.Session.GetString("BranchId") != "All")
+                    {
+                        Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
+                        Guid FinancialYearId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
+                       List<decimal> salesAmount = new List<decimal>(new decimal[12]); // Initialize with 12 elements, all 0
+                       List<decimal> purchaseAmount = new List<decimal>(new decimal[12]);
+                       List<decimal> productionAmount = new List<decimal>(new decimal[12]);
+                    #region SaleData
+                    var salesData = _appDbContext.SalesOrders
+                    .Where(s => s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYearId)
+                   .GroupBy(s => s.OrderDate.Month)
+                   .Select(g => new
+                   {
+                       Month = g.Key,
+                       SaleAmount = g.Sum(s => s.GrandTotal)
+                   });
+                    foreach (var item in salesData)
+                    {
+                        salesAmount[item.Month - 1] = item.SaleAmount; // Month - 1 to match zero-based index
+                    }
+                    #endregion
+                    #region PurchaseData
+                    var PurchaseData = _appDbContext.PurchaseOrders
+                   .Where(s => s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYearId)
+                  .GroupBy(s => s.TransactionDate.Month)
+                  .Select(g => new
+                  {
+                      Month = g.Key,
+                      PurchaseAmount = g.Sum(s => s.GrandTotal)
+                  });
+                    foreach (var item in PurchaseData)
+                    {
+                        purchaseAmount[item.Month - 1] = item.PurchaseAmount; // Month - 1 to match zero-based index
+                    }
+                    #endregion
+                    #region ProductionData
+                    var ProductionData = _appDbContext.LabourOrders
+                  .Where(s => s.FK_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYearId)
+                   .GroupBy(s => s.TransactionDate.Month)
+                   .Select(g => new
+                  {
+                     Month = g.Key,
+                     ProductionAmount = g.Sum(s => s.Amount)
+                   });
+                    foreach (var item in ProductionData)
+                    {
+                        productionAmount[item.Month - 1] = item.ProductionAmount; // Month - 1 to match zero-based index
+                    }
+                    #endregion
+                    Model.SalesAmount = salesAmount;
+                    Model.PurchaseAmount = purchaseAmount;
+                    Model.ProductionAmount = productionAmount;
+                }
+                   
+                    if (Model != null)
+                    {
+                        _Result.SingleObjData = Model;
+                        _Result.IsSuccess = true;
+                        _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
+                    }   
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("horizonexception@gmail.com", "FMS Excepion", $"ReportRepo/GetDaySheet : {_Exception.Message}");
+            }
+            return _Result;
+        }
+        #endregion
         #region Stock Report
         public async Task<Result<StockReportSummerizedModel>> GetSummerizedStockReports(StockReportDataRequest requestData)
         {
@@ -1555,7 +1633,11 @@ namespace FMS.Repository.Reports
                             VouvherNo = s.VouvherNo,
                             CashBank = s.CashBank,
                             Narration = s.Narration,
-                            FromAcc = _appDbContext.Parties.Where(p => p.Fk_SubledgerId == s.Fk_SubLedgerId).Select(p => p.PartyName).SingleOrDefault(),
+                            LedgerDevName = _appDbContext.LedgersDev.Where(l => l.LedgerId == s.Fk_LedgerId).Select(l => l.LedgerName).SingleOrDefault(),
+                            LedgerName = _appDbContext.Ledgers.Where(l => l.LedgerId == s.Fk_LedgerId).Select(l => l.LedgerName).SingleOrDefault(),
+                            SubLedgerName = s.SubLedger != null ? s.SubLedger.SubLedgerName : "-",
+                            FromAcc = s.SubLedger != null ? s.SubLedger.SubLedgerName : s.Ledger != null ? _appDbContext.Ledgers.Where(l => l.LedgerId == s.Fk_LedgerId).Select(l => l.LedgerName).SingleOrDefault() : _appDbContext.LedgersDev.Where(l => l.LedgerId == s.Fk_LedgerId).Select(l => l.LedgerName).SingleOrDefault(),
+                            //FromAcc = _appDbContext.Parties.Where(p => p.Fk_SubledgerId == s.Fk_SubLedgerId).Select(p => p.PartyName).SingleOrDefault(),
                             Amount = s.Amount
                         }).ToListAsync();
                         var Payments = await _appDbContext.Payments.Where(s => s.VoucherDate == convertedDate && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYearId).Select(s => new PaymentModel
@@ -1563,7 +1645,10 @@ namespace FMS.Repository.Reports
                             VouvherNo = s.VouvherNo,
                             CashBank = s.CashBank,
                             Narration = s.Narration,
-                            ToAcc = _appDbContext.Parties.Where(p => p.Fk_SubledgerId == s.Fk_SubLedgerId).Select(p => p.PartyName).SingleOrDefault(),
+                            LedgerDevName = _appDbContext.LedgersDev.Where(l => l.LedgerId == s.Fk_LedgerId).Select(l => l.LedgerName).SingleOrDefault(),
+                            LedgerName = _appDbContext.Ledgers.Where(l => l.LedgerId == s.Fk_LedgerId).Select(l => l.LedgerName).SingleOrDefault(),
+                            SubLedgerName = s.SubLedger != null ? s.SubLedger.SubLedgerName : "-",
+                            ToAcc = s.SubLedger != null ? s.SubLedger.SubLedgerName : s.Ledger != null ? _appDbContext.Ledgers.Where(l => l.LedgerId == s.Fk_LedgerId).Select(l => l.LedgerName).SingleOrDefault() : _appDbContext.LedgersDev.Where(l => l.LedgerId == s.Fk_LedgerId).Select(l => l.LedgerName).SingleOrDefault(),
                             Amount = s.Amount
                         }).ToListAsync();
                         decimal OpeningCashBal = await _appDbContext.LedgerBalances.Where(x => x.Fk_LedgerId == MappingLedgers.CashAccount && x.Fk_BranchId == BranchId && x.Fk_FinancialYear == FinancialYearId).Select(x => x.OpeningBalance).SingleOrDefaultAsync() + await _appDbContext.Receipts.Where(x => x.VoucherDate < convertedDate && x.CashBank == "cash" && x.Fk_BranchId == BranchId && x.Fk_FinancialYearId == FinancialYearId).SumAsync(x => x.Amount) - await _appDbContext.Payments.Where(x => x.VoucherDate < convertedDate && x.CashBank == "cash" && x.Fk_BranchId == BranchId && x.Fk_FinancialYearId == FinancialYearId).SumAsync(x => x.Amount);
@@ -1571,6 +1656,7 @@ namespace FMS.Repository.Reports
                         var ListBankLedgers = await _appDbContext.Ledgers.Where(x => x.LedgerType == "bank").Select(x => x.LedgerId).ToListAsync();
                         decimal OpeningBankBal = await _appDbContext.LedgerBalances.Where(x => ListBankLedgers.Contains(x.Fk_LedgerId) && x.Fk_BranchId == BranchId && x.Fk_FinancialYear == FinancialYearId).SumAsync(x => x.OpeningBalance) + await _appDbContext.Receipts.Where(x => x.VoucherDate < convertedDate && x.CashBank == "bank" && x.Fk_BranchId == BranchId && x.Fk_FinancialYearId == FinancialYearId).SumAsync(x => x.Amount) - await _appDbContext.Payments.Where(x => x.VoucherDate < convertedDate && x.CashBank == "bank" && x.Fk_BranchId == BranchId && x.Fk_FinancialYearId == FinancialYearId).SumAsync(x => x.Amount);
                         decimal ClosingBankBal = OpeningBankBal + await _appDbContext.Receipts.Where(x => x.VoucherDate == convertedDate && x.CashBank == "bank" && x.Fk_BranchId == BranchId && x.Fk_FinancialYearId == FinancialYearId).SumAsync(x => x.Amount) - await _appDbContext.Payments.Where(x => x.VoucherDate == convertedDate && x.CashBank == "bank" && x.Fk_BranchId == BranchId && x.Fk_FinancialYearId == FinancialYearId).SumAsync(x => x.Amount);
+                        var ProductionAmount = _appDbContext.LabourOrders.Where(s => s.TransactionDate == convertedDate  && s.FK_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYearId).Select(t => t.Amount).Sum();
                         Model = new DaySheetModel
                         {
                             Purchases = Purchases,
@@ -1583,7 +1669,8 @@ namespace FMS.Repository.Reports
                             OpeningCashBal = OpeningCashBal,
                             OpeningBankBal = OpeningBankBal,
                             ClosingCashBal = ClosingCashBal,
-                            ClosingBankBal = ClosingBankBal
+                            ClosingBankBal = ClosingBankBal,
+                            ProductionAmount = ProductionAmount,
                         };
                     }
                     else

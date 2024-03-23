@@ -186,7 +186,7 @@ $(function () {
                             $.each(result.DaySheet.Receipts, function (key, Receipt) {
                                 html += '<tr>';
                                 html += '<td>' + Receipt.VouvherNo + '</td>';
-                                html += '<td>' + Receipt.narration + '</td>';
+                                html += '<td>' + Receipt.Narration + '</td>';
                                 html += '<td>' + Receipt.CashBank + '</td>';
                                 html += '<td>' + Receipt.FromAcc + '</td>';
                                 html += '<td>' + Receipt.Amount + '</td>';
@@ -216,7 +216,7 @@ $(function () {
                             $.each(result.DaySheet.Payments, function (key, Payment) {
                                 html += '<tr>';
                                 html += '<td>' + Payment.VouvherNo + '</td>';
-                                html += '<td>' + Payment.narration + '</td>';
+                                html += '<td>' + Payment.Narration + '</td>';
                                 html += '<td>' + Payment.CashBank + '</td>';
                                 html += '<td>' + Payment.ToAcc + '</td>';
                                 html += '<td>' + Payment.Amount + '</td>';
@@ -266,6 +266,4 @@ $(function () {
             },
         });
     });
-    
-   
 })

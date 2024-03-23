@@ -22,6 +22,12 @@ namespace FMS.Controllers.Reports
             _adminSvcs = adminSvcs;
             _masterSvcs = masterSvcs;
         }
+        [HttpGet]
+        public async Task<IActionResult> GetGraphData()
+        {
+            var result = await _reportSvcs.GetGraphData();
+            return new JsonResult(result);
+        }
         #region Stock Report
         [HttpGet]
         public IActionResult StockReport()

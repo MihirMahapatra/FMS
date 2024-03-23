@@ -6,6 +6,10 @@ namespace FMS.Service.Reports
 {
     public interface IReportSvcs
     {
+        #region GraphData
+        Task<GraphDataViewModel> GetGraphData();
+        
+        #endregion
         #region Stock Report 
         Task<StockReportSummerizedViewModel> GetSummerizedStockReports(StockReportDataRequest requestData);
         Task<StockReportSummerizedInfoViewModel> GetBranchWiseStockInfo(StockReportDataRequest requestData);

@@ -12,6 +12,45 @@ namespace FMS.Service.Reports
         {
             _reportRepo = reportRepo;
         }
+        #region GraphData
+        public async Task<GraphDataViewModel> GetGraphData()
+        {
+            GraphDataViewModel Obj;
+            var Result = await _reportRepo.GetGraphData();
+            if (Result.IsSuccess)
+            {
+                if (Result.Response == "success")
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
+                        GraphData = Result.SingleObjData,
+                    };
+                }
+                else
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.NotFound),
+                        Message = "No Record Found"
+                    };
+                }
+            }
+            else
+            {
+                Obj = new()
+                {
+                    ResponseStatus = Result.Response,
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    Message = "Some Eroor Occoured"
+                };
+            }
+            return Obj;
+        }
+        #endregion
         #region Stock Report
         public async Task<StockReportSummerizedViewModel> GetSummerizedStockReports(StockReportDataRequest requestData)
         {

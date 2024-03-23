@@ -1867,6 +1867,7 @@ $(function () {
                 Sr_vehicleNo.val(result.SalesReturnOrder.VehicleNo);
                 Sr_orderNo.val(result.SalesReturnOrder.OrderNo);
                 Sr_receivingPerson.val(result.SalesReturnOrder.ReceivingPerson);
+                Sr_transportationCharges.val(result.SalesReturnOrder.TransportationCharges);
                 Sr_siteAdress.val(result.SalesReturnOrder.SiteAdress);
                 ModifyorderDate = result.SalesReturnOrder.OrderDate;
                 if (ModifyorderDate) {
