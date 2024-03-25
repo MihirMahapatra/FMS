@@ -7,15 +7,13 @@
             success: function (result) {
                 if (result.ResponseCode == 302) {
                     //Starting 
-                    console.log(result.GraphData.SalesAmount);
-                    console.log(result.GraphData.PurchaseAmount);
                     var areaChartData = {
                         labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'Octber', 'November', 'December'],
                         datasets: [
                             {
                                 label: 'Sales',
                                 backgroundColor: '#fc030f',
-                                borderColor: 'rgba(60,141,188,0.8)',
+                                borderColor: '#09daed',
                                 pointRadius: false,
                                 pointColor: '#3b8bba',
                                 pointStrokeColor: 'rgba(60,141,188,1)',
@@ -25,7 +23,7 @@
                             },
                             {
                                 label: 'Purchases',
-                                backgroundColor: 'rgba(210, 214, 222, 1)',
+                                backgroundColor: '#18cf0e',
                                 borderColor: 'rgba(210, 214, 222, 1)',
                                 pointRadius: false,
                                 pointColor: 'rgba(210, 214, 222, 1)',
@@ -61,7 +59,19 @@
                     var barChartOptions = {
                         responsive: true,
                         maintainAspectRatio: false,
-                        datasetFill: false
+                        datasetFill: false,
+                        scales: {
+                            xAxes: [{
+                                ticks: {
+                                    fontColor: 'white' 
+                                }
+                            }],
+                            yAxes: [{
+                                ticks: {
+                                    fontColor: 'white' 
+                                }
+                            }]
+                        }
                     }
                     new Chart(barChartCanvas, {
                         type: 'bar',
