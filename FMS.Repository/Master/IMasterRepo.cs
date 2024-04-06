@@ -1,6 +1,9 @@
-﻿using FMS.Model;
+﻿using FMS.Db.Context;
+using FMS.Db.DbEntity;
+using FMS.Model;
 using FMS.Model.CommonModel;
 using FMS.Model.ViewModel;
+using FMS.Utility;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace FMS.Repository.Master
@@ -48,6 +51,15 @@ namespace FMS.Repository.Master
         Task<Result<bool>> UpdateCity(CityModel data);
         Task<Result<bool>> DeleteCity(Guid Id, IDbContextTransaction transaction, bool IsCallBack);
         #endregion
+        #region Refarance
+        Task<Result<ReferanceModel>> GetReferance();
+        Task<Result<bool>> CreateReferance(ReferanceModel data);
+        Task<Result<bool>> UpdateRefarance(ReferanceModel data);
+        Task<Result<bool>> DeleteDeferance(Guid Id, IDbContextTransaction transaction, bool IsCallBack);
+        #endregion
+        #endregion
+        #region PartyGroup Master
+        Task<Result<PartyGroupModel>> GetPartyGroups();
         #endregion
         #region Account Master
         #region LedgerBalance

@@ -68,6 +68,13 @@
                                         </select>
                                     </div>
                                 </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label>Party Group</label>
+                                        <select class="form-control select2bs4" style="width: 100%;" name="ddnPartyGroup" tabindex="1">
+                                        </select>
+                                    </div>
+                                </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label>Party Name</label>
@@ -115,6 +122,18 @@
                                     <button class="btn btn-primary btn-link cust-btn"  id="btnCityAdd" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-plus"></i></button>
                                     <button class="btn btn-primary btn-link cust-btn" id="btnCityEdit" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"><i class="fa-solid fa-edit"></i></button>
                                     <button class="btn btn-primary btn-link cust-btn" id="btnCityDelete" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"><i class="fa-solid fa-trash-can"></i></button>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label>Referance Name</label>
+                                        <select class="form-control select2bs4" style="width: 100%;" name="ddnReferanceId" tabindex="6">
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <button class="btn btn-primary btn-link cust-btn" id="btnReferanceAdd" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-plus"></i></button>
+                                    <button class="btn btn-primary btn-link cust-btn" id="btnReferanceEdit" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"><i class="fa-solid fa-edit"></i></button>
+                                    <button class="btn btn-primary btn-link cust-btn" id="btnReferanceDelete" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"><i class="fa-solid fa-trash-can"></i></button>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
@@ -360,8 +379,22 @@
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
+                            <label for="PartyGruopId">PartyGruop</label>
+                            <select class="form-control select2bs4" style="width: 100%;" name="mdlddnPartygroupId">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
                             <label for="txtPartyName">Party Name</label>
                             <input type="text" class="form-control" id="txtPartyName" name="mdlPartyName">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="ReferanceId">Refarance Name</label>
+                            <select class="form-control select2bs4" style="width: 100%;" name="mdlddnReferanceId">
+                            </select>
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -413,6 +446,69 @@
     <!-- /.modal-dialog -->
 </div>
 <!--End partylist Modal edit  -->
+<!--Modal Add Refarance-->
+<div class="modal fade" id="modal-add-Refarance">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Add New Refarance Name</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>Refarance Name</label>
+                            <input type="text" class="form-control" id="" name="mdlRefaranceAdd">
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary RefaranceAdd">Save changes</button>
+            </div>
+
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!--.end Modal Add State-->
+<!--Modal Update State-->
+<div class="modal fade" id="modal-edit-Refarance">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Update Refarance</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <input type="hidden" name="mdlRefarenceId"/>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>Refarance Name</label>
+                            <input type="text" class="form-control" id="" name="mdlRefaranceEdit">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary StateUpdate">Save changes</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!--.end Modal State-->
 <!---------------------------------------------------------------------------------------------------------------------------->
 @section additionalScripts {
     <!--Fontawsome Kit-->

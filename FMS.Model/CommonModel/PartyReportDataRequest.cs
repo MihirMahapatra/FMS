@@ -10,6 +10,7 @@ namespace FMS.Model.CommonModel
     {
         public Guid PartyId { get; set; }
         public Guid Fk_SubledgerId {  get; set; }
+        public Guid Fk_PartyGroupId { get; set; }
         public string FromDate {  get; set; }
         public string ToDate { get; set; }
     }

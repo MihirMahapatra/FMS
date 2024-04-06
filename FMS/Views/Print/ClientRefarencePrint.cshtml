@@ -1,22 +1,21 @@
-﻿@using FMS.Model.ViewModel
-@using System
-@model SalesPrintModel
+﻿
 @{
     Layout = null;
 }
 
+@using FMS.Model.CommonModel
+@model CustomerReportDataModel
 <!DOCTYPE html>
-
 <html>
 <head>
     <style>
         .small-text {
-            font-size: 0.9em !important;
+            font-size: 0.7em !important;
             /* Adjust the font size as needed */
         }
 
         .small-row td {
-            font-size: 0.9em !important;
+            font-size: 0.7em !important;
             padding: 0.1em !important;
             /* Adjust the font size as needed */
         }
@@ -35,28 +34,29 @@
         }
     </style>
     <meta name="viewport" content="width=device-width" />
-    <title>SalesPrint</title>
+    <title>Client Refarance Print</title>
     <link rel="stylesheet" href="~/invoice/assets/css/app.min.css">
     <link rel="stylesheet" href="~/invoice/assets/css/style.css">
 </head>
-<body class="hospital-template" style="font-family:'Courier New'">
+<body class="hospital-template" style="font-family: Times,  Times New Roman, Georgia, serif;">
     <div class="invoice-container-wrap">
         <div class="invoice-container">
             <main>
                 <div class="th-invoice invoice_style8" data-bg-src="~/invoice/assets/img/template/hospital_bg.png">
+
                     <div class="download-inner" id="download_section">
                         <header class="th-header header-layout5">
-                            <div class="row justify-content-between" style="margin-bottom:-20px; margin-top:-20px;">
+                            <div class="row justify-content-between">
                                 <div class="col-auto">
                                     <div class="header-logo">
                                         <a href="index.html">
                                             <img src="~/landingpage/assets/images/logo/logo.png" alt="logo" style="width:30%; margin-left:25px;" />
                                         </a>
-                                        <p style=" color:black; font-family: Times,  Times New Roman, Georgia, serif; margin-left:30px;"> @Model.Cmopany.Name</p>
+                                        <p style="font-family: Times,  Times New Roman, Georgia, serif; color:black; margin-left:30px;"> @Model.Cmopany.Name</p>
                                     </div>
                                 </div>
                                 <div class="col-auto">
-                                    <h6 style="padding-top:20px; text-decoration:underline;font-family: cursive;padding-right:40px">Tax Invoice</h6>
+                                    <h6 style="padding-top:20px;padding-right:20px; text-decoration:underline;font-family: cursive;padding-right:20px">Client Refarance Report</h6>
                                 </div>
                             </div>
                         </header>
@@ -68,48 +68,50 @@
                                         @Model.Cmopany.Adress<br>@Model.Cmopany.Email,<br>
                                         @Model.Cmopany.Phone,<br>Odisha
                                     </address>
-                                    <br /> <b>Customer Name : @Model.SalesData.CustomerName</b>
                                 </div>
                             </div>
-                            <div class="col-auto" style="padding-right:20px">
-                                Print Date :  @DateTime.Now.ToString("dd/MM/yyyy") <br />
+                            <div class="col-auto" style="padding-right:30px">
+                                Report Date :  @DateTime.Now.ToString("dd/MM/yyyy") <br />
+                                From Date :  @Model.Customers.FromDate<br />
+                                To Date :  @Model.Customers.ToDate<br />
                             </div>
                         </div>
-                        <table class="invoice-table table-stripe-column">
+                        <table class="invoice-table">
                             <thead>
                                 <tr class="small-row">
-                                    <th style="width:30%">Product</th>
-                                    <th style="width:10%">Qty</th>
-                                    <th style="width:10%">Unit</th>
-                                    <th style="width:10%">Rate</th>
-                                    <th style="width:5%">Disc(%)</th>
-                                    <th style="width:10%">Disc.</th>
-                                    <th style="width:5%">Gst(%)</th>
-                                    <th style="width:10%">Gst</th>
-                                    <th style="width:10%">Amount</th>
+                                    <th style="width:20%!important; text-align:left;">Client Name</th>
+                                    <th style="width:20%!important;"> Refarance Name</th>
+                                    <th style="width:10%!important; text-align:right">Bal</th>
+                                    <th style="width:10%!important; text-align:center">Type</th>
+
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var Item in Model.SalesData.PrintData)
+                                @if (Model.Customers != null)
+                                {
+                                    @foreach (var item in Model.Customers.PartyReports)
+                                    {
+                                        var balance = item.Balance + item.OpeningBal;
+                                        <tr class="small-row">
+                                            <td style="text-align:left;">@item.PartyName</td>
+                                            @if(item.RefarenceName != null)
+                                            {
+                                                <td >@item.RefarenceName</td>
+                                            }
+                                            else
+                                            {
+                                                <td>-</td>
+                                            }
+
+                                            <td style=" text-align:right">@Math.Abs(@balance)</td>
+                                            <td style=" text-align:center">@item.BalanceType</td>
+                                        </tr>
+                                    }
+                                }
+                                else
                                 {
                                     <tr class="small-row">
-                                        <td>@Item[1]</td>
-                                        <td>@Item[2]</td>
-                                        @if (@Item[3] == "--Select Option--")
-                                        {
-                                            <td>@Item[12]</td>
-                                        }
-
-                                        else{
-                                            <td>@Item[3]</td>
-                                        }
-                                        <td>@Item[5]</td>
-                                        <td>@Item[6]</td>
-                                        <td>@Item[7]</td>
-                                        <td>@Item[8]</td>
-                                        <td>@Item[9]</td>
-                                        <td>@Item[10]</td>
-                                        
+                                        <td colspan="6">No purchases available</td>
                                     </tr>
                                 }
                             </tbody>
@@ -120,73 +122,15 @@
                                 </div>
                             </div>
                             <div class="col-auto">
-                                
-                                @{
-                                    var Subtotal = @Model.SalesData.SubTotal;
-                                    var Discount = @Model.SalesData.Discount;
-                                    var Total = Subtotal - Discount;
-                                }
                                 <table class="total-table3">
                                     <tr>
-                                        <th>SubTotal:</th>
-                                        <td>@Model.SalesData.SubTotal</td>
                                     </tr>
-                                    <tr>
-                                        <th colspan="2">
-                                            <hr style="color:black; margin: 5px 0;">
-                                        </th>
-                                    </tr>
-                                    <tr>
-                                        <th>Total:</th>
-                                        <td>@Total</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Gst Amount:</th>
-                                        <td>@Model.SalesData.Gst</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Transportation Charges:</th>
-                                        <td>@Model.SalesData.TransportationCharges</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Handling Charges:</th>
-                                        <td>@Model.SalesData.HandlingCharges</td>
-                                    </tr>
-                                    <tr>
-                                        <th colspan="2">
-                                            <hr style="color:black; margin: 5px 0;">
-                                        </th>
-                                    </tr>
-                                    <tr>
-                                        <th>Grant Amount:</th>
-                                        <td>@Model.SalesData.GrandTotal</td>
-                                    </tr>
-                                   
                                 </table>
                             </div>
                         </div>
-                        @functions {
-                            static string[] units = { "Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten",
-                        "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen" };
-                            static string[] tens = { "", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety" };
-                            static string ConvertToWords(long num)
-                            {
-                                if (num < 20)
-                                    return units[num];
-                                if (num < 100)
-                                    return tens[num / 10] + ((num % 10 != 0) ? " " + units[num % 10] : "");
-                                if (num < 1000)
-                                    return units[num / 100] + " Hundred" + ((num % 100 != 0) ? " " + ConvertToWords(num % 100) : "");
-                                if (num < 1000000)
-                                    return ConvertToWords(num / 1000) + " Thousand" + ((num % 1000 != 0) ? " " + ConvertToWords(num % 1000) : "");
-                                if (num < 1000000000)
-                                    return ConvertToWords(num / 1000000) + " Million" + ((num % 1000000 != 0) ? " " + ConvertToWords(num % 1000000) : "");
-                                return ConvertToWords(num / 1000000000) + " Billion" + ((num % 1000000000 != 0) ? " " + ConvertToWords(num % 1000000000) : "");
-                            }
-                        }
-                        <b>Total In Words:</b>@ConvertToWords((long)Model.SalesData.GrandTotal)  Rupees Only
                         <p class="invoice-note mt-3">
-                            <b> The END Report </b>
+                            <b>This is The End </b>
+
                         </p>
                     </div>
                     <div class="invoice-buttons">
@@ -213,3 +157,4 @@
     <script src="~/invoice/assets/js/main.js"></script>
 </body>
 </html>
+

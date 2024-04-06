@@ -123,6 +123,14 @@ namespace FMS.Controllers.Master
             return new JsonResult(data);
         }
         #endregion
+        #region Party Gruop Master
+        [HttpGet]
+        public async Task<IActionResult> GetPartyGruops()
+        {
+            var result = await _masterSvcs.GetPartyGroups();
+            return new JsonResult(result);
+        }
+        #endregion
         #region State
         [HttpGet]
         public async Task<IActionResult> GetStates()
@@ -247,6 +255,47 @@ namespace FMS.Controllers.Master
             return new JsonResult(result);
         }
         #endregion   
+        #region Refarance
+        [HttpGet]
+        public async Task<IActionResult> GetRefarance()
+        {
+            var result = await _masterSvcs.GetRefarence();
+            return new JsonResult(result);
+        }
+        [HttpPost, Authorize(Policy = "Create")]
+        public async Task<IActionResult> CreateRefarence([FromBody] ReferanceModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _masterSvcs.CreateRefarence(model);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
+        [HttpPost, Authorize(Policy = "Edit")]
+        public async Task<IActionResult> UpdateRefarence([FromBody] ReferanceModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _masterSvcs.UpdateRefarence(model);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
+        [HttpPost, Authorize(Policy = "Delete")]
+        public async Task<IActionResult> DeleteRefarance([FromQuery] string id)
+        {
+            Guid Id = Guid.Parse(id);
+            var result = await _masterSvcs.DeleteRefarence(Id);
+            return new JsonResult(result);
+        }
+        #endregion
         #endregion
         #region labour Master
         [HttpGet]

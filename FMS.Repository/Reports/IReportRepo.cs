@@ -57,5 +57,8 @@ namespace FMS.Repository.Reports
         Task<Result<GroupedJournalModel>> JournalBookreport(LedgerbookDataRequest requestData);
 
         #endregion
+        #region Refarance Report
+        Task<Result<PartyReportModel>> GetCustomerRefranceReport(PartyReportDataRequest requestData);
+        #endregion
     }
 }

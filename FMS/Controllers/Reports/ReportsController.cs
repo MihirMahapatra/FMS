@@ -347,5 +347,26 @@ namespace FMS.Controllers.Reports
             return BadRequest(ModelState);
         }
         #endregion
+        #region ClientRefarance
+        [HttpGet]
+        public IActionResult ClientRefarance()
+        {
+            string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
+            string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
+            ViewBag.BranchName = branchName;
+            ViewBag.FinancialYear = FinancialYear;
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> GetCustomerRefranceReport([FromBody] PartyReportDataRequest requestData)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _reportSvcs.GetCustomerRefranceReport(requestData);
+                return new JsonResult(result);
+            }
+            return BadRequest(ModelState);
+        }
+        #endregion
     }
 }

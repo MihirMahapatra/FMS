@@ -4,6 +4,8 @@
     {
         public Guid SupplyId { get; set; }
         public string TransactionNo { get; set; }
+        public string ChallanNo { get; set; }
+        public string VehicleNo { get; set; }
         public string TransactionDate { get; set; }
         public Guid Branch { get; set; }
         public Guid Fk_ProductTypeId { get; set; }

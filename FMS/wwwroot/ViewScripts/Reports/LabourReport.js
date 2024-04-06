@@ -113,7 +113,12 @@ $(function () {
                             html += '<td>' + item.DamageAmt.toFixed(2) + '</td>';
                             html += '<td>' + item.PaymentAmt.toFixed(2) + '</td>';
                             var Balance = item.OpeningBal + (item.BillingAmt - item.DamageAmt - item.PaymentAmt);
-                            html += '<td>' + Balance.toFixed(2) + '</td>';
+                            if (0 > Balance) {
+                                html += '<td class="bg-danger text-white">' + Balance.toFixed(2) + '</td>';
+                            }
+                            else {
+                                html += '<td>' + Balance.toFixed(2) + '</td>';
+                            }
                             html += '</tr >';
                         });
                         PrintDataSummarized = {

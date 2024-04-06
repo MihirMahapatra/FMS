@@ -361,7 +361,6 @@ $(function () {
                     html += '<thead>'
                     html += '<tr>'
                     html += '<th hidden>Financia Year Id</th>'
-                    html += '<th>Branch</th>'
                     html += '<th>Financial Year</th>'
                     html += '<th>Start Date</th>'
                     html += '<th>End Date</th>'
@@ -372,7 +371,6 @@ $(function () {
                     $.each(result.FinancialYears, function (key, item) {
                         html += '<tr>';
                         html += '<td hidden>' + item.FinancialYearId + '</td>';
-                        html += '<td>' + item.Branch.BranchName + '</td>';
                         html += '<td>' + item.Financial_Year + '</td>';
                         html += '<td>' + item.StartDate + '</td>';
                         html += '<td>' + item.EndDate + '</td>';

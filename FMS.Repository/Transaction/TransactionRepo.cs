@@ -6995,6 +6995,8 @@ namespace FMS.Repository.Transaction
                     OutwardSupplyOrderId = s.OutwardSupplyOrderId,
                     TransactionNo = s.TransactionNo,
                     TransactionDate = s.TransactionDate,
+                    ChallanNo = s.ChallanNo,
+                    VehicleNo = s.VehicleNo,
                     TotalAmount = s.TotalAmount,
                     ProductType = s.ProductType != null ? new ProductTypeModel { Product_Type = s.ProductType.Product_Type } : null,
                     BranchName = _appDbContext.Branches.Where(b => b.BranchId == s.ToBranch).Select(b => b.BranchName).FirstOrDefault()
@@ -7028,6 +7030,8 @@ namespace FMS.Repository.Transaction
                     TransactionNo = s.TransactionNo,
                     TransactionDate = s.TransactionDate,
                     ToBranch = s.ToBranch,
+                    ChallanNo = s.ChallanNo,
+                    VehicleNo = s.VehicleNo,
                     Fk_ProductTypeId = s.Fk_ProductTypeId,
                     ProductTypeName = _appDbContext.ProductTypes.Where(p => p.ProductTypeId == s.Fk_ProductTypeId).Select(b => b.Product_Type).SingleOrDefault(),
                     TotalAmount = s.TotalAmount,
@@ -7036,6 +7040,7 @@ namespace FMS.Repository.Transaction
                     {
                         OutwardSupplyTransactionId = t.OutwardSupplyTransactionId,
                         Fk_ProductId = t.Fk_ProductId,
+                        Product = t.Product != null ? new ProductModel { Unit = t.Product.Unit != null ? new UnitModel { UnitName = t.Product.Unit.UnitName } : null } : null,
                         Quantity = t.Quantity,
                         Rate = t.Rate,
                         Amount = t.Amount,
@@ -7078,6 +7083,8 @@ namespace FMS.Repository.Transaction
                             Fk_FinancialYearId = FinancialYear,
                             TransactionDate = convertedTrnsactionDate,
                             TransactionNo = data.TransactionNo,
+                            ChallanNo = data.ChallanNo,
+                            VehicleNo = data.VehicleNo,
                             TotalAmount = data.TotalAmount
                         };
                         await _appDbContext.OutwardSupplyOrders.AddAsync(newOutwardSupplyOrder);
@@ -7094,8 +7101,8 @@ namespace FMS.Repository.Transaction
                                 Fk_BranchId = BranchId,
                                 Fk_FinancialYearId = FinancialYear,
                                 Quantity = Convert.ToDecimal(item[2]),
-                                Rate = Convert.ToDecimal(item[3]),
-                                Amount = Convert.ToDecimal(item[4])
+                                Rate = Convert.ToDecimal(item[4]),
+                                Amount = Convert.ToDecimal(item[5])
                             };
                             await _appDbContext.OutwardSupplyTransactions.AddAsync(newOutwardSupplyTransactionn);
                             await _appDbContext.SaveChangesAsync();
@@ -7151,6 +7158,8 @@ namespace FMS.Repository.Transaction
                             UpdateOutwardSupplyOrder.TransactionDate = convertedTrnsactionDate;
                             UpdateOutwardSupplyOrder.ToBranch = data.Branch;
                             UpdateOutwardSupplyOrder.Fk_ProductTypeId = data.Fk_ProductTypeId;
+                            UpdateOutwardSupplyOrder.VehicleNo = data.VehicleNo;
+                            UpdateOutwardSupplyOrder.ChallanNo = data.ChallanNo;
                             UpdateOutwardSupplyOrder.TotalAmount = data.TotalAmount;
                             await _appDbContext.SaveChangesAsync();
                             //************************************************************Inward Supply Transaction**************************************************//
@@ -7189,8 +7198,8 @@ namespace FMS.Repository.Transaction
                                     }
                                     UpdateOutwardSupplyTransaction.Fk_ProductId = Guid.Parse(item[1]);
                                     UpdateOutwardSupplyTransaction.Quantity = Convert.ToDecimal(item[2]);
-                                    UpdateOutwardSupplyTransaction.Rate = Convert.ToDecimal(item[3]);
-                                    UpdateOutwardSupplyTransaction.Amount = Convert.ToDecimal(item[4]);
+                                    UpdateOutwardSupplyTransaction.Rate = Convert.ToDecimal(item[4]);
+                                    UpdateOutwardSupplyTransaction.Amount = Convert.ToDecimal(item[5]);
                                     await _appDbContext.SaveChangesAsync();
                                 }
                                 else
@@ -7204,8 +7213,8 @@ namespace FMS.Repository.Transaction
                                         Fk_BranchId = BranchId,
                                         Fk_FinancialYearId = FinancialYear,
                                         Quantity = Convert.ToDecimal(item[2]),
-                                        Rate = Convert.ToDecimal(item[3]),
-                                        Amount = Convert.ToDecimal(item[4]),
+                                        Rate = Convert.ToDecimal(item[4]),
+                                        Amount = Convert.ToDecimal(item[5]),
                                     };
                                     await _appDbContext.OutwardSupplyTransactions.AddAsync(newOutwardSupplyTransaction);
                                     await _appDbContext.SaveChangesAsync();

@@ -16,5 +16,8 @@
         public ProductModel Product { get; set; }
         public BranchModel Branch { get; set; }
         public FinancialYearModel FinancialYear { get; set; }
+        //Otheres
+        public string UnitName { get; set; }
+        
     }
 }

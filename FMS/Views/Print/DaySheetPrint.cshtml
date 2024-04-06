@@ -43,7 +43,7 @@
                                 <div class="col-auto">
                                     <div class="header-logo">
                                         <a href="index.html">
-                                            <img src="~/assets/images/logo/logo.png" alt="logo" style="width:30%; margin-left:25px;" />
+                                            <img src="~/landingpage/assets/images/logo/logo.png" alt="logo" style="width:30%; margin-left:25px;" />
                                         </a>
                                         <p style="font-family: Times,  Times New Roman, Georgia, serif;margin-left:30px;">@Model.Cmopany.Name</p>
                                     </div>
@@ -168,21 +168,31 @@
                                 {
                                     @foreach (var CreditSale in Model.daySheet.CreditSales)
                                     {
-                                        <tr class="small-row">
-                                            <td>@CreditSale.TransactionNo</td>
-                                            <td>@CreditSale.CustomerName</td>
-                                            @foreach (var SaleTransaction in CreditSale.SalesTransactions)
-                                            {
+                                        var firstRow = true;
+                                        foreach (var SaleTransaction in CreditSale.SalesTransactions)
+                                        {
+                                            <tr class="small-row">
+                                                @if (firstRow)
+                                                {
+                                                    <td>@CreditSale.TransactionNo</td>
+                                                    <td>@CreditSale.CustomerName</td>
+                                                    firstRow = false;
+                                                }
+                                                else
+                                                {
+                                                    <td>-</td>
+                                                    <td>-</td>
+                                                }
                                                 <td>@SaleTransaction.ProductName</td>
                                                 <td>@SaleTransaction.Quantity</td>
                                                 <td>@SaleTransaction.Rate</td>
                                                 <td>@SaleTransaction.Amount</td>
-                                            }
-                                        </tr>
+                                            </tr>
+                                        }
                                     }
                                 }
-                                else
-                                {
+
+                                else{
                                     <tr class="small-row">
                                         <td colspan="6">No Credit Sales available</td>
                                     </tr>

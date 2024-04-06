@@ -18,6 +18,7 @@ namespace FMS.Model.CommonModel
         public decimal Balance { get; set; }
         public string BalanceType { get; set; }
         public string Adress { get; set; }
+        public string RefarenceName { get; set; }
     }
     public class PartyReportOrderModel
     {

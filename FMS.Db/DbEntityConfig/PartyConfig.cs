@@ -24,6 +24,8 @@ namespace FMS.Db.DbEntityConfig
             builder.HasOne(p => p.SubLedger).WithMany(s => s.Parties).HasForeignKey(p => p.Fk_SubledgerId).OnDelete(DeleteBehavior.Restrict);
             builder.HasOne(p => p.State).WithMany(s => s.Parties).HasForeignKey(p => p.Fk_StateId).OnDelete(DeleteBehavior.Restrict);
             builder.HasOne(p => p.City).WithMany(s => s.Parties).HasForeignKey(p => p.Fk_CityId).OnDelete(DeleteBehavior.Restrict);
+            builder.HasOne(p => p.Referance).WithMany(s => s.Parties).HasForeignKey(p => p.Fk_RefarenceId).OnDelete(DeleteBehavior.Restrict);
+            builder.HasOne(p => p.PartyGroup).WithMany(s => s.Parties).HasForeignKey(p => p.Fk_PartyGroupId).OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

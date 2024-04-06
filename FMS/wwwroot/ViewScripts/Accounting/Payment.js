@@ -532,11 +532,11 @@ $(function () {
                             console.log(errormessage)
                         }
                     })
-                }
-                else {
+                } else {
                     $('.hdndiv').hide();
                     CashBank.val('Cash');
                 }
+
                 // Clear the table
                 PaymentTable.clear().draw();
                 var uniqueId = 0;
@@ -544,93 +544,70 @@ $(function () {
                     group.LederwisePayments.forEach(function (ledger) {
                         var html = ''; // Build HTML for ledger dropdowns and associated subledgers
                         var ledgerDropdownAdded = false; // Flag to track ledger dropdown addition
-                        ledger.Payments.forEach(function (payment) {
-                            if (!ledgerDropdownAdded) {
-                                // Add ledger dropdown if not added yet
-                                html += '<tr>';
-                                html += '<td style="width:60px">';
-                                html += '<div class="form-group row">';
-                                html += '<div class="col-sm-7">';
-                                html += '<select class="select2bs4 form-control ledgerType" style="width: 100%;" data-target="additionalDropdown_' + uniqueId + '" name="ddlLedgerId">';
-                                html += '<option>--Select Option--</option>';
 
-                                $.ajax({
-                                    url: "/Accounting/GetLedgers",
-                                    type: "GET",
-                                    contentType: "application/json;charset=utf-8",
-                                    dataType: "json",
-                                    success: function (result1) {
-                                        if (result1.ResponseCode == 302) {
-                                            $.each(result1.Ledgers, function (key, item1) {
-                                                var option = $('<option></option>').val(item1.LedgerId).text(item1.LedgerName);
-                                                if (item1.LedgerId == ledger.Fk_LedgerId) {
-                                                    option.attr('selected', 'selected');
-                                                }
-                                                $('.ledgerType').append(option);
-                                            });
-                                        }
-                                    },
-                                });
-
-                                // Close ledger dropdown
-                                html += '</select>';
-                                html += '</div>';
-                                html += '<label name="LadgerCurBal" class="col-sm-3 col-form-label">Cur Bal:</label>';
-                                html += '</div>';
-                                // Adding container for additional dropdowns
-                                html += '<div class="additionalDropdowns" data-id="additionalDropdown_' + uniqueId + '"></div>';
-                                // Increment uniqueId for the next set of additionalDropdowns
-                                uniqueId++;
-                                // Set the flag to true since ledger dropdown has been added
-                                ledgerDropdownAdded = true;
-                            }
-
-                            // Add subledger dropdowns for each payment
-                            html += '<div class="form-group row">';
-                            html += '<div class="col-sm-2">';
-                            html += '<label name="SubLadgerCurBal" class="col-form-label">Cur Bal: </label>';
-                            html += '</div>';
-                            html += '<div class="col-sm-5">';
-                            html += '<select class="select2bs4 form-control SubledgerType" style="width: 100%;" name="ddlSubledgerId">';
-                            html += '<option>--Select Option--</option>';
-
-                            // Populate subledger dropdown
-                            $.ajax({
-                                url: '/Accounting/GetSubLedgersById?LedgerId=' + ledger.Fk_LedgerId,
-                                type: "GET",
-                                contentType: "application/json;charset=utf-8",
-                                dataType: "json",
-                                success: function (result2) {
-                                    if (result2.ResponseCode == 302) {
-                                        var subledgerDropdown = $('.SubledgerType'); // Select the appropriate subledger dropdown
-                                        subledgerDropdown.empty(); // Clear existing options before appending new ones
-                                        $.each(result2.SubLedgers, function (key, item2) {
-                                            var option = $('<option></option>').val(item2.SubLedgerId).text(item2.SubLedgerName);
-                                            if (item2.SubLedgerId == payment.Fk_SubLedgerId) {
-                                                option.attr('selected', 'selected');
-                                            }
-                                            subledgerDropdown.append(option); // Append the option to the subledger dropdown
-                                        });
-                                    } else {
-                                        console.error('Failed to fetch subledgers');
-                                    }
-                                },
-                                error: function (xhr, status, error) {
-                                    console.error('AJAX error:', error);
-                                }
-                            });
-
-                            html += '</select>';
-                            html += '</div>';
-                            html += '<div class="col-sm-3">';
-                            html += '<input type="text" class="form-control" name="SubledgerAmount" value="' + payment.Amount + '">';
-                            html += '</div>';
-                            html += '<div class="col-sm-2">';
-                            html += '<button class="btn btn-primary btn-link addSubLedgerBtn" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-plus"></i></button>';
-                            html += ' <button class="btn btn-primary btn-link deleteBtns" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button>';
-                            html += '</div>';
-                            html += '</div>';
+                        // Add ledger dropdown if not added yet
+                        html += '<tr>';
+                        html += '<td style="width:60px">';
+                        html += '<div class="form-group row">';
+                        html += '<div class="col-sm-7">';
+                        html += '<select class="select2bs4 form-control ledgerType" style="width: 100%;" data-target="additionalDropdown_' + uniqueId + '" name="ddlLedgerId">';
+                        html += '<option>--Select Ledger--</option>';
+                        $.each(result.GroupedLederwisePayments[0].LederwisePayments, function (key, item) {
+                            var option = $('<option></option>').val(item.Fk_LedgerId).text(item.LedgerName);
+                            html += option.prop('outerHTML');
                         });
+                        html += '</select>';
+                        html += '</div>';
+                        html += '<label name="LadgerCurBal" class="col-sm-3 col-form-label">Cur Bal:</label>';
+                        html += '</div>';
+                        // Adding container for additional dropdowns
+                        html += '<div class="additionalDropdowns" data-id="additionalDropdown_' + uniqueId + '"></div>';
+                        // Increment uniqueId for the next set of additionalDropdowns
+                        uniqueId++;
+                        // Set the flag to true since ledger dropdown has been added
+                        ledgerDropdownAdded = true;
+
+                        // Add subledger dropdowns for each payment
+                        html += '<div class="form-group row">';
+                        html += '<div class="col-sm-2">';
+                        html += '<label name="SubLadgerCurBal" class="col-form-label">Cur Bal: </label>';
+                        html += '</div>';
+                        html += '<div class="col-sm-5">';
+                        html += '<select class="select2bs4 form-control SubledgerType" style="width: 100%;" name="ddlSubledgerId">';
+                        html += '<option>--Select Subledger--</option>';
+                        // Populate subledger dropdown based on the selected ledger
+                        var selectedLedgerId = $('.ledgerType').val(); // Get the selected ledger ID
+                        $.ajax({
+                            url: '/Accounting/GetSubLedgersById?LedgerId=' + selectedLedgerId,
+                            type: "GET",
+                            contentType: "application/json;charset=utf-8",
+                            dataType: "json",
+                            success: function (result2) {
+                                if (result2.ResponseCode == 302) {
+                                    var subledgerDropdown = $('.SubledgerType'); // Select the appropriate subledger dropdown
+                                    subledgerDropdown.empty(); // Clear existing options before appending new ones
+                                    $.each(result2.SubLedgers, function (key, item2) {
+                                        var option = $('<option></option>').val(item2.SubLedgerId).text(item2.SubLedgerName);
+                                        subledgerDropdown.append(option); // Append the option to the subledger dropdown
+                                    });
+                                } else {
+                                    console.error('Failed to fetch subledgers');
+                                }
+                            },
+                            error: function (xhr, status, error) {
+                                console.error('AJAX error:', error);
+                            }
+                        });
+                        html += '</select>';
+                        html += '</div>';
+                        html += '<div class="col-sm-3">';
+                        html += '<input type="text" class="form-control" name="SubledgerAmount" value="' + payment.Amount + '">';
+                        html += '</div>';
+                        html += '<div class="col-sm-2">';
+                        html += '<button class="btn btn-primary btn-link addSubLedgerBtn" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-plus"></i></button>';
+                        html += ' <button class="btn btn-primary btn-link deleteBtns" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button>';
+                        html += '</div>';
+                        html += '</div>';
 
                         // Close the table row
                         html += '</td>';
@@ -645,10 +622,7 @@ $(function () {
                         var newRow = PaymentTable.row.add($(html)).draw(false).node();
                     });
                 });
-
-
-
-            }, 
+            },
             error: function (errormessage) {
                 Swal.fire(
                     'Error!',
@@ -658,6 +632,7 @@ $(function () {
             }
         });
     }
+
     //------------------------------Delete Payments---------//
     $(document).on('click', '.btn-payment-delete', (event) => {
         const value = $(event.currentTarget).data('id');

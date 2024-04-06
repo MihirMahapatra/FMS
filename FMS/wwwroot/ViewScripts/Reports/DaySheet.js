@@ -19,7 +19,6 @@ $(function () {
     const ClosingCashBal = $('input[name="ClosingCashBal"]');
     const ClosingBankBal = $('input[name="ClosingBankBal"]');
     //-------------------------------------DaySheet Report------------------------------------------------//
-    var PrintData = {};
     $('#btnView').on('click', function () {
         if (!txtDate.val()) {
             toastr.error('Date Is Required.');
@@ -74,7 +73,7 @@ $(function () {
                                         html += '<td>-</td>';
                                     }
                                     html += '<td>' + purchaseTrn.ProductName + '</td>';
-                                    html += '<td>' + purchaseTrn.Quantity + '</td>';
+                                    html += '<td>' + purchaseTrn.AlternateQuantity + '</td>';
                                     html += '<td>' + purchaseTrn.Rate + '</td>';
                                     html += '<td>' + purchaseTrn.Amount + '</td>';
                                     html += '</tr>';
@@ -227,20 +226,6 @@ $(function () {
                             $('.tblPayment').html(html);
                         }
                     }
-                     PrintData = {
-                            CashSale: parseFloat(result.DaySheet.CashSale),
-                            CreditSale: parseFloat(result.DaySheet.CreditSale),
-                            OpeningCashBal: parseFloat(result.DaySheet.OpeningCashBal),
-                            OpeningBankBal: parseFloat(result.DaySheet.OpeningBankBal),
-                            ClosingCashBal: parseFloat(result.DaySheet.ClosingCashBal),
-                            ClosingBankBal: parseFloat(result.DaySheet.ClosingBankBal),
-                            Purchases: result.DaySheet.Purchases, 
-                            CreditSales: result.DaySheet.CreditSales, 
-                            CashSales: result.DaySheet.CashSales, 
-                            Receipts: result.DaySheet.Receipts, 
-                            Payments: result.DaySheet.Payments,
-                            Day: txtDate.val()
-                    }; 
                 },
                 error: function (errormessage) {
                     $('#loader').hide();
@@ -254,16 +239,7 @@ $(function () {
         }
     })
     $('#BtnPrint').on('click', function () {
-        $.ajax({
-            type: "POST",
-            url: '/Print/DaySheetPrintData',
-            dataType: 'json',
-            data: JSON.stringify(PrintData),
-            contentType: "application/json;charset=utf-8",
-            success: function (Response) {
-                window.open(Response.redirectTo, '_blank');
-
-            },
-        });
+        var url = '/Print/DaySheetPrint?Date=' + txtDate.val() + '';
+        window.open(url, '_blank');
     });
 })

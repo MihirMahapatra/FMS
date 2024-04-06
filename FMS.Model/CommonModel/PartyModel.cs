@@ -6,6 +6,8 @@
         public Guid Fk_PartyType { get; set; }
         public Guid Fk_SubledgerId { get; set; }
         public Guid Fk_StateId { get; set; }
+        public Guid? Fk_RefarenceId { get; set; }
+         public Guid? Fk_PartyGroupId { get; set; }
         public Guid Fk_CityId { get; set; }
         public string PartyName { get; set; }
         public string Address { get; set; }
@@ -17,6 +19,8 @@
         public CityModel City { get; set; }
         public LedgerModel Ledger { get; set; }
         public SubLedgerModel SubLedger { get; set; }
+        public PartyGroupModel PartyGroup { get; set; }
+        public ReferanceModel Referance { get; set; }
         public SubLedgerBalanceModel SubLedgerBalance { get; set; }
         public List<PurchaseOrderModel> PurchaseOrders { get; set; }
         public List<PurchaseReturnOrderModel> PurchaseReturns { get; set; }
@@ -27,8 +31,6 @@
         public List<PaymentModel> Payments { get; set; }
         public decimal OpeningBal { get; set; }
         public string OpeningBalType { get; set; }
-
-
         //other Property
         public string BranchName { get; set; }
     }

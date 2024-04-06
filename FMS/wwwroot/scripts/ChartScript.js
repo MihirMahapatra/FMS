@@ -44,7 +44,6 @@
                                 data: result.GraphData.ProductionAmount
                             },
                             
-                            
                         ]
                     }
                     //-------------

@@ -125,6 +125,12 @@
                             html += '<td>' + item.InwardQty.toFixed(2) + '</td>';
                             var closing = item.OpeningQty + item.PurchaseQty + item.ProductionQty + item.SalesReturnQty + item.InwardQty - item.PurchaseReturnQty - item.SalesQty - item.DamageQty - item.OutwardQty - item.ProductionEntryQty;
                             html += '<td>' + closing.toFixed(2) + ' ' + item.UnitName + '</td>';
+                            if (0 > closing) {
+                                html += '<td class="bg-danger text-white">' + closing.toFixed(2) + ' ' + item.UnitName + '</td>';
+                            }
+                            else {
+                                html += '<td>' + closing.toFixed(2) + ' ' + item.UnitName + '</td>';
+                            }
                             html += '</tr >';
                         });
                         $('#BtnPrintSummarized').show();

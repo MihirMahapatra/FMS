@@ -67,6 +67,8 @@ public partial class AppDbContext : IdentityDbContext<AppUser>, IDataProtectionK
     public DbSet<DamageOrder> DamageOrders { get; set; }
     public DbSet<DamageTransaction> DamageTransactions { get; set; }
     public DbSet<SalesConfig> SalesConfigs { get; set; }
+    public DbSet<Referance> Referances { get; set; }
+    public DbSet<PartyGroup> PartyGroups { get; set; }
 
     #endregion
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -122,6 +124,8 @@ public partial class AppDbContext : IdentityDbContext<AppUser>, IDataProtectionK
         new DamageOrderConfig().Configure(modelBuilder.Entity<DamageOrder>());
         new DamageTransactionConfig().Configure(modelBuilder.Entity<DamageTransaction>());
         new SalesConfigConfig().Configure(modelBuilder.Entity<SalesConfig>());
+        new ReferanceConfig().Configure(modelBuilder.Entity<Referance>());
+        new PartyGruopConfig().Configure(modelBuilder.Entity<PartyGroup>());
         #endregion
         base.OnModelCreating(modelBuilder);
     }

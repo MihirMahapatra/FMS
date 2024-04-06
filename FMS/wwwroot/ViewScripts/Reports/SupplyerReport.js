@@ -20,7 +20,7 @@ $(function () {
     const toDateDetailed = $('input[name="ToDateDetailed"]');
     toDateDetailed.val(todayDate);
     //--------------------------------Customer Report Summerized------------------------------------------------//
-    var PrintData = {}
+    var requestData = {};
     $('#btnViewSummerized').on('click', function () {
         $('#loader').show();
         $('.SummerizedReportTable').empty();
@@ -31,7 +31,7 @@ $(function () {
             toastr.error('ToDate Is Required.');
             return;
         } else {
-            var requestData = {
+             requestData = {
                 FromDate: fromDateSummerized.val(),
                 ToDate: toDateSummerized.val(),
                 ZeroValued: ddlZeroValued.val(),
@@ -71,16 +71,17 @@ $(function () {
                             html += '<td>' + item.CrAmt + '</td>';
                             var balance = item.Balance + item.OpeningBal;
                             var balanceType = balance >= 0 ? "Dr" : "Cr";
-                            html += '<td>' + Math.abs(balance) + '</td>';
+                            //html += '<td>' + Math.abs(balance) + '</td>';
+                            if (0 > balance) {
+                                html += '<td class="bg-danger text-white">' + balance.toFixed(2) + '</td>';
+                            }
+                            else {
+                                html += '<td>' + balance.toFixed(2) + '</td>';
+                            }
                             html += '<td>' + balanceType + '</td>';
                             html += '<tr>';
                         })
 
-                        PrintData = {
-                            FromDate : fromDateSummerized.val(),
-                            ToDate : toDateSummerized.val(),
-                            PartyReports: result.PartySummerized
-                        }
                     }
                     else {
                         html += '<tr>';
@@ -169,17 +170,9 @@ $(function () {
         $('#modal-Supplyer-info').modal('show');
     });
     $('#BtnPrintSummarized').on('click', function () {
-        console.log(PrintData);
-        $.ajax({
-            type: "POST",
-            url: '/Print/SupplyerSummarizedPrintData',
-            dataType: 'json',
-            data: JSON.stringify(PrintData),
-            contentType: "application/json;charset=utf-8",
-            success: function (Response) {
-                window.open(Response.redirectTo, '_blank');
-            },
-        });
+        var queryString = $.param(requestData); // Serialize object to query string
+        var url = '/Print/SupplyerSummarizedReportPrint?' + queryString; // Append query string to URL
+        window.open(url, '_blank');
     });
     //--------------------------------Customer Report Detailed------------------------------------------------//
     GetSundryCreditors();
@@ -211,6 +204,7 @@ $(function () {
         });
     }
     var Printdatadetails = {}; 
+    var Data = {};
     $('#btnViewDetailed').on('click', function () {
         $('#loader').show();
         $('.DetailedReportTable').empty();
@@ -227,6 +221,11 @@ $(function () {
         } 
         else {
             var requestData = {
+                FromDate: fromDateDetailed.val(),
+                ToDate: toDateDetailed.val(),
+                PartyId: ddlSupplyer.val()
+            };
+             Data = {
                 FromDate: fromDateDetailed.val(),
                 ToDate: toDateDetailed.val(),
                 PartyId: ddlSupplyer.val()
@@ -357,5 +356,10 @@ $(function () {
                 window.open(Response.redirectTo, '_blank');
             },
         });
+    });
+    $('#BtnPrintDetailed').on('click', function () {
+        var queryString = $.param(Data); // Serialize object to query string
+        var url = '/Print/SupplyerDetailedReportPrint?' + queryString; // Append query string to URL
+        window.open(url, '_blank');
     });
 })

@@ -937,6 +937,8 @@ namespace FMS.Repository.Master
                                        Email = s.Email,
                                        Address = s.Address,
                                        GstNo = s.GstNo,
+                                       PartyGroup = s.PartyGroup != null ? new PartyGroupModel { PartyGruopName = s.PartyGroup.PartyGroupName } : null,
+                                       Referance = s.Referance != null? new ReferanceModel { ReferanceName = s.Referance.ReferanceName} : null,
                                        Ledger = s.LedgerDev != null ? new LedgerModel { LedgerName = s.LedgerDev.LedgerName } : null,
                                        State = s.State != null ? new StateModel { StateName = s.State.StateName } : null,
                                        City = s.City != null ? new CityModel { CityName = s.City.CityName } : null,
@@ -1060,6 +1062,8 @@ namespace FMS.Repository.Master
                     Query.Fk_CityId = data.Fk_CityId;
                     Query.Fk_StateId = data.Fk_StateId;
                     Query.Fk_PartyType = data.Fk_PartyType;
+                    Query.Fk_PartyGroupId = data.Fk_PartyGroupId;
+                    Query.Fk_RefarenceId = data.Fk_RefarenceId;
                     Query.GstNo = data.GstNo;
                     Query.PartyName = data.PartyName;
                     Query.Phone = data.Phone;
@@ -1335,6 +1339,150 @@ namespace FMS.Repository.Master
             {
                 _Result.Exception = _Exception;
                 await _emailService.SendExceptionEmail("horizonexception@gmail.com", "FMS Excepion", $"MasterRepo/DeleteCity : {_Exception.Message}");
+            }
+            return _Result;
+        }
+        #endregion
+        #region Refarance
+        public async Task<Result<ReferanceModel>> GetReferance()
+        {
+            Result<ReferanceModel> _Result = new();
+            try
+            {
+                Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
+                _Result.IsSuccess = false;
+                var Query = await (from s in _appDbContext.Referances
+                                   select new ReferanceModel
+                                   {
+                                       RefaranceId = s.RefaranceId,
+                                       ReferanceName = s.ReferanceName
+                                   }).ToListAsync();
+                if (Query.Count > 0)
+                {
+                    _Result.CollectionObjData = Query;
+                    _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
+                }
+                _Result.IsSuccess = true;
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("horizonexception@gmail.com", "FMS Excepion", $"MasterRepo/GetStates : {_Exception.Message}");
+            }
+            return _Result;
+        }
+        public async Task<Result<bool>> CreateReferance(ReferanceModel data)
+        {
+            Result<bool> _Result = new();
+            try
+            {
+                Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
+                _Result.IsSuccess = false;
+                var Query = await _appDbContext.Referances.FirstOrDefaultAsync(s => s.ReferanceName == data.ReferanceName);
+                if (Query == null)
+                {
+                    var newRefarance = new Referance
+                    {
+                        ReferanceName = data.ReferanceName,
+                    };
+                    await _appDbContext.Referances.AddAsync(newRefarance);
+                    int count = await _appDbContext.SaveChangesAsync();
+                    _Result.Response = (count > 0) ? ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Created) : ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Error);
+                }
+                _Result.IsSuccess = true;
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("horizonexception@gmail.com", "FMS Excepion", $"MasterRepo/CreateState : {_Exception.Message}");
+            }
+            return _Result;
+        }
+        public async Task<Result<bool>> UpdateRefarance(ReferanceModel data)
+        {
+            Result<bool> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
+                var Query = await _appDbContext.Referances.FirstOrDefaultAsync(s => s.RefaranceId == data.RefaranceId);
+                if (Query != null)
+                {
+
+                    Query.ReferanceName = data.ReferanceName;
+                    int count = await _appDbContext.SaveChangesAsync();
+                    _Result.Response = (count > 0) ? ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Modified) : ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Error);
+                }
+                _Result.IsSuccess = true;
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("horizonexception@gmail.com", "FMS Excepion", $"MasterRepo/UpdateState : {_Exception.Message}");
+            }
+            return _Result;
+        }
+        public async Task<Result<bool>> DeleteDeferance(Guid Id, IDbContextTransaction transaction, bool IsCallBack)
+        {
+            Result<bool> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                using var localTransaction = transaction ?? await _appDbContext.Database.BeginTransactionAsync();
+                try
+                {
+                    if (Id != Guid.Empty)
+                    {
+                        var Query = await _appDbContext.Referances.FirstOrDefaultAsync(x => x.RefaranceId == Id);
+                        if (Query != null)
+                        {
+                            _appDbContext.Referances.Remove(Query);
+                            int count = await _appDbContext.SaveChangesAsync();
+                            _Result.Response = (count > 0) ? ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Deleted) : ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Error);
+                        }
+                        _Result.IsSuccess = true;
+                        if (IsCallBack == false) localTransaction.Commit();
+                    }
+                }
+                catch
+                {
+                    localTransaction.Rollback();
+                    throw;
+                }
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("horizonexception@gmail.com", "FMS Excepion", $"MasterRepo/DeleteState : {_Exception.Message}");
+            }
+            return _Result;
+        }
+        #endregion
+        #region PartyGruop
+        public async Task<Result<PartyGroupModel>> GetPartyGroups()
+        {
+            Result<PartyGroupModel> _Result = new();
+            try
+            {
+               
+                _Result.IsSuccess = false;
+                var Query = await (from s in _appDbContext.PartyGroups
+                                   select new PartyGroupModel
+                                   {
+                                       PartyGroupId = s.PartyGroupId,
+                                      PartyGruopName = s.PartyGroupName
+                                   }).ToListAsync();
+                if (Query.Count > 0)
+                {
+                    _Result.CollectionObjData = Query;
+                    _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
+                }
+                _Result.IsSuccess = true;
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("horizonexception@gmail.com", "FMS Excepion", $"MasterRepo/GetPartyGroups : {_Exception.Message}");
             }
             return _Result;
         }

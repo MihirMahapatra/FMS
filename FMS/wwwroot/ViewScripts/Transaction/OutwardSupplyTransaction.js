@@ -14,6 +14,8 @@ $(function () {
     const transactionDate = $('input[name="TransactionDate"]');
     transactionDate.val(todayDate);
     const transactionNo = $('input[name="TransactionNo"]');
+    const challanno = $('input[name="ChallanNo"]');
+    const vehicleno = $('input[name="VehicleNo"]');
     const ddlBranch = $('select[name="ddlBranchId"]');
     const ddlProductType = $('select[name="ddlProductTypeId"]');
     const totalAmout = $('input[name="GrandTotal"]');
@@ -154,8 +156,9 @@ $(function () {
         else {
             html = '<tr>';
             html += '<td hidden><input type="hidden" class="form-control" value="0"></td>';
-            html += '<td><div class="form-group"><select class="form-control form-control-sm select2bs4" style="width: 100%;" id="' + uniqueId + '"></select></div></td>';
+            html += '<td><div class="form-group"><select class="form-control form-control-sm select2bs4 Products" style="width: 100%;" id="' + uniqueId + '"></select></div></td>';
             html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
+            html += '<td><div class="form-group"><input type="text" class="form-control" disabled value="N/A"></div></td>';
             html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
             html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
             html += '<td><button class="btn btn-primary btn-link deleteBtn" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button></td>';
@@ -183,8 +186,6 @@ $(function () {
                 }
             });
         }
-
-
         $('#tblOutwardSupply tbody').find('.select2bs4').select2({
             theme: 'bootstrap4'
         });
@@ -192,6 +193,32 @@ $(function () {
     $(document).on('click', '.deleteBtn', function () {
         var row = OutwardSupplyTable.row($(this).closest('tr'));
         row.remove().draw();
+    });
+    $(document).on('change', '.Products', function () {
+        var selectElement = $(this);
+        var selectedProductId = selectElement.val();
+        if (selectedProductId) {
+            $.ajax({
+                url: '/Admin/GetProductById?ProductId=' + selectedProductId + '',
+                type: "GET",
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    if (result.ResponseCode == 302) {
+                        var Textbox = selectElement.closest('tr').find('input[type="text"]');
+                        for (var i = 0; i < 7; i++) {
+                            Textbox.eq(i).val('0');
+                        }
+                       
+                        Textbox.eq(1).val(result.Product.Unit.UnitName);
+                    }
+                },
+                error: function (errormessage) {
+                    console.log(errormessage);
+                }
+            });
+           
+        }
     });
     $('#tblOutwardSupply tbody').on('change', 'input[type="text"]', function () {
         var row = $(this).closest('tr');
@@ -244,6 +271,8 @@ $(function () {
             var requestData = {
                 TransactionDate: transactionDate.val(),
                 TransactionNo: transactionNo.val(),
+                ChallanNo: challanno.val(),
+                VehicleNo: vehicleno.val(),
                 Branch: ddlBranch.val(),
                 Fk_ProductTypeId: ddlProductType.val(),
                 TotalAmount: totalAmout.val(),
@@ -452,6 +481,8 @@ $(function () {
                     }
                 });
                 totalAmout.val(result.OutwardSupply.TotalAmount);
+                challanno.val(result.OutwardSupply.ChallanNo);
+                vehicleno.val(result.OutwardSupply.VehicleNo);
                 //Fill Table Data
                 OutwardSupplyTable.clear().draw();
                 $.each(result.OutwardSupply.OutwardSupplyTransactions, function (key, item) {
@@ -459,6 +490,7 @@ $(function () {
                     html += '<td  hidden><input type="hidden" class="form-control"  value=' + item.OutwardSupplyTransactionId + '></td>';
                     html += '<td><div class="form-group"><select class="form-control form-control-sm select2bs4" style="width: 100%;" id="ddn_' + item.OutwardSupplyTransactionId + '"> </select></div></td>';
                     html += '<td><div class="form-group"><input type="text" class="form-control" id="" value=' + item.Quantity + '></div></td>';
+                    html += '<td><div class="form-group"><input type="text" class="form-control" disabled value=' + item.Product.Unit.UnitName + '></div></td>';
                     html += '<td><div class="form-group"><input type="text" class="form-control" id=""  value=' + item.Rate + '></div></td>';
                     html += '<td><div class="form-group"><input type="text" class="form-control" id=""  value=' + item.Amount + '></div></td>';
                     html += '<td><button class="btn btn-primary btn-link deleteBtn" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button></td>';
@@ -536,6 +568,8 @@ $(function () {
             var requestData = {
                 SupplyId: outwardSupplyOrderId.val(),
                 TransactionDate: transactionDate.val(),
+                ChallanNo: challanno.val(),
+                VehicleNo: vehicleno.val(),
                 TransactionNo: transactionNo.val(),
                 Branch: ddlBranch.val(),
                 Fk_ProductTypeId: ddlProductType.val(),

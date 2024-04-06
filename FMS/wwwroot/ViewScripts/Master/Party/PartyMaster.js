@@ -4,9 +4,11 @@ $(function () {
     $("#PartyMasterLink i.far.fa-circle").removeClass("far fa-circle").addClass("far fa-dot-circle");
     /***************************************Variable Declaration********************************************/
     const ddlpartyType = $('select[name="ddnPartyTypeId"]');
+    const ddlpartyGruop = $('select[name="ddnPartyGroup"]');
     const partyName = $('input[name="PartyName"]');
     const ddlState = $('select[name="ddnStateId"]');
     const ddlCity = $('select[name="ddnCityId"]');
+    const ddlReferance = $('select[name="ddnReferanceId"]');
     const phoneNo = $('input[name="PhoneNo"]');
     const email = $('input[name="Mail"]');
     const address = $('input[name="Address"]');
@@ -79,13 +81,13 @@ $(function () {
         }
         $(this).val(inputValue);
     });
-    email.on('blur', function (event) {
-        const Regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-        const isValid = Regex.test(emailInput.val());
-        if (!isValid) {
-            toastr.error("Invalid Email");
-        }
-    });
+    //email.on('blur', function (event) {
+    //    const Regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+    //    const isValid = Regex.test(emailInput.val());
+    //    if (!isValid) {
+    //        toastr.error("Invalid Email");
+    //    }
+    //});
     address.on("input", function () {
         let inputValue = $(this).val();
         inputValue = inputValue.toUpperCase();
@@ -118,6 +120,27 @@ $(function () {
             }
         });
     }
+    LoadPartyGroups();
+    function LoadPartyGroups() {
+        $.ajax({
+            url: "/Master/GetPartyGruops",
+            type: "GET",
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            success: function (result) {
+                ddlpartyGruop.empty();
+                var defaultOption = $('<option></option>').val('').text('--Select Option--');
+                ddlpartyGruop.append(defaultOption);
+                $.each(result.PartyGruops, function (key, item) {
+                    var option = $('<option></option>').val(item.PartyGroupId).text(item.PartyGruopName);
+                    ddlpartyGruop.append(option);
+                });
+            },
+            error: function (errormessage) {
+                console.log(errormessage)
+            }
+        });
+    }
     GetParties();
     function GetParties() {
         $('.PartyTable').empty();
@@ -141,6 +164,8 @@ $(function () {
                 html += '<th>Email</th>'
                 html += '<th hidden>Address</th>'
                 html += '<th>GST No</th>'
+                html += '<th>Party Group</th>'
+                html += '<th>Refarance Name</th>'
                 html += '<th>Action</th>'
                 html += '</tr>'
                 html += '</thead>'
@@ -157,6 +182,17 @@ $(function () {
                         html += '<td>' + item.Email + '</td>';
                         html += '<td hidden>' + item.Address + '</td>';
                         html += '<td>' + item.GstNo + '</td>';
+                        if (item.PartyGroup != null) {
+                            html += '<td>' + item.PartyGroup.PartyGruopName + '</td>';
+                        } else {
+                            html += '<td>' + "_" + '</td>';
+                        }
+                        if (item.Referance != null) {
+                            html += '<td>' + item.Referance.ReferanceName + '</td>';
+                        } else {
+                            html += '<td>' + "_" + '</td>';
+                        }
+                        
                         html += '<td style="background-color:#ffe6e6;">';
                         html += '<button class="btn btn-primary btn-link btn-sm btn-party-edit"   id="btnPartyEdit_' + item.PartyId + '"     data-id="' + item.PartyId + '" data-toggle="modal" data-target="#modal-party-edit" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-edit"></i></button>';
                         html += ' <button class="btn btn-primary btn-link btn-sm btn-party-delete" id="btnPartyDelete_' + item.PartyId + '"   data-id="' + item.PartyId + '" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button>';
@@ -246,6 +282,8 @@ $(function () {
                 Fk_PartyType: ddlpartyType.val(),
                 Fk_StateId: ddlState.val(),
                 Fk_CityId: ddlCity.val(),
+                Fk_PartyGroupId : ddlpartyGruop.val(),
+                Fk_RefarenceId: ddlReferance.val(),
                 PartyName: partyName.val(),
                 Address: address.val(),
                 Phone: phoneNo.val(),
@@ -294,6 +332,8 @@ $(function () {
         var Email = $tr.find('td:eq(6)').text().trim();
         var Address = $tr.find('td:eq(7)').text().trim();
         var GSTNo = $tr.find('td:eq(8)').text().trim();
+        var PartyGroupName = $tr.find('td:eq(9)').text().trim();
+        var Refarancename = $tr.find('td:eq(10)').text().trim();
         //fill Modal
         $('input[name="mdlPartyId"]').val(Id);
         $('input[name="mdlPartyName"]').val(PartyName);
@@ -372,6 +412,52 @@ $(function () {
                         }
                     });
                 }
+                $.ajax({
+                    url: "/Master/GetPartyGruops",
+                    type: "GET",
+                    contentType: "application/json;charset=utf-8",
+                    dataType: "json",
+                    success: function (result) {
+                        var ddlpartyGruop = $('select[name="mdlddnPartygroupId"]');
+                        ddlpartyGruop.empty();
+                        var defaultOption = $('<option></option>').val('').text('--Select Option--');
+                        ddlpartyGruop.append(defaultOption);
+                        $.each(result.PartyGruops, function (key, item) {
+                            var option = $('<option></option>').val(item.PartyGroupId).text(item.PartyGruopName);
+                            if (item.PartyGruopName === PartyGroupName) {
+                                option.attr('selected', 'selected');
+                            }
+                            ddlpartyGruop.append(option);
+                        });
+                    },
+                    error: function (errormessage) {
+                        console.log(errormessage)
+                    }
+                });
+                $.ajax({
+                    url: "/Master/GetRefarance",
+                    type: "GET",
+                    contentType: "application/json;charset=utf-8",
+                    dataType: "json",
+                    success: function (result) {
+                        if (result.ResponseCode == 302) {
+                            var ddlReferance = $('select[name="mdlddnReferanceId"]');
+                            ddlReferance.empty();
+                            var defaultOption = $('<option></option>').val('').text('--Select Option--');
+                            ddlReferance.append(defaultOption);
+                            $.each(result.Referances, function (key, item) {
+                                var option = $('<option></option>').val(item.RefaranceId).text(item.ReferanceName);
+                                if (item.ReferanceName === Refarancename) {
+                                    option.attr('selected', 'selected');
+                                }
+                                ddlReferance.append(option);
+                            });
+                        }
+                    },
+                    error: function (errormessage) {
+                        console.log(errormessage)
+                    }
+                });
             },
             error: function (errormessage) {
                 console.log(errormessage)
@@ -385,6 +471,8 @@ $(function () {
             Fk_PartyType: $('select[name="mdlddnPartyTypeId"]').val(),
             Fk_StateId: $('select[name="mdlddnStateId"]').val(),
             Fk_CityId: $('select[name="mdlddnCityId"]').val(),
+            Fk_PartyGroupId: $('select[name="mdlddnPartygroupId"]').val(),
+            Fk_RefarenceId: $('select[name="mdlddnReferanceId"]').val(),
             PartyName: $('input[name="mdlPartyName"]').val(),
             Address: $('input[name="mdlAddress"]').val(),
             Phone: $('input[name="mdlPhoneNo"]').val(),
@@ -785,6 +873,145 @@ $(function () {
                 }
             });
         }
+    }
+
+    /**************************************Refarance*************************************/
+    LoadRefarance();
+    function LoadRefarance() {
+        ddlReferance.empty();
+        var defaultOption = $('<option></option>').val('').text('--Select Option--');
+        ddlReferance.append(defaultOption);
+        $.ajax({
+            url: "/Master/GetRefarance",
+            type: "GET",
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            success: function (result) {
+                if (result.ResponseCode == 302) {
+                    $.each(result.Referances, function (key, item) {
+                        var option = $('<option></option>').val(item.RefaranceId).text(item.ReferanceName);
+                        ddlReferance.append(option);
+                    });
+                }
+            },
+            error: function (errormessage) {
+                console.log(errormessage)
+            }
+        });
+    }
+    $('#btnReferanceAdd').on('click', function () {
+        $('#modal-add-Refarance').modal('show');
+    });
+    $('.RefaranceAdd').on('click', RefaranceAdd);
+    function RefaranceAdd() {
+        const data = {
+            ReferanceName: $('input[name="mdlRefaranceAdd"]').val(),
+        }
+        $.ajax({
+            type: "POST",
+            url: '/Master/CreateRefarence',
+            dataType: 'json',
+            data: JSON.stringify(data),
+            contentType: "application/json;charset=utf-8",
+            success: function (Response) {
+                $('#modal-add-Refarance').modal('hide');
+                if (Response.ResponseCode == 201) {
+                    toastr.success(Response.SuccessMsg);
+                    $('input[name="mdlRefaranceAdd"]').val('');
+                }
+                else {
+                    toastr.error(Response.ErrorMsg);
+                }
+                LoadRefarance();
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+    }
+    $("#btnReferanceEdit").on('click', RefaranceEdit);
+    function RefaranceEdit() {
+        if (!ddlReferance.val() || ddlReferance.val() === '--Select Option--') {
+            toastr.error('Plz Select a Refarance To Edit');
+            return;
+        }
+        else {
+            $('#modal-edit-Refarance').modal('show');
+            const selectedOption = ddlReferance.find('option:selected').not(':contains("--Select Option--")');
+            var text = selectedOption.text();
+            var value = selectedOption.val();
+            $("input[name='mdlRefaranceEdit']").val(text);
+            $("input[name='mdlRefarenceId']").val(value);
+        }
+    }
+    $('.StateUpdate').on('click', RefaranceUpdate);
+    function RefaranceUpdate() {
+        const data = {
+            RefaranceId: $("input[name='mdlRefarenceId']").val(),
+            ReferanceName: $('input[name="mdlRefaranceEdit"]').val(),
+        }
+        $.ajax({
+            type: "POST",
+            url: '/Master/UpdateRefarence',
+            dataType: 'json',
+            data: JSON.stringify(data),
+            contentType: "application/json;charset=utf-8",
+            success: function (Response) {
+                $('#modal-edit-Refarance').modal('hide');
+                if (Response.ResponseCode == 200) {
+                    toastr.success(Response.SuccessMsg);
+                    $('input[name="mdlRefarenceId"]').val('');
+                    $('input[name="mdlRefaranceEdit"]').val('');
+                    LoadRefarance();
+                }
+                else {
+                    toastr.error(Response.ErrorMsg);
+                }
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+    }
+    $('#btnReferanceDelete').on('click', RefaranceDelete);
+    function RefaranceDelete() {
+        if (!ddlReferance.val() || ddlReferance.val() === '--Select Option--') {
+            toastr.error('Plz Select a Referance To Delete');
+            return;
+        }
+        const Id = ddlReferance.find('option:selected').val();
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+
+                $.ajax({
+                    url: '/Master/DeleteRefarance?id=' + Id + '',
+                    type: "POST",
+                    contentType: "application/json;charset=utf-8",
+                    dataType: "json",
+                    success: function (result) {
+                        if (result.ResponseCode == 200) {
+                            toastr.success(result.SuccessMsg);
+                            LoadRefarance();
+                        }
+                        else {
+                            toastr.error(result.ErrorMsg);
+                        }
+
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    }
+                });
+            }
+        });
     }
 
 });

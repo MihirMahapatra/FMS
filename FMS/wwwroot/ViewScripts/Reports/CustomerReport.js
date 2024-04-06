@@ -14,12 +14,34 @@ $(function () {
     const toDateSummerized = $('input[name="ToDateSummerized"]');
     toDateSummerized.val(todayDate);
     const ddlCustomer = $('select[name="ddlCustomerId"]');
+    const ddlPartyGroup = $('select[name="ddlPartyGroupId"]');
     const fromDateDetailed = $('input[name="FromDateDetailed"]');
     fromDateDetailed.val(todayDate);
     const toDateDetailed = $('input[name="ToDateDetailed"]');
     toDateDetailed.val(todayDate);
     //--------------------------------Customer Report Summerized------------------------------------------------//
-    var PrintData = {}
+    LoadPartyGroups();
+    function LoadPartyGroups() {
+        $.ajax({
+            url: "/Master/GetPartyGruops",
+            type: "GET",
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            success: function (result) {
+                ddlPartyGroup.empty();
+                var defaultOption = $('<option></option>').val('').text('--Select Option--');
+                ddlPartyGroup.append(defaultOption);
+                $.each(result.PartyGruops, function (key, item) {
+                    var option = $('<option></option>').val(item.PartyGroupId).text(item.PartyGruopName);
+                    ddlPartyGroup.append(option);
+                });
+            },
+            error: function (errormessage) {
+                console.log(errormessage)
+            }
+        });
+    }
+    var requestData = {};
     $('#btnViewSummerized').on('click', function () {
         $('#loader').show();
         $('.SummerizedReportTable').empty();
@@ -30,10 +52,16 @@ $(function () {
             toastr.error('ToDate Is Required.');
             return;
         } else {
-            var requestData = {
+            
+            requestData = {
                 FromDate: fromDateSummerized.val(),
                 ToDate: toDateSummerized.val(),
+                Fk_PartyGroupId: ddlPartyGroup.val(),
             };
+            if (requestData.Fk_PartyGroupId === '') {
+                delete requestData.Fk_PartyGroupId;
+            }
+
             $.ajax({
                 url: "/Reports/GetSummerizedCustomerReport",
                 type: "POST",
@@ -69,7 +97,13 @@ $(function () {
                             html += '<td>' + item.CrAmt + '</td>';
                             var balance = item.Balance + item.OpeningBal;
                             var balanceType = balance >= 0 ? "Dr" : "Cr";
-                            html += '<td>' + Math.abs(balance) + '</td>';
+                            //html += '<td>' + Math.abs(balance) + '</td>';
+                            if (0 > balance) {
+                                html += '<td class="bg-danger text-white">' + balance.toFixed(2) + '</td>';
+                            }
+                            else {
+                                html += '<td>' + balance.toFixed(2) + '</td>';
+                            }
                             html += '<td>' + balanceType + '</td>';
                             html += '</tr>';
                         })
@@ -164,20 +198,14 @@ $(function () {
         $('#modal-customer-info').modal('show');
     });
     $('#BtnPrintSummarized').on('click', function () {
-        console.log(PrintData);
-        $.ajax({
-            type: "POST",
-            url: '/Print/CustomerSummarizedPrintData',
-            dataType: 'json',
-            data: JSON.stringify(PrintData),
-            contentType: "application/json;charset=utf-8",
-            success: function (Response) {
-                window.open(Response.redirectTo, '_blank');
-            },
-        });
+        console.log(requestData);
+        var queryString = $.param(requestData); // Serialize object to query string
+        var url = '/Print/CustomerSummarizedReportPrint?' + queryString; // Append query string to URL
+        window.open(url, '_blank');
     });
     //--------------------------------Customer Report Detailed------------------------------------------------//
     GetSundryDebtors();
+    var data = {}
     function GetSundryDebtors() {
         $.ajax({
             url: "/Transaction/GetSundryDebtors",
@@ -221,7 +249,12 @@ $(function () {
             return;
         }
         else {
-            var requestData = {
+             requestData = {
+                FromDate: fromDateDetailed.val(),
+                ToDate: toDateDetailed.val(),
+                PartyId: ddlCustomer.val()
+            };
+            data = {
                 FromDate: fromDateDetailed.val(),
                 ToDate: toDateDetailed.val(),
                 PartyId: ddlCustomer.val()
@@ -357,5 +390,10 @@ $(function () {
                 window.open(Response.redirectTo, '_blank');
             },
         });
+    });
+    $('#BtnPrintDetailed').on('click', function () {
+        var queryString = $.param(data); // Serialize object to query string
+        var url = '/Print/CustomerDetailedReportPrint?' + queryString; // Append query string to URL
+        window.open(url, '_blank');
     });
 })

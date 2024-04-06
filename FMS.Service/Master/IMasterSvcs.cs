@@ -34,6 +34,9 @@ namespace FMS.Service.Master
         Task<Base> UpdateParty(PartyModel data);
         Task<Base> DeleteParty(Guid Id);
         #endregion
+        #region Party Gruop
+        Task<PartyGroupViewModel> GetPartyGroups();
+        #endregion
         #region State
         Task<StateViewModel> GetStates();
         Task<Base> CreateState(StateModel data);
@@ -45,6 +48,12 @@ namespace FMS.Service.Master
         Task<Base> CreateCity(CityModel data);
         Task<Base> UpdateCity(CityModel data);
         Task<Base> DeleteCity(Guid Id);
+        #endregion
+        #region Refarence
+        Task<ReferanceViewModel> GetRefarence();
+        Task<Base> CreateRefarence(ReferanceModel data);
+        Task<Base> UpdateRefarence(ReferanceModel data);
+        Task<Base> DeleteRefarence(Guid Id);
         #endregion
         #endregion
         #region Account Master

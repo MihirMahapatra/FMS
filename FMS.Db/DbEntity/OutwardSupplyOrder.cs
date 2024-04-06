@@ -4,6 +4,8 @@
     {
         public Guid OutwardSupplyOrderId { get; set; }
         public string TransactionNo { get; set; }
+        public string ChallanNo { get; set; }
+        public string VehicleNo { get; set; }
         public DateTime TransactionDate { get; set; }
         public Guid ToBranch { get; set; }
         public Guid Fk_ProductTypeId { get; set; }

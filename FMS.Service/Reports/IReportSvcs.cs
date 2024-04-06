@@ -49,8 +49,11 @@ namespace FMS.Service.Reports
         #region TrialBalances
         public Task<LedgerTrialBalanceViewModel> TrialBalanceReport(LedgerbookDataRequest requestData);
         #endregion
-        #region TrialBalances
+        #region JournalBook
         public Task<JournalViewModel> JournalBookReport(LedgerbookDataRequest requestData);
+        #endregion
+        #region refarence
+        Task<PartyReportViewModel> GetCustomerRefranceReport(PartyReportDataRequest requestData);
         #endregion
     }
 }

@@ -682,6 +682,7 @@ $(function () {
             $('#tblSales tbody tr').each(function () {
                 var row = $(this);
                 var PrintCelles = [];
+                var unitText = row.find('#Unit').text();
                 row.find('td').each(function () {
                     var cell = $(this);
                     var input = cell.find('input,select,span');
@@ -693,7 +694,9 @@ $(function () {
                     PrintCelles.push(value);
                 });
                 PrintData.push(PrintCelles);
-            });
+                PrintCelles.push(unitText);
+            });  
+
             var requestData = {
                 TransactionType: ddlPayment.val(),
                 RateType: ddlRate.val(),

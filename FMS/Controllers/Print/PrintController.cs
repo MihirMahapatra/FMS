@@ -5,7 +5,7 @@ using FMS.Service.Admin;
 using FMS.Service.Reports;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace FMS.Controllers.Print
 {
@@ -50,27 +50,18 @@ namespace FMS.Controllers.Print
         }
         #endregion
         #region Daysheet Report
-        [HttpPost]
-        public IActionResult DaySheetPrintData([FromBody] DaySheetModel requestData)
-        {
-            TempData["DaySheetData"] = JsonConvert.SerializeObject(requestData);
-            return Json(new { redirectTo = Url.Action("DaySheetPrint", "Print") });
-        }
         [HttpGet]
-        public IActionResult DaySheetPrint(string data)
+        public async Task<IActionResult> DaySheetPrint([FromQuery] string Date)
         {
-            if (TempData.TryGetValue("DaySheetData", out object tempData) && tempData is string jsonData)
+            var result = await _reportSvcs.GetDaySheet(Date);
+            var DaySheetData = new DaySheetModel();
+            DaySheetData = result.DaySheet;
+            var DaySheetPrintModel = new DaysheetPrintModel()
             {
-                var requestPrintData = JsonConvert.DeserializeObject<DaySheetModel>(jsonData);
-                var CashBookPrintModel = new DaysheetPrintModel()
-                {
-                    Cmopany = _adminSvcs.GetCompany().Result.GetCompany,
-                    daySheet = requestPrintData
-                };
-
-                return View(CashBookPrintModel);
-            }
-            return RedirectToAction("Error");
+                Cmopany = _adminSvcs.GetCompany().Result.GetCompany,
+                daySheet = DaySheetData
+            };
+            return View(DaySheetPrintModel);
         }
         #endregion
         #region Labour Reports
@@ -149,95 +140,77 @@ namespace FMS.Controllers.Print
         }
         #endregion
         #region Customer Report
-        [HttpPost]
-        public IActionResult CustomerSummarizedPrintData([FromBody] CustomerSummarizedModel requestData)
-        {
-            TempData["CustomerSummarizedData"] = JsonConvert.SerializeObject(requestData);
-            return Json(new { redirectTo = Url.Action("CustomerSummarizedReportPrint", "Print") });
-        }
         [HttpGet]
-        public IActionResult CustomerSummarizedReportPrint()
+        public async Task<IActionResult> CustomerSummarizedReportPrint([FromQuery] PartyReportDataRequest requestData)
         {
-            if (TempData.TryGetValue("CustomerSummarizedData", out object tempData) && tempData is string jsonData)
+            
+            var result = await _reportSvcs.GetSummerizedCustomerReport(requestData);
+            var CustomerSumrizedData = new CustomerSummarizedModel();
+            CustomerSumrizedData.FromDate = requestData.FromDate;
+            CustomerSumrizedData.ToDate = requestData.ToDate;
+            CustomerSumrizedData.PartyReports = result.PartySummerized;
+            var CustomerSumrizedReportModal = new CustomerReportDataModel()
             {
-                var requestPrintData = JsonConvert.DeserializeObject<CustomerSummarizedModel>(jsonData);
-                var StockSumrizedReportModal = new CustomerReportDataModel()
-                {
-                    Cmopany = _adminSvcs.GetCompany().Result.GetCompany,
-                    Customers = requestPrintData
-                };
-                return View(StockSumrizedReportModal);
-            }
-            return RedirectToAction("Error");
+                Cmopany = _adminSvcs.GetCompany().Result.GetCompany,
+                Customers = CustomerSumrizedData
+            };
+            return View(CustomerSumrizedReportModal);
 
         }
-        [HttpPost]
-        public IActionResult CustomerDetailedPrintData([FromBody] CustomerSummarizedModel requestData)
-        {
-            TempData["CustomerDetailedData"] = JsonConvert.SerializeObject(requestData);
-            return Json(new { redirectTo = Url.Action("CustomerDetailedReportPrint", "Print") });
-        }
+        //[HttpPost]
+        //public IActionResult CustomerDetailedPrintData([FromBody] CustomerSummarizedModel requestData)
+        //{
+        //    TempData["CustomerDetailedData"] = JsonConvert.SerializeObject(requestData);
+        //    return Json(new { redirectTo = Url.Action("CustomerDetailedReportPrint", "Print") });
+        //}
         [HttpGet]
-        public IActionResult CustomerDetailedReportPrint()
+        public async Task<IActionResult> CustomerDetailedReportPrint([FromQuery] PartyReportDataRequest requestData)
         {
-            if (TempData.TryGetValue("CustomerDetailedData", out object tempData) && tempData is string jsonData)
+            var result = await _reportSvcs.GetDetailedCustomerReport(requestData);
+            var CustomerDetailedData = new CustomerSummarizedModel();
+            CustomerDetailedData.FromDate = requestData.FromDate;
+            CustomerDetailedData.ToDate = requestData.ToDate;
+            CustomerDetailedData.PartyDetailedReports = result.PartyDetailed;
+            var CustomerDetailedReportModal = new CustomerReportDataModel()
             {
-                var requestPrintData = JsonConvert.DeserializeObject<CustomerSummarizedModel>(jsonData);
-                var StockSumrizedReportModal = new CustomerReportDataModel()
-                {
-                    Cmopany = _adminSvcs.GetCompany().Result.GetCompany,
-                    Customers = requestPrintData
-                };
-                return View(StockSumrizedReportModal);
-            }
-            return RedirectToAction("Error");
+                Cmopany = _adminSvcs.GetCompany().Result.GetCompany,
+                Customers = CustomerDetailedData
+            };
+            return View(CustomerDetailedReportModal);
 
         }
         #endregion
         #region Supplyer Report
-        [HttpPost]
-        public IActionResult SupplyerSummarizedPrintData([FromBody] CustomerSummarizedModel requestData)
-        {
-            TempData["SupplyerSummarizedData"] = JsonConvert.SerializeObject(requestData);
-            return Json(new { redirectTo = Url.Action("SupplyerSummarizedReportPrint", "Print") });
-        }
         [HttpGet]
-        public IActionResult SupplyerSummarizedReportPrint()
+        public async Task<IActionResult> SupplyerSummarizedReportPrint([FromQuery] PartyReportDataRequest requestData)
         {
-            if (TempData.TryGetValue("SupplyerSummarizedData", out object tempData) && tempData is string jsonData)
+            var result = await _reportSvcs.GetSummerizedSupplyerReport(requestData);
+            var SupplyerReportData = new CustomerSummarizedModel();
+            SupplyerReportData.FromDate = requestData.FromDate;
+            SupplyerReportData.ToDate = requestData.ToDate;
+            SupplyerReportData.PartyReports = result.PartySummerized;
+            var SupplyerSumrizedReportModal = new CustomerReportDataModel()
             {
-                var requestPrintData = JsonConvert.DeserializeObject<CustomerSummarizedModel>(jsonData);
-                var StockSumrizedReportModal = new CustomerReportDataModel()
-                {
-                    Cmopany = _adminSvcs.GetCompany().Result.GetCompany,
-                    Customers = requestPrintData
-                };
-                return View(StockSumrizedReportModal);
-            }
-            return RedirectToAction("Error");
+                Cmopany = _adminSvcs.GetCompany().Result.GetCompany,
+                Customers = SupplyerReportData
+            };
+            return View(SupplyerSumrizedReportModal);
 
         }
-        [HttpPost]
-        public IActionResult SupplyerDetailsPrintData([FromBody] CustomerSummarizedModel requestData)
-        {
-
-            TempData["SupplyerDetailedData"] = JsonConvert.SerializeObject(requestData);
-            return Json(new { redirectTo = Url.Action("SupplyerDetailedReportPrint", "Print") });
-        }
         [HttpGet]
-        public IActionResult SupplyerDetailedReportPrint()
+        public async Task<IActionResult> SupplyerDetailedReportPrint([FromQuery] PartyReportDataRequest requestData)
         {
-            if (TempData.TryGetValue("SupplyerDetailedData", out object tempData) && tempData is string jsonData)
+            var result = await _reportSvcs.GetDetailedSupplyerReport(requestData);
+            var SupplyerDetailedData = new CustomerSummarizedModel();
+            SupplyerDetailedData.FromDate = requestData.FromDate;
+            SupplyerDetailedData.ToDate = requestData.ToDate;
+            SupplyerDetailedData.PartyDetailedReports = result.PartyDetailed;
+            var CustomerDetailedReportModal = new CustomerReportDataModel()
             {
-                var requestPrintData = JsonConvert.DeserializeObject<CustomerSummarizedModel>(jsonData);
-                var StockSumrizedReportModal = new CustomerReportDataModel()
-                {
-                    Cmopany = _adminSvcs.GetCompany().Result.GetCompany,
-                    Customers = requestPrintData
-                };
-                return View(StockSumrizedReportModal);
-            }
-            return RedirectToAction("Error");
+                Cmopany = _adminSvcs.GetCompany().Result.GetCompany,
+                Customers = SupplyerDetailedData
+            };
+            return View(CustomerDetailedReportModal);
 
         }
         #endregion
@@ -398,6 +371,22 @@ namespace FMS.Controllers.Print
 
         }
         #endregion
-
+        #region ClientRefarance Report
+        [HttpGet]
+        public async Task<IActionResult> ClientRefarencePrint([FromQuery] PartyReportDataRequest requestData)
+        {
+            var result = await _reportSvcs.GetCustomerRefranceReport(requestData);
+            var ClientRefarance = new CustomerSummarizedModel();
+            ClientRefarance.PartyReports = result.PartySummerized;
+            ClientRefarance.FromDate = requestData.FromDate;
+            ClientRefarance.ToDate = requestData.ToDate;
+            var ClientRefarancePrintModel = new CustomerReportDataModel()
+            {
+                Cmopany = _adminSvcs.GetCompany().Result.GetCompany,
+                Customers = ClientRefarance
+            };
+            return View(ClientRefarancePrintModel);
+        }
+        #endregion
     }
 }

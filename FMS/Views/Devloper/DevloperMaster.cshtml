@@ -15,6 +15,8 @@
     <link rel="stylesheet" href="~/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
     <!-- Theme style -->
     <link rel="stylesheet" href="~/dist/css/adminlte.min.css">
+    <!-- Daterange picker -->
+    <link rel="stylesheet" href="~/plugins/daterangepicker/daterangepicker.css">
     <!-- DataTables -->
     <link rel="stylesheet" href="~/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
     <link rel="stylesheet" href="~/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
@@ -26,6 +28,7 @@
     <link rel="stylesheet" href="~/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
     <!-- Toastr -->
     <link rel="stylesheet" href="~/plugins/toastr/toastr.min.css">
+    <link href="~/viewstyles/loader.css" rel="stylesheet" />
     <style>
         .cust-btn {
             margin-top: 32px !important;
@@ -73,25 +76,25 @@
                                 <div class="tab-pane text-left fade show active" id="BranchMaster" role="tabpanel" aria-labelledby="tab-BranchMaster">
                                     <!--Branche-->
                                     <div class="row">
-                                        <div class="col-md-6">
+                                        <div class="col-md-3">
                                             <div class="form-group">
                                                 <label>Branch Name</label>
                                                 <input type="text" class="form-control" id="txtBranchName">
                                             </div>
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-md-3">
                                             <div class="form-group">
                                                 <label>Contact Number</label>
                                                 <input type="text" class="form-control" id="txtContactNumber" maxlength="10">
                                             </div>
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-md-3">
                                             <div class="form-group">
                                                 <label>Branch Address</label>
                                                 <input type="text" class="form-control" id="txtBranchAddress">
                                             </div>
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-md-3">
                                             <div class="form-group">
                                                 <label>Branch Code</label>
                                                 <input type="text" class="form-control" id="txtBranchCode">
@@ -111,20 +114,20 @@
                                 <div class="tab-pane fade" id="FinancialYearMaster" role="tabpanel" aria-labelledby="tab-FinancialYearMaster">
                                     <!--FinancialYear Master-->
                                     <div class="row">
-                                        <div class="col-md-6">
+                                        <div class="col-md-3">
                                             <div class="form-group">
                                                 <label>Financial Year</label>
                                                 <input type="text" class="form-control" id="txtFinancialYear">
                                             </div>
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-md-3">
                                             <div class="form-group">
                                                 <label>For Branch</label>
                                                 <select class="form-control  select2bs4" style="width: 100%;" name="ddlFinancialYearBranchId">
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-md-3">
                                             <div class="form-group">
                                                 <label>Start Date</label>
                                                 <div class="input-group date" id="reservationdate1" data-target-input="nearest">
@@ -135,7 +138,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-md-3">
                                             <div class="form-group">
                                                 <label>End Date</label>
                                                 <div class="input-group date" id="reservationdate2" data-target-input="nearest">
@@ -380,6 +383,12 @@
     <script src="~/plugins/jquery/jquery.min.js"></script>
     <!-- Bootstrap 4 -->
     <script src="~/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!--date Format-->
+    <script src="~/plugins/moment/moment.min.js"></script>
+    <!-- daterangepicker -->
+    <script src="~/plugins/daterangepicker/daterangepicker.js"></script>
+    <!-- Tempusdominus Bootstrap 4 -->
+    <script src="~/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
     <!-- AdminLTE App -->
     <script src="~/dist/js/adminlte.min.js"></script>
     <!-- DataTables  & Plugins -->
@@ -395,14 +404,15 @@
     <script src="~/scripts/FormScript.js"></script>
     <script src="~/viewscripts/devlopermaster/master.js"></script>
     <script>
+        $('.select2bs4').select2({
+            theme: 'bootstrap4'
+        });
         $('#reservationdate1').datetimepicker({
             format: 'DD/MM/YYYY'
         });
         $('#reservationdate2').datetimepicker({
             format: 'DD/MM/YYYY'
         });
-        $('.select2bs4').select2({
-            theme: 'bootstrap4'
-        });
+        
     </script>
 }
