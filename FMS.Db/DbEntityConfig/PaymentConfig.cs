@@ -12,6 +12,7 @@ namespace FMS.Db.DbEntityConfig
             builder.HasKey(e => e.PaymentId);
             builder.Property(e => e.PaymentId).HasDefaultValueSql("(newid())");
             builder.Property(e => e.VouvherNo).HasMaxLength(100).IsRequired(true);
+            builder.Property(e => e.TransactionNo).HasMaxLength(100).IsRequired(false);
             builder.Property(e => e.VoucherDate).HasColumnType("datetime").IsRequired(true);
             builder.Property(e => e.ChequeNo).HasMaxLength(100).IsRequired(false);
             builder.Property(e => e.ChequeDate).HasColumnType("datetime").IsRequired(false);

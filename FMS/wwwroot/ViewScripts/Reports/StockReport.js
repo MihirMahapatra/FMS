@@ -110,28 +110,31 @@
                     html += '<tbody>';
                     if (result.ResponseCode == 302) {
                         $.each(result.StockReports, function (key, item) {
-                            html += '<tr>';
-                            html += '<td><button  class="btn btn-primary btn-sm toggleColumnsBtn" id="btn-info-' + item.ProductId + '"  data-id="' + item.ProductId + '" style=" border-radius: 50%;" ><i class="fa-solid fa-circle-info"></i></button></td>'
-                            html += '<td>' + item.ProductName + '</td>';
-                            html += '<td>' + item.OpeningQty.toFixed(2) + '  ' + item.UnitName + '</td>';
-                            html += '<td>' + item.PurchaseQty.toFixed(2) + '</td>';
-                            html += '<td>' + item.PurchaseReturnQty.toFixed(2) + '</td>';
-                            html += '<td>' + item.ProductionQty.toFixed(2) + '</td>';
-                            html += '<td>' + item.ProductionEntryQty.toFixed(2) + '</td>';
-                            html += '<td>' + item.SalesQty.toFixed(2) + '</td>';
-                            html += '<td>' + item.SalesReturnQty.toFixed(2) + '</td>';
-                            html += '<td>' + item.DamageQty.toFixed(2) + '</td>';
-                            html += '<td>' + item.OutwardQty.toFixed(2) + '</td>';
-                            html += '<td>' + item.InwardQty.toFixed(2) + '</td>';
-                            var closing = item.OpeningQty + item.PurchaseQty + item.ProductionQty + item.SalesReturnQty + item.InwardQty - item.PurchaseReturnQty - item.SalesQty - item.DamageQty - item.OutwardQty - item.ProductionEntryQty;
-                            html += '<td>' + closing.toFixed(2) + ' ' + item.UnitName + '</td>';
-                            if (0 > closing) {
-                                html += '<td class="bg-danger text-white">' + closing.toFixed(2) + ' ' + item.UnitName + '</td>';
-                            }
-                            else {
+                            if (item.unit !== 'SET') {
+                                html += '<tr>';
+                                html += '<td><button  class="btn btn-primary btn-sm toggleColumnsBtn" id="btn-info-' + item.ProductId + '"  data-id="' + item.ProductId + '" style=" border-radius: 50%;" ><i class="fa-solid fa-circle-info"></i></button></td>'
+                                html += '<td>' + item.ProductName + '</td>';
+                                html += '<td>' + item.OpeningQty.toFixed(2) + '  ' + item.UnitName + '</td>';
+                                html += '<td>' + item.PurchaseQty.toFixed(2) + '</td>';
+                                html += '<td>' + item.PurchaseReturnQty.toFixed(2) + '</td>';
+                                html += '<td>' + item.ProductionQty.toFixed(2) + '</td>';
+                                html += '<td>' + item.ProductionEntryQty.toFixed(2) + '</td>';
+                                html += '<td>' + item.SalesQty.toFixed(2) + '</td>';
+                                html += '<td>' + item.SalesReturnQty.toFixed(2) + '</td>';
+                                html += '<td>' + item.DamageQty.toFixed(2) + '</td>';
+                                html += '<td>' + item.OutwardQty.toFixed(2) + '</td>';
+                                html += '<td>' + item.InwardQty.toFixed(2) + '</td>';
+                                var closing = item.OpeningQty + item.PurchaseQty + item.ProductionQty + item.SalesReturnQty + item.InwardQty - item.PurchaseReturnQty - item.SalesQty - item.DamageQty - item.OutwardQty - item.ProductionEntryQty;
                                 html += '<td>' + closing.toFixed(2) + ' ' + item.UnitName + '</td>';
+                                if (0 > closing) {
+                                    html += '<td class="bg-danger text-white">' + closing.toFixed(2) + ' ' + item.UnitName + '</td>';
+                                }
+                                else {
+                                    html += '<td>' + closing.toFixed(2) + ' ' + item.UnitName + '</td>';
+                                }
+                                html += '</tr >';
                             }
-                            html += '</tr >';
+                            
                         });
                         $('#BtnPrintSummarized').show();
                         PrintData = {

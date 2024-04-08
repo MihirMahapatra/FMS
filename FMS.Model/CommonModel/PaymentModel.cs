@@ -8,6 +8,7 @@
         public string ChequeNo { get; set; } = null;
         public DateTime? ChequeDate { get; set; }
         public string CashBank { get; set; }
+        public string TransactionNo { get; set; }
         public Guid? CashBankLedgerId { get; set; }
         public Guid Fk_LedgerGroupId { get; set; }
         public Guid Fk_LedgerId { get; set; }

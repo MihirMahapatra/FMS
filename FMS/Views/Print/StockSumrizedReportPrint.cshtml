@@ -89,20 +89,24 @@
                                     @foreach(var item in Model.StockReports.StockReport)
                                     {
                                         var closing = item.OpeningQty + item.PurchaseQty + item.ProductionQty + item.SalesReturnQty + item.InwardQty - item.PurchaseReturnQty - item.SalesQty - item.DamageQty - item.OutwardQty - item.ProductionEntryQty;
-                                        <tr class="small-row">
-                                            <td>@item.ProductName</td>
-                                            <td>@item.OpeningQty.ToString("N2")</td>
-                                            <td>@item.ProductionEntryQty.ToString("N2")</td>
-                                            <td>@item.PurchaseReturnQty.ToString("N2")</td>
-                                            <td>@item.ProductionQty.ToString("N2")</td>
-                                            <td>@item.ProductionEntryQty.ToString("N2")</td>
-                                            <td>@item.SalesQty.ToString("N2")</td>
-                                            <td>@item.SalesReturnQty.ToString("N2")</td>
-                                            <td>@item.DamageQty.ToString("N2")</td>
-                                            <td>@item.OutwardQty.ToString("N2")</td>
-                                            <td>@item.InwardQty.ToString("N2")</td>
-                                            <td style="text-align:center">@closing.ToString("N2")</td>
-                                        </tr>
+                                        if(item.UnitName != "SET")
+                                        {
+                                            <tr class="small-row">
+                                                <td>@item.ProductName</td>
+                                                <td>@item.OpeningQty.ToString("N2") + @item.UnitName</td>
+                                                <td>@item.ProductionEntryQty.ToString("N2")</td>
+                                                <td>@item.PurchaseReturnQty.ToString("N2")</td>
+                                                <td>@item.ProductionQty.ToString("N2")</td>
+                                                <td>@item.ProductionEntryQty.ToString("N2")</td>
+                                                <td>@item.SalesQty.ToString("N2")</td>
+                                                <td>@item.SalesReturnQty.ToString("N2")</td>
+                                                <td>@item.DamageQty.ToString("N2")</td>
+                                                <td>@item.OutwardQty.ToString("N2")</td>
+                                                <td>@item.InwardQty.ToString("N2")</td>
+                                                <td style="text-align:center">@closing.ToString("N2")</td>
+                                            </tr>
+                                            
+                                        }
                                     }
                                 }
                                 else

@@ -12,6 +12,7 @@ namespace FMS.Model.CommonModel
         public string RateType { get; set; }
         public Guid SalesRetunOrderId { get; set; }
         public string TransactionNo { get; set; }
+        public string  PaymentMode { get; set; }
         public Guid? Fk_SubLedgerId { get; set; }
         public string CustomerName { get; set; }
         public string TransactionDate { get; set; }

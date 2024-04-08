@@ -13,6 +13,7 @@ namespace FMS.Db.DbEntityConfig
             builder.Property(e => e.SalesReturnOrderId).HasDefaultValueSql("(newid())");
             builder.Property(e => e.Fk_SubLedgerId).IsRequired(false);
             builder.Property(e => e.CustomerName).HasMaxLength(200).IsRequired(false);
+            builder.Property(e => e.PaymentMode).HasMaxLength(200).IsRequired(false);
             builder.Property(e => e.Fk_BranchId).IsRequired(true);
             builder.Property(e => e.Fk_FinancialYearId).IsRequired(true);
             builder.Property(e => e.TransactionNo).HasMaxLength(100).IsRequired(true);

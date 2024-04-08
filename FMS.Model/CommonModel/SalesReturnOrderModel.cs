@@ -8,6 +8,7 @@
         public string PriceType { get; set; }
         public DateTime TransactionDate { get; set; }
         public Guid? Fk_SubLedgerId { get; set; }
+        public string PaymentMode { get; set; }
         public string CustomerName { get; set; }
         public Guid Fk_BranchId { get; set; }
         public Guid Fk_FinancialYearId { get; set; }

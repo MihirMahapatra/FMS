@@ -4464,6 +4464,7 @@ namespace FMS.Repository.Transaction
                     OrderDate = s.OrderDate,
                     SiteAdress = s.SiteAdress,
                     Discount = s.Discount,
+                    PaymentMode = s.PaymentMode,
                     Gst = s.Gst,
                     SubTotal = s.SubTotal,
                     GrandTotal = s.GrandTotal,
@@ -4528,7 +4529,7 @@ namespace FMS.Repository.Transaction
                 Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
                 Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
                 string Journalvoucher = "";
-                string ReciptVoucher = "";
+                string PaymentVoucher = "";
                 using var transaction = await _appDbContext.Database.BeginTransactionAsync();
                 try
                 {
@@ -4766,24 +4767,28 @@ namespace FMS.Repository.Transaction
                                 await _appDbContext.SaveChangesAsync();
                             }
                             #endregion
-                            #region Receipt
-                            var ReciptVoucherNo = await _appDbContext.Receipts.Where(s => s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).Select(s => new { s.VouvherNo }).OrderByDescending(s => s.VouvherNo).FirstOrDefaultAsync();
-                            if (ReciptVoucherNo != null)
+                            #region Payment
+                            var PaymentVoucherNo = await _appDbContext.Payments.Where(s => s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).Select(s => new { s.VouvherNo }).OrderByDescending(s => s.VouvherNo).FirstOrDefaultAsync();
+                            if (PaymentVoucherNo != null)
                             {
-                                if (int.TryParse(ReciptVoucherNo.VouvherNo.AsSpan(2), out int currentId))
+                                if (int.TryParse(PaymentVoucherNo.VouvherNo.AsSpan(2), out int currentId))
                                 {
                                     currentId++;
-                                    ReciptVoucher = $"Cr{currentId:D6}";
+                                    var prefix = (data.PaymentMode == "Bank") ? "BP" : "CP";
+                                    var newTransactionId = $"{prefix}{currentId:D6}";
+
+                                    PaymentVoucher = newTransactionId;
                                 }
                             }
                             else
                             {
-                                ReciptVoucher = "CR000001";
+                                var prefix = (data.PaymentMode == "Bank") ? "BP" : "CP";
+                                PaymentVoucher = $"{prefix}000001";
                             }
-                            var newRecipt = new Receipt
+                            var newPayment = new Payment
                             {
                                 VoucherDate = newSalesReturnOrder.TransactionDate,
-                                VouvherNo = ReciptVoucher,
+                                VouvherNo = PaymentVoucher,
                                 CashBank = data.TransactionType,
                                 Fk_LedgerGroupId = MappingLedgerGroup.Sales,
                                 Fk_LedgerId = MappingLedgers.SalesReturnAccount,
@@ -4793,7 +4798,7 @@ namespace FMS.Repository.Transaction
                                 Amount = newSalesReturnOrder.GrandTotal,
                                 DrCr = "Dr",
                             };
-                            await _appDbContext.Receipts.AddAsync(newRecipt);
+                            await _appDbContext.Payments.AddAsync(newPayment);
                             await _appDbContext.SaveChangesAsync();
                             #endregion
                         }
@@ -5215,12 +5220,12 @@ namespace FMS.Repository.Transaction
                                         }
                                     }
                                     #endregion
-                                    #region Update Recipt
-                                    var UpdateOrderRecipt = await _appDbContext.Receipts.Where(s => s.TransactionNo == UpdateSalesReturnOrder.TransactionNo && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
-                                    if (UpdateOrderRecipt != null)
+                                    #region Update Payment
+                                    var UpdateOrderPayment = await _appDbContext.Payments.Where(s => s.TransactionNo == UpdateSalesReturnOrder.TransactionNo && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
+                                    if (UpdateOrderPayment != null)
                                     {
-                                        UpdateOrderRecipt.Amount = data.GrandTotal;
-                                        UpdateOrderRecipt.VoucherDate = convertedTransactionDate;
+                                        UpdateOrderPayment.Amount = data.GrandTotal;
+                                        UpdateOrderPayment.VoucherDate = convertedTransactionDate;
                                         await _appDbContext.SaveChangesAsync();
                                     }
                                     #endregion
@@ -5462,6 +5467,7 @@ namespace FMS.Repository.Transaction
                                 UpdateSalesReturnOrder.CustomerName = null;
                             }
                             UpdateSalesReturnOrder.OrderNo = data.OrderNo;
+                            UpdateSalesReturnOrder.PaymentMode = data.PaymentMode;
                             UpdateSalesReturnOrder.OrderDate = convertedOrderDate;
                             UpdateSalesReturnOrder.TranspoterName = data.TranspoterName;
                             UpdateSalesReturnOrder.ReceivingPerson = data.ReceivingPerson;

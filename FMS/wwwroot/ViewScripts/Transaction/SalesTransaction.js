@@ -152,6 +152,7 @@ $(function () {
     //----------------------------------------Sale Return---------------------------------------------- //
     const Sr_ddlPayment = $('select[name="Sr_ddlPayment"]');
     const Sr_ddlRate = $('select[name="Sr_ddlRate"]');
+    const Sr_ddlPaymentMode = $('select[name="PaymentMode"]');
     const Sr_CustomerName = $('input[name="Sr_CustomerName"]');
     const Sr_ddlCustomer = $('select[name="Sr_ddlCustomerId"]');
     const Sr_OrderId = $('input[name="hdnSaleReturnOrderId"]');
@@ -1619,6 +1620,7 @@ $(function () {
                 TransactionType: Sr_ddlPayment.val(),
                 RateType: Sr_ddlRate.val(),
                 Fk_SubLedgerId: Sr_ddlCustomer.val(),
+                PaymentMode: Sr_ddlPaymentMode.val(),
                 CustomerName: Sr_CustomerName.val(),
                 TransactionDate: Sr_transactionDate.val(),
                 TransactionNo: Sr_transactionNo.val(),
@@ -1865,6 +1867,12 @@ $(function () {
                         console.log(errormessage)
                     }
                 });
+                if (result.SalesReturnOrder.PaymentMode === 'Cash') {
+                    $('select[name="PaymentMode"]').val('Cash');
+                } else {
+                    $('select[name="PaymentMode"]').val('Bank');
+                }
+                Sr_ddlPaymentMode.val(result.SalesReturnOrder.PaymentMode);
                 Sr_transpoterName.val(result.SalesReturnOrder.TranspoterName);
                 Sr_Narration.val(result.SalesReturnOrder.Naration);
                 Sr_vehicleNo.val(result.SalesReturnOrder.VehicleNo);
@@ -2055,6 +2063,7 @@ $(function () {
                 SalesRetunOrderId: Sr_OrderId.val(),
                 TransactionType: Sr_ddlPayment.val(),
                 RateType: Sr_ddlRate.val(),
+                PaymentMode : Sr_ddlPaymentMode.val(),
                 TransactionDate: Sr_transactionDate.val(),
                 TransactionNo: Sr_transactionNo.val(),
                 CustomerName: Sr_CustomerName.val(),

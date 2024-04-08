@@ -223,12 +223,12 @@ $(function () {
     $('#tblOutwardSupply tbody').on('change', 'input[type="text"]', function () {
         var row = $(this).closest('tr');
         var quantity = parseFloat(row.find('input:eq(1)').val());
-        var rate = parseFloat(row.find('input:eq(2)').val());
+        var rate = parseFloat(row.find('input:eq(3)').val());
         var amount = quantity * rate;
-        row.find('input:eq(3)').val(amount.toFixed(2));
+        row.find('input:eq(4)').val(amount.toFixed(2));
         var totalAmount = 0;
         $('#tblOutwardSupply tbody tr').each(function () {
-            var amount = parseFloat($(this).find('input:eq(3)').val());
+            var amount = parseFloat($(this).find('input:eq(4)').val());
             if (!isNaN(amount)) {
                 totalAmount += amount;
             }
