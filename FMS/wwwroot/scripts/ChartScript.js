@@ -19,7 +19,8 @@
                                 pointStrokeColor: 'rgba(60,141,188,1)',
                                 pointHighlightFill: '#fff',
                                 pointHighlightStroke: 'rgba(60,141,188,1)',
-                                data: result.GraphData.SalesAmount
+                                data: result.GraphData.SalesAmount,
+                                labelFontColor: 'white'
                             },
                             {
                                 label: 'Purchases',
@@ -30,7 +31,8 @@
                                 pointStrokeColor: '#c1c7d1',
                                 pointHighlightFill: '#fff',
                                 pointHighlightStroke: 'rgba(220,220,220,1)',
-                                data: result.GraphData.PurchaseAmount
+                                data: result.GraphData.PurchaseAmount,
+                                labelFontColor: 'white'
                             },
                             {
                                 label: 'Productions',
@@ -41,7 +43,8 @@
                                 pointStrokeColor: '#c1c7d1',
                                 pointHighlightFill: '#fff',
                                 pointHighlightStroke: 'rgba(220,220,220,1)',
-                                data: result.GraphData.ProductionAmount
+                                data: result.GraphData.ProductionAmount,
+                                labelFontColor: 'white'
                             },
                             
                         ]
@@ -77,6 +80,62 @@
                         data: barChartData,
                         options: barChartOptions
                     })
+                    //Ending
+                    //secod chart
+                    var stackedBarChartCanvas = $('#stackedBarChart').get(0).getContext('2d');
+                    var stackedBarChartData = {
+                        labels: areaChartData.labels,
+                        datasets: [
+                            {
+                                label: 'Sales',
+                                backgroundColor: '#fc030f',
+                                borderColor: '#09daed',
+                                pointRadius: false,
+                                pointColor: '#3b8bba',
+                                pointStrokeColor: 'rgba(60,141,188,1)',
+                                pointHighlightFill: '#fff',
+                                pointHighlightStroke: 'rgba(60,141,188,1)',
+                                data: result.GraphData.SalesAmount,
+                                labelFontColor: 'white'
+                            },
+                            {
+                                label: 'Received Amount',
+                                backgroundColor: '#18cf0e',
+                                borderColor: 'rgba(210, 214, 222, 1)',
+                                pointRadius: false,
+                                pointColor: 'rgba(210, 214, 222, 1)',
+                                pointStrokeColor: '#c1c7d1',
+                                pointHighlightFill: '#fff',
+                                pointHighlightStroke: 'rgba(220,220,220,1)',
+                                data: result.GraphData.ReceivedAmount,
+                                labelFontColor: 'white'
+                            }
+                        ]
+                    };
+                    var stackedBarChartOptions = {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        datasetFill: false,
+                        scales: {
+                            xAxes: [{
+                                ticks: {
+                                    fontColor: 'white'
+                                }
+                            }],
+                            yAxes: [{
+                                ticks: {
+                                    fontColor: 'white'
+                                }
+                            }]
+                        }
+                    };
+
+                    new Chart(stackedBarChartCanvas, {
+                        type: 'bar',
+                        data: stackedBarChartData,
+                        options: stackedBarChartOptions
+                    });
+                
                     //Ending 
                 }
             },

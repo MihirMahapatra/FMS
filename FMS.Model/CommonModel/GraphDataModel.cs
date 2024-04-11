@@ -11,6 +11,7 @@ namespace FMS.Model.CommonModel
         public List<decimal> PurchaseAmount { get; set; }
         public List<decimal> ProductionAmount { get; set; }
         public List<decimal> SalesAmount { get; set; }
+        public List<decimal> ReceivedAmount { get; set; }
     }
     public class GraphDataViewModel : Base
     {

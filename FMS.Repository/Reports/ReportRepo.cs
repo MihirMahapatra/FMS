@@ -49,6 +49,7 @@ namespace FMS.Repository.Reports
                        List<decimal> salesAmount = new List<decimal>(new decimal[12]); // Initialize with 12 elements, all 0
                        List<decimal> purchaseAmount = new List<decimal>(new decimal[12]);
                        List<decimal> productionAmount = new List<decimal>(new decimal[12]);
+                       List<decimal> receivedAmount = new List<decimal>(new decimal[12]);
                     #region SaleData
                     var salesData = _appDbContext.SalesOrders
                     .Where(s => s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYearId)
@@ -91,9 +92,92 @@ namespace FMS.Repository.Reports
                         productionAmount[item.Month - 1] = item.ProductionAmount; // Month - 1 to match zero-based index
                     }
                     #endregion
+                    #region ReceiptData
+                    var ReceivedAmountdata = _appDbContext.Receipts
+                  .Where(s => s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYearId)
+                   .GroupBy(s => s.VoucherDate.Month)
+                   .Select(g => new
+                   {
+                       Month = g.Key,
+                       ReceivedAmount = g.Sum(s => s.Amount)
+                   });
+                    foreach (var item in ReceivedAmountdata)
+                    {
+                        receivedAmount[item.Month - 1] = item.ReceivedAmount; // Month - 1 to match zero-based index
+                    }
+                    #endregion
                     Model.SalesAmount = salesAmount;
                     Model.PurchaseAmount = purchaseAmount;
                     Model.ProductionAmount = productionAmount;
+                    Model.ReceivedAmount = receivedAmount;
+                }
+                else
+                {
+                    Guid FinancialYearId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
+                    List<decimal> salesAmount = new List<decimal>(new decimal[12]); // Initialize with 12 elements, all 0
+                    List<decimal> purchaseAmount = new List<decimal>(new decimal[12]);
+                    List<decimal> productionAmount = new List<decimal>(new decimal[12]);
+                    List<decimal> receivedAmount = new List<decimal>(new decimal[12]);
+                    #region SaleData
+                    var salesData = _appDbContext.SalesOrders
+                    .Where(s => s.Fk_FinancialYearId == FinancialYearId)
+                   .GroupBy(s => s.OrderDate.Month)
+                   .Select(g => new
+                   {
+                       Month = g.Key,
+                       SaleAmount = g.Sum(s => s.GrandTotal)
+                   });
+                    foreach (var item in salesData)
+                    {
+                        salesAmount[item.Month - 1] = item.SaleAmount; // Month - 1 to match zero-based index
+                    }
+                    #endregion
+                    #region PurchaseData
+                    var PurchaseData = _appDbContext.PurchaseOrders
+                   .Where(s =>  s.Fk_FinancialYearId == FinancialYearId)
+                  .GroupBy(s => s.TransactionDate.Month)
+                  .Select(g => new
+                  {
+                      Month = g.Key,
+                      PurchaseAmount = g.Sum(s => s.GrandTotal)
+                  });
+                    foreach (var item in PurchaseData)
+                    {
+                        purchaseAmount[item.Month - 1] = item.PurchaseAmount; // Month - 1 to match zero-based index
+                    }
+                    #endregion
+                    #region ProductionData
+                    var ProductionData = _appDbContext.LabourOrders
+                  .Where(s => s.Fk_FinancialYearId == FinancialYearId)
+                   .GroupBy(s => s.TransactionDate.Month)
+                   .Select(g => new
+                   {
+                       Month = g.Key,
+                       ProductionAmount = g.Sum(s => s.Amount)
+                   });
+                    foreach (var item in ProductionData)
+                    {
+                        productionAmount[item.Month - 1] = item.ProductionAmount; // Month - 1 to match zero-based index
+                    }
+                    #endregion
+                    #region ReceiptData
+                    var ReceivedAmountdata = _appDbContext.Receipts
+                  .Where(s =>  s.Fk_FinancialYearId == FinancialYearId)
+                   .GroupBy(s => s.VoucherDate.Month)
+                   .Select(g => new
+                   {
+                       Month = g.Key,
+                       ReceivedAmount = g.Sum(s => s.Amount)
+                   });
+                    foreach (var item in ReceivedAmountdata)
+                    {
+                        receivedAmount[item.Month - 1] = item.ReceivedAmount; // Month - 1 to match zero-based index
+                    }
+                    #endregion
+                    Model.SalesAmount = salesAmount;
+                    Model.PurchaseAmount = purchaseAmount;
+                    Model.ProductionAmount = productionAmount;
+                    Model.ReceivedAmount = receivedAmount;
                 }
                    
                     if (Model != null)
