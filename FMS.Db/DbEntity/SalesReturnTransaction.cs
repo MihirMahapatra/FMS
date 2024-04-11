@@ -22,6 +22,7 @@
         public decimal Amount { get; set; }
         public SalesReturnOrder SalesReturnOrder { get; set; }
         public Product Product { get; set; }
+        public Product SubProduct { get; set; }
         public Branch Branch { get; set; }
         public FinancialYear FinancialYear { get; set; }
         public AlternateUnit AlternateUnit { get; set; }

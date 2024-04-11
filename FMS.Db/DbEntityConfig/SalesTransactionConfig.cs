@@ -30,7 +30,7 @@ namespace FMS.Db.DbEntityConfig
             builder.HasOne(p => p.SalesOrder).WithMany(po => po.SalesTransactions).HasForeignKey(po => po.Fk_SalesOrderId).OnDelete(DeleteBehavior.Restrict);
             builder.HasOne(p => p.AlternateUnit).WithMany(po => po.SalesTransactions).HasForeignKey(po => po.Fk_AlternateUnitId).OnDelete(DeleteBehavior.Restrict);
             builder.HasOne(p => p.Product).WithMany(po => po.SalesTransactions).HasForeignKey(po => po.Fk_ProductId).OnDelete(DeleteBehavior.Restrict);
-            builder.HasOne(p => p.Product).WithMany(po => po.SalesTransactions).HasForeignKey(po => po.Fk_SubProductId).OnDelete(DeleteBehavior.Restrict);
+            builder.HasOne(p => p.SubProduct).WithMany().HasForeignKey(po => po.Fk_SubProductId).OnDelete(DeleteBehavior.Restrict);
             builder.HasOne(p => p.Branch).WithMany(po => po.SalesTransactions).HasForeignKey(po => po.Fk_BranchId).OnDelete(DeleteBehavior.Restrict);
             builder.HasOne(p => p.FinancialYear).WithMany(po => po.SalesTransactions).HasForeignKey(po => po.Fk_FinancialYearId).OnDelete(DeleteBehavior.Restrict);
         }

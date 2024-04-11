@@ -24,6 +24,7 @@
         public FinancialYear FinancialYear { get; set; }
         public SalesOrder SalesOrder { get; set; }
         public Product Product { get; set; }
+        public Product SubProduct { get; set; }
         public AlternateUnit AlternateUnit { get; set; }
 
     }
