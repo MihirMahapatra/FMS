@@ -15,6 +15,7 @@ $(function () {
     toDateSummerized.val(todayDate);
     const ddlCustomer = $('select[name="ddlCustomerId"]');
     const ddlPartyGroup = $('select[name="ddlPartyGroupId"]');
+    const ddlPartyGroupDetailed = $('select[name="ddlPartyGroupIddetailed"]');
     const fromDateDetailed = $('input[name="FromDateDetailed"]');
     fromDateDetailed.val(todayDate);
     const toDateDetailed = $('input[name="ToDateDetailed"]');
@@ -204,9 +205,29 @@ $(function () {
         window.open(url, '_blank');
     });
     //--------------------------------Customer Report Detailed------------------------------------------------//
-    GetSundryDebtors();
-    var data = {}
-    function GetSundryDebtors() {
+    LoadPartyGroupsDetailed();
+    function LoadPartyGroupsDetailed() {
+        $.ajax({
+            url: "/Master/GetPartyGruops",
+            type: "GET",
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            success: function (result) {
+                ddlPartyGroupDetailed.empty();
+                var defaultOption = $('<option></option>').val('').text('--Select Option--');
+                ddlPartyGroupDetailed.append(defaultOption);
+                $.each(result.PartyGruops, function (key, item) {
+                    var option = $('<option></option>').val(item.PartyGroupId).text(item.PartyGruopName);
+                    ddlPartyGroupDetailed.append(option);
+                });
+            },
+            error: function (errormessage) {
+                console.log(errormessage)
+            }
+        });
+    }
+    ddlPartyGroupDetailed.on('change', function () {
+        var fkpartygroupId = $(this).val();
         $.ajax({
             url: "/Transaction/GetSundryDebtors",
             type: "GET",
@@ -218,8 +239,10 @@ $(function () {
                     var defaultOption = $('<option></option>').val('').text('--Select Option--');
                     ddlCustomer.append(defaultOption);
                     $.each(result.SubLedgers, function (key, item) {
-                        var option = $('<option></option>').val(item.SubLedgerId).text(item.SubLedgerName);
-                        ddlCustomer.append(option);
+                        if (item.Parties[0].Fk_PartyGroupId == fkpartygroupId) {
+                            var option = $('<option></option>').val(item.SubLedgerId).text(item.SubLedgerName);
+                            ddlCustomer.append(option);
+                        }
                     });
                 }
                 else {
@@ -232,7 +255,8 @@ $(function () {
                 console.log(errormessage)
             }
         });
-    }
+    })
+    var data = {}
     var PrintDataDetailed = {};
     $('#btnViewDetailed').on('click', function () {
         $('#loader').show();
@@ -274,7 +298,7 @@ $(function () {
                         if (result.PartyDetailed !== null) {
                             var balance =
                             html += '<tr>';
-                            html += '<td colspan="7">Opening Bal.</td>';
+                            html += '<td colspan="8">Opening Bal.</td>';
                             html += '<td >' + result.PartyDetailed.OpeningBal + ' ' + result.PartyDetailed.OpeningBalType + '</td>';
                             html += '</tr >';
                             var balance = result.PartyDetailed.OpeningBal;
@@ -284,7 +308,7 @@ $(function () {
                                 html += '<td >Challan No</td>';
                                 html += '<td >Site Adress</td>';
                                 html += '<td >Branch</td>';
-                                html += '<td colspan="4">Details</td>';
+                                html += '<td colspan="5">Details</td>';
                                 html += '<td></td>';
                                 html += '</tr >';
                                 $.each(result.PartyDetailed.Orders, function (key, item) {
@@ -313,9 +337,10 @@ $(function () {
                                         html += '<td >-</td>';
                                         html += '<td >-</td>';
                                         html += '<td >Product</td>';
+                                        html += '<td >Alternate Qty</td>';
+                                        html += '<td >Alternate Unit</td>';
                                         html += '<td >Qty</td>';
                                         html += '<td >Unit</td>';
-                                        html += '<td >Alternate Unit</td>';
                                         html += '<td >Rate</td>';
                                         html += '<td >Amount</td>';
                                         html += '<td >-</td>';
@@ -326,13 +351,19 @@ $(function () {
                                             html += '<td >-</td>';
                                             html += '<td >-</td>';
                                             html += '<td >' + Transaction.ProductName + '</td>';
-                                            html += '<td >' + Transaction.Quantity + '</td>';
-                                            html += '<td >' + Transaction.Unit + '</td>';
+                                            if (Transaction.AlternateQuantity != null) {
+                                                html += '<td >' + Transaction.AlternateQuantity + '</td>';
+                                            } else {
+                                                html += '<td >-</td>';
+                                            }
                                             if (Transaction.AlternateUnit != null) {
                                                 html += '<td >' + Transaction.AlternateUnit + '</td>';
                                             } else {
                                                 html += '<td >-</td>';
                                             }
+                                            html += '<td >' + Transaction.Quantity + '</td>';
+                                            html += '<td >' + Transaction.Unit + '</td>';
+                                           
                                             html += '<td >' + Transaction.Rate +'</td>';
                                             html += '<td >' + Transaction.Amount +'</td>';
                                             html += '<td >-</td>';

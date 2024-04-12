@@ -25,6 +25,7 @@ namespace FMS.Model.CommonModel
         public DateTime TransactionDate { get; set; }
         public string TransactionNo { get; set; }
         public string TransactionType { get; set; }
+        public decimal HandlingCharges { get; set; }
         public decimal GrandTotal { get; set; }
         public decimal TransportCharges { get; set; }
         public string SiteAdress { get; set; }
@@ -38,12 +39,15 @@ namespace FMS.Model.CommonModel
     public class PartyReportTransactionModel
     {
         public string ProductName { get; set; }
+        public string SubProductName { get; set; }
         public decimal Quantity { get; set; }
         public decimal AlternateQuantity { get; set; }
         public string Unit { get; set; }
+        public string SubProductUnit { get; set; }
         public string AlternateUnit { get; set; }
         public decimal Rate { get; set; }
         public decimal Amount { get; set; }
+
     }
     public class PartyReportModel2
     {

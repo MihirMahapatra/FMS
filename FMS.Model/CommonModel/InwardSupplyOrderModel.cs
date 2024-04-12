@@ -8,6 +8,8 @@
         public Guid FromBranch { get; set; }
         public Guid Fk_ProductTypeId { get; set; }
         public Guid Fk_BranchId { get; set; }
+        public string ChallanNo { get; set; }
+        public string VehicleNo { get; set; }
         public Guid Fk_FinancialYearId { get; set; }
         public decimal TotalAmount { get; set; }
         public BranchModel Branch { get; set; }

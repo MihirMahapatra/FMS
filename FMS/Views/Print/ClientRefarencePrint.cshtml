@@ -68,6 +68,7 @@
                                         @Model.Cmopany.Adress<br>@Model.Cmopany.Email,<br>
                                         @Model.Cmopany.Phone,<br>Odisha
                                     </address>
+                                    <b>Refarance Name : @Model.Customers.PartyReports[0].RefarenceName </b>
                                 </div>
                             </div>
                             <div class="col-auto" style="padding-right:30px">
@@ -79,11 +80,9 @@
                         <table class="invoice-table">
                             <thead>
                                 <tr class="small-row">
-                                    <th style="width:20%!important; text-align:left;">Client Name</th>
-                                    <th style="width:20%!important;"> Refarance Name</th>
-                                    <th style="width:10%!important; text-align:right">Bal</th>
-                                    <th style="width:10%!important; text-align:center">Type</th>
-
+                                    <th style=" text-align:left;">Client Name</th>
+                                    <th style=" text-align:right">Bal</th>
+                                    <th style=" text-align:center">Type</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -94,15 +93,6 @@
                                         var balance = item.Balance + item.OpeningBal;
                                         <tr class="small-row">
                                             <td style="text-align:left;">@item.PartyName</td>
-                                            @if(item.RefarenceName != null)
-                                            {
-                                                <td >@item.RefarenceName</td>
-                                            }
-                                            else
-                                            {
-                                                <td>-</td>
-                                            }
-
                                             <td style=" text-align:right">@Math.Abs(@balance)</td>
                                             <td style=" text-align:center">@item.BalanceType</td>
                                         </tr>

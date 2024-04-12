@@ -291,6 +291,8 @@ $(function () {
                         OutwardSupplyTable.clear().draw();
                         transactionDate.val('');
                         totalAmout.val('');
+                        challanno.val('');
+                        vehicleno.val('');
                         GetLastOutwardSupply();
                     }
                     else {

@@ -12,8 +12,33 @@
     const fromDateSummerized = $('input[name="FromDateSummerized"]');
     fromDateSummerized.val(todayDate);
     const toDateSummerized = $('input[name="ToDateSummerized"]');
+    const ddlReferance = $('select[name="ddnReferanceId"]');
     toDateSummerized.val(todayDate);
     //-------------------------------------ClientRefarance Report------------------------------------------------//
+    LoadRefarance();
+    function LoadRefarance() {
+        ddlReferance.empty();
+        var defaultOption = $('<option></option>').val('').text('--Select Option--');
+        ddlReferance.append(defaultOption);
+        $.ajax({
+            url: "/Master/GetRefarance",
+            type: "GET",
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            success: function (result) {
+                if (result.ResponseCode == 302) {
+                    $.each(result.Referances, function (key, item) {
+                        var option = $('<option></option>').val(item.RefaranceId).text(item.ReferanceName);
+                        ddlReferance.append(option);
+                    });
+                }
+            },
+            error: function (errormessage) {
+                console.log(errormessage)
+            }
+        });
+    }
+
     var requestData = {};
     $('#btnViewSummerized').on('click', function () {
         $('#loader').show();
@@ -29,6 +54,7 @@
             requestData = {
                 FromDate: fromDateSummerized.val(),
                 ToDate: toDateSummerized.val(),
+                Fk_RefaranceId: ddlReferance.val(),
             };
             $.ajax({
                 url: "/Reports/GetCustomerRefranceReport",
@@ -43,7 +69,6 @@
                     html += '<thead>'
                     html += '<tr>'
                     html += '<th class="text-left">Client Name</th>'
-                    html += '<th>Refarance Name</th>'
                     html += '<th class="text-right">Balance</th>'
                     html += '<th>Type</th>'
                     html += '</tr>'
@@ -54,11 +79,6 @@
                         $.each(result.PartySummerized, function (key, item) {
                             html += '<tr>';
                             html += '<td class="text-left">' + item.PartyName + '</td>';
-                            if (item.RefarenceName != null) {
-                                html += '<td>' + item.RefarenceName + '</td>';
-                            } else {
-                                html += '<td>' + "-" + '</td>';
-                            }
                             var balance = item.Balance + item.OpeningBal;
                             var balanceType = balance >= 0 ? "Dr" : "Cr";
                             //html += '<td>' + Math.abs(balance) + '</td>';

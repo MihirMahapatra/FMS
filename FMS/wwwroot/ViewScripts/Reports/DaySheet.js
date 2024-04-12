@@ -54,6 +54,7 @@ $(function () {
                             html += '<th>Trxn No</th>'
                             html += '<th>Narration</th>'
                             html += '<th>Item</th>'
+                            html += '<th>Unit</th>'
                             html += '<th>Qty</th>'
                             html += '<th>Rate</th>'
                             html += '<th>Amount</th>'
@@ -73,6 +74,7 @@ $(function () {
                                         html += '<td>-</td>';
                                     }
                                     html += '<td>' + purchaseTrn.ProductName + '</td>';
+                                    html += '<td>' + purchaseTrn.UnitName + '</td>';
                                     html += '<td>' + purchaseTrn.AlternateQuantity + '</td>';
                                     html += '<td>' + purchaseTrn.Rate + '</td>';
                                     html += '<td>' + purchaseTrn.Amount + '</td>';
@@ -96,6 +98,7 @@ $(function () {
                             html += '<th>Narration</th>'
                             html += '<th>Item</th>'
                             html += '<th>Qty</th>'
+                            html += '<th>Unit</th>'
                             html += '<th>Rate</th>'
                             html += '<th>Amount</th>'
                             html += '</tr>'
@@ -115,6 +118,7 @@ $(function () {
                                     }
                                     html += '<td>' + CreditSaleTrn.ProductName + '</td>';
                                     html += '<td>' + CreditSaleTrn.Quantity + '</td>';
+                                    html += '<td>' + CreditSaleTrn.UnitName + '</td>';
                                     html += '<td>' + CreditSaleTrn.Rate + '</td>';
                                     html += '<td>' + CreditSaleTrn.Amount + '</td>';
                                     html += '</tr>';
@@ -137,6 +141,7 @@ $(function () {
                             html += '<th>Narration</th>'
                             html += '<th>Item</th>'
                             html += '<th>Qty</th>'
+                            html += '<th>Unit</th>'
                             html += '<th>Rate</th>'
                             html += '<th>Amount</th>'
                             html += '</tr>'
@@ -156,6 +161,7 @@ $(function () {
                                     }
                                     html += '<td>' + CashSaleTrn.ProductName + '</td>';
                                     html += '<td>' + CashSaleTrn.Quantity + '</td>';
+                                    html += '<td>' + CashSaleTrn.UnitName + '</td>';
                                     html += '<td>' + CashSaleTrn.Rate + '</td>';
                                     html += '<td>' + CashSaleTrn.Amount + '</td>';
                                     html += '</tr>';

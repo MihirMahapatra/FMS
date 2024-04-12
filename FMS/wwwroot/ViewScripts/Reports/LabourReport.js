@@ -5,7 +5,6 @@ $(function () {
     const month = String(today.getMonth() + 1).padStart(2, '0');
     const day = String(today.getDate()).padStart(2, '0');
     const todayDate = `${day}/${month}/${year}`;
-
     $("#ReportsLink").addClass("active");
     $("#LabourReportLink").addClass("active");
     $("#LabourReportLink i.far.fa-circle").removeClass("far fa-circle").addClass("far fa-dot-circle");
@@ -239,6 +238,7 @@ $(function () {
                     html += '<th>Date</th>'
                     html += '<th>Trxn No</th>'
                     html += '<th>Particular</th>'
+                    html += '<th>Narration</th>'
                     html += '<th>Qty</th>'
                     html += '<th>Rate</th>'
                     html += '<th>OT Amount</th>'
@@ -250,9 +250,12 @@ $(function () {
                     html += '</thead>'
                     html += '<tbody>';
                     if (result.ResponseCode == 302) {
+                        var TotalBillingAmt = 0;
+                        var TotalPaymentAmt = 0;
                         $.each(result.DetailedLabour, function (key, item) {
                             console.log(result.DetailedLabour)
                             var Balance = item.OpeningBalance;
+                            
                             html += '<tr>';
                             html += '<td colspan=9>Opening Bal.</td>';
                             html += '<td>' + item.OpeningBalance + '</td>';
@@ -278,16 +281,20 @@ $(function () {
                                     } else {
                                         html += '<td>' + transation.Particular + '</td>';
                                     }
+                                    if (transation.Narration != null) {
+                                        html += '<td>' + transation.Narration + '</td>';
+                                    } else {
+                                        html += '<td>' + transation.Narration + '</td>';
+                                    }
                                     html += '<td>' + transation.Quantity + '</td>';
                                     html += '<td>' + transation.Rate.toFixed(2) + '</td>';
                                     html += '<td>' + transation.OTAmount.toFixed(2) + '</td>';
-                                   
                                     if (transation.Particular == "LabourOrders") {
+                                        TotalBillingAmt += transation.Amount;
                                         html += '<td>' + transation.Amount.toFixed(2) + '</td>';
                                         html += '<td>-</td>';
                                         html += '<td>-</td>';
                                         Balance += transation.Amount
-                                        
                                     } else if (transation.Particular == "DamageOrders") {
                                         html += '<td>-</td>';
                                         html += '<td>' + transation.Amount.toFixed(2) + '</td>';
@@ -297,18 +304,28 @@ $(function () {
                                         html += '<td>-</td>';
                                         html += '<td>-</td>';
                                         html += '<td>' + transation.Amount.toFixed(2) + '</td>';
+                                        TotalPaymentAmt += transation.Amount
                                         Balance -= transation.Amount
                                     }
-                                    
-                                    
-                                    html += '<td>' + Balance.toFixed(2) + '</td>';
+                                    if (0 > Balance) {
+                                        html += '<td class="bg-danger text-white">' + Balance.toFixed(2) + '</td>';
+                                    }
+                                    else {
+                                        html += '<td>' + Balance.toFixed(2) + '</td>';
+                                    }
                                     html += '</tr >';
-
                                 });
+                                
                             }
                         });
-
                         $('#BtnPrint').show();
+                        html += '<tr>';
+                        html += '<td colspan="7">-</td>';
+                        html += '<td style="background-color:lightblue;">' + TotalBillingAmt + '</td>';
+                        html += '<td>-</td>';
+                        html += '<td  style="background-color:lightblue;">' + TotalPaymentAmt + '</td>';
+                        html += '<td>-</td>';
+                        html += '</tr >';
                     }
                     else {
                         html += '<tr>';

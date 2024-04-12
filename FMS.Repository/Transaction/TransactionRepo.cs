@@ -2553,6 +2553,7 @@ namespace FMS.Repository.Transaction
                                                    where s.Fk_LedgerId == PartyTypeId
                                                    select new SubLedgerModel
                                                    {
+                                                       Parties = s.Parties != null && s.Parties.Any() ? s.Parties.Select(p => new PartyModel { Fk_PartyGroupId = p.Fk_PartyGroupId }).ToList():null,
                                                        SubLedgerId = s.SubLedgerId,
                                                        SubLedgerName = s.SubLedgerName,
                                                        Adress = _appDbContext.Parties.Where(a => a.Fk_SubledgerId == s.SubLedgerId).Select(s => s.Address).FirstOrDefault()
@@ -6660,6 +6661,8 @@ namespace FMS.Repository.Transaction
                     TransactionNo = s.TransactionNo,
                     TransactionDate = s.TransactionDate,
                     FromBranch = s.FromBranch,
+                    ChallanNo = s.ChallanNo,
+                    VehicleNo = s.VehicleNo,
                     Fk_ProductTypeId = s.Fk_ProductTypeId,
                     ProductTypeName = _appDbContext.ProductTypes.Where(p => p.ProductTypeId == s.Fk_ProductTypeId).Select(b => b.Product_Type).FirstOrDefault(),
                     TotalAmount = s.TotalAmount,
@@ -6708,6 +6711,8 @@ namespace FMS.Repository.Transaction
                             Fk_ProductTypeId = data.Fk_ProductTypeId,
                             Fk_BranchId = BranchId,
                             Fk_FinancialYearId = FinancialYear,
+                            ChallanNo = data.ChallanNo,
+                            VehicleNo = data.VehicleNo,
                             TransactionDate = convertedTrnsactionDate,
                             TransactionNo = data.TransactionNo,
                             TotalAmount = data.TotalAmount
@@ -6789,6 +6794,8 @@ namespace FMS.Repository.Transaction
 
                             UpdateInwardSupplyOrder.TransactionDate = convertedTrnsactionDate;
                             UpdateInwardSupplyOrder.FromBranch = data.Branch;
+                            UpdateInwardSupplyOrder.ChallanNo = data.ChallanNo;
+                            UpdateInwardSupplyOrder.VehicleNo = data.VehicleNo;
                             UpdateInwardSupplyOrder.Fk_ProductTypeId = data.Fk_ProductTypeId;
                             UpdateInwardSupplyOrder.TotalAmount = data.TotalAmount;
                             await _appDbContext.SaveChangesAsync();

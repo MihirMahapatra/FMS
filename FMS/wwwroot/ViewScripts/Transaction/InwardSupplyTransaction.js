@@ -15,6 +15,8 @@ $(function () {
     const transactionNo = $('input[name="TransactionNo"]');
     const ddlBranch = $('select[name="ddlBranchId"]');
     const ddlProductType = $('select[name="ddlProductTypeId"]');
+    const challanno = $('input[name="ChallanNo"]');
+    const vehicleno = $('input[name="VehicleNo"]');
     const totalAmout = $('input[name="GrandTotal"]');
     var InwardSupplyTable = $('#tblInwardSupply').DataTable({
         "paging": false,
@@ -241,6 +243,8 @@ $(function () {
                 TransactionDate: transactionDate.val(),
                 TransactionNo: transactionNo.val(),
                 Branch: ddlBranch.val(),
+                ChallanNo: challanno.val(),
+                VehicleNo: vehicleno.val(),
                 Fk_ProductTypeId: ddlProductType.val(),
                 TotalAmount: totalAmout.val(),
                 rowData: rowData
@@ -258,6 +262,8 @@ $(function () {
                         InwardSupplyTable.clear().draw();
                         transactionDate.val('');
                         totalAmout.val('');
+                        challanno.val('');
+                        vehicleno.val('');
                         GetLastInwardSupply();
                     }
                     else {
@@ -448,6 +454,8 @@ $(function () {
                     }
                 });
                 totalAmout.val(result.InwardSupply.TotalAmount);
+                challanno.val(result.InwardSupply.ChallanNo);
+                vehicleno.val(result.InwardSupply.VehicleNo);
                 //Fill Table Data
                 InwardSupplyTable.clear().draw();
                 $.each(result.InwardSupply.InwardSupplyTransactions, function (key, item) {
@@ -535,6 +543,8 @@ $(function () {
                 TransactionDate: transactionDate.val(),
                 TransactionNo: transactionNo.val(),
                 Branch: ddlBranch.val(),
+                ChallanNo: challanno.val(),
+                VehicleNo: vehicleno.val(),
                 Fk_ProductTypeId: ddlProductType.val(),
                 TotalAmount: totalAmout.val(),
                 rowData: rowData

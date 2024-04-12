@@ -370,7 +370,13 @@
                                 html += item2.IncrementStock === true ? '<td>' + item2.Quantity.toFixed(2) + '</td>' : '<td>-</td>';
                                 html += item2.IncrementStock === false ? '<td>' + item2.Quantity.toFixed(2) + '</td>' : '<td>-</td>';
                                 Stock += item2.IncrementStock === true ? item2.Quantity : -item2.Quantity;
-                                html += '<td>' + Stock.toFixed(2) + '</td>';
+                                if (0 > Balance) {
+                                    html += '<td class="bg-danger text-white">' + Stock.toFixed(2) + '</td>';
+                                }
+                                else {
+                                    html += '<td>' + Stock.toFixed(2) + '</td>';
+                                }
+                                
                                 html += '</tr >';
                             });
 

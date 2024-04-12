@@ -26,6 +26,7 @@
         public string BranchName { get; set; }
         public bool IncrementStock { get; set; }
         public ProductModel Product { get; set; }
+        public string Narration { get; set; }
     }
 
     public class LabourReportDetailedModel2
