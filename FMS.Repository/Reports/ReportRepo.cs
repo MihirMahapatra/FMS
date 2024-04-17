@@ -194,6 +194,166 @@ namespace FMS.Repository.Reports
             }
             return _Result;
         }
+        public async Task<Result<GraphDataModel>> GetGraphDataforProductWise(StockReportDataRequest requestData)
+        {
+            Result<GraphDataModel> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                GraphDataModel Model = new GraphDataModel();
+
+                if (_HttpContextAccessor.HttpContext.Session.GetString("BranchId") != "All")
+                {
+                    Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
+                    Guid FinancialYearId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
+                    List<decimal> salesAmount = new List<decimal>(new decimal[12]); // Initialize with 12 elements, all 0
+                   //List<decimal> purchaseAmount = new List<decimal>(new decimal[12]);
+                    List<decimal> productionAmount = new List<decimal>(new decimal[12]);
+                   // List<decimal> receivedAmount = new List<decimal>(new decimal[12]);
+                    #region SaleData
+                    var salesData = _appDbContext.SalesTransaction
+                    .Where(s => s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYearId && s.Fk_ProductId == requestData.ProductId)
+                   .GroupBy(s => s.TransactionDate.Month)
+                   .Select(g => new
+                   {
+                       Month = g.Key,
+                       SaleAmount = g.Sum(s => s.Amount)
+                   });
+                    foreach (var item in salesData)
+                    {
+                        salesAmount[item.Month - 1] = item.SaleAmount; // Month - 1 to match zero-based index
+                    }
+                    #endregion
+                  //  #region PurchaseData
+                  //  var PurchaseData = _appDbContext.PurchaseOrders
+                  // .Where(s => s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYearId)
+                  //.GroupBy(s => s.TransactionDate.Month)
+                  //.Select(g => new
+                  //{
+                  //    Month = g.Key,
+                  //    PurchaseAmount = g.Sum(s => s.GrandTotal)
+                  //});
+                  //  foreach (var item in PurchaseData)
+                  //  {
+                  //      purchaseAmount[item.Month - 1] = item.PurchaseAmount; // Month - 1 to match zero-based index
+                  //  }
+                  //  #endregion
+                    #region ProductionData
+                    var ProductionData = _appDbContext.LabourOrders
+                  .Where(s => s.FK_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYearId && s.Fk_ProductId == requestData.ProductId)
+                   .GroupBy(s => s.TransactionDate.Month)
+                   .Select(g => new
+                   {
+                       Month = g.Key,
+                       ProductionAmount = g.Sum(s => s.Amount)
+                   });
+                    foreach (var item in ProductionData)
+                    {
+                        productionAmount[item.Month - 1] = item.ProductionAmount; // Month - 1 to match zero-based index
+                    }
+                    #endregion
+                  //  #region ReceiptData
+                  //  var ReceivedAmountdata = _appDbContext.Receipts
+                  //.Where(s => s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYearId)
+                  // .GroupBy(s => s.VoucherDate.Month)
+                  // .Select(g => new
+                  // {
+                  //     Month = g.Key,
+                  //     ReceivedAmount = g.Sum(s => s.Amount)
+                  // });
+                  //  foreach (var item in ReceivedAmountdata)
+                  //  {
+                  //      receivedAmount[item.Month - 1] = item.ReceivedAmount; // Month - 1 to match zero-based index
+                  //  }
+                  //  #endregion
+                    Model.SalesAmount = salesAmount;
+                   // Model.PurchaseAmount = purchaseAmount;
+                    Model.ProductionAmount = productionAmount;
+                    //Model.ReceivedAmount = receivedAmount;
+                }
+                else
+                {
+                    Guid FinancialYearId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
+                    List<decimal> salesAmount = new List<decimal>(new decimal[12]); // Initialize with 12 elements, all 0
+                    List<decimal> purchaseAmount = new List<decimal>(new decimal[12]);
+                    List<decimal> productionAmount = new List<decimal>(new decimal[12]);
+                    List<decimal> receivedAmount = new List<decimal>(new decimal[12]);
+                    #region SaleData
+                    var salesData = _appDbContext.SalesOrders
+                    .Where(s => s.Fk_FinancialYearId == FinancialYearId)
+                   .GroupBy(s => s.OrderDate.Month)
+                   .Select(g => new
+                   {
+                       Month = g.Key,
+                       SaleAmount = g.Sum(s => s.GrandTotal)
+                   });
+                    foreach (var item in salesData)
+                    {
+                        salesAmount[item.Month - 1] = item.SaleAmount; // Month - 1 to match zero-based index
+                    }
+                    #endregion
+                    #region PurchaseData
+                    var PurchaseData = _appDbContext.PurchaseOrders
+                   .Where(s => s.Fk_FinancialYearId == FinancialYearId)
+                  .GroupBy(s => s.TransactionDate.Month)
+                  .Select(g => new
+                  {
+                      Month = g.Key,
+                      PurchaseAmount = g.Sum(s => s.GrandTotal)
+                  });
+                    foreach (var item in PurchaseData)
+                    {
+                        purchaseAmount[item.Month - 1] = item.PurchaseAmount; // Month - 1 to match zero-based index
+                    }
+                    #endregion
+                    #region ProductionData
+                    var ProductionData = _appDbContext.LabourOrders
+                  .Where(s => s.Fk_FinancialYearId == FinancialYearId)
+                   .GroupBy(s => s.TransactionDate.Month)
+                   .Select(g => new
+                   {
+                       Month = g.Key,
+                       ProductionAmount = g.Sum(s => s.Amount)
+                   });
+                    foreach (var item in ProductionData)
+                    {
+                        productionAmount[item.Month - 1] = item.ProductionAmount; // Month - 1 to match zero-based index
+                    }
+                    #endregion
+                    #region ReceiptData
+                    var ReceivedAmountdata = _appDbContext.Receipts
+                  .Where(s => s.Fk_FinancialYearId == FinancialYearId)
+                   .GroupBy(s => s.VoucherDate.Month)
+                   .Select(g => new
+                   {
+                       Month = g.Key,
+                       ReceivedAmount = g.Sum(s => s.Amount)
+                   });
+                    foreach (var item in ReceivedAmountdata)
+                    {
+                        receivedAmount[item.Month - 1] = item.ReceivedAmount; // Month - 1 to match zero-based index
+                    }
+                    #endregion
+                    Model.SalesAmount = salesAmount;
+                    Model.PurchaseAmount = purchaseAmount;
+                    Model.ProductionAmount = productionAmount;
+                    Model.ReceivedAmount = receivedAmount;
+                }
+
+                if (Model != null)
+                {
+                    _Result.SingleObjData = Model;
+                    _Result.IsSuccess = true;
+                    _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
+                }
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("horizonexception@gmail.com", "FMS Excepion", $"ReportRepo/GetDaySheet : {_Exception.Message}");
+            }
+            return _Result;
+        }
         #endregion
         #region Stock Report
         public async Task<Result<StockReportSummerizedModel>> GetSummerizedStockReports(StockReportDataRequest requestData)
@@ -841,6 +1001,7 @@ namespace FMS.Repository.Reports
                                 TransactionDate = pe.VoucherDate,
                                 TransactionNo = pe.VouvherNo,
                                 BranchName = pe.Branch.BranchName,
+                                Narration = pe.Narration,
                                 Amount = pe.Amount,
                                 Particular = "Payments",
                                 IncrementStock = true
@@ -1570,6 +1731,7 @@ namespace FMS.Repository.Reports
                                                  {
                                                      TransactionDate = t.TransactionDate,
                                                      TransactionNo = t.TransactionNo,
+                                                     MaterialReceiptNo = t.InvoiceNo,
                                                      GrandTotal = t.GrandTotal,
                                                      Naration = t.Narration,
                                                      BranchName = t.Branch.BranchName,
@@ -1726,6 +1888,7 @@ namespace FMS.Repository.Reports
                                 ProductName = x.Product != null ? x.Product.ProductName : null,
                                 AlternateQuantity = x.AlternateQuantity,
                                 UnitQuantity = x.UnitQuantity,
+                                AlternateUnit = x.AlternateUnit != null ? new AlternateUnitModel { AlternateUnitName = x.AlternateUnit.AlternateUnitName } : null,
                                 UnitName = x.Product.Unit.UnitName,
                                 Rate = x.Rate,
                                 Amount = x.Amount,
@@ -1740,6 +1903,8 @@ namespace FMS.Repository.Reports
                                 ProductName = x.Product != null ? x.Product.ProductName : null,
                                 Quantity = x.UnitQuantity,
                                 UnitName = x.Product.Unit.UnitName,
+                                AlternateUnit = x.AlternateUnit != null ? new AlternateUnitModel { AlternateUnitName = x.AlternateUnit.AlternateUnitName } : null,
+                                AlternateQuantity = x.AlternateQuantity,
                                 Rate = x.Rate,
                                 Amount = x.Amount,
                             }).ToList(),
@@ -1754,6 +1919,8 @@ namespace FMS.Repository.Reports
                                 ProductName = x.Product != null ? x.Product.ProductName : _appDbContext.Products.Where(p => p.ProductId == x.Fk_ProductId).Select(p => p.ProductName).FirstOrDefault(),
                                 UnitName = x.Product.Unit.UnitName,
                                 Quantity = x.UnitQuantity,
+                                AlternateQuantity = x.AlternateQuantity,
+                                AlternateUnit =  x.AlternateUnit != null ? new AlternateUnitModel { AlternateUnitName = x.AlternateUnit.AlternateUnitName } : null,
                                 Rate = x.Rate,
                                 Amount = x.Amount,
                             }).ToList(),
@@ -2764,6 +2931,206 @@ namespace FMS.Repository.Reports
             {
                 _Result.Exception = _Exception;
                 await _emailService.SendExceptionEmail("horizonexception@gmail.com", "FMS Excepion", $"ReportRepo/GetSummerizedCustomerReport : {_Exception.Message}");
+            }
+            return _Result;
+        }
+        #endregion
+        //For All Branches Reports Supplyer And Customer
+        #region Supplyer Report All Branches
+        public async Task<Result<PartyReportModel2>> GetDetailedSupplyerReportForAll(PartyReportDataRequest requestData)
+        {
+            Result<PartyReportModel2> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                PartyReportModel2 SupllyerInfos = new PartyReportModel2();
+                if (DateTime.TryParseExact(requestData.FromDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedFromDate) && DateTime.TryParseExact(requestData.ToDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedToDate))
+                {
+                    Guid FinancialYearId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
+                    SupllyerInfos.PartyName = _appDbContext.SubLedgers.Where(x => x.SubLedgerId == requestData.PartyId).Select(x => x.SubLedgerName).FirstOrDefault();
+                    SupllyerInfos.OpeningBal = _appDbContext.SubLedgerBalances.Where(x => x.Fk_SubLedgerId == requestData.PartyId && x.Fk_FinancialYearId == FinancialYearId).Select(t => t.OpeningBalance).Sum()
+                                      + _appDbContext.SalesOrders.Where(p => p.Fk_FinancialYearId == FinancialYearId && p.TransactionDate < convertedFromDate && p.Fk_SubLedgerId == requestData.PartyId).Select(t => t.GrandTotal).Sum()
+                                      - _appDbContext.SalesReturnOrders.Where(so => so.Fk_FinancialYearId == FinancialYearId && so.TransactionDate < convertedFromDate && so.Fk_SubLedgerId == requestData.PartyId).Select(t => t.GrandTotal).Sum()
+                                      - _appDbContext.Receipts.Where(r => r.Fk_FinancialYearId == FinancialYearId && r.VoucherDate < convertedFromDate && r.Fk_SubLedgerId == requestData.PartyId).Select(t => t.Amount).Sum();
+                    SupllyerInfos.OpeningBalType = _appDbContext.SubLedgerBalances.Where(x => x.Fk_SubLedgerId == requestData.PartyId && x.Fk_FinancialYearId == FinancialYearId).Select(t => t.OpeningBalance).Sum()
+                                        + _appDbContext.SalesOrders.Where(p => p.Fk_FinancialYearId == FinancialYearId && p.TransactionDate < convertedFromDate && p.Fk_SubLedgerId == requestData.PartyId).Select(t => t.GrandTotal).Sum()
+                                        - _appDbContext.SalesReturnOrders.Where(so => so.Fk_FinancialYearId == FinancialYearId && so.TransactionDate < convertedFromDate && so.Fk_SubLedgerId == requestData.PartyId).Select(t => t.GrandTotal).Sum()
+                                        - _appDbContext.Receipts.Where(r => r.Fk_FinancialYearId == FinancialYearId && r.VoucherDate < convertedFromDate && r.Fk_SubLedgerId == requestData.PartyId).Select(t => t.Amount).Sum()
+                                        > 0 ? "Dr" : "Cr";
+                    SupllyerInfos.Orders.AddRange(_appDbContext.PurchaseOrders
+                                       .Where(p => p.Fk_FinancialYearId == FinancialYearId && p.TransactionDate >= convertedFromDate && p.TransactionDate <= convertedToDate && p.Fk_SubLedgerId == requestData.PartyId)
+                                       .OrderBy(t => t.TransactionDate)
+                                       .Select(t => new PartyReportOrderModel
+                                       {
+                                           TransactionDate = t.TransactionDate,
+                                           TransactionNo = t.TransactionNo,
+                                           //TransactionType = t.TransactionType,
+                                           GrandTotal = t.GrandTotal,
+                                           Naration = t.Narration,
+                                           DrCr = "Dr",
+                                           BranchName = t.Branch.BranchName,
+                                           Transactions = t.PurchaseTransactions.Where(s => s.Fk_PurchaseOrderId == t.PurchaseOrderId)
+                                           .Select(s => new PartyReportTransactionModel
+                                           {
+                                               ProductName = s.Product.ProductName,
+                                               Quantity = s.UnitQuantity,
+                                               AlternateQuantity = s.AlternateQuantity,
+                                               Rate = s.Rate,
+                                               Amount = s.Amount
+                                           }).ToList()
+                                       }).ToList());
+                    SupllyerInfos.Orders.AddRange(_appDbContext.PurchaseReturnOrders
+                                      .Where(p => p.Fk_FinancialYearId == FinancialYearId && p.TransactionDate >= convertedFromDate && p.TransactionDate <= convertedToDate && p.Fk_SubLedgerId == requestData.PartyId)
+                                      .OrderBy(t => t.TransactionDate)
+                                      .Select(t => new PartyReportOrderModel
+                                      {
+                                          TransactionDate = t.TransactionDate,
+                                          TransactionNo = t.TransactionNo,
+                                          //TransactionType = t.TransactionType,
+                                          GrandTotal = t.GrandTotal,
+                                          Naration = t.Narration,
+                                          DrCr = "Cr",
+                                          BranchName = t.Branch.BranchName,
+                                          Transactions = t.PurchaseReturnTransactions.Where(s => s.Fk_PurchaseReturnOrderId == t.PurchaseReturnOrderId)
+                                      .Select(s => new PartyReportTransactionModel
+                                      {
+                                          ProductName = s.Product.ProductName,
+                                          Quantity = s.UnitQuantity,
+                                          AlternateQuantity = s.AlternateQuantity,
+                                          Rate = s.Rate,
+                                          Amount = s.Amount,
+                                      }).ToList()
+                                      }).ToList());
+                    SupllyerInfos.Orders.AddRange(_appDbContext.Payments.Where(r => r.Fk_FinancialYearId == FinancialYearId && r.VoucherDate >= convertedFromDate && r.VoucherDate <= convertedToDate && r.Fk_SubLedgerId == requestData.PartyId)
+                        .OrderBy(t => t.VoucherDate)
+                        .Select(t => new PartyReportOrderModel
+                        {
+                            TransactionDate = t.VoucherDate,
+                            TransactionNo = t.VouvherNo,
+                            Naration = t.Narration,
+                            GrandTotal = t.Amount,
+                            DrCr = "Cr",
+                            BranchName = t.Branch.BranchName,
+                        }).ToList());
+                    SupllyerInfos.Orders = SupllyerInfos.Orders.OrderBy(t => t.TransactionDate).ToList();
+
+                    if (SupllyerInfos != null)
+                    {
+                        _Result.SingleObjData = SupllyerInfos;
+                        _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
+                    }
+                    _Result.IsSuccess = true;
+                }
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("horizonexception@gmail.com", "FMS Excepion", $"ReportRepo/GetDetailedSupplyerReport : {_Exception.Message}");
+            }
+            return _Result;
+        }
+        #endregion
+        #region Customer Report For All Branches
+        public async Task<Result<PartyReportModel2>> GetDetailedCustomerReportForAll(PartyReportDataRequest requestData)
+        {
+            Result<PartyReportModel2> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                PartyReportModel2 PartyInfos = new PartyReportModel2();
+                if (DateTime.TryParseExact(requestData.FromDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedFromDate) && DateTime.TryParseExact(requestData.ToDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedToDate))
+                {
+                    Guid FinancialYearId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
+                   
+                        PartyInfos.OpeningBal = _appDbContext.SubLedgerBalances.Where(x => x.Fk_SubLedgerId == requestData.PartyId && x.Fk_FinancialYearId == FinancialYearId).Select(t => t.OpeningBalance).Sum()
+                                         + _appDbContext.SalesOrders.Where(p => p.Fk_FinancialYearId == FinancialYearId && p.TransactionDate < convertedFromDate && p.Fk_SubLedgerId == requestData.PartyId).Select(t => t.GrandTotal).Sum()
+                                         - _appDbContext.SalesReturnOrders.Where(so => so.Fk_FinancialYearId == FinancialYearId && so.TransactionDate < convertedFromDate && so.Fk_SubLedgerId == requestData.PartyId).Select(t => t.GrandTotal).Sum()
+                                         - _appDbContext.Receipts.Where(r => r.Fk_FinancialYearId == FinancialYearId && r.VoucherDate < convertedFromDate && r.Fk_SubLedgerId == requestData.PartyId).Select(t => t.Amount).Sum();
+                        PartyInfos.OpeningBalType = _appDbContext.SubLedgerBalances.Where(x => x.Fk_SubLedgerId == requestData.PartyId && x.Fk_FinancialYearId == FinancialYearId).Select(t => t.OpeningBalance).Sum()
+                                            + _appDbContext.SalesOrders.Where(p => p.Fk_FinancialYearId == FinancialYearId && p.TransactionDate < convertedFromDate && p.Fk_SubLedgerId == requestData.PartyId).Select(t => t.GrandTotal).Sum()
+                                            - _appDbContext.SalesReturnOrders.Where(so => so.Fk_FinancialYearId == FinancialYearId && so.TransactionDate < convertedFromDate && so.Fk_SubLedgerId == requestData.PartyId).Select(t => t.GrandTotal).Sum()
+                                            - _appDbContext.Receipts.Where(r => r.Fk_FinancialYearId == FinancialYearId && r.VoucherDate < convertedFromDate && r.Fk_SubLedgerId == requestData.PartyId).Select(t => t.Amount).Sum()
+                                            > 0 ? "Dr" : "Cr";
+                        PartyInfos.Orders.AddRange(_appDbContext.SalesOrders
+                                           .Where(p => p.Fk_FinancialYearId == FinancialYearId && p.TransactionDate >= convertedFromDate && p.TransactionDate <= convertedToDate && p.Fk_SubLedgerId == requestData.PartyId)
+                                           .OrderBy(t => t.TransactionDate)
+                                           .Select(t => new PartyReportOrderModel
+                                           {
+                                               TransactionDate = t.TransactionDate,
+                                               TransactionNo = t.TransactionNo,
+                                               TransactionType = t.TransactionType,
+                                               GrandTotal = t.GrandTotal,
+                                               SiteAdress = t.SiteAdress,
+                                               Naration = t.Narration,
+                                               DrCr = "Dr",
+                                               BranchName = t.Branch.BranchName,
+                                               Transactions = t.SalesTransactions.Where(s => s.Fk_SalesOrderId == t.SalesOrderId)
+                                               .Select(s => new PartyReportTransactionModel
+                                               {
+                                                   ProductName = _appDbContext.Products.Where(p => p.ProductId == s.Fk_ProductId).Select(p => p.ProductName).FirstOrDefault(),
+                                                   Quantity = s.UnitQuantity,
+                                                   AlternateUnit = _appDbContext.AlternateUnits.Where(a => a.FK_ProductId == s.Fk_ProductId).Select(a => a.AlternateUnitName).FirstOrDefault(),
+                                                   Unit = (from p in _appDbContext.Products
+                                                           join u in _appDbContext.Units on p.Fk_UnitId equals u.UnitId
+                                                           where p.ProductId == s.Fk_ProductId
+                                                           select u.UnitName).FirstOrDefault(),
+                                                   Rate = s.Rate,
+                                                   Amount = s.Amount
+                                               }).ToList()
+                                           }).ToList());
+                        PartyInfos.Orders.AddRange(_appDbContext.SalesReturnOrders
+                                          .Where(p => p.Fk_FinancialYearId == FinancialYearId && p.TransactionDate >= convertedFromDate && p.TransactionDate <= convertedToDate && p.Fk_SubLedgerId == requestData.PartyId)
+                                          .OrderBy(t => t.TransactionDate)
+                                          .Select(t => new PartyReportOrderModel
+                                          {
+                                              TransactionDate = t.TransactionDate,
+                                              TransactionNo = t.TransactionNo,
+                                              TransactionType = t.TransactionType,
+                                              GrandTotal = t.GrandTotal,
+                                              SiteAdress = t.SiteAdress,
+                                              Naration = t.Narration,
+                                              DrCr = "Cr",
+                                              BranchName = t.Branch.BranchName,
+                                              Transactions = t.SalesReturnTransactions.Where(s => s.Fk_SalesReturnOrderId == t.SalesReturnOrderId)
+                                          .Select(s => new PartyReportTransactionModel
+                                          {
+                                              ProductName = _appDbContext.Products.Where(p => p.ProductId == s.Fk_ProductId).Select(p => p.ProductName).FirstOrDefault(),
+                                              Quantity = s.UnitQuantity,
+                                              AlternateUnit = _appDbContext.AlternateUnits.Where(a => a.FK_ProductId == s.Fk_ProductId).Select(a => a.AlternateUnitName).FirstOrDefault(),
+                                              Rate = s.Rate,
+                                              Unit = (from p in _appDbContext.Products
+                                                      join u in _appDbContext.Units on p.Fk_UnitId equals u.UnitId
+                                                      where p.ProductId == s.Fk_ProductId
+                                                      select u.UnitName).FirstOrDefault(),
+                                              Amount = s.Amount,
+                                          }).ToList()
+                                          }).ToList());
+                        PartyInfos.Orders.AddRange(_appDbContext.Receipts.Where(r => r.Fk_FinancialYearId == FinancialYearId && r.VoucherDate >= convertedFromDate && r.VoucherDate <= convertedToDate && r.Fk_SubLedgerId == requestData.PartyId)
+                            .OrderBy(t => t.VoucherDate)
+                            .Select(t => new PartyReportOrderModel
+                            {
+                                TransactionDate = t.VoucherDate,
+                                TransactionNo = t.VouvherNo,
+                                Naration = t.Narration,
+                                SiteAdress = "-",
+                                GrandTotal = t.Amount,
+                                DrCr = "Cr",
+                                BranchName = t.Branch.BranchName,
+                            }).ToList());
+                        PartyInfos.Orders = PartyInfos.Orders.OrderBy(t => t.TransactionDate).ToList();
+                    
+                    if (PartyInfos != null)
+                    {
+                        _Result.SingleObjData = PartyInfos;
+                        _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
+                        _Result.IsSuccess = true;
+                    }
+                }
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("horizonexception@gmail.com", "FMS Excepion", $"ReportRepo/GetDetailedCustomerReport : {_Exception.Message}");
             }
             return _Result;
         }

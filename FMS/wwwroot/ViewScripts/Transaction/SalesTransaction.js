@@ -22,6 +22,7 @@ $(function () {
         pageLength: 10 // Set the default page length to 5
     });
     const ddlPayment = $('select[name="ddlPayment"]');
+    const ddlcustomergroup = $('select[name="ddlPartyGroupId"]');
     const ddlRate = $('select[name="ddlRate"]');
     const CustomerName = $('input[name="CustomerName"]');
     const transactionNo = $('input[name="TransactionNo"]');
@@ -388,11 +389,63 @@ $(function () {
         if (selectedOption === 'credit') {
             $('.hdnddn').show();
             $('.hdntxt').hide();
+            $('.hdnpartygroup').show();
             GetSundryDebtors();
+            LoadPartyGroups();
         } else {
             $('.hdnddn').hide();
             $('.hdntxt').show();
         }
+    });
+    function LoadPartyGroups() {
+        $.ajax({
+            url: "/Master/GetPartyGruops",
+            type: "GET",
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            success: function (result) {
+                ddlcustomergroup.empty();
+                var defaultOption = $('<option></option>').val('').text('--Select Option--');
+                ddlcustomergroup.append(defaultOption);
+                $.each(result.PartyGruops, function (key, item) {
+                    var option = $('<option></option>').val(item.PartyGroupId).text(item.PartyGruopName);
+                    ddlcustomergroup.append(option);
+                });
+            },
+            error: function (errormessage) {
+                console.log(errormessage)
+            }
+        });
+    }
+    ddlcustomergroup.on('change', function () {
+        var fkpartygroupId = $(this).val();
+        $.ajax({
+            url: "/Transaction/GetSundryDebtors",
+            type: "GET",
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            success: function (result) {
+                if (result.ResponseCode == 302) {
+                    ddlCustomer.empty();
+                    var defaultOption = $('<option></option>').val('').text('--Select Option--');
+                    ddlCustomer.append(defaultOption);
+                    $.each(result.SubLedgers, function (key, item) {
+                        if (item.PartyGroupId == fkpartygroupId) {
+                            var option = $('<option></option>').val(item.SubLedgerId).text(item.SubLedgerName);
+                            ddlCustomer.append(option);
+                        }
+                    });
+                }
+                else {
+                    ddlCustomer.empty();
+                    var defaultOption = $('<option></option>').val('').text('--Select Option--');
+                    ddlCustomer.append(defaultOption);
+                }
+            },
+            error: function (errormessage) {
+                console.log(errormessage)
+            }
+        });
     });
     $(document).on('change', 'select[name = "ddlRate"]', function () {
         selectedOption = ddlRate.val();

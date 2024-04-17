@@ -1745,6 +1745,13 @@ namespace FMS.Repository.Master
             {
                 _Result.IsSuccess = false;
                 var Query = await _appDbContext.Labours.Where(s => s.LabourId == data.LabourId).FirstOrDefaultAsync();
+                var LabourName = Query.LabourName;
+                var query1 = await _appDbContext.SubLedgers.Where(s => s.SubLedgerName == LabourName).FirstOrDefaultAsync();
+                if(query1 != null)
+                {
+                    query1.SubLedgerName = data.LabourName;
+                    await _appDbContext.SaveChangesAsync();
+                }
                 if (Query != null)
                 {
                     data.Fk_BranchId = BranchId;

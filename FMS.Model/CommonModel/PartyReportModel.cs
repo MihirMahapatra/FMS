@@ -24,6 +24,7 @@ namespace FMS.Model.CommonModel
     {
         public DateTime TransactionDate { get; set; }
         public string TransactionNo { get; set; }
+        public string MaterialReceiptNo { get; set; }
         public string TransactionType { get; set; }
         public decimal HandlingCharges { get; set; }
         public decimal GrandTotal { get; set; }

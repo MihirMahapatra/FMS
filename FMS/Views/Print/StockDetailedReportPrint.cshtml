@@ -89,6 +89,8 @@
                                     @foreach (var item in @Model.StockReports.Stocks)
                                     {
                                         decimal stock = 0;
+                                        decimal TotalInward = 0;
+                                        decimal Totaloutward = 0;
                                         <tr class="small-row">
                                             <td colspan="6" style="text-align:center">@item.BranchName</td>
                                         </tr>
@@ -106,14 +108,27 @@
                                                 <td>@formattedDate</td>
                                                 <td>@item2.TransactionNo</td>
                                                 <td>@item2.Particular</td>
-                                                <td>@(item2.IncrementStock ? item2.Quantity.ToString("N2") : "-")</td>
-                                                <td>@(!item2.IncrementStock ? item2.Quantity.ToString("N2") : "-")</td>
+                                                @if(item2.IncrementStock == true){
+                                                <td>@item2.Quantity.ToString("N2")</td>
+                                                 <td>-</td>
+                                                 TotalInward += @item2.Quantity;
+                                                }else{
+                                                <td>-</td>
+                                                <td>@item2.Quantity.ToString("N2")</td>
+                                                 Totaloutward += @item2.Quantity;
+                                                }
                                                 @{
                                                     stock += item2.IncrementStock ? item2.Quantity : -item2.Quantity;
                                                 }
                                                 <td style="text-align:center">@stock.ToString("N2")</td>
                                             </tr>
                                         }
+                                        <tr class="small-row">
+                                            <td colspan="3" style="text-align:center">Totals</td>
+                                            <td>@TotalInward.ToString("N2")</td>
+                                            <td>@Totaloutward.ToString("N2")</td>
+                                            <td>-</td>
+                                        </tr>
                                     }
                                 }
                                 else

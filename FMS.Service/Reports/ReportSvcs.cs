@@ -51,6 +51,43 @@ namespace FMS.Service.Reports
             }
             return Obj;
         }
+        public async Task<GraphDataViewModel> GetGraphDataforProductWise(StockReportDataRequest requestData)
+        {
+            GraphDataViewModel Obj;
+            var Result = await _reportRepo.GetGraphDataforProductWise(requestData);
+            if (Result.IsSuccess)
+            {
+                if (Result.Response == "success")
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
+                        GraphData = Result.SingleObjData,
+                    };
+                }
+                else
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.NotFound),
+                        Message = "No Record Found"
+                    };
+                }
+            }
+            else
+            {
+                Obj = new()
+                {
+                    ResponseStatus = Result.Response,
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    Message = "Some Eroor Occoured"
+                };
+            }
+            return Obj;
+        }
         #endregion
         #region Stock Report
         public async Task<StockReportSummerizedViewModel> GetSummerizedStockReports(StockReportDataRequest requestData)
@@ -855,5 +892,84 @@ namespace FMS.Service.Reports
             return Obj;
         }
         #endregion
+        #region All Branch Customer Details
+        public async Task<PartyReportViewModel> GetDetailedCustomerReportForAll(PartyReportDataRequest requestData)
+        {
+            PartyReportViewModel Obj;
+            var Result = await _reportRepo.GetDetailedCustomerReport(requestData);
+            if (Result.IsSuccess)
+            {
+                if (Result.Response == "success")
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
+                        PartyDetailed = Result.SingleObjData,
+                    };
+                }
+                else
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.NotFound),
+                        Message = "No Record Found"
+                    };
+                }
+            }
+            else
+            {
+                Obj = new()
+                {
+                    ResponseStatus = Result.Response,
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    Message = "Some Eroor Occoured"
+                };
+            }
+            return Obj;
+        }
+        #endregion
+        #region All Branch Supplyer Details
+        public async Task<PartyReportViewModel> GetDetailedSupplyerReportForAll(PartyReportDataRequest requestData)
+        {
+            PartyReportViewModel Obj;
+            var Result = await _reportRepo.GetDetailedSupplyerReportForAll(requestData);
+            if (Result.IsSuccess)
+            {
+                if (Result.Response == "success")
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
+                        PartyDetailed = Result.SingleObjData,
+                    };
+                }
+                else
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.NotFound),
+                        Message = "No Record Found"
+                    };
+                }
+            }
+            else
+            {
+                Obj = new()
+                {
+                    ResponseStatus = Result.Response,
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    Message = "Some Eroor Occoured"
+                };
+            }
+            return Obj;
+        }
+        #endregion
+        
     }
 }

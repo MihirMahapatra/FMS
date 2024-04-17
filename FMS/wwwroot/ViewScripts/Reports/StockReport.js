@@ -153,7 +153,7 @@
                     $('.tblSummerizedStockList').html(html);
                     if (!$.fn.DataTable.isDataTable('.SummerizedStockReportTable')) {
                         var table = $('.SummerizedStockReportTable').DataTable({
-                            "responsive": true, "lengthChange": false, "autoWidth": false,
+                            "responsive": true, "lengthChange": false, "autoWidth": false, "searching": true,
                             /*"buttons": ["copy", "csv", "excel", "pdf", "colvis"]*/
                         })/*.buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');*/
                     }
@@ -348,9 +348,16 @@
                             html += '</tr >';
                             html += '<tr>';
                             html += '<td colspan="5">Opening Qty</td>';
-                            html += '<td>' + item.OpeningQty + '</td>';
+                            if (0 > item.OpeningQty) {
+                                html += '<td class="bg-danger text-white">' + item.OpeningQty + '</td>';
+                            }
+                            else {
+                                html += '<td>' + item.OpeningQty + '</td>';
+                            }
                             html += '</tr >';
                             Stock = item.OpeningQty;
+                            var totalinward = 0;
+                            var totaloutward = 0;
                             $.each(item.Stocks, function (key, item2) {
                                 const ModifyDate = item2.TransactionDate;
                                 var formattedDate = '';
@@ -367,19 +374,33 @@
                                 html += '<td>' + formattedDate + '</td>';
                                 html += '<td>' + item2.TransactionNo + '</td>';
                                 html += '<td>' + item2.Particular + '</td>';
-                                html += item2.IncrementStock === true ? '<td>' + item2.Quantity.toFixed(2) + '</td>' : '<td>-</td>';
-                                html += item2.IncrementStock === false ? '<td>' + item2.Quantity.toFixed(2) + '</td>' : '<td>-</td>';
+                                if (item2.IncrementStock === true) {
+                                    totalinward += item2.Quantity;
+                                    html += '<td>' + item2.Quantity.toFixed(2) + '</td>';
+                                    html += '<td >-</td>';
+                                } else {
+                                    totaloutward += item2.Quantity;
+                                    html += '<td >-</td>';
+                                    html += '<td>' + item2.Quantity.toFixed(2) + '</td>';
+                                    
+                                }
+                                //html += item2.IncrementStock === true ? '<td>' + item2.Quantity.toFixed(2) + '</td>' : '<td>-</td>';
+                                //html += item2.IncrementStock === false ? '<td>' + item2.Quantity.toFixed(2) + '</td>' : '<td>-</td>';
                                 Stock += item2.IncrementStock === true ? item2.Quantity : -item2.Quantity;
-                                if (0 > Balance) {
+                                if (0 > Stock) {
                                     html += '<td class="bg-danger text-white">' + Stock.toFixed(2) + '</td>';
                                 }
                                 else {
                                     html += '<td>' + Stock.toFixed(2) + '</td>';
                                 }
-                                
                                 html += '</tr >';
                             });
-
+                            html += '<tr>';
+                            html += '<td colspan="3">Totals</td>';
+                            html += '<td>' + totalinward.toFixed(2) + '</td>';
+                            html += '<td>' + totaloutward.toFixed(2) + '</td>';
+                            html += '<td >-</td>';
+                            html += '</tr >';
                         });
                         $('#BtnPrintDetailed').show();
                         PrintDataDetailed = {

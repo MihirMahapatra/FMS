@@ -52,79 +52,18 @@
                 <div class="card-body">
                     <ul class="nav nav-tabs" id="custom-content-below-tab" role="tablist">
                         <li class="nav-item">
-                            <a class="nav-link active" id="tab-SummerizedReport" data-toggle="pill" href="#SummerizedReport" role="tab" aria-controls="SummerizedReport" aria-selected="true"><b>Summerized Report</b></a>
+                            <a class="nav-link active" id="tab-DetailedReportCustomer" data-toggle="pill" href="#DetailedReportCustomer" role="tab" aria-controls="DetailedReportCustomer" aria-selected="true"><b>Customer Detailed Report</b></a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" id="tab-DetailedReport" data-toggle="pill" href="#DetailedReport" role="tab" aria-controls="DetailedReport" aria-selected="false"><b>Detailed Report</b></a>
+                            <a class="nav-link" id="tab-DetailedReportSupplyer" data-toggle="pill" href="#DetailedReportSupplyer" role="tab" aria-controls="DetailedReportSupplyer" aria-selected="false"><b>Supplyer Detailed Report </b></a>
                         </li>
                     </ul>
                     <div class="tab-content pt-3" id="custom-content-below-tabContent">
-                        <div class="tab-pane fade show active" id="SummerizedReport" role="tabpanel" aria-labelledby="tab-SummerizedReport">
+                        <div class="tab-pane fade show active" id="DetailedReportCustomer" role="tabpanel" aria-labelledby="tab-DetailedReportCustomer">
                             <div class="card card-primary card-outline">
                                 <div class="card-header">
                                     <i class="fa-solid fa-file-invoice"></i>
-                                    Summerized List
-                                </div>
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label>ChooseGroup</label>
-                                                <select class="form-control select2bs4" style="width: 100%" id="PartyGroupId" name="ddlPartyGroupId">
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label>From Date</label>
-                                                <div class="input-group  date" id="FromDateSummerized" data-target-input="nearest">
-                                                    <input type="text" class="form-control datetimepicker-input" data-target="#FromDateSummerized" name="FromDateSummerized" />
-                                                    <div class="input-group-append" data-target="#FromDateSummerized" data-toggle="datetimepicker">
-                                                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label>To Date</label>
-                                                <div class="input-group  date" id="ToDateSummerized" data-target-input="nearest">
-                                                    <input type="text" class="form-control datetimepicker-input" data-target="#ToDateSummerized" name="ToDateSummerized" />
-                                                    <div class="input-group-append" data-target="#ToDateSummerized" data-toggle="datetimepicker">
-                                                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <button type="button" id="btnViewSummerized" class="btn btn-primary" style="float:left; margin-top:32px">View</button>
-                                        </div>
-                                        <div class="col-md-12">
-                                            <div id="loader" style="display:none;"></div>
-                                            <div class="tblSummerizedList" id="example1_wrapper">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-12">
-                                            <div class="row">
-                                                <div class="col-md-9"></div>
-                                                <div class="col-md-3">
-                                                    <div class="form-group">
-                                                        <div class="form-group">
-                                                            <button type="button" id="BtnPrintSummarized" class="btn btn-primary" style="float:right; display:none; margin-top:32px">Print</button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="tab-pane fade" id="DetailedReport" role="tabpanel" aria-labelledby="tab-DetailedReport">
-                            <div class="card card-primary card-outline">
-                                <div class="card-header">
-                                    <i class="fa-solid fa-file-invoice"></i>
-                                    Detailed List
+                                    Detailed Customer List
                                 </div>
                                 <div class="card-body">
                                     <div class="row">
@@ -145,9 +84,9 @@
                                         <div class="col-md-2">
                                             <div class="form-group">
                                                 <label>From Date</label>
-                                                <div class="input-group  date" id="FromDateDetailed" data-target-input="nearest">
-                                                    <input type="text" class="form-control datetimepicker-input" data-target="#FromDateDetailed" name="FromDateDetailed" />
-                                                    <div class="input-group-append" data-target="#FromDateDetailed" data-toggle="datetimepicker">
+                                                <div class="input-group  date" id="FromDateCustomer" data-target-input="nearest">
+                                                    <input type="text" class="form-control datetimepicker-input" data-target="#FromDateCustomer" name="FromDateCustomer" />
+                                                    <div class="input-group-append" data-target="#FromDateCustomer" data-toggle="datetimepicker">
                                                         <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                                     </div>
                                                 </div>
@@ -156,20 +95,91 @@
                                         <div class="col-md-2">
                                             <div class="form-group">
                                                 <label>To Date</label>
-                                                <div class="input-group  date" id="ToDateDetailed" data-target-input="nearest">
-                                                    <input type="text" class="form-control datetimepicker-input" data-target="#ToDateDetailed" name="ToDateDetailed" />
-                                                    <div class="input-group-append" data-target="#ToDateDetailed" data-toggle="datetimepicker">
+                                                <div class="input-group  date" id="ToDateCustomer" data-target-input="nearest">
+                                                    <input type="text" class="form-control datetimepicker-input" data-target="#ToDateCustomer" name="ToDateCustomer" />
+                                                    <div class="input-group-append" data-target="#ToDateCustomer" data-toggle="datetimepicker">
                                                         <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="col-md-2">
-                                            <button type="button" id="btnViewDetailed" class="btn btn-primary" style="float:left; margin-top:32px">View</button>
+                                            <button type="button" id="btnViewCustomerDetailed" class="btn btn-primary" style="float:left; margin-top:32px">View</button>
                                         </div>
                                         <div class="col-md-12">
                                             <div id="loader" style="display:none;"></div>
-                                            <div class="tblDetailedList" id="example2_wrapper">
+                                            <div class="tblCustomerDetailedList" id="example2_wrapper">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="row">
+                                                <div class="col-md-9"></div>
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <div class="form-group">
+                                                            <button type="button" id="BtnPrintDetailed" class="btn btn-primary" style="float:right; display:none; margin-top:32px">Print</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="DetailedReportSupplyer" role="tabpanel" aria-labelledby="tab-DetailedReportSupplyer">
+                            <div class="card card-primary card-outline">
+                                <div class="card-header">
+                                    <i class="fa-solid fa-file-invoice"></i>
+                                    Detailed List
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label>Supplyer Name</label>
+                                                <select class="form-control select2bs4" style="width: 100%" id="SupplyerId" name="ddlSupplyerId">
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label>From Date</label>
+                                                <div class="input-group  date" id="FromDateSupplyer" data-target-input="nearest">
+                                                    <input type="text" class="form-control datetimepicker-input" data-target="#FromDateSupplyer" name="FromDateSupplyer" />
+                                                    <div class="input-group-append" data-target="#FromDateSupplyer" data-toggle="datetimepicker">
+                                                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label>To Date</label>
+                                                <div class="input-group  date" id="ToDateSupplyer" data-target-input="nearest">
+                                                    <input type="text" class="form-control datetimepicker-input" data-target="#ToDateSupplyer" name="ToDateSupplyer" />
+                                                    <div class="input-group-append" data-target="#ToDateSupplyer" data-toggle="datetimepicker">
+                                                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label>Zero Valued</label>
+                                                <select class="form-control select2bs4" style="width: 100%" name="ddlDetailedZerovalued">
+                                                    <option value="No" selected>No</option>
+                                                    <option value="Yes">Yes</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-10"></div>
+                                        <div class="col-md-2 mb-2">
+                                            <button type="button" id="btnViewSupplyerDetailed" class="btn btn-primary" style="float:right">View</button>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div id="loader" style="display:none;"></div>
+                                            <div class="tblSupplyerDetailed" id="example2_wrapper">
                                             </div>
                                         </div>
                                         <div class="col-md-12">
@@ -235,40 +245,21 @@
     <!-- Toastr -->
     <script src="~/plugins/toastr/toastr.min.js"></script>
     <!--Page Script-->
-    <script src="~/viewscripts/reports/customerreport.js"></script>
+    <script src="~/viewscripts/reports/allbranchescustomerreport.js"></script>
     <script>
         $('.select2bs4').select2({
             theme: 'bootstrap4'
         });
-        $('.select2bs4').on('select2:open', function (e) {
-            // Ensure the search input field is available before focusing
-            var $searchField = $('.select2-search__field');
-            if ($searchField.length > 0) {
-                $searchField.focus();
-            }
-        });
-
-        // Explicitly set focus on the search input field after a delay
-        setTimeout(function () {
-            $('.select2-search__field').focus();
-        }, 100);
-
-        $('#FromDateSummerized').datetimepicker({
+        $('#FromDateCustomer').datetimepicker({
             format: 'DD/MM/YYYY'
         });
-        $('#ToDateSummerized').datetimepicker({
+        $('#ToDateCustomer').datetimepicker({
             format: 'DD/MM/YYYY'
         });
-        $('#FromDateDetailed').datetimepicker({
+        $('#FromDateSupplyer').datetimepicker({
             format: 'DD/MM/YYYY'
         });
-        $('#ToDateDetailed').datetimepicker({
-            format: 'DD/MM/YYYY'
-        });
-        $('#TFromDateDetailed').datetimepicker({
-            format: 'DD/MM/YYYY'
-        });
-        $('#TToDateDetailed').datetimepicker({
+        $('#ToDateSupplyer').datetimepicker({
             format: 'DD/MM/YYYY'
         });
     </script>

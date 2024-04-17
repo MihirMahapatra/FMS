@@ -157,6 +157,16 @@
         $('.select2bs4').select2({
             theme: 'bootstrap4'
         });
+        // Trigger dropdown opening when pressing Enter key on select element
+        $('.select2bs4').on('keydown', function (e) {
+            if (e.keyCode == 13) { // 13 is the Enter key code
+                $(this).select2('open');
+            }
+            $('.select2bs4').on('select2:open', function () {
+                // Focus on the search input when the dropdown is opened
+                $(this).data('select2').$dropdown.find('.select2-search__field').focus();
+            });
+        });
     </script>
     <!--Page Script-->
     <script src="~/viewscripts/admin/salesconfig.js"></script>

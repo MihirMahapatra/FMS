@@ -284,7 +284,7 @@ $(function () {
                                     if (transation.Narration != null) {
                                         html += '<td>' + transation.Narration + '</td>';
                                     } else {
-                                        html += '<td>' + transation.Narration + '</td>';
+                                        html += '<td>-</td>';
                                     }
                                     html += '<td>' + transation.Quantity + '</td>';
                                     html += '<td>' + transation.Rate.toFixed(2) + '</td>';
@@ -321,9 +321,9 @@ $(function () {
                         $('#BtnPrint').show();
                         html += '<tr>';
                         html += '<td colspan="7">-</td>';
-                        html += '<td style="background-color:lightblue;">' + TotalBillingAmt + '</td>';
+                        html += '<td style="background-color:lightblue;">' + TotalBillingAmt.toFixed(2) + '</td>';
                         html += '<td>-</td>';
-                        html += '<td  style="background-color:lightblue;">' + TotalPaymentAmt + '</td>';
+                        html += '<td  style="background-color:lightblue;">' + TotalPaymentAmt.toFixed(2) + '</td>';
                         html += '<td>-</td>';
                         html += '</tr >';
                     }

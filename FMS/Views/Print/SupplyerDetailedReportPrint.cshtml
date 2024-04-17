@@ -26,7 +26,7 @@
 
         .small-rows td {
             padding: 0.1em !important; /* Adjust the row height */
-            font-size: 0.9em !important;
+            font-size: 0.7em !important;
         }
 
         body {
@@ -85,11 +85,11 @@
                                     <td style="text-align:center;">@Model.Customers.PartyDetailedReports.OpeningBal  @Model.Customers.PartyDetailedReports.OpeningBalType</td>
                                 </tr>
                                 <tr class="small-row">
-                                    <th style="width:10%!important;">Trxn Date</th>
-                                    <th style="width:15%!important;">Trxn No</th>
-                                    <th style="width:20%!important;">Branch</th>
-                                    <th style="width:45%!important;text-align:center;" colspan="4">Details</th>
-                                    <th style="width:10%!important;text-align:center;"> - </th>
+                                    <th style="width:15%!important;">Trxn Date</th>
+                                    <th style="width:10%!important;">MatRcpt No</th>
+                                    <th style="width:25%!important;">Branch</th>
+                                    <th style="width:40%!important;text-align:center;" colspan="4">Details</th>
+                                    <th style="width:15%!important;text-align:center;"> - </th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -100,7 +100,7 @@
                                 {
                                     <tr class="small-rows">
                                         <td>@item.TransactionDate.ToString("dd/MM/yyyy")</td>
-                                        <td>@item.TransactionNo</td>
+                                        <td>@item.MaterialReceiptNo</td>
                                         <td>@item.BranchName</td>
                                         <td colspan="4">@item.Naration</td>
                                         <td style="text-align:center;"> - </td>

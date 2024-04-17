@@ -8,7 +8,7 @@ namespace FMS.Service.Reports
     {
         #region GraphData
         Task<GraphDataViewModel> GetGraphData();
-        
+        Task<GraphDataViewModel>GetGraphDataforProductWise(StockReportDataRequest requestData);
         #endregion
         #region Stock Report 
         Task<StockReportSummerizedViewModel> GetSummerizedStockReports(StockReportDataRequest requestData);
@@ -55,5 +55,12 @@ namespace FMS.Service.Reports
         #region refarence
         Task<PartyReportViewModel> GetCustomerRefranceReport(PartyReportDataRequest requestData);
         #endregion
+        #region All Branch Customer Details
+        Task<PartyReportViewModel> GetDetailedCustomerReportForAll(PartyReportDataRequest requestData);
+        #endregion
+        #region All Branch Supplyer Details
+        Task<PartyReportViewModel> GetDetailedSupplyerReportForAll(PartyReportDataRequest requestData);
+        #endregion
+
     }
 }

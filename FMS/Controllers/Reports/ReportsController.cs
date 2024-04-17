@@ -22,12 +22,6 @@ namespace FMS.Controllers.Reports
             _adminSvcs = adminSvcs;
             _masterSvcs = masterSvcs;
         }
-        [HttpGet]
-        public async Task<IActionResult> GetGraphData()
-        {
-            var result = await _reportSvcs.GetGraphData();
-            return new JsonResult(result);
-        }
         #region Stock Report
         [HttpGet]
         public IActionResult StockReport()
@@ -363,6 +357,65 @@ namespace FMS.Controllers.Reports
             if (ModelState.IsValid)
             {
                 var result = await _reportSvcs.GetCustomerRefranceReport(requestData);
+                return new JsonResult(result);
+            }
+            return BadRequest(ModelState);
+        }
+        #endregion
+        #region GrapData Reports
+        [HttpGet]
+        public async Task<IActionResult> GetGraphData()
+        {
+            var result = await _reportSvcs.GetGraphData();
+            return new JsonResult(result);
+        }
+        [HttpGet]
+        public IActionResult GrapdataProductWise()
+        {
+            string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
+            string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
+            ViewBag.BranchName = branchName;
+            ViewBag.FinancialYear = FinancialYear;
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> GetGrapDataProductWiseReport([FromBody] StockReportDataRequest requestData)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _reportSvcs.GetGraphDataforProductWise(requestData);
+                return new JsonResult(result);
+            }
+            return BadRequest(ModelState);
+        }
+        #endregion
+        #region Branch Wise Customer/Suplyer Reports
+       
+        [HttpGet]
+        public IActionResult AllBranchCustomerReport()
+        {
+            string branchName = _HttpContextAccessor.HttpContext.Session.GetString("BranchName");
+            string FinancialYear = _HttpContextAccessor.HttpContext.Session.GetString("FinancialYear");
+            ViewBag.BranchName = branchName;
+            ViewBag.FinancialYear = FinancialYear;
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> GetDetailedCustomerReportForAll([FromBody] PartyReportDataRequest requestData)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _reportSvcs.GetDetailedCustomerReportForAll(requestData);
+                return new JsonResult(result);
+            }
+            return BadRequest(ModelState);
+        }
+        [HttpPost]
+        public async Task<IActionResult> GetDetailedSupplyerReportForAll([FromBody] PartyReportDataRequest requestData)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _reportSvcs.GetDetailedSupplyerReportForAll(requestData);
                 return new JsonResult(result);
             }
             return BadRequest(ModelState);

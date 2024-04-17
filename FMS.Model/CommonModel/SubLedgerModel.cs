@@ -21,5 +21,6 @@
         //others
         public string LedgerName { get; set; }
         public string Adress { get; set; }
+        public Guid PartyGroupId { get; set; }
     }
 }

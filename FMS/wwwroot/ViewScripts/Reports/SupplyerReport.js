@@ -252,7 +252,7 @@ $(function () {
                             if (result.PartyDetailed.Orders.length > 0) {
                                 html += '<tr class="bg-primary">';
                                 html += '<td >Trxn Date </td>';
-                                html += '<td >Trxn No</td>';
+                                html += '<td >Mat Receive No</td>';
                                 html += '<td >Branch</td>';
                                 html += '<td colspan="4">Details</td>';
                                 html += '<td></td>';
@@ -271,7 +271,7 @@ $(function () {
                                     }
                                     html += '<tr>';
                                     html += '<td >' + formattedDate + '</td>';
-                                    html += '<td >' + item.TransactionNo + '</td>';
+                                    html += '<td >' + item.MaterialReceiptNo + '</td>';
                                     html += '<td >' + item.BranchName + '</td>';
                                     html += '<td colspan="4">' + item.Naration + '</td>';
                                     html += '<td>-</td>';

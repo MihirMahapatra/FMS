@@ -1,12 +1,16 @@
-﻿using FMS.Model;
+﻿using FMS.Db.Context;
+using FMS.Model;
 using FMS.Model.CommonModel;
+using FMS.Utility;
+using System.Globalization;
 namespace FMS.Repository.Reports
 {
     public interface IReportRepo
     {
         #region GrapData
         Task<Result<GraphDataModel>> GetGraphData();
-        
+        Task<Result<GraphDataModel>> GetGraphDataforProductWise(StockReportDataRequest requestData);
+
         #endregion
         #region Stock Report
         Task<Result<StockReportSummerizedModel>> GetSummerizedStockReports(StockReportDataRequest requestData);
@@ -59,6 +63,12 @@ namespace FMS.Repository.Reports
         #endregion
         #region Refarance Report
         Task<Result<PartyReportModel>> GetCustomerRefranceReport(PartyReportDataRequest requestData);
+        #endregion
+        #region All Branch Customer Details
+        Task<Result<PartyReportModel2>> GetDetailedCustomerReportForAll(PartyReportDataRequest requestData);
+        #endregion
+        #region Supplyer Report All Branches
+        Task<Result<PartyReportModel2>> GetDetailedSupplyerReportForAll(PartyReportDataRequest requestData);
         #endregion
     }
 }

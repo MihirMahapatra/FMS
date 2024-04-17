@@ -2553,9 +2553,9 @@ namespace FMS.Repository.Transaction
                                                    where s.Fk_LedgerId == PartyTypeId
                                                    select new SubLedgerModel
                                                    {
-                                                       Parties = s.Parties != null && s.Parties.Any() ? s.Parties.Select(p => new PartyModel { Fk_PartyGroupId = p.Fk_PartyGroupId }).ToList():null,
                                                        SubLedgerId = s.SubLedgerId,
                                                        SubLedgerName = s.SubLedgerName,
+                                                       PartyGroupId = _appDbContext.Parties.Where(a => a.Fk_SubledgerId == s.SubLedgerId).Select(s => s.Fk_PartyGroupId).FirstOrDefault() ?? Guid.Empty,
                                                        Adress = _appDbContext.Parties.Where(a => a.Fk_SubledgerId == s.SubLedgerId).Select(s => s.Address).FirstOrDefault()
                                                    }).ToListAsync();
                 if (_Result.CollectionObjData.Count > 0)

@@ -33,7 +33,6 @@
     <link rel="stylesheet" href="~/plugins/toastr/toastr.min.css">
 }
 
-
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <section class="content-header">
@@ -75,7 +74,7 @@
                                 <div class="card-header">
                                     <div class="row">
                                         <input type="hidden" name="hdnSaleOrderId" value="" />
-                                        <div class="col-md-3">
+                                        <div class="col-md-2">
                                             <div class="form-group">
                                                 <label class="pt-2">Transaction Date</label>
                                                 <div class="input-group  date" id="reservationdate3" data-target-input="nearest">
@@ -86,14 +85,21 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-3">
+                                        <div class="col-md-2">
                                             <div class="form-group">
                                                 <label class="pt-2">Transaction Type</label>
                                                 <select class="form-control select2bs4 PaymentOptions" style="width: 100%" name="ddlPayment" tabindex="1">
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="col-md-3">
+                                        <div class="col-md-2 hdnpartygroup" style="display:none">
+                                            <div class="form-group">
+                                                <label class="pt-2">ChooseGroup</label>
+                                                <select class="form-control select2bs4" style="width: 100%" id="PartyGroupId"  name="ddlPartyGroupId">
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
                                             <div class="form-group">
                                                 <label class="pt-2">Rate Type</label>
                                                 <select class="form-control select2bs4 RateOptions" style="width: 100%" name="ddlRate" tabindex="2">
@@ -119,7 +125,7 @@
                                                 <div class="col-md-3 ">
                                                     <div class="form-group hdnddn" style=" display:none">
                                                         <label>Customer Name</label>
-                                                        <select class="form-control select2bs4 " style="width: 100%" name="ddlCustomerId">    </select>
+                                                        <select class="form-control select2bs4 " style="width: 100%" name="ddlCustomerId" tabindex="3">    </select>
 
                                                     </div>
                                                     <div class="form-group hdntxt">
@@ -164,7 +170,7 @@
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <label>Site Adress</label>
-                                                        <input type="text" class="form-control" id="" name="SiteAdress" tabindex="7">
+                                                        <input type="text" class="form-control" id="" name="SiteAdress" tabindex="8">
                                                     </div>
                                                 </div>
                                             </div>
@@ -218,7 +224,7 @@
                                                         <div class="col-md-12 mt-3">
                                                             <div class="form-group">
                                                                 <label>Narration:</label>
-                                                                <textarea class="form-control" rows="2" placeholder="Enter ..." name="NarrationSales"></textarea>
+                                                                <textarea class="form-control" rows="2" placeholder="Enter ..." name="NarrationSales" tabindex="11"></textarea>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -240,11 +246,11 @@
                                                         </tr>
                                                         <tr>
                                                             <th>Transport Crgs.(+)</th>
-                                                            <td><input type="text" class="form-control form-control-sm" id="" value="0" name="TransportationCharges"></td>
+                                                            <td><input type="text" class="form-control form-control-sm" id="" value="0" name="TransportationCharges" tabindex="12"></td>
                                                         </tr>
                                                         <tr>
                                                             <th>Handling Crgs.(+)</th>
-                                                            <td><input type="text" class="form-control form-control-sm" id="" value="0" name="HandlingCharges"></td>
+                                                            <td><input type="text" class="form-control form-control-sm" id="" value="0" name="HandlingCharges" tabindex="13"></td>
                                                         </tr>
                                                         <tr>
                                                             <th>Grand Amt:</th>
@@ -255,8 +261,8 @@
                                             </div>
                                         </div>
                                         <div class="card-footer">
-                                            <button type="button" id="btnSave" tabindex="9" class="btn btn-primary" style="float:right">Submit</button>
-                                            <button type="button" id="btnUpdate" tabindex="10" class="btn btn-primary" style="float:right; display:none">Update</button>
+                                            <button type="button" id="btnSave" tabindex="14" class="btn btn-primary" style="float:right">Submit</button>
+                                            <button type="button" id="btnUpdate" tabindex="15" class="btn btn-primary" style="float:right; display:none">Update</button>
                                         </div>
                                     </div>
                                 </div>

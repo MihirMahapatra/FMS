@@ -52,8 +52,10 @@ $(function () {
                             html += '</tr>'
                             html += '<tr>'
                             html += '<th>Trxn No</th>'
-                            html += '<th>Narration</th>'
+                            html += '<th>Party</th>'
                             html += '<th>Item</th>'
+                            html += '<th>Alt Unit</th>'
+                            html += '<th>Alt Qty</th>'
                             html += '<th>Unit</th>'
                             html += '<th>Qty</th>'
                             html += '<th>Rate</th>'
@@ -61,6 +63,7 @@ $(function () {
                             html += '</tr>'
                             html += '</thead>'
                             html += '<tbody>';
+                            var TotalPurchaseAmt = 0;
                             $.each(result.DaySheet.Purchases, function (key, purchaseOdr) {
                                 var firstRow = true;
                                 $.each(purchaseOdr.PurchaseTransactions, function (key, purchaseTrn) {
@@ -74,13 +77,21 @@ $(function () {
                                         html += '<td>-</td>';
                                     }
                                     html += '<td>' + purchaseTrn.ProductName + '</td>';
-                                    html += '<td>' + purchaseTrn.UnitName + '</td>';
+                                    html += '<td>' + purchaseTrn.AlternateUnit.AlternateUnitName + '</td>';
                                     html += '<td>' + purchaseTrn.AlternateQuantity + '</td>';
+                                    html += '<td>' + purchaseTrn.UnitName + '</td>';
+                                    html += '<td>' + purchaseTrn.UnitQuantity + '</td>';
                                     html += '<td>' + purchaseTrn.Rate + '</td>';
                                     html += '<td>' + purchaseTrn.Amount + '</td>';
+                                    TotalPurchaseAmt += purchaseTrn.Amount;
                                     html += '</tr>';
                                 })
                             })
+                            html += '<tr>'
+                            html += '<tr>'
+                            html += '<th colspan="8">Total Purchase Amount</th>'
+                            html += '<th>' + TotalPurchaseAmt.toFixed(2) + '</th>'
+                            html += '</tr>'
                             html += ' </tbody>';
                             html += '</table >';
                             $('.tblPurchase').html(html);
@@ -91,22 +102,26 @@ $(function () {
                             html += '<table class="table table-bordered table-hover text-center mt-2 CreditSaleTable" style="width:100%">';
                             html += '<thead>'
                             html += '<tr>'
-                            html += '<th colspan="6">Credit Sales</th>'
+                            html += '<th colspan="9">Credit Sales</th>'
                             html += '</tr>'
                             html += '<tr>'
                             html += '<th>Trxn No</th>'
-                            html += '<th>Narration</th>'
+                            html += '<th>Party</th>'
                             html += '<th>Item</th>'
-                            html += '<th>Qty</th>'
+                            html += '<th>Alt Unit</th>'
+                            html += '<th>Alt Qty</th>'
                             html += '<th>Unit</th>'
+                            html += '<th>Qty</th>'
                             html += '<th>Rate</th>'
                             html += '<th>Amount</th>'
                             html += '</tr>'
                             html += '</thead>'
                             html += '<tbody>';
+                            var totalCreditSale = 0;
                             $.each(result.DaySheet.CreditSales, function (key, CreditSaleOdr) {
                                 var firstRow = true;
                                 $.each(CreditSaleOdr.SalesTransactions, function (key, CreditSaleTrn) {
+                                    totalCreditSale += CreditSaleTrn.Amount;
                                     html += '<tr>';
                                     if (firstRow) {
                                         html += '<td>' + CreditSaleOdr.TransactionNo + '</td>';
@@ -117,13 +132,24 @@ $(function () {
                                         html += '<td>-</td>';
                                     }
                                     html += '<td>' + CreditSaleTrn.ProductName + '</td>';
-                                    html += '<td>' + CreditSaleTrn.Quantity + '</td>';
+                                    if (CreditSaleTrn.AlternateUnit != null) {
+                                        html += '<td>' + CreditSaleTrn.AlternateUnit.AlternateUnitName + '</td>';
+                                    } else {
+                                        html += '<td>-</td>';
+                                    }
+                                        
+                                    html += '<td>' + CreditSaleTrn.AlternateQuantity + '</td>';
                                     html += '<td>' + CreditSaleTrn.UnitName + '</td>';
+                                    html += '<td>' + CreditSaleTrn.UnitQuantity + '</td>';
                                     html += '<td>' + CreditSaleTrn.Rate + '</td>';
                                     html += '<td>' + CreditSaleTrn.Amount + '</td>';
                                     html += '</tr>';
                                 })
                             })
+                            html += '<tr>'
+                            html += '<th colspan="8">Total Credit Sale</th>'
+                            html += '<th>' + totalCreditSale.toFixed(2) + '</th>'
+                            html += '</tr>'
                             html += ' </tbody>';
                             html += '</table >';
                             $('.tblCreditSale').html(html);
@@ -134,22 +160,26 @@ $(function () {
                             html += '<table class="table table-bordered table-hover text-center mt-2 CashSaleTable" style="width:100%">';
                             html += '<thead>'
                             html += '<tr>'
-                            html += '<th colspan="6">Cash Sales</th>'
+                            html += '<th colspan="9">Cash Sales</th>'
                             html += '</tr>'
                             html += '<tr>'
                             html += '<th>Trxn No</th>'
-                            html += '<th>Narration</th>'
+                            html += '<th>Party</th>'
                             html += '<th>Item</th>'
-                            html += '<th>Qty</th>'
+                            html += '<th>Alt Unit</th>'
+                            html += '<th>Alt Qty</th>'
                             html += '<th>Unit</th>'
+                            html += '<th>Qty</th>'
                             html += '<th>Rate</th>'
                             html += '<th>Amount</th>'
                             html += '</tr>'
                             html += '</thead>'
                             html += '<tbody>';
+                            var CashsaleTotal = 0;
                             $.each(result.DaySheet.CashSales, function (key, CashSaleOdr) {
                                 var firstRow = true;
                                 $.each(CashSaleOdr.SalesTransactions, function (key, CashSaleTrn) {
+                                    CashsaleTotal += CashSaleTrn.Amount;
                                     html += '<tr>';
                                     if (firstRow) {
                                         html += '<td>' + CashSaleOdr.TransactionNo + '</td>';
@@ -160,13 +190,19 @@ $(function () {
                                         html += '<td>-</td>';
                                     }
                                     html += '<td>' + CashSaleTrn.ProductName + '</td>';
-                                    html += '<td>' + CashSaleTrn.Quantity + '</td>';
+                                    html += '<td>' + CashSaleTrn.AlternateUnit.AlternateUnitName + '</td>';
+                                    html += '<td>' + CashSaleTrn.AlternateQuantity + '</td>';
                                     html += '<td>' + CashSaleTrn.UnitName + '</td>';
+                                    html += '<td>' + CashSaleTrn.UnitQuantity + '</td>';
                                     html += '<td>' + CashSaleTrn.Rate + '</td>';
                                     html += '<td>' + CashSaleTrn.Amount + '</td>';
                                     html += '</tr>';
                                 })
                             })
+                            html += '<tr>'
+                            html += '<th colspan="8"> Total Cash Sales</th>'
+                            html += '<th>' + CashsaleTotal +'</th>'
+                            html += '</tr>'
                             html += ' </tbody>';
                             html += '</table >';
                             $('.tblCashSale').html(html);
@@ -188,15 +224,25 @@ $(function () {
                             html += '</tr>'
                             html += '</thead>'
                             html += '<tbody>';
+                            var TotalPayments = 0;
                             $.each(result.DaySheet.Receipts, function (key, Receipt) {
+                                TotalPayments += Receipt.Amount;
                                 html += '<tr>';
                                 html += '<td>' + Receipt.VouvherNo + '</td>';
                                 html += '<td>' + Receipt.Narration + '</td>';
                                 html += '<td>' + Receipt.CashBank + '</td>';
-                                html += '<td>' + Receipt.FromAcc + '</td>';
+                                if (Receipt.FromAcc != null) {
+                                    html += '<td>' + Receipt.FromAcc + '</td>';
+                                } else {
+                                    html += '<td>-</td>';
+                                }
                                 html += '<td>' + Receipt.Amount + '</td>';
                                 html += '</tr>';
                             })
+                            html += '<tr>'
+                            html += '<th colspan="4">Total Payments</th>'
+                            html += '<th>' + TotalReceipts.toFixed(2) + '</th>'
+                            html += '</tr>'
                             html += ' </tbody>';
                             html += '</table >';
                             $('.tblRecive').html(html);
@@ -218,15 +264,25 @@ $(function () {
                             html += '</tr>'
                             html += '</thead>'
                             html += '<tbody>';
+                            var TotalPayments = 0;
                             $.each(result.DaySheet.Payments, function (key, Payment) {
+                                TotalPayments += Payment.Amount;
                                 html += '<tr>';
                                 html += '<td>' + Payment.VouvherNo + '</td>';
                                 html += '<td>' + Payment.Narration + '</td>';
                                 html += '<td>' + Payment.CashBank + '</td>';
-                                html += '<td>' + Payment.ToAcc + '</td>';
+                                if (Payment.ToAcc != null) {
+                                    html += '<td>' + Payment.ToAcc + '</td>';
+                                } else {
+                                    html += '<td>-</td>';
+                                }
                                 html += '<td>' + Payment.Amount + '</td>';
                                 html += '</tr>';
                             })
+                            html += '<tr>'
+                            html += '<th colspan="4">Total Payments</th>'
+                            html += '<th>' + TotalPayments.toFixed(2) +'</th>'
+                            html += '</tr>'
                             html += ' </tbody>';
                             html += '</table >';
                             $('.tblPayment').html(html);
