@@ -17,6 +17,7 @@ namespace FMS.Service.Accounting
         Task<Base> GetPaymentVoucherNo(string CashBank);
         Task<LedgerViewModel> GetBankLedgers();
         Task<Base> CreatePayment(PaymentDataRequest requestData);
+        Task<Base> UpdatePayment(PaymentDataRequest requestData);
         Task<PaymentViewModel> GetPayments();
         Task<PaymentViewModel> GetPaymentById(string Id);
         Task<Base> DeletePayment(string Id);

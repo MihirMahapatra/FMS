@@ -34,6 +34,7 @@ namespace FMS.Model.CommonModel
         public string Naration { get; set; }
         public string BranchName {  get; set; }
         public string DrCr { get; set; }
+        public string VoucherType { get; set; }
         public List<PartyReportTransactionModel> Transactions { get; set; } = new List<PartyReportTransactionModel>();
 
     }

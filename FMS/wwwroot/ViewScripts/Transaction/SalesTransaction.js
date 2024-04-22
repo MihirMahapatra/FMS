@@ -139,7 +139,6 @@ $(function () {
             $(this).val(inputValue);
         }
     });
-
     orderNo.on("input", function () {
         let inputValue = $(this).val();
         inputValue = inputValue.toUpperCase();

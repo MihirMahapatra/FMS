@@ -19,6 +19,7 @@ namespace FMS.Repository.Accounting
         Task<Result<string>> GetPaymentVoucherNo(string CashBank);
         Task<Result<LedgerModel>> GetBankLedgers(); 
         Task<Result<bool>> CreatePayment(PaymentDataRequest requestData);
+        Task<Result<bool>> UpdatePayment(PaymentDataRequest requestData);
         Task<Result<GroupedPaymentModel>> GetPayments();
         Task<Result<GroupedLederwisePayments>> GetPaymentById(string Id);
         Task<Result<bool>> DeletePayment(string Id, IDbContextTransaction transaction);

@@ -113,6 +113,19 @@ namespace FMS.Controllers.Accounting
                 return BadRequest();
             }
         }
+        [HttpPost]
+        public async Task<IActionResult> UpdatePayment([FromBody] PaymentDataRequest requestData)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _accountingSvcs.UpdatePayment(requestData);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
         [HttpGet]
         public async Task<IActionResult> GetPayments()
         {

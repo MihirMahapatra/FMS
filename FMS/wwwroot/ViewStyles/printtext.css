@@ -1,0 +1,31 @@
+﻿@media print {
+   
+    body {
+        margin: 0;
+        padding: 0;
+    }
+    .small-text,
+    .small-row td {
+        font-size: 0.5em !important;
+        height: 0.2em !important; /* Adjust the font size for printing */
+    }
+
+    .small-row tr {
+        height: 0.2em !important;
+         /* Adjust the row height for printing */
+    }
+
+    .small-row th {
+        font-size: 0.5em !important;
+        height: 0.2em !important; /* Adjust the font size for table headers */
+    }
+    .cust-text {
+        font-size: 0.9em !important;
+        /* Adjust the font size as needed */
+    }
+
+    body {
+        color: black; /* Set text color to black for printing */
+    }
+   
+}

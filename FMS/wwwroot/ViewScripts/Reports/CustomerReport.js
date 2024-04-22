@@ -355,7 +355,12 @@ $(function () {
                                             html += '<td >-</td>';
                                             html += '<td >-</td>';
                                             html += '<td >-</td>';
-                                            html += '<td >' + Transaction.ProductName + '</td>';
+                                            if (Transaction.SubProductName != null) {
+                                                html += '<td >' + Transaction.SubProductName + '</td>';
+                                            } else {
+                                                html += '<td >' + Transaction.ProductName + '</td>';
+                                            }
+                                            
                                             if (Transaction.AlternateQuantity != null) {
                                                 html += '<td >' + Transaction.AlternateQuantity + '</td>';
                                             } else {
@@ -367,8 +372,12 @@ $(function () {
                                                 html += '<td >-</td>';
                                             }
                                             html += '<td >' + Transaction.Quantity + '</td>';
-                                            html += '<td >' + Transaction.Unit + '</td>';
-                                           
+                                            if (Transaction.SubProductUnit != null) {
+                                                html += '<td >' + Transaction.SubProductUnit + '</td>';
+                                            } else {
+                                                html += '<td >' + Transaction.Unit + '</td>';
+                                            }
+                                            
                                             html += '<td >' + Transaction.Rate +'</td>';
                                             html += '<td >' + Transaction.Amount +'</td>';
                                             html += '<td >-</td>';
@@ -394,6 +403,7 @@ $(function () {
                             PartyDetailedReports: result.PartyDetailed
                         }
                         $('#BtnPrintDetailed').show();
+                        $('#BtnshortDetails').show();
                     }
                     else {
                         html += '<tr>';
@@ -415,21 +425,16 @@ $(function () {
             });
         }
     })
-    $('#BtnPrintDetailed').on('click', function () {
-        $.ajax({
-            type: "POST",
-            url: '/Print/CustomerDetailedPrintData',
-            dataType: 'json',
-            data: JSON.stringify(PrintDataDetailed),
-            contentType: "application/json;charset=utf-8",
-            success: function (Response) {
-                window.open(Response.redirectTo, '_blank');
-            },
-        });
-    });
+  
     $('#BtnPrintDetailed').on('click', function () {
         var queryString = $.param(data); // Serialize object to query string
         var url = '/Print/CustomerDetailedReportPrint?' + queryString; // Append query string to URL
+        window.open(url, '_blank');
+    });
+    //Print details Short
+    $('#BtnshortDetails').on('click', function () {
+        var queryString = $.param(data); // Serialize object to query string
+        var url = '/Print/CustomerDetailedReportShortPrint?' + queryString; // Append query string to URL
         window.open(url, '_blank');
     });
 })

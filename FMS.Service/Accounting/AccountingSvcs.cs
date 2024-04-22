@@ -279,6 +279,52 @@ namespace FMS.Service.Accounting
             }
             return Obj;
         }
+        public async Task<Base> UpdatePayment(PaymentDataRequest requestData)
+        {
+            Base Obj;
+            var Result = await _accountingRepo.UpdatePayment(requestData);
+            if (Result.IsSuccess)
+            {
+                if (Result.Response == "created")
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.Created),
+                        SuccessMsg = "Data Updated SuccessFully"
+                    };
+                }
+                else
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                        ErrorMsg = "Data Already Exist"
+                    };
+                }
+            }
+            else if (Result.WarningMessage != null)
+            {
+                Obj = new()
+                {
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    ErrorMsg = Result.WarningMessage,
+                };
+            }
+            else
+            {
+                Obj = new()
+                {
+                    ResponseStatus = Result.Response,
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    ErrorMsg = "Some Error Occourd Try To Contact Your App Devloper"
+                };
+            }
+            return Obj;
+        }
         public async Task<PaymentViewModel> GetPayments()
         {
             PaymentViewModel Obj;

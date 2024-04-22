@@ -157,14 +157,25 @@ namespace FMS.Controllers.Print
             return View(CustomerSumrizedReportModal);
 
         }
-        //[HttpPost]
-        //public IActionResult CustomerDetailedPrintData([FromBody] CustomerSummarizedModel requestData)
-        //{
-        //    TempData["CustomerDetailedData"] = JsonConvert.SerializeObject(requestData);
-        //    return Json(new { redirectTo = Url.Action("CustomerDetailedReportPrint", "Print") });
-        //}
         [HttpGet]
         public async Task<IActionResult> CustomerDetailedReportPrint([FromQuery] PartyReportDataRequest requestData)
+        {
+            var result = await _reportSvcs.GetDetailedCustomerReport(requestData);
+            var CustomerDetailedData = new CustomerSummarizedModel();
+            CustomerDetailedData.FromDate = requestData.FromDate;
+            CustomerDetailedData.ToDate = requestData.ToDate;
+            CustomerDetailedData.PartyDetailedReports = result.PartyDetailed;
+            var CustomerDetailedReportModal = new CustomerReportDataModel()
+            {
+                Cmopany = _adminSvcs.GetCompany().Result.GetCompany,
+                Customers = CustomerDetailedData
+            };
+            return View(CustomerDetailedReportModal);
+
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> CustomerDetailedReportShortPrint([FromQuery] PartyReportDataRequest requestData)
         {
             var result = await _reportSvcs.GetDetailedCustomerReport(requestData);
             var CustomerDetailedData = new CustomerSummarizedModel();
