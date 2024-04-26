@@ -62,13 +62,11 @@
                                         @Model.Cmopany.Phone,<br>Odisha
                                     </address>
                                     <br />
-                                   
                                 </div>
                                 <b>Opening Bank Bal :</b>@Model.daySheet.OpeningBankBal<br />
                                 <b>Opening Cash Bal :</b> @Model.daySheet.OpeningCashBal<br />
                             </div>
                             <div class="col-auto" style="padding-right:20px!important;">
-                                GSTIN :  @Model.Cmopany.GSTIN<br />
                                 <b>Report Date :</b> @DateTime.Now.ToString("dd/MM/yyyy") <br />
                                 <b>Date : </b> @Model.daySheet.Day<br />
                                 <br/>
@@ -95,17 +93,28 @@
                                 {
                                     @foreach (var purchase in Model.daySheet.Purchases)
                                     {
-                                        <tr class="small-row">
-                                            <td>@purchase.TransactionNo</td>
-                                            <td>@purchase.PartyName</td>
+                                            var firstRow = true;
                                             @foreach (var purchaseTransaction in purchase.PurchaseTransactions)
                                             {
+                                            <tr class="small-row">
+                                                    @if (firstRow)
+                                                    {
+                                                    <td>@purchase.TransactionNo</td>
+                                                    <td>@purchase.PartyName</td>
+                                                        firstRow = false;
+                                                    }
+                                                    else
+                                                    {
+                                                    <td>-</td>
+                                                    <td>-</td>
+                                                    }
                                                 <td>@purchaseTransaction.ProductName</td>
                                                 <td>@purchaseTransaction.AlternateQuantity</td>
                                                 <td>@purchaseTransaction.Rate</td>
                                                 <td>@purchaseTransaction.Amount</td>
+                                            </tr>
+                                                
                                             }
-                                        </tr>
                                     }
                                 }
                                 else
@@ -133,18 +142,29 @@
                                 {
                                     @foreach (var Cashsale in Model.daySheet.CashSales)
                                     {
-                                        <tr class="small-row">
-                                            <td>@Cashsale.TransactionNo</td>
-                                            <td>@Cashsale.CustomerName</td>
+                                            var firstRow = true;
                                             @foreach (var Salestransation in Cashsale.SalesTransactions)
                                             {
+                                            <tr class="small-row">
+                                                    @if (firstRow)
+                                                    {
+                                                    <td>@Cashsale.TransactionNo</td>
+                                                    <td>@Cashsale.CustomerName</td>
+                                                        firstRow = false;
+                                                    }
+                                                    else
+                                                    {
+                                                    <td>-</td>
+                                                    <td>-</td>
+                                                    }
                                                 <td>@Salestransation.ProductName</td>
                                                 <td>@Salestransation.Quantity</td>
                                                 <td>@Salestransation.UnitName</td>
                                                 <td>@Salestransation.Rate</td>
                                                 <td>@Salestransation.Amount</td>
+                                            </tr>
+                                                
                                             }
-                                        </tr>
                                     }
                                 }
                                 else
@@ -196,7 +216,6 @@
                                         }
                                     }
                                 }
-
                                 else{
                                     <tr class="small-row">
                                         <td colspan="6">No Credit Sales available</td>

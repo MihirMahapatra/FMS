@@ -1561,7 +1561,6 @@ namespace FMS.Service.Transaction
             }
             return Obj;
         }
-
         #endregion
         #region Outward Supply Transaction
         public async Task<Base> GetLastOutwardSupply()

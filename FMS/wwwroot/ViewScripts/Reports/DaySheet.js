@@ -190,8 +190,17 @@ $(function () {
                                         html += '<td>-</td>';
                                     }
                                     html += '<td>' + CashSaleTrn.ProductName + '</td>';
-                                    html += '<td>' + CashSaleTrn.AlternateUnit.AlternateUnitName + '</td>';
-                                    html += '<td>' + CashSaleTrn.AlternateQuantity + '</td>';
+                                    if (CashSaleTrn.AlternateUnit != null) {
+                                        html += '<td>' + CashSaleTrn.AlternateUnit.AlternateUnitName + '</td>';
+                                    } else {
+                                        html += '<td>-</td>';
+                                    }
+                                    if (CashSaleTrn.AlternateQuantity != null) {
+                                        html += '<td>' + CashSaleTrn.AlternateQuantity + '</td>';
+                                    } else {
+                                        html += '<td>-</td>';
+                                    }
+                                    
                                     html += '<td>' + CashSaleTrn.UnitName + '</td>';
                                     html += '<td>' + CashSaleTrn.UnitQuantity + '</td>';
                                     html += '<td>' + CashSaleTrn.Rate + '</td>';
@@ -224,9 +233,9 @@ $(function () {
                             html += '</tr>'
                             html += '</thead>'
                             html += '<tbody>';
-                            var TotalPayments = 0;
+                            var TotalReceipts = 0;
                             $.each(result.DaySheet.Receipts, function (key, Receipt) {
-                                TotalPayments += Receipt.Amount;
+                                TotalReceipts += Receipt.Amount;
                                 html += '<tr>';
                                 html += '<td>' + Receipt.VouvherNo + '</td>';
                                 html += '<td>' + Receipt.Narration + '</td>';

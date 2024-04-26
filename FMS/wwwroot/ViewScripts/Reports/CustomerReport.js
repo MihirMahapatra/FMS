@@ -205,7 +205,6 @@ $(function () {
         window.open(url, '_blank');
     });
     //--------------------------------Customer Report Detailed------------------------------------------------//
-
     LoadPartyGroupsDetailed();
     function LoadPartyGroupsDetailed() {
         $.ajax({
@@ -333,7 +332,7 @@ $(function () {
                                     html += '<td>' + item.ChallanNo + '</td>';
                                     html += '<td>' + item.SiteAdress + '</td>';
                                     html += '<td>' + item.BranchName + '</td>';
-                                    html += '<td colspan="4">' + "----" + '</td>';  
+                                    html += '<td colspan="5">' + "----" + '</td>';  
                                     html += '<td>-</td>';  
                                     html += '</tr >';
                                     if (item.Transactions.length > 0) {
@@ -360,7 +359,7 @@ $(function () {
                                             } else {
                                                 html += '<td >' + Transaction.ProductName + '</td>';
                                             }
-                                            
+
                                             if (Transaction.AlternateQuantity != null) {
                                                 html += '<td >' + Transaction.AlternateQuantity + '</td>';
                                             } else {
@@ -377,19 +376,48 @@ $(function () {
                                             } else {
                                                 html += '<td >' + Transaction.Unit + '</td>';
                                             }
-                                            
-                                            html += '<td >' + Transaction.Rate +'</td>';
-                                            html += '<td >' + Transaction.Amount +'</td>';
+
+                                            html += '<td >' + Transaction.Rate + '</td>';
+                                            html += '<td >' + Transaction.Amount + '</td>';
                                             html += '<td >-</td>';
                                             html += '</tr >';
                                         });
+                                    }
+                                    else {
+                                        html += '<tr>';
+                                        html += '<td >-</td>';
+                                        html += '<td >-</td>';
+                                        html += '<td >-</td>';
+                                        html += '<td >-</td>';
+                                        html += '<td >-</td>';
+                                        html += '<td >-</td>';
+                                        html += '<td >-</td>';
+                                        html += '<td >-</td>';
+                                        html += '<td >-</td>';
+                                        html += '<td >Amount</td>';
+                                        html += '<td >-</td>';
+                                        html += '</tr >';
+                                        html += '<tr>';
+                                        html += '<td >-</td>';
+                                        html += '<td >-</td>';
+                                        html += '<td >-</td>';
+                                        html += '<td >-</td>';
+                                        html += '<td >-</td>';
+                                        html += '<td >-</td>';
+                                        html += '<td >-</td>';
+                                        html += '<td >-</td>';
+                                        html += '<td >-</td>';
+                                        html += '<td >' + item.GrandTotal + '</td>';
+                                        html += '</tr >';
                                     }
                                     html += '<tr>';
                                     html += '<td >-</td>';
                                     html += '<td >-</td>';
                                     html += '<td >-</td>';
-                                    html += '<td colspan="4">Grand Total</td>';
+                                    html += '<td colspan="3">Grand Total</td>';
                                     html += '<td>' + item.GrandTotal + '</td>';
+                                    html += '<td>' + "(TransportCharges) " + item.TransportCharges + '</td>';
+                                    html += '<td>' + "(HandlingCharges) " + item.HandlingCharges + '</td>';
                                     balance += item.DrCr == "Dr" ? item.GrandTotal : -item.GrandTotal;
                                     var DrCr = balance > 0 ? "Dr" : "Cr";
                                     html += '<td>' + balance.toFixed(2) + ' ' + DrCr + '</td>';
@@ -425,7 +453,6 @@ $(function () {
             });
         }
     })
-  
     $('#BtnPrintDetailed').on('click', function () {
         var queryString = $.param(data); // Serialize object to query string
         var url = '/Print/CustomerDetailedReportPrint?' + queryString; // Append query string to URL

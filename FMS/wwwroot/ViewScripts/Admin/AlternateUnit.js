@@ -280,7 +280,6 @@
     const fAlternateUnit = $('input[name = "fAlternateUnit"]');
     const fWholesalePrice = $('input[name = "fWholesalePrice"]');
     const fRetailPrice = $('input[name = "fRetailPrice"]');
-
     GetProductTypesfinishedGood();
     function GetProductTypesfinishedGood() {
         $.ajax({

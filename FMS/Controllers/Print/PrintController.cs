@@ -178,9 +178,9 @@ namespace FMS.Controllers.Print
         public async Task<IActionResult> CustomerDetailedReportShortPrint([FromQuery] PartyReportDataRequest requestData)
         {
             var result = await _reportSvcs.GetDetailedCustomerReport(requestData);
-            var CustomerDetailedData = new CustomerSummarizedModel();
+           var CustomerDetailedData = new CustomerSummarizedModel();
             CustomerDetailedData.FromDate = requestData.FromDate;
-            CustomerDetailedData.ToDate = requestData.ToDate;
+           CustomerDetailedData.ToDate = requestData.ToDate;
             CustomerDetailedData.PartyDetailedReports = result.PartyDetailed;
             var CustomerDetailedReportModal = new CustomerReportDataModel()
             {

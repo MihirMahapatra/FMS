@@ -87,10 +87,7 @@
                         </div>
                         <table class="invoice-table">
                             <thead>
-                                <tr class="small-rows">
-                                    <td class="cust-text" colspan="9">Opening Bal.</td>
-                                    <td style="text-align:center;" colspan="2">@Model.Customers.PartyDetailedReports.OpeningBal  @Model.Customers.PartyDetailedReports.OpeningBalType</td>
-                                </tr>
+                               
                                 <tr class="small-row">
                                     <th style="width:10%!important;">Date</th>
                                     <th style="width:10%!important;">VhrType</th>
@@ -107,10 +104,16 @@
                               
                             </thead>
                             <tbody>
+                                <tr class="small-rows">
+                                    <td class="cust-text" colspan="9">Opening Bal.</td>
+                                    <td style="text-align:center;" colspan="2">@Model.Customers.PartyDetailedReports.OpeningBal  @Model.Customers.PartyDetailedReports.OpeningBalType</td>
+                                </tr>
                                 @{
                                     var balance = @Model.Customers.PartyDetailedReports.OpeningBal;
                                     decimal TotalAmount = 0;
+                                    decimal GrandTotalAmount = 0;
                                     decimal TotalReceptAmount = 0;
+
                                 }
                               
                                 @foreach (var item in Model.Customers.PartyDetailedReports.Orders)
@@ -153,21 +156,38 @@
                                                 }
                                                 
                                                 <td>@transaction.Rate</td>
-                                                @if (@item.VoucherType != "Receipt")
-                                                {
+                                                @* @if (@item.VoucherType != "Receipt")
+                                                { *@
+                                                   @{
                                                     TotalAmount += @transaction.Amount;
+                                                   }
                                                     <td>@transaction.Amount</td>
                                                     <td>0.00</td>
-                                                }
-                                                else
+                                                @* } *@
+                                              @*   else
                                                 {
                                                     TotalReceptAmount += @item.GrandTotal;
                                                     <td>0.00</td>
                                                     <td>@item.GrandTotal</td>
-                                                }
+                                                } *@
                                                 
                                             </tr>
                                         }
+                                        <tr class="small-row">
+                                            <td>-</td>
+                                            <td>-</td>
+                                            <td>-</td>
+                                            <td>-</td>
+                                            <td>Trans Chags</td>
+                                            <td>@item.TransportCharges</td>
+                                            <td colspan="2">Handling chags</td>
+                                            <td>@item.HandlingCharges</td>
+                                            <td>GrandTotal </td>
+                                            <td>@item.GrandTotal</td>
+                                            @{
+                                                GrandTotalAmount += @item.GrandTotal;
+                                            }
+                                        </tr>
                                     }
                                     else{
                                         <tr class="small-row">
@@ -187,7 +207,9 @@
                                             <td>-</td>
                                             <td>-</td>
                                             <td>-</td>
-                                            @TotalReceptAmount += @item.GrandTotal;
+                                            @{
+                                                TotalReceptAmount += @item.GrandTotal;
+                                            }
                                              <td>-</td>
                                              <td>@item.GrandTotal</td>
                                         </tr>
@@ -220,7 +242,7 @@
                                             Openingbal = -@Model.Customers.PartyDetailedReports.OpeningBal;
                                         }
 
-                                        var closing = TotalAmount + Openingbal - @TotalReceptAmount;
+                                        var closing = GrandTotalAmount + Openingbal - @TotalReceptAmount;
                                         var drcr = closing > 0 ? "Dr" : "Cr";
                                     }
                                     <td colspan="9" style="background-color:lightblue">Closing Balance</td>
