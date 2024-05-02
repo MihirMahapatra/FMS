@@ -12,7 +12,8 @@ namespace FMS.Repository.Accounting
         Task<Result<string>> GetJournalVoucherNo();
         Task<Result<bool>> CreateJournal(JournalDataRequest requestData);
         Task<Result<GroupedJournalModel>> GetJournals();
-        Task<Result<GroupedJournalModel>> GetJournalById(string Id);
+        Task<Result<GroupedLederwiseJournals>> GetJournalById(string Id);
+        Task<Result<bool>> UpdateJournal(JournalDataRequest requestData);
         Task<Result<bool>> DeleteJournal(string Id, IDbContextTransaction transaction);
         #endregion
         #region Payment
@@ -27,8 +28,9 @@ namespace FMS.Repository.Accounting
         #region Receipt
         Task<Result<string>> GetReceiptVoucherNo(string CashBank);
         Task<Result<bool>> CreateRecipt(ReciptsDataRequest requestData);
+        Task<Result<bool>> UpdateRecipt(ReciptsDataRequest requestData);
         Task<Result<GroupedReceptModel>> GetReceipts();
-        Task<Result<GroupedReceptModel>> GetReceiptById(string Id);
+        Task<Result<GroupedLederwiseReceipts>> GetReceiptById(string Id);
         Task<Result<bool>> DeleteRecipt(string Id, IDbContextTransaction transaction);
         #endregion
     }

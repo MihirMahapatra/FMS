@@ -19,6 +19,7 @@ namespace FMS.Model.ViewModel
         public List<JournalModel> Journals { get; set; }
         public JournalModel Journal { get; set; }
         public List<GroupedJournalModel> GroupedJournals { get; set; }
+        public List<GroupedLederwiseJournals> GroupedLederwiseJournals { get; set; }
     }
 }
 

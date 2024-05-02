@@ -103,9 +103,9 @@ namespace FMS.Repository.Accounting
             }
             return _Result;
         }
-        public async Task<Result<GroupedJournalModel>> GetJournalById(string Id)
+        public async Task<Result<GroupedLederwiseJournals>> GetJournalById(string Id)
         {
-            Result<GroupedJournalModel> _Result = new();
+            Result<GroupedLederwiseJournals> _Result = new();
             try
             {
                 _Result.IsSuccess = false;
@@ -120,18 +120,23 @@ namespace FMS.Repository.Accounting
                                        LedgerDevName = _appDbContext.LedgersDev.Where(l => l.LedgerId == s.Fk_LedgerId).Select(l => l.LedgerName).SingleOrDefault(),
                                        LedgerName = _appDbContext.Ledgers.Where(l => l.LedgerId == s.Fk_LedgerId).Select(l => l.LedgerName).SingleOrDefault(),
                                        SubLedgerName = s.SubLedger != null ? s.SubLedger.SubLedgerName : "-",
+                                       Fk_LedgerId = s.Fk_LedgerId,
+                                       Fk_SubLedgerId = s.Fk_SubLedgerId,
                                        Narration = s.Narration,
                                        Amount = s.Amount,
                                        DrCr = s.DrCr
                                    }).ToListAsync();
-
                 var groupedQuery = Query.GroupBy(journal => journal.VouvherNo)
-                        .Select(group => new GroupedJournalModel
+                        .Select(group => new GroupedLederwiseJournals
                         {
                             VoucherNo = group.Key,
-                            Journals = group.ToList()
+                            LederwiseJournals = group.GroupBy(journal => journal.Fk_LedgerId)
+                                 .Select(ledgerGroup => new LederwiseJournals
+                                 {
+                                     Fk_LedgerId = ledgerGroup.Key,
+                                     Journals = ledgerGroup.ToList()
+                                 }).ToList()
                         }).ToList();
-
                 if (groupedQuery.Count > 0)
                 {
                     _Result.CollectionObjData = groupedQuery;
@@ -313,6 +318,233 @@ namespace FMS.Repository.Accounting
                 _Result.Exception = _Exception;
                 await _emailService.SendExceptionEmail("horizonexception@gmail.com", "FMS Excepion", $"AccountingRepo/CreateJournal : {_Exception.Message}");
             }
+            return _Result;
+        }
+        public async Task<Result<bool>> UpdateJournal(JournalDataRequest requestData)
+        {
+            Result<bool> _Result = new Result<bool>();
+            try
+            {
+                _Result.IsSuccess = false;
+                Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
+                Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
+                using var transaction = await _appDbContext.Database.BeginTransactionAsync();
+                try
+                {
+                    //Delete Opartion 
+                    if (requestData.VoucherNo != null)
+                    {
+                        var Id = requestData.VoucherNo;
+                        //*****************************Delete Journal**************************************//
+                        var GetJournals = await _appDbContext.Journals.Where(x => x.VouvherNo == Id && x.Fk_BranchId == BranchId && x.Fk_FinancialYearId == FinancialYear).ToListAsync();
+                        foreach (var item in GetJournals)
+                        {
+                            if (item.Fk_LedgerId != Guid.Empty)
+                            {
+                                var updateLedgerBalance = await _appDbContext.LedgerBalances.Where(l => l.Fk_LedgerId == item.Fk_LedgerId && l.Fk_BranchId == BranchId && l.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                if (updateLedgerBalance != null)
+                                {
+                                    ;
+                                    decimal Balance = item.DrCr == "Dr" ? item.Amount : -item.Amount;
+                                    updateLedgerBalance.RunningBalance += Balance;
+                                    updateLedgerBalance.RunningBalanceType = updateLedgerBalance.RunningBalance > 0 ? "Dr" : "Cr";
+                                    await _appDbContext.SaveChangesAsync();
+                                }
+                                if (item.Fk_SubLedgerId != Guid.Empty)
+                                {
+                                    var updateSubLedgerBalance = await _appDbContext.SubLedgerBalances.Where(l => l.Fk_SubLedgerId == item.Fk_SubLedgerId && l.Fk_BranchId == BranchId && l.Fk_FinancialYearId == FinancialYear).SingleOrDefaultAsync();
+                                    if (updateSubLedgerBalance != null)
+                                    {
+                                        decimal Balance = item.DrCr == "Dr" ? item.Amount : -item.Amount;
+                                        updateSubLedgerBalance.RunningBalance += Balance;
+                                        updateSubLedgerBalance.RunningBalanceType = updateSubLedgerBalance.RunningBalance > 0 ? "Dr" : "Cr";
+                                        await _appDbContext.SaveChangesAsync();
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                continue;
+                            }
+
+                            if (!string.IsNullOrEmpty(item.TransactionNo) && item.TransactionNo.StartsWith("SI"))
+                            {
+                                var SalesTrn = await _appDbContext.SalesTransaction.Where(s => s.TransactionNo == item.TransactionNo && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).ToListAsync();
+                                _appDbContext.RemoveRange(SalesTrn);
+                                await _appDbContext.SaveChangesAsync();
+                                var SalesOdr = await _appDbContext.SalesOrders.Where(s => s.TransactionNo == item.TransactionNo && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).ToListAsync();
+                                _appDbContext.RemoveRange(SalesOdr);
+                                await _appDbContext.SaveChangesAsync();
+                            }
+                            else if (!string.IsNullOrEmpty(item.TransactionNo) && item.TransactionNo.StartsWith("PI"))
+                            {
+                                var PurchaseTrn = await _appDbContext.PurchaseTransactions.Where(s => s.TransactionNo == item.TransactionNo && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).ToListAsync();
+                                _appDbContext.RemoveRange(PurchaseTrn);
+                                await _appDbContext.SaveChangesAsync();
+                                var PurchaseOdr = await _appDbContext.PurchaseOrders.Where(s => s.TransactionNo == item.TransactionNo && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).ToListAsync();
+                                _appDbContext.RemoveRange(PurchaseOdr);
+                                await _appDbContext.SaveChangesAsync();
+                            }
+                            else
+                            {
+                                continue;
+                            }
+                        }
+                        _appDbContext.Journals.RemoveRange(GetJournals);
+                        await _appDbContext.SaveChangesAsync();
+                    }
+                    //end DeleteOparation
+                    if (DateTime.TryParseExact(requestData.VoucherDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedVoucherDate))
+                    {
+                        foreach (var item in requestData.arr)
+                        {
+                            if (item.subledgerData.Count > 0)
+                            {
+                                int i = 0;
+                                foreach (var data in item.subledgerData)
+                                {
+                                    #region Journal
+                                    var newJournal = new Journal()
+                                    {
+                                        VouvherNo = requestData.VoucherNo,
+                                        VoucherDate = convertedVoucherDate,
+                                        Fk_LedgerGroupId = await GetFkLedgerGroupId(item.ddlLedgerId),
+                                        Fk_LedgerId = Guid.Parse(item.ddlLedgerId),
+                                        Fk_SubLedgerId = Guid.Parse(data.ddlSubledgerId[i]),
+                                        Fk_BranchId = BranchId,
+                                        Fk_FinancialYearId = FinancialYear,
+                                        Narration = requestData.Narration,
+                                        Amount = Convert.ToDecimal(data.SubledgerAmunt[i]),
+                                        DrCr = item.BalanceType,
+                                    };
+                                    //newJournal.VouvherNo = requestData.VoucherNo;
+                                    //newJournal.VoucherDate = convertedVoucherDate;
+                                    //newJournal.Fk_LedgerGroupId = await GetFkLedgerGroupId(item.ddlLedgerId);
+                                    //newJournal.Fk_LedgerId = Guid.Parse(item.ddlLedgerId);
+                                    //newJournal.Fk_SubLedgerId = Guid.Parse(data.ddlSubledgerId[i]);
+                                    //newJournal.Fk_BranchId = BranchId;
+                                    //newJournal.Narration = requestData.Narration;
+                                    //newJournal.Amount = Convert.ToDecimal(data.SubledgerAmunt[i]);
+                                    //newJournal.DrCr = item.BalanceType;
+                                    await _appDbContext.Journals.AddAsync(newJournal);
+                                    await _appDbContext.SaveChangesAsync();
+                                    #endregion
+                                    #region Ledger & SubLedger Balance
+                                    var LedgerBalanceId = Guid.Empty;
+                                    decimal Amount = newJournal.DrCr == "Dr" ? newJournal.Amount : -newJournal.Amount;
+                                    var updateLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == newJournal.Fk_LedgerId && s.Fk_FinancialYear == FinancialYear && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
+                                    if (updateLedgerBalance != null)
+                                    {
+                                        updateLedgerBalance.RunningBalance += Amount;
+                                        updateLedgerBalance.RunningBalanceType = (updateLedgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
+                                        await _appDbContext.SaveChangesAsync();
+                                        LedgerBalanceId = updateLedgerBalance.LedgerBalanceId;
+                                    }
+                                    else
+                                    {
+                                        var newLedgerBalance = new LedgerBalance
+                                        {
+                                            Fk_LedgerId = newJournal.Fk_LedgerId,
+                                            OpeningBalance = 0,
+                                            OpeningBalanceType = newJournal.DrCr,
+                                            RunningBalance = Amount,
+                                            RunningBalanceType = newJournal.DrCr,
+                                            Fk_BranchId = BranchId,
+                                            Fk_FinancialYear = FinancialYear
+                                        };
+                                        await _appDbContext.LedgerBalances.AddAsync(newLedgerBalance);
+                                        await _appDbContext.SaveChangesAsync();
+                                        LedgerBalanceId = newLedgerBalance.LedgerBalanceId;
+                                    }
+                                    var updateSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == newJournal.Fk_SubLedgerId && s.Fk_FinancialYearId == FinancialYear && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
+                                    if (updateSubledgerBalance != null)
+                                    {
+                                        updateSubledgerBalance.RunningBalance += Amount;
+                                        updateSubledgerBalance.RunningBalanceType = (updateSubledgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
+                                        await _appDbContext.SaveChangesAsync();
+                                    }
+                                    else
+                                    {
+                                        var newSubLedgerBalance = new SubLedgerBalance
+                                        {
+                                            Fk_LedgerBalanceId = LedgerBalanceId,
+                                            Fk_SubLedgerId = Guid.Parse(data.ddlSubledgerId[i]),
+                                            OpeningBalanceType = newJournal.DrCr,
+                                            OpeningBalance = 0,
+                                            RunningBalanceType = newJournal.DrCr,
+                                            RunningBalance = Amount,
+                                            Fk_FinancialYearId = FinancialYear,
+                                            Fk_BranchId = BranchId
+                                        };
+                                        await _appDbContext.SubLedgerBalances.AddAsync(newSubLedgerBalance);
+                                        await _appDbContext.SaveChangesAsync();
+                                    }
+                                    #endregion
+                                    i++;
+                                }
+                            }
+                            else
+                            {
+                                #region Journal
+                                var newJournal = new Journal()
+                                {
+                                    VouvherNo = requestData.VoucherNo,
+                                    VoucherDate = convertedVoucherDate,
+                                    Fk_LedgerGroupId = await GetFkLedgerGroupId(item.ddlLedgerId),
+                                    Fk_LedgerId = Guid.Parse(item.ddlLedgerId),
+                                    Fk_BranchId = BranchId,
+                                    Fk_FinancialYearId = FinancialYear,
+                                    Narration = requestData.Narration,
+                                    DrCr = item.BalanceType,
+                                    Amount = item.CrBalance != "" ? Convert.ToDecimal(item.CrBalance) : Convert.ToDecimal(item.DrBalance)
+                                };
+                                await _appDbContext.Journals.AddAsync(newJournal);
+                                await _appDbContext.SaveChangesAsync();
+                                #endregion
+                                #region  Ledger Balance
+                                var updateLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == Guid.Parse(item.ddlLedgerId) && s.Fk_FinancialYear == FinancialYear && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
+                                decimal Amount = newJournal.DrCr == "Dr" ? newJournal.Amount : -newJournal.Amount;
+                                if (updateLedgerBalance != null)
+                                {
+                                    updateLedgerBalance.RunningBalance += Amount;
+                                    updateLedgerBalance.RunningBalanceType = (updateLedgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
+                                    await _appDbContext.SaveChangesAsync();
+                                }
+                                else
+                                {
+                                    var newLedgerBalance = new LedgerBalance
+                                    {
+                                        Fk_LedgerId = newJournal.Fk_LedgerId,
+                                        OpeningBalance = 0,
+                                        OpeningBalanceType = newJournal.DrCr,
+                                        RunningBalance = Amount,
+                                        RunningBalanceType = newJournal.DrCr,
+                                        Fk_BranchId = BranchId,
+                                        Fk_FinancialYear = FinancialYear
+                                    };
+                                    await _appDbContext.LedgerBalances.AddAsync(newLedgerBalance);
+                                    await _appDbContext.SaveChangesAsync();
+                                }
+                                #endregion
+                            }
+                        }
+                        _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Created);
+                        transaction.Commit();
+                        _Result.IsSuccess = true;
+                    }
+                }
+                catch
+                {
+                    transaction.Rollback();
+                    throw;
+                }
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("horizonexception@gmail.com", "FMS Excepion", $"AccountingRepo/CreatePayment : {_Exception.Message}");
+            }
+
             return _Result;
         }
         public async Task<Result<bool>> DeleteJournal(string Id, IDbContextTransaction transaction)
@@ -1164,7 +1396,6 @@ namespace FMS.Repository.Accounting
             }
             return _Result;
         }
-
         #endregion
         #region Receipt
         public async Task<Result<GroupedReceptModel>> GetReceipts()
@@ -1209,9 +1440,9 @@ namespace FMS.Repository.Accounting
             }
             return _Result;
         }
-        public async Task<Result<GroupedReceptModel>> GetReceiptById(string Id)
+        public async Task<Result<GroupedLederwiseReceipts>> GetReceiptById(string Id)
         {
-            Result<GroupedReceptModel> _Result = new();
+            Result<GroupedLederwiseReceipts> _Result = new();
             try
             {
                 _Result.IsSuccess = false;
@@ -1222,18 +1453,29 @@ namespace FMS.Repository.Accounting
                                    {
                                        ReceiptId = s.ReceiptId,
                                        VouvherNo = s.VouvherNo,
+                                       CashBank = s.CashBank,
+                                       CashBankLedgerId = s.CashBankLedgerId,
                                        VoucherDate = s.VoucherDate,
+                                       LedgerDevName = _appDbContext.LedgersDev.Where(l => l.LedgerId == s.Fk_LedgerId).Select(l => l.LedgerName).SingleOrDefault(),
+                                       LedgerName = _appDbContext.Ledgers.Where(l => l.LedgerId == s.Fk_LedgerId).Select(l => l.LedgerName).SingleOrDefault(),
                                        SubLedgerName = s.SubLedger != null ? s.SubLedger.SubLedgerName : "-",
+                                       Fk_LedgerId = s.Fk_LedgerId,
+                                       Fk_SubLedgerId = s.Fk_SubLedgerId,
                                        Narration = s.Narration,
                                        Amount = s.Amount,
                                        DrCr = s.DrCr
                                    }).ToListAsync();
                 var groupedQuery = Query.GroupBy(Receipt => Receipt.VouvherNo)
-                       .Select(group => new GroupedReceptModel
-                       {
-                           VoucherNo = group.Key,
-                           Receipts = group.ToList()
-                       }).ToList();
+                        .Select(group => new GroupedLederwiseReceipts
+                        {
+                            VoucherNo = group.Key,
+                            LederwiseReceipts = group.GroupBy(Receipt => Receipt.Fk_LedgerId)
+                                 .Select(ledgerGroup => new LederwiseReceipts
+                                 {
+                                     Fk_LedgerId = ledgerGroup.Key,
+                                     Receipts = ledgerGroup.ToList()
+                                 }).ToList()
+                        }).ToList();
                 if (groupedQuery.Count > 0)
                 {
                     _Result.CollectionObjData = groupedQuery;
@@ -1511,6 +1753,291 @@ namespace FMS.Repository.Accounting
             }
             return _Result;
         }
+        public async Task<Result<bool>> UpdateRecipt(ReciptsDataRequest requestData)
+        {
+            Result<bool> _Result = new Result<bool>();
+            try
+            {
+                _Result.IsSuccess = false;
+                Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
+                Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
+                using var transaction = await _appDbContext.Database.BeginTransactionAsync();
+                try
+                {
+                    //Delete Opartion 
+                    if (requestData.VoucherNo != null)
+                    {
+                        var Id = requestData.VoucherNo;
+                        //*****************************Delete DeleteRecipt**************************************//
+                        var GetRecipts = await _appDbContext.Receipts.Where(x => x.VouvherNo == Id && x.Fk_BranchId == BranchId && x.Fk_FinancialYearId == FinancialYear).ToListAsync();
+                        foreach (var item in GetRecipts)
+                        {
+                            decimal Balance = item.DrCr == "DR" ? item.Amount : -item.Amount;
+                            if (item.Fk_LedgerId != Guid.Empty)
+                            {
+                                var updateLedgerBalance = await _appDbContext.LedgerBalances.Where(l => l.Fk_LedgerId == item.Fk_LedgerId && l.Fk_BranchId == BranchId && l.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                if (updateLedgerBalance != null)
+                                {
+                                    updateLedgerBalance.RunningBalance += Balance;
+                                    updateLedgerBalance.RunningBalanceType = updateLedgerBalance.RunningBalance > 0 ? "Dr" : "Cr";
+                                    await _appDbContext.SaveChangesAsync();
+                                }
+                                if (item.Fk_SubLedgerId != Guid.Empty)
+                                {
+                                    var updateSubLedgerBalance = await _appDbContext.SubLedgerBalances.Where(l => l.Fk_SubLedgerId == item.Fk_SubLedgerId && l.Fk_BranchId == BranchId && l.Fk_FinancialYearId == FinancialYear).SingleOrDefaultAsync();
+                                    if (updateSubLedgerBalance != null)
+                                    {
+                                        updateSubLedgerBalance.RunningBalance += Balance;
+                                        updateSubLedgerBalance.RunningBalanceType = updateSubLedgerBalance.RunningBalance > 0 ? "Dr" : "Cr";
+                                        await _appDbContext.SaveChangesAsync();
+                                    }
+                                }
+                            }
+
+                            if (item.CashBank == "bank")
+                            {
+                                var updateSubLedgerBalance = await _appDbContext.LedgerBalances.Where(l => l.Fk_LedgerId == item.CashBankLedgerId && l.Fk_BranchId == BranchId && l.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                if (updateSubLedgerBalance != null)
+                                {
+                                    updateSubLedgerBalance.RunningBalance += Balance;
+                                    updateSubLedgerBalance.RunningBalanceType = updateSubLedgerBalance.RunningBalance > 0 ? "Dr" : "Cr";
+                                    await _appDbContext.SaveChangesAsync();
+                                }
+                            }
+                            else
+                            {
+                                var updateSubLedgerBalance = await _appDbContext.LedgerBalances.Where(l => l.Fk_LedgerId == MappingLedgers.CashAccount && l.Fk_BranchId == BranchId && l.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                if (updateSubLedgerBalance != null)
+                                {
+                                    updateSubLedgerBalance.RunningBalance += Balance;
+                                    updateSubLedgerBalance.RunningBalanceType = updateSubLedgerBalance.RunningBalance > 0 ? "Dr" : "Cr";
+                                    await _appDbContext.SaveChangesAsync();
+                                }
+                            }
+                        }
+                        _appDbContext.Receipts.RemoveRange(GetRecipts);
+                        await _appDbContext.SaveChangesAsync();
+                    }
+                    //end DeleteOparation
+                    DateTime? convertedChqDate = null;
+                    if (DateTime.TryParseExact(requestData.VoucherDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedVoucherDate))
+                    {
+                        if (!string.IsNullOrEmpty(requestData.ChqDate) && DateTime.TryParseExact(requestData.ChqDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedChqDate))
+                        {
+                            convertedChqDate = parsedChqDate;
+                        }
+                        foreach (var item in requestData.arr)
+                        {
+                            if (item.subledgerData.Count > 0)
+                            {
+                                foreach (var data in item.subledgerData)
+                                {
+                                    for (int j = 0; j < data.ddlSubledgerId.Count; j++)
+                                    {
+                                        #region Receipt
+                                        var ledDev = await _appDbContext.LedgersDev.Where(x => x.LedgerId == Guid.Parse(item.ddlLedgerId)).Select(x => x.Fk_LedgerGroupId).SingleOrDefaultAsync();
+                                        var led = await _appDbContext.Ledgers.Where(x => x.LedgerId == Guid.Parse(item.ddlLedgerId)).Select(x => x.Fk_LedgerGroupId).SingleOrDefaultAsync();
+                                        var newReceipts = new Receipt()
+                                        {
+                                            CashBank = requestData.CashBank,
+                                            CashBankLedgerId = requestData.BankLedgerId != null ? Guid.Parse(requestData.BankLedgerId) : null,
+                                            VouvherNo = requestData.VoucherNo,
+                                            VoucherDate = convertedVoucherDate,
+                                            ChequeNo = requestData.ChqNo,
+                                            ChequeDate = convertedChqDate,
+                                            Narration = requestData.Narration,
+                                            DrCr = "Cr",
+                                            Fk_LedgerId = Guid.Parse(item.ddlLedgerId),
+                                            Fk_LedgerGroupId = ledDev != Guid.Empty ? ledDev : led,
+                                            Fk_SubLedgerId = Guid.Parse(data.ddlSubledgerId[j]),
+                                            Amount = Convert.ToDecimal(data.SubledgerAmunt[j]),
+                                            Fk_BranchId = BranchId,
+                                            Fk_FinancialYearId = FinancialYear
+                                        };
+                                        await _appDbContext.Receipts.AddAsync(newReceipts);
+                                        await _appDbContext.SaveChangesAsync();
+                                        #endregion
+
+                                        #region Ledger & SubLedger Balance
+                                        //@AnyLedger --------------Cr
+                                        var LedgerBalanceId = Guid.Empty;
+                                        var updateLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == newReceipts.Fk_LedgerId && s.Fk_FinancialYear == FinancialYear && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
+                                        if (updateLedgerBalance != null)
+                                        {
+                                            updateLedgerBalance.RunningBalance -= newReceipts.Amount;
+                                            updateLedgerBalance.RunningBalanceType = (updateLedgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
+                                            await _appDbContext.SaveChangesAsync();
+                                            LedgerBalanceId = updateLedgerBalance.LedgerBalanceId;
+                                        }
+                                        else
+                                        {
+                                            var newLedgerBalance = new LedgerBalance
+                                            {
+                                                Fk_LedgerId = newReceipts.Fk_LedgerId,
+                                                OpeningBalance = 0,
+                                                OpeningBalanceType = "Cr",
+                                                RunningBalance = -newReceipts.Amount,
+                                                RunningBalanceType = "Cr",
+                                                Fk_BranchId = BranchId,
+                                                Fk_FinancialYear = FinancialYear
+                                            };
+                                            await _appDbContext.LedgerBalances.AddAsync(newLedgerBalance);
+                                            await _appDbContext.SaveChangesAsync();
+                                            LedgerBalanceId = newLedgerBalance.LedgerBalanceId;
+                                        }
+                                        var updateSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == newReceipts.Fk_SubLedgerId && s.Fk_FinancialYearId == FinancialYear && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
+                                        if (updateSubledgerBalance != null)
+                                        {
+                                            updateSubledgerBalance.RunningBalance -= newReceipts.Amount;
+                                            updateSubledgerBalance.RunningBalanceType = (updateSubledgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
+                                            await _appDbContext.SaveChangesAsync();
+                                        }
+                                        else
+                                        {
+                                            var newSubLedgerBalance = new SubLedgerBalance
+                                            {
+                                                Fk_LedgerBalanceId = LedgerBalanceId,
+                                                Fk_SubLedgerId = Guid.Parse(data.ddlSubledgerId[j]),
+                                                OpeningBalanceType = "Cr",
+                                                OpeningBalance = 0,
+                                                RunningBalanceType = "Cr",
+                                                RunningBalance = -newReceipts.Amount,
+                                                Fk_FinancialYearId = FinancialYear,
+                                                Fk_BranchId = BranchId
+                                            };
+                                            await _appDbContext.SubLedgerBalances.AddAsync(newSubLedgerBalance);
+                                            await _appDbContext.SaveChangesAsync();
+                                        }
+                                        #endregion
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                if (item.ddlLedgerId != null)
+                                {
+                                    #region Receipt
+                                    var newRecipts = new Receipt()
+                                    {
+                                        CashBank = requestData.CashBank,
+                                        VouvherNo = requestData.VoucherNo,
+                                        VoucherDate = convertedVoucherDate,
+                                        ChequeNo = requestData.ChqNo,
+                                        ChequeDate = convertedChqDate,
+                                        Narration = requestData.Narration,
+                                        DrCr = "Dr",
+                                        Fk_LedgerId = Guid.Parse(item.ddlLedgerId),
+                                        Fk_LedgerGroupId = MappingLedgerGroup.CashBankBalance,
+                                        Amount = Convert.ToDecimal(item.CrBalance),
+                                        Fk_BranchId = BranchId,
+                                        Fk_FinancialYearId = FinancialYear
+                                    };
+                                    await _appDbContext.Receipts.AddAsync(newRecipts);
+                                    await _appDbContext.SaveChangesAsync();
+                                    #endregion
+                                    #region Ledger Balance
+                                    //@AnyLedger--------------Cr
+                                    var updateLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == Guid.Parse(item.ddlLedgerId) && s.Fk_FinancialYear == FinancialYear && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
+                                    if (updateLedgerBalance != null)
+                                    {
+                                        updateLedgerBalance.RunningBalance -= Convert.ToDecimal(item.CrBalance);
+                                        updateLedgerBalance.RunningBalanceType = (updateLedgerBalance.RunningBalance >= 0) ? "Cr" : "Dr";
+                                        await _appDbContext.SaveChangesAsync();
+                                    }
+                                    else
+                                    {
+                                        var newLedgerBalance = new LedgerBalance
+                                        {
+                                            Fk_LedgerId = newRecipts.Fk_LedgerId,
+                                            OpeningBalance = 0,
+                                            OpeningBalanceType = "Cr",
+                                            RunningBalance = -newRecipts.Amount,
+                                            RunningBalanceType = "Cr",
+                                            Fk_BranchId = BranchId,
+                                            Fk_FinancialYear = FinancialYear
+                                        };
+                                        await _appDbContext.LedgerBalances.AddAsync(newLedgerBalance);
+                                        await _appDbContext.SaveChangesAsync();
+                                    }
+                                    #endregion
+                                }
+
+                            }
+                            #region update Bank/Cash Ledger Balance
+                            //@Bank/Cash A/c ------------Dr
+                            if (requestData.CashBank == "Bank")
+                            {
+                                var updateBankLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == Guid.Parse(requestData.BankLedgerId) && s.Fk_FinancialYear == FinancialYear && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
+                                if (updateBankLedgerBalance != null)
+                                {
+                                    updateBankLedgerBalance.RunningBalance += Convert.ToDecimal(item.CrBalance);
+                                    updateBankLedgerBalance.RunningBalanceType = (updateBankLedgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
+                                    await _appDbContext.SaveChangesAsync();
+                                }
+                                else
+                                {
+                                    var newLedgerBalance = new LedgerBalance
+                                    {
+                                        Fk_LedgerId = Guid.Parse(requestData.BankLedgerId),
+                                        OpeningBalance = 0,
+                                        OpeningBalanceType = "Dr",
+                                        RunningBalance = Convert.ToDecimal(item.CrBalance),
+                                        RunningBalanceType = "Dr",
+                                        Fk_BranchId = BranchId,
+                                        Fk_FinancialYear = FinancialYear
+                                    };
+                                    await _appDbContext.LedgerBalances.AddAsync(newLedgerBalance);
+                                    await _appDbContext.SaveChangesAsync();
+                                }
+                            }
+                            else
+                            {
+                                var updateCashLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.CashAccount && s.Fk_FinancialYear == FinancialYear && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
+                                if (updateCashLedgerBalance != null)
+                                {
+                                    updateCashLedgerBalance.RunningBalance += Convert.ToDecimal(item.CrBalance);
+                                    updateCashLedgerBalance.RunningBalanceType = (updateCashLedgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
+                                    await _appDbContext.SaveChangesAsync();
+                                }
+                                else
+                                {
+                                    var newLedgerBalance = new LedgerBalance
+                                    {
+                                        Fk_LedgerId = MappingLedgers.CashAccount,
+                                        OpeningBalance = 0,
+                                        OpeningBalanceType = "  Dr",
+                                        RunningBalance = Convert.ToDecimal(item.CrBalance),
+                                        RunningBalanceType = "Dr",
+                                        Fk_BranchId = BranchId,
+                                        Fk_FinancialYear = FinancialYear
+                                    };
+                                    await _appDbContext.LedgerBalances.AddAsync(newLedgerBalance);
+                                    await _appDbContext.SaveChangesAsync();
+                                }
+                            }
+                            #endregion
+                        }
+
+                        _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Created);
+                        transaction.Commit();
+                        _Result.IsSuccess = true;
+
+                    }
+                }
+                catch
+                {
+                    transaction.Rollback();
+                    throw;
+                }
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("horizonexception@gmail.com", "FMS Excepion", $"AccountingRepo/UpdateRecipt : {_Exception.Message}");
+            }
+
+            return _Result;
+        }
         public async Task<Result<bool>> DeleteRecipt(string Id, IDbContextTransaction transaction)
         {
             Result<bool> _Result = new();
@@ -1524,6 +2051,7 @@ namespace FMS.Repository.Accounting
                 {
                     if (Id != null)
                     {
+                        
                         //*****************************Delete DeleteRecipt**************************************//
                         var GetRecipts = await _appDbContext.Receipts.Where(x => x.VouvherNo == Id && x.Fk_BranchId == BranchId && x.Fk_FinancialYearId == FinancialYear).ToListAsync();
                         foreach (var item in GetRecipts)

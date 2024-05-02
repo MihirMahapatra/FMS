@@ -1742,7 +1742,7 @@ namespace FMS.Repository.Admin
                 if (ProductType == MappingProductType.ServiceGoods)
                 {
                     Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
-                    _Result.SingleObjData = await _appDbContext.LabourRates.Where(s => s.Fk_ProductId == ProductId && s.Fk_FinancialYearId == FinancialYear && s.Fk_BranchId == BranchId).OrderByDescending(s => s.Date).
+                    _Result.SingleObjData = await _appDbContext.LabourRates.Where(s => s.Fk_ProductId == ProductId  && s.Fk_BranchId == BranchId).OrderByDescending(s => s.Date).
                  Select(s => new LabourRateModel
                  {
                      Rate = s.Rate,
@@ -1754,7 +1754,7 @@ namespace FMS.Repository.Admin
                 }
                 else
                 {
-                    _Result.SingleObjData = await _appDbContext.LabourRates.Where(s => s.Fk_ProductId == ProductId && s.Fk_FinancialYearId == FinancialYear).OrderByDescending(s => s.Date).
+                    _Result.SingleObjData = await _appDbContext.LabourRates.Where(s => s.Fk_ProductId == ProductId).OrderByDescending(s => s.Date).
                  Select(s => new LabourRateModel
                  {
                      Rate = s.Rate,

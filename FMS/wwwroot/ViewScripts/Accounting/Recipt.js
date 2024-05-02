@@ -367,7 +367,6 @@ $(function () {
         }
     });
     //_______________________________________________Receipt List________________________________________________________________________//
-
     $('a[href="#ReceiptList"]').on('click', function () {
         LoadReceipts();
     });
@@ -471,8 +470,305 @@ $(function () {
             }
         });
     }
+    //------------------Edit Receipts ---------------------//
+    $(document).on('click', '.btn-receipt-edit', (event) => {
+        const value = $(event.currentTarget).data('id');
+        GetReceiptById(value);
+        $('#tab-Receipt').trigger('click');
+        $('#btnSave').hide();
+        $('#btnUpdate').show();
+    });
+    function GetReceiptById(Id) {
+        $.ajax({
+            url: '/Accounting/GetReceiptById?Id=' + Id + '',
+            type: "GET",
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            success: function (result) {
+                console.log(result);
+                const ModifytransactionDate = result.GroupedLederwiseReceipts[0].LederwiseReceipts[0].Receipts[0].VoucherDate;
+                if (ModifytransactionDate) {
+                    const dateObject = new Date(ModifytransactionDate);
+                    if (!isNaN(dateObject)) {
+                        const day = String(dateObject.getDate()).padStart(2, '0');
+                        const month = String(dateObject.getMonth() + 1).padStart(2, '0');
+                        const year = dateObject.getFullYear();
+                        const formattedDate = `${day}/${month}/${year}`;
+                        VoucherDate.val(formattedDate);
+                    }
+                }
+                VoucherNo.val(result.GroupedLederwiseReceipts[0].VoucherNo);
+                Narration.val(result.GroupedLederwiseReceipts[0].LederwiseReceipts[0].Receipts[0].Narration);
+                if (result.GroupedLederwiseReceipts[0].LederwiseReceipts[0].Receipts[0].CashBank == 'Bank') {
+                    CashBank.val('Bank');
+                    CashBank.trigger('change.select2');
+                    $('.hdndiv').show();
+                    $.ajax({
+                        url: '/Accounting/GetBankLedgers',
+                        type: "GET",
+                        contentType: "application/json;charset=utf-8",
+                        dataType: "json",
+                        success: function (result1) {
+                            Bank.empty();
+                            var defaultOption = $('<option></option>').val('').text('--Select Option--');
+                            Bank.append(defaultOption);
+                            if (result1.ResponseCode == 302) {
+                                $.each(result1.Ledgers, function (key, item) {
+                                    var option = $('<option></option>').val(item.LedgerId).text(item.LedgerName);
+                                    if (item.LedgerId == result.GroupedLederwiseReceipts[0].LederwiseReceipts[0].Receipts[0].CashBankLedgerId) {
+                                        option.attr('selected', 'selected');
+                                    }
+                                    Bank.append(option);
+                                });
+                            }
+                        },
+                        error: function (errormessage) {
+                            console.log(errormessage)
+                        }
+                    })
+                } else {
+                    $('.hdndiv').hide();
+                    CashBank.val('Cash');
+                }
+                // Receipts table Clear
+                ReciptTable.clear().draw();
+                $.each(result.GroupedLederwiseReceipts, function (key, item) {
+                    $.each(item.LederwiseReceipts, function (key, item1) {
+                        var uniqueId = 'ddlitem' + new Date().getTime();
+                        $.ajax({
+                            url: "/Accounting/GetLedgers",
+                            type: "GET",
+                            contentType: "application/json;charset=utf-8",
+                            dataType: "json",
+                            success: function (result) {
+                                if (result.ResponseCode == 302) {
+                                    var selectedLederName = "";
+                                    var html = '<tr>';
+                                    html += '<td style="width:60px">';
+                                    html += '<div class="form-group row">';
+                                    html += '<div class="col-sm-9">';
+                                    html += '<select class="select2bs4 ledgerType" style="width: 100%;" data-target="additionalDropdown_' + uniqueId + '" name="ddlLedgerId">';
+                                    html += '<option>--Select Option--</option>';
+                                    $.each(result.Ledgers, function (key, Ledger) {
+                                        var option = $('<option></option>').val(Ledger.LedgerId).text(Ledger.LedgerName);
+                                        if (Ledger.LedgerId == item1.Fk_LedgerId) {
+                                            option.attr('selected', 'selected');
+                                            selectedLederName = Ledger.LedgerName;
+                                        }
+                                        html += option.prop('outerHTML');
+                                    });
+                                    html += '</select>';
+                                    html += '</div>';
+                                    $.ajax({
+                                        url: '/Master/GetLedgerBalances',
+                                        type: "GET",
+                                        contentType: "application/json;charset=utf-8",
+                                        dataType: "json",
+                                        success: function (result) {
 
-    //------------------------------Delete Payments---------//
+                                            if (result.ResponseCode == 302) {
+                                                $.each(result.LedgerBalances, function (index, bal) {
+                                                    if (bal.Ledger.LedgerName === selectedLederName) {
+                                                        var balance = "CurBal: " + Math.abs(bal.RunningBalance) + " " + bal.RunningBalanceType
+                                                        $('label[name="LadgerCurBal"]').text(balance);
+                                                    }
+                                                });
+                                            }
+                                        }
+                                    });
+                                    html += '<label name="LadgerCurBal" class="col-sm-3 col-form-label"> Cur Bal: </label>';
+                                    html += '</div>';
+                                    html += '<div class="additionalDropdown" data-id="additionalDropdown_' + uniqueId + '"> </div>';
+                                    html += '</td>';
+                                    html += '<td style="width:15px">';
+                                    html += '<div class="form-group">';
+                                    html += '<input type="text" class="form-control" id = "txtCrAmount" for="CrBalance_' + uniqueId +'" name = "CrBalance">';
+                                    html += '</div>';
+                                    html += '</td>';
+                                    html += '</tr>';
+                                    var newRow = ReciptTable.row.add($(html)).draw(false).node();
+                                    $(newRow).find('.select2bs4').select2({
+                                        theme: 'bootstrap4'
+                                    });
+                                    // Initialize sub-ledger dropdown
+                                    if (item1.Receipts && item1.Receipts.length > 0) {
+                                        $.each(item1.Receipts, function (index, receipt) {
+                                            var subUniqueId = new Date().getTime();
+                                            selectedOption = item1.Fk_LedgerId;
+                                            if (receipt.Fk_SubLedgerId != null) {
+                                                $.ajax({
+                                                    url: '/Accounting/GetSubLedgersById?LedgerId=' + item1.Fk_LedgerId,
+                                                    type: "GET",
+                                                    contentType: "application/json;charset=utf-8",
+                                                    dataType: "json",
+                                                    success: function (subResult) {
+                                                        if (subResult.ResponseCode == 302) {
+                                                            var SubladgerName = "";
+                                                            var subHtml = '';
+                                                            subHtml += '<div class="form-group row">';
+                                                            subHtml += '<label name="SubLadgerCurBal" for="SubLadgerCurBal_' + subUniqueId + '" class="col-sm-2 col-form-label">Cur Bal: </label>';
+                                                            subHtml += '<div class="col-sm-5">';
+                                                            subHtml += '<select class="select2bs4 SubledgerType" style="width: 100%;" name="ddlSubledgerId">';
+                                                            subHtml += '<option>--Select Option--</option>';
+                                                            $.each(subResult.SubLedgers, function (key, subLedger) {
+                                                                var option = $('<option></option>').val(subLedger.SubLedgerId).text(subLedger.SubLedgerName);
+                                                                if (subLedger.SubLedgerId == receipt.Fk_SubLedgerId) {
+                                                                    option.attr('selected', 'selected');
+                                                                    SubladgerName = subLedger.SubLedgerName;
+                                                                }
+                                                                subHtml += option.prop('outerHTML');
+                                                            });
+                                                            subHtml += '</select>';
+                                                            subHtml += '</div>';
+                                                            subHtml += '<div class="col-sm-3">';
+                                                            subHtml += '<input type="text" class="form-control" name="SubledgerAmount" value="' + receipt.Amount + '">';
+                                                            subHtml += '</div>';
+                                                            subHtml += '<div class="col-sm-2">';
+                                                            subHtml += '<button class="btn btn-primary btn-link addSubLedgerBtn" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-plus"></i></button>';
+                                                            subHtml += ' <button class="btn btn-primary btn-link deleteBtns" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button>';
+                                                            subHtml += '</div>';
+                                                            subHtml += '</div>';
+                                                            $.ajax({
+                                                                url: '/Master/GetSubLedgerBalances',
+                                                                type: "GET",
+                                                                contentType: "application/json;charset=utf-8",
+                                                                dataType: "json",
+                                                                success: function (result) {
+                                                                    if (result.ResponseCode == 302) {
+                                                                        $.each(result.SubLedgerBalances, function (index, subBal) {
+                                                                            if (subBal.SubLedger.SubLedgerName.trim().toLowerCase() === SubladgerName.trim().toLowerCase()) {
+                                                                                var bal = "CurBal: " + Math.abs(subBal.RunningBalance) + " " + subBal.RunningBalanceType
+                                                                                $('label[for="SubLadgerCurBal_' + subUniqueId + '"]').text(bal);
+                                                                            }
+                                                                        });
+                                                                    }
+                                                                }
+                                                            });
+                                                            $('.additionalDropdown[data-id="additionalDropdown_' + uniqueId + '"]').append(subHtml);
+                                                            $('.form-group').find('.select2bs4').select2({
+                                                                theme: 'bootstrap4'
+                                                            });
+                                                            var totalAmount = 0;
+                                                            $('.form-group').find('input[name="SubledgerAmount"]').each(function () {
+                                                                var amount = parseFloat($(this).val()) || 0;
+                                                                totalAmount += amount;
+                                                            });
+                                                            $('input[name="CrBalance"]').val(totalAmount);
+                                                        }
+                                                    },
+                                                    error: function (errormessage) {
+                                                        console.log(errormessage)
+                                                    }
+                                                });
+                                            } else {
+                                                $('input[for="CrBalance_' + uniqueId +'"]').val(receipt.Amount);
+                                            }
+                                            
+
+                                        });
+
+                                    }
+                                }
+                            },
+                            error: function (errormessage) {
+                                console.log(errormessage)
+                            }
+                        });
+                    });
+
+                });
+            },
+            error: function (errormessage) {
+                Swal.fire(
+                    'Error!',
+                    'An error occurred',
+                    'error'
+                );
+            }
+        });
+    }
+    //-----------------------Update Receipts-----------------------------------------//
+    $('#btnUpdate').on('click', UpdateReceipts);
+    function UpdateReceipts() {
+        if (CashBank.val() === "Bank") {
+            if (!Bank.val() || Bank.val() === '--Select Option--') {
+                toastr.error('Bank  Is Required.');
+                return;
+            }
+        }
+        if (!VoucherDate.val()) {
+            toastr.error('VoucherDate Is Required.');
+            return;
+        } else if (!Narration.val()) {
+            toastr.error('Narration Is Required.');
+            return;
+        } else {
+            $('#loader').show();
+            var requestData = {
+                CashBank: CashBank.val(),
+                BankLedgerId: Bank.val(),
+                ChqNo: ChqNo.val(),
+                ChqDate: ChqDate.val(),
+                VoucherDate: VoucherDate.val(),
+                VoucherNo: VoucherNo.val(),
+                Narration: Narration.val(),
+                "arr": []
+            };
+            $('tbody tr').each(function () {
+                var row = $(this);
+                var rowData = {
+                    "ddlLedgerId": row.find("select[name='ddlLedgerId']").val(),
+                    "DrBalance": row.find("input[name='CrBalance']").val(),
+                    "subledgerData": []
+                };
+                if (rowData.ddlLedgerId && rowData.DrBalance) {
+                    row.find(".additionalDropdown[data-id^='additionalDropdown_']").each(function () {
+                        var subledgerRow = $(this);
+                        var subledgerData = {
+                            "ddlSubledgerId": [],
+                            "SubledgerAmunt": []
+                        };
+                        subledgerRow.find("select[name='ddlSubledgerId']").each(function () {
+                            subledgerData.ddlSubledgerId.push($(this).val());
+                        });
+                        subledgerRow.find("input[name='SubledgerAmount']").each(function () {
+                            subledgerData.SubledgerAmunt.push($(this).val());
+                        });
+
+                        if (subledgerData.ddlSubledgerId.length > 0 || subledgerData.SubledgerAmunt.length > 0) {
+                            rowData.subledgerData.push(subledgerData);
+                        }
+                    });
+                    requestData.arr.push(rowData);
+                }
+            });
+            $.ajax({
+                type: "POST",
+                url: '/Accounting/UpdateRecipt',
+                dataType: 'json',
+                data: JSON.stringify(requestData),
+                contentType: "application/json;charset=utf-8",
+                success: function (Response) {
+                    $('#loader').hide();
+                    if (Response.ResponseCode == 201) {
+                        toastr.success(Response.SuccessMsg);
+                        GetPaymentVoucherNo();
+                        PaymentTable.clear().draw();
+                        Narration.val('');
+                        VoucherDate.val('');
+                    }
+                    else {
+                        toastr.error(Response.ErrorMsg);
+                    }
+                },
+                error: function (error) {
+                    console.log(error);
+                    $('#loader').hide();
+                }
+            });
+        }
+    }
+    //------------------------------Delete Receipts---------//
     $(document).on('click', '.btn-receipt-delete', (event) => {
         const value = $(event.currentTarget).data('id');
         DeleteReciptssDetails(value);

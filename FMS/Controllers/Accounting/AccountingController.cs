@@ -80,6 +80,19 @@ namespace FMS.Controllers.Accounting
             var result = await _accountingSvcs.GetJournalById(Id);
             return new JsonResult(result);
         }
+        [HttpPost]
+        public async Task<IActionResult> UpdateJournal([FromBody] JournalDataRequest requestData)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _accountingSvcs.UpdateJournal(requestData);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
         [HttpPost, Authorize(Policy = "Delete")]
         public async Task<IActionResult> DeleteJournal([FromQuery] string id)
         {
@@ -164,6 +177,19 @@ namespace FMS.Controllers.Accounting
             if (ModelState.IsValid)
             {
                 var result = await _accountingSvcs.CreateRecipt(requestData);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> UpdateRecipt([FromBody] ReciptsDataRequest requestData)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _accountingSvcs.UpdateRecipt(requestData);
                 return new JsonResult(result);
             }
             else

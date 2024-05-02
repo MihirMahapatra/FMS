@@ -9,6 +9,7 @@ namespace FMS.Service.Accounting
         #region Journal
         Task<Base> GetJournalVoucherNo();
         Task<Base> CreateJournal(JournalDataRequest requestData);
+        Task<Base> UpdateJournal(JournalDataRequest requestData);
         Task<JournalViewModel> GetJournals();
         Task<JournalViewModel> GetJournalById(string Id);
         Task<Base> DeleteJournal(string Id);
@@ -27,6 +28,7 @@ namespace FMS.Service.Accounting
         Task<Base> CreateRecipt(ReciptsDataRequest requestData);
         Task<ReceiptViewModel> GetReceipts();
         Task<ReceiptViewModel> GetReceiptById(string Id);
+        Task<Base> UpdateRecipt(ReciptsDataRequest requestData);
         Task<Base> DeleteReceipt(string Id);
         #endregion
     }

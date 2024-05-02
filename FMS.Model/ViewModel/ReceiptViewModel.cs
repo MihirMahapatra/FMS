@@ -18,5 +18,6 @@ namespace FMS.Model.ViewModel
         public List<ReceiptModel> Receipts { get; set; }
         public ReceiptModel Receipt { get; set; }
         public List<GroupedReceptModel> GroupedReceipts { get; set; }
+        public List<GroupedLederwiseReceipts> GroupedLederwiseReceipts {get; set;}
     }
 }

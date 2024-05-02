@@ -120,7 +120,7 @@ namespace FMS.Service.Accounting
                     {
                         ResponseStatus = Result.Response,
                         ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
-                        GroupedJournals = Result.CollectionObjData,
+                        GroupedLederwiseJournals = Result.CollectionObjData,
                     };
                 }
                 else
@@ -141,6 +141,52 @@ namespace FMS.Service.Accounting
                     ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
                     Exception = Result.Exception,
                     Message = "Some Eroor Occoured"
+                };
+            }
+            return Obj;
+        }
+        public async Task<Base> UpdateJournal(JournalDataRequest requestData)
+        {
+            Base Obj;
+            var Result = await _accountingRepo.UpdateJournal(requestData);
+            if (Result.IsSuccess)
+            {
+                if (Result.Response == "created")
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.Created),
+                        SuccessMsg = "Data Updated SuccessFully"
+                    };
+                }
+                else
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                        ErrorMsg = "Data Already Exist"
+                    };
+                }
+            }
+            else if (Result.WarningMessage != null)
+            {
+                Obj = new()
+                {
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    ErrorMsg = Result.WarningMessage,
+                };
+            }
+            else
+            {
+                Obj = new()
+                {
+                    ResponseStatus = Result.Response,
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    ErrorMsg = "Some Error Occourd Try To Contact Your App Devloper"
                 };
             }
             return Obj;
@@ -496,6 +542,52 @@ namespace FMS.Service.Accounting
             }
             return Obj;
         }
+        public async Task<Base> UpdateRecipt(ReciptsDataRequest requestData)
+        {
+            Base Obj;
+            var Result = await _accountingRepo.UpdateRecipt(requestData);
+            if (Result.IsSuccess)
+            {
+                if (Result.Response == "created")
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.Created),
+                        SuccessMsg = "Data Updated SuccessFully"
+                    };
+                }
+                else
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                        ErrorMsg = "Data Already Exist"
+                    };
+                }
+            }
+            else if (Result.WarningMessage != null)
+            {
+                Obj = new()
+                {
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    ErrorMsg = Result.WarningMessage,
+                };
+            }
+            else
+            {
+                Obj = new()
+                {
+                    ResponseStatus = Result.Response,
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    ErrorMsg = "Some Error Occourd Try To Contact Your App Devloper"
+                };
+            }
+            return Obj;
+        }
         public async Task<ReceiptViewModel> GetReceipts()
         {
             ReceiptViewModel Obj;
@@ -536,7 +628,7 @@ namespace FMS.Service.Accounting
         public async Task<ReceiptViewModel> GetReceiptById(string Id)
         {
             ReceiptViewModel Obj;
-            var Result = await _accountingRepo.GetReceipts();
+            var Result = await _accountingRepo.GetReceiptById(Id);
             if (Result.IsSuccess)
             {
                 if (Result.Response == "success")
@@ -545,7 +637,7 @@ namespace FMS.Service.Accounting
                     {
                         ResponseStatus = Result.Response,
                         ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
-                        GroupedReceipts = Result.CollectionObjData,
+                        GroupedLederwiseReceipts = Result.CollectionObjData,
                     };
                 }
                 else
