@@ -539,7 +539,6 @@ $(function () {
                                     } else {
                                         html += '<input type="text" class="form-control"  id= "DrBalance_' + uniqueId + '" name = "DrBalance">';
                                     }
-                                   
                                     html += '</div>';
                                     html += '</td>';
                                     html += '<td style = "width:15px">';
@@ -555,8 +554,8 @@ $(function () {
                                     html += ' <button class="btn btn-primary btn-link journalRemoveBtn" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button>';
                                     html += '</td>';
                                     html += '</tr>';
-                                    //var newRow = JournalTable.row.add($(html)).draw(false).node();
-                                    var newRow = $('#tblJournal tbody').append(html);
+                                    var newRow = JournalTable.row.add($(html)).draw(false).node();
+                                    //var newRow = $('#tblJournal tbody').append(html);
                                     $(newRow).find('.select2bs4').select2({
                                         theme: 'bootstrap4'
                                     });
