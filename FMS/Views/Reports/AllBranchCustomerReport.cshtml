@@ -188,7 +188,7 @@
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <div class="form-group">
-                                                            <button type="button" id="BtnPrintDetailed" class="btn btn-primary" style="float:right; display:none; margin-top:32px">Print</button>
+                                                            <button type="button" id="BtnPrintDetailedSupplyer" class="btn btn-primary" style="float:right; display:none; margin-top:32px">Print</button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -249,6 +249,9 @@
     <script>
         $('.select2bs4').select2({
             theme: 'bootstrap4'
+        });
+        $(document).on('select2:open', () => {
+            document.querySelector('.select2-search__field').focus();
         });
         $('#FromDateCustomer').datetimepicker({
             format: 'DD/MM/YYYY'

@@ -241,19 +241,9 @@
         $('.select2bs4').select2({
             theme: 'bootstrap4'
         });
-        $('.select2bs4').on('select2:open', function (e) {
-            // Ensure the search input field is available before focusing
-            var $searchField = $('.select2-search__field');
-            if ($searchField.length > 0) {
-                $searchField.focus();
-            }
+        $(document).on('select2:open', () => {
+            document.querySelector('.select2-search__field').focus();
         });
-
-        // Explicitly set focus on the search input field after a delay
-        setTimeout(function () {
-            $('.select2-search__field').focus();
-        }, 100);
-
         $('#FromDateSummerized').datetimepicker({
             format: 'DD/MM/YYYY'
         });

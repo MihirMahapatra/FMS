@@ -1411,6 +1411,20 @@ namespace FMS.Repository.Reports
                                 DrCr = "Cr",
                                 VoucherType = "Receipt"
                             }).ToList());
+                        PartyInfos.Orders.AddRange(_appDbContext.Payments.Where(r => r.Fk_FinancialYearId == FinancialYearId && r.Fk_BranchId == BranchId && r.VoucherDate >= convertedFromDate && r.VoucherDate <= convertedToDate && r.Fk_SubLedgerId == requestData.PartyId)
+                            .OrderBy(t => t.VoucherDate)
+                            .Select(t => new PartyReportOrderModel
+                            {
+                                TransactionDate = t.VoucherDate,
+                                TransactionNo = t.VouvherNo,
+                                ChallanNo = t.VouvherNo,
+                                Naration = t.Narration,
+                                SiteAdress = "_",
+                                GrandTotal = t.Amount,
+                                BranchName = t.Branch.BranchName,
+                                DrCr = "Dr",
+                                VoucherType = "Payment"
+                            }).ToList());
                         PartyInfos.Orders = PartyInfos.Orders.OrderBy(t => t.TransactionDate).ToList();
                     }
                     else
@@ -3109,6 +3123,18 @@ namespace FMS.Repository.Reports
                             SiteAdress = "-",
                             GrandTotal = t.Amount,
                             DrCr = "Cr",
+                            BranchName = t.Branch.BranchName,
+                        }).ToList());
+                    PartyInfos.Orders.AddRange(_appDbContext.Payments.Where(r => r.Fk_FinancialYearId == FinancialYearId && r.VoucherDate >= convertedFromDate && r.VoucherDate <= convertedToDate && r.Fk_SubLedgerId == requestData.PartyId)
+                        .OrderBy(t => t.VoucherDate)
+                        .Select(t => new PartyReportOrderModel
+                        {
+                            TransactionDate = t.VoucherDate,
+                            TransactionNo = t.VouvherNo,
+                            Naration = t.Narration,
+                            SiteAdress = "-",
+                            GrandTotal = t.Amount,
+                            DrCr = "Dr",
                             BranchName = t.Branch.BranchName,
                         }).ToList());
                     PartyInfos.Orders = PartyInfos.Orders.OrderBy(t => t.TransactionDate).ToList();

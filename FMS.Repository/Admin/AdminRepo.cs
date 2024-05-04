@@ -1418,27 +1418,26 @@ namespace FMS.Repository.Admin
             try
             {
                 _Result.IsSuccess = false;
-                var Query = _appDbContext.Productions.Where(s => s.Fk_FinishedGoodId == Guid.Parse(data.FinishedGoodId)).FirstOrDefaultAsync();
-                   if(Query != null)
+                //var Query = _appDbContext.Productions.Where(s => s.Fk_FinishedGoodId == Guid.Parse(data.FinishedGoodId)).FirstOrDefaultAsync();
+                //if(Query != null)
+                List<Production> products = new();
+                foreach (var item in data.RowData)
                 {
-                    List<Production> products = new();
-                    foreach (var item in data.RowData)
+                    var AddNewMixProduct = new Production
                     {
-                        var AddNewMixProduct = new Production
-                        {
-                            Fk_FinishedGoodId = Guid.Parse(data.FinishedGoodId),
-                            Fk_RawMaterialId = Guid.Parse(item[0]),
-                            Quantity = Convert.ToDecimal(item[1]),
-                            Unit = item[2].ToString()
-                        };
-                        products.Add(AddNewMixProduct);
-                    }
-                    await _appDbContext.Productions.AddRangeAsync(products);
-                    int count = await _appDbContext.SaveChangesAsync();
-                    _Result.Response = (count > 0) ? ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Created) : ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Error);
-
-                    
+                        Fk_FinishedGoodId = Guid.Parse(data.FinishedGoodId),
+                        Fk_RawMaterialId = Guid.Parse(item[0]),
+                        Quantity = Convert.ToDecimal(item[1]),
+                        Unit = item[2].ToString()
+                    };
+                    products.Add(AddNewMixProduct);
                 }
+                await _appDbContext.Productions.AddRangeAsync(products);
+                int count = await _appDbContext.SaveChangesAsync();
+                _Result.Response = (count > 0) ? ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Created) : ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Error);
+
+            //}
+                
                 _Result.IsSuccess = true;
             }
             catch (Exception _Exception)

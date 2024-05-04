@@ -45,7 +45,7 @@ $(function () {
                 success: function (result) {
                     $('#loader').hide();
                     var html = '';
-                    html += '<table class="table table-bordered table-hover text-center mt-2 SummerizedReportTable" style="width:100%">';
+                    html += '<table  class="table table-bordered  table-hover text-center mt-2 SummerizedReportTable" style="width:100%">';
                     html += '<thead>'
                     html += '<tr>'
                     html += '<th></th>'
@@ -188,7 +188,8 @@ $(function () {
                     var defaultOption = $('<option></option>').val('').text('--Select Option--');
                     ddlSupplyer.append(defaultOption);
                     $.each(result.SubLedgers, function (key, item) {
-                        var option = $('<option></option>').val(item.SubLedgerId).text(item.SubLedgerName);
+                        //var option = $('<option></option>').val(item.SubLedgerId).text(item.SubLedgerName);
+                        var option = $('<option></option>').val(item.SubLedgerId).text(item.SubLedgerName + " (" + item.Adress + ")");
                         ddlSupplyer.append(option);
                     });
                 }
@@ -203,7 +204,6 @@ $(function () {
             }
         });
     }
-    var Printdatadetails = {}; 
     var Data = {};
     $('#btnViewDetailed').on('click', function () {
         $('#loader').show();
@@ -271,7 +271,11 @@ $(function () {
                                     }
                                     html += '<tr>';
                                     html += '<td >' + formattedDate + '</td>';
-                                    html += '<td >' + item.MaterialReceiptNo + '</td>';
+                                    if (item.MaterialReceiptNo != null) {
+                                        html += '<td >' + item.MaterialReceiptNo + '</td>';
+                                    } else {
+                                        html += '<td >' + item.TransactionNo + '</td>';
+                                    }
                                     html += '<td >' + item.BranchName + '</td>';
                                     html += '<td colspan="4">' + item.Naration + '</td>';
                                     html += '<td>-</td>';
@@ -344,19 +348,6 @@ $(function () {
         }
        
     })
-    $('#BtnPrintDetailed').on('click', function () {
-        console.log(Printdatadetails);
-        $.ajax({
-            type: "POST",
-            url: '/Print/SupplyerDetailsPrintData',
-            dataType: 'json',
-            data: JSON.stringify(Printdatadetails),
-            contentType: "application/json;charset=utf-8",
-            success: function (Response) {
-                window.open(Response.redirectTo, '_blank');
-            },
-        });
-    });
     $('#BtnPrintDetailed').on('click', function () {
         var queryString = $.param(Data); // Serialize object to query string
         var url = '/Print/SupplyerDetailedReportPrint?' + queryString; // Append query string to URL

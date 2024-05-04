@@ -896,7 +896,7 @@ namespace FMS.Service.Reports
         public async Task<PartyReportViewModel> GetDetailedCustomerReportForAll(PartyReportDataRequest requestData)
         {
             PartyReportViewModel Obj;
-            var Result = await _reportRepo.GetDetailedCustomerReport(requestData);
+            var Result = await _reportRepo.GetDetailedCustomerReportForAll(requestData);
             if (Result.IsSuccess)
             {
                 if (Result.Response == "success")

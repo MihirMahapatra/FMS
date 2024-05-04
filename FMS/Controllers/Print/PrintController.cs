@@ -160,7 +160,9 @@ namespace FMS.Controllers.Print
         [HttpGet]
         public async Task<IActionResult> CustomerDetailedReportPrint([FromQuery] PartyReportDataRequest requestData)
         {
-            var result = await _reportSvcs.GetDetailedCustomerReport(requestData);
+            var result = requestData.Type == null
+            ? await _reportSvcs.GetDetailedCustomerReport(requestData)
+            : await _reportSvcs.GetDetailedCustomerReportForAll(requestData);
             var CustomerDetailedData = new CustomerSummarizedModel();
             CustomerDetailedData.FromDate = requestData.FromDate;
             CustomerDetailedData.ToDate = requestData.ToDate;
@@ -211,7 +213,9 @@ namespace FMS.Controllers.Print
         [HttpGet]
         public async Task<IActionResult> SupplyerDetailedReportPrint([FromQuery] PartyReportDataRequest requestData)
         {
-            var result = await _reportSvcs.GetDetailedSupplyerReport(requestData);
+            var result = requestData.Type == null
+            ? await _reportSvcs.GetDetailedSupplyerReport(requestData)
+            : await _reportSvcs.GetDetailedSupplyerReportForAll(requestData);
             var SupplyerDetailedData = new CustomerSummarizedModel();
             SupplyerDetailedData.FromDate = requestData.FromDate;
             SupplyerDetailedData.ToDate = requestData.ToDate;

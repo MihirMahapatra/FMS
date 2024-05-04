@@ -63,7 +63,8 @@
                     ddlCustomer.append(defaultOption);
                     $.each(result.SubLedgers, function (key, item) {
                         if (item.PartyGroupId == fkpartygroupId) {
-                            var option = $('<option></option>').val(item.SubLedgerId).text(item.SubLedgerName);
+                            // var option = $('<option></option>').val(item.SubLedgerId).text(item.SubLedgerName);
+                            var option = $('<option></option>').val(item.SubLedgerId).text(item.SubLedgerName + " (" + item.Adress + ")");
                             ddlCustomer.append(option);
                         }
                     });
@@ -104,7 +105,8 @@
             data = {
                 FromDate: FromDateCustomer.val(),
                 ToDate: ToDateCustomer.val(),
-                PartyId: ddlCustomer.val()
+                PartyId: ddlCustomer.val(),
+                Type : 'All'
             };
             $.ajax({
                 url: "/Reports/GetDetailedCustomerReportForAll",
@@ -247,7 +249,8 @@
                     var defaultOption = $('<option></option>').val('').text('--Select Option--');
                     ddlSupplyer.append(defaultOption);
                     $.each(result.SubLedgers, function (key, item) {
-                        var option = $('<option></option>').val(item.SubLedgerId).text(item.SubLedgerName);
+                        //var option = $('<option></option>').val(item.SubLedgerId).text(item.SubLedgerName);
+                        var option = $('<option></option>').val(item.SubLedgerId).text(item.SubLedgerName + " (" + item.Adress + ")");
                         ddlSupplyer.append(option);
                     });
                 }
@@ -286,7 +289,8 @@
             Data = {
                 FromDate: FromDateSupplyer.val(),
                 ToDate: ToDateSupplyer.val(),
-                PartyId: ddlSupplyer.val()
+                PartyId: ddlSupplyer.val(),
+                Type: 'All'
             };
             $.ajax({
                 url: "/Reports/GetDetailedSupplyerReportForAll",
@@ -329,7 +333,11 @@
                                     }
                                     html += '<tr>';
                                     html += '<td >' + formattedDate + '</td>';
-                                    html += '<td >' + item.MaterialReceiptNo + '</td>';
+                                    if (item.MaterialReceiptNo != null) {
+                                        html += '<td >' + item.MaterialReceiptNo + '</td>';
+                                    } else {
+                                        html += '<td >' + item.TransactionNo + '</td>';
+                                    }
                                     html += '<td >' + item.BranchName + '</td>';
                                     html += '<td colspan="4">' + item.Naration + '</td>';
                                     html += '<td>-</td>';
@@ -373,7 +381,7 @@
                                 });
                             }
                         }
-                        $('#BtnPrintDetailed').show();
+                        $('#BtnPrintDetailedSupplyer').show();
                     }
                     else {
                         html += '<tr>';
@@ -397,21 +405,193 @@
         }
 
     })
-    $('#BtnPrintDetailed').on('click', function () {
-        $.ajax({
-            type: "POST",
-            url: '/Print/SupplyerDetailsPrintData',
-            dataType: 'json',
-            data: JSON.stringify(Printdatadetails),
-            contentType: "application/json;charset=utf-8",
-            success: function (Response) {
-                window.open(Response.redirectTo, '_blank');
-            },
-        });
-    });
-    $('#BtnPrintDetailed').on('click', function () {
+    $('#BtnPrintDetailedSupplyer').on('click', function () {
         var queryString = $.param(Data); // Serialize object to query string
         var url = '/Print/SupplyerDetailedReportPrint?' + queryString; // Append query string to URL
         window.open(url, '_blank');
     });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 })

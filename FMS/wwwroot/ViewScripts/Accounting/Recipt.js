@@ -152,7 +152,12 @@ $(function () {
                         html += '<option>--Select Option--</option>';
 
                         $.each(result.SubLedgers, function (key, item) {
-                            html += '<option value=' + item.SubLedgerId + '>' + item.SubLedgerName + ' </option>';
+                            if (selectedName == "Sundry Creditors" || selectedName == "Sundry Creditors") {
+                                html += '<option value=' + item.SubLedgerId + '>' + item.SubLedgerName + "(" + item.Adress + ")" + ' </option>';
+                            } else {
+                                html += '<option value=' + item.SubLedgerId + '>' + item.SubLedgerName + ' </option>';
+                            }
+                            
                         });
                         html += '</select>';
                         html += '</div>';

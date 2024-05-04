@@ -91,6 +91,7 @@ namespace FMS.Repository.Master
                             {
                                 SubLedgerId = sl.SubLedgerId,
                                 SubLedgerName = sl.SubLedgerName,
+                                Adress = _appDbContext.Parties.Where(a => a.Fk_SubledgerId == sl.SubLedgerId).Select(s => s.Address).FirstOrDefault() ?? "null"
                             }).ToListAsync();
                 if (Query.Count > 0)
                 {
@@ -117,7 +118,7 @@ namespace FMS.Repository.Master
                 using var transaction = await _appDbContext.Database.BeginTransactionAsync();
                 try
                 {
-                    var getLedgerBalanceExist = await _appDbContext.LedgerBalances.Where(x => x.Fk_LedgerId == data.Fk_LedgerId && x.Fk_BranchId == BranchId).SingleOrDefaultAsync();
+                    var getLedgerBalanceExist = await _appDbContext.LedgerBalances.Where(x => x.Fk_LedgerId == data.Fk_LedgerId && x.Fk_BranchId == BranchId && x.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
                     if (getLedgerBalanceExist != null)
                     {
                         #region SubLedger

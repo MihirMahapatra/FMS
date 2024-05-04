@@ -244,7 +244,8 @@ $(function () {
                     ddlCustomer.append(defaultOption);
                     $.each(result.SubLedgers, function (key, item) {
                         if (item.PartyGroupId == fkpartygroupId) {
-                            var option = $('<option></option>').val(item.SubLedgerId).text(item.SubLedgerName);
+                            //var option = $('<option></option>').val(item.SubLedgerId).text(item.SubLedgerName);
+                            var option = $('<option></option>').val(item.SubLedgerId).text(item.SubLedgerName + " (" + item.Adress + ")");
                             ddlCustomer.append(option);
                         }
                     });

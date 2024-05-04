@@ -156,21 +156,11 @@
                                                 }
                                                 
                                                 <td>@transaction.Rate</td>
-                                                @* @if (@item.VoucherType != "Receipt")
-                                                { *@
-                                                   @{
+                                                 @{
                                                     TotalAmount += @transaction.Amount;
                                                    }
-                                                    <td>@transaction.Amount</td>
-                                                    <td>0.00</td>
-                                                @* } *@
-                                              @*   else
-                                                {
-                                                    TotalReceptAmount += @item.GrandTotal;
-                                                    <td>0.00</td>
-                                                    <td>@item.GrandTotal</td>
-                                                } *@
-                                                
+                                                 <td>@transaction.Amount</td>
+                                                 <td>0.00</td>
                                             </tr>
                                         }
                                         <tr class="small-row">
@@ -207,11 +197,19 @@
                                             <td>-</td>
                                             <td>-</td>
                                             <td>-</td>
-                                            @{
-                                                TotalReceptAmount += @item.GrandTotal;
+                                            @if (item.VoucherType != "Payment")
+                                            {
+                                                 TotalReceptAmount += @item.GrandTotal;
+                                                <td>-</td>
+                                                <td>@item.GrandTotal</td>
                                             }
-                                             <td>-</td>
-                                             <td>@item.GrandTotal</td>
+                                            else
+                                            { 
+                                                TotalAmount += @item.GrandTotal;
+                                                <td>@item.GrandTotal</td>
+                                                <td>-</td>
+                                                
+                                            }
                                         </tr>
                                     }
                                     

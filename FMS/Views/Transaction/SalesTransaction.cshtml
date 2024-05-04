@@ -95,14 +95,14 @@
                                         <div class="col-md-2 hdnpartygroup" style="display:none">
                                             <div class="form-group">
                                                 <label class="pt-2">ChooseGroup</label>
-                                                <select class="form-control select2bs4" style="width: 100%" id="PartyGroupId"  name="ddlPartyGroupId">
+                                                <select class="form-control select2bs4" style="width: 100%" id="PartyGroupId" tabindex="2" name="ddlPartyGroupId">
                                                 </select>
                                             </div>
                                         </div>
                                         <div class="col-md-2">
                                             <div class="form-group">
                                                 <label class="pt-2">Rate Type</label>
-                                                <select class="form-control select2bs4 RateOptions" style="width: 100%" name="ddlRate" tabindex="2">
+                                                <select class="form-control select2bs4 RateOptions" style="width: 100%" name="ddlRate" tabindex="3">
                                                 </select>
                                             </div>
                                         </div>
@@ -133,8 +133,6 @@
                                                         <input type="text" class="form-control" id="" name="CustomerName" tabindex="3">
                                                     </div>
                                                 </div>
-
-
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <label>Challan No</label>
@@ -533,6 +531,9 @@
     <script>
         $('.select2bs4').select2({
             theme: 'bootstrap4'
+        });
+        $(document).on('select2:open', () => {
+            document.querySelector('.select2-search__field').focus();
         });
         $('#reservationdate1').datetimepicker({
             format: 'DD/MM/YYYY'

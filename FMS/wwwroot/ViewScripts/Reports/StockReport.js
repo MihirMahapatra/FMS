@@ -23,6 +23,13 @@
     const ddlZeroValuedDetailed = $('select[name="ddlDetailedZerovalued"]');
     var PrintData = {};
     //var PrintDataDetailed = {};
+    var table = $('#Summarizedtbl').DataTable({
+        "responsive": true,
+        "lengthChange": false,
+        "ordering": true,
+        "autoWidth": false,
+        "searching": true
+    });
     //-----------------------------------stock Report Summerized---------------------------------------//
     GetAllProductTypes();
     function GetAllProductTypes() {
@@ -89,7 +96,7 @@
                 success: function (result) {
                     $('#loader').hide();
                     var html = '';
-                    html += '<table class="table table-bordered table-hover text-center mt-2 SummerizedStockReportTable" style="width:100%">';
+                    html += '<table id="Summarizedtbl" class="table table-bordered table-hover text-center mt-2 SummerizedStockReportTable" style="width:100%">';
                     html += '<thead>'
                     html += '<tr>'
                     html += '<th></th>'
@@ -134,7 +141,7 @@
                                 }
                                 html += '</tr >';
                             }
-                            
+
                         });
                         $('#BtnPrintSummarized').show();
                         PrintData = {
@@ -151,12 +158,6 @@
                     html += ' </tbody>';
                     html += '</table >';
                     $('.tblSummerizedStockList').html(html);
-                    if (!$.fn.DataTable.isDataTable('.SummerizedStockReportTable')) {
-                        var table = $('.SummerizedStockReportTable').DataTable({
-                            "responsive": true, "lengthChange": false, "autoWidth": false, "searching": true,
-                            /*"buttons": ["copy", "csv", "excel", "pdf", "colvis"]*/
-                        })/*.buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');*/
-                    }
                 },
                 error: function (errormessage) {
                     $('#loader').hide();
