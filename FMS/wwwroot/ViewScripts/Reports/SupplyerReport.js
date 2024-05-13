@@ -320,11 +320,7 @@ $(function () {
                             }
                         }
                         $('#BtnPrintDetailed').show();
-                        Printdatadetails = {
-                            FromDate: fromDateDetailed.val(),
-                            ToDate: toDateDetailed.val(),
-                            PartyDetailedReports: result.PartyDetailed
-                        }
+                        $('#BtnshortDetailedSupplyer').show();
                     }
                     else {
                         html += '<tr>';
@@ -351,6 +347,11 @@ $(function () {
     $('#BtnPrintDetailed').on('click', function () {
         var queryString = $.param(Data); // Serialize object to query string
         var url = '/Print/SupplyerDetailedReportPrint?' + queryString; // Append query string to URL
+        window.open(url, '_blank');
+    });
+    $('#BtnshortDetailedSupplyer').on('click', function () {
+        var queryString = $.param(Data); // Serialize object to query string
+        var url = '/Print/SupplyerDetailedReportShortPrint?' + queryString; // Append query string to URL
         window.open(url, '_blank');
     });
 })

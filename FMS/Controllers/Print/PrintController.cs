@@ -192,6 +192,22 @@ namespace FMS.Controllers.Print
             return View(CustomerDetailedReportModal);
 
         }
+        [HttpGet]
+        public async Task<IActionResult> CustomerDetailedReportShortPrintAll([FromQuery] PartyReportDataRequest requestData)
+        {
+            var result = await _reportSvcs.GetDetailedCustomerReportForAll(requestData);
+            var CustomerDetailedData = new CustomerSummarizedModel();
+            CustomerDetailedData.FromDate = requestData.FromDate;
+            CustomerDetailedData.ToDate = requestData.ToDate;
+            CustomerDetailedData.PartyDetailedReports = result.PartyDetailed;
+            var CustomerDetailedReportModal = new CustomerReportDataModel()
+            {
+                Cmopany = _adminSvcs.GetCompany().Result.GetCompany,
+                Customers = CustomerDetailedData
+            };
+            return View(CustomerDetailedReportModal);
+
+        }
         #endregion
         #region Supplyer Report
         [HttpGet]
@@ -212,6 +228,26 @@ namespace FMS.Controllers.Print
         }
         [HttpGet]
         public async Task<IActionResult> SupplyerDetailedReportPrint([FromQuery] PartyReportDataRequest requestData)
+        {
+           // var result = await _reportSvcs.GetDetailedSupplyerReport(requestData);
+            var result = requestData.Type == null
+            ? await _reportSvcs.GetDetailedSupplyerReport(requestData)
+            : await _reportSvcs.GetDetailedSupplyerReportForAll(requestData);
+            var SupplyerDetailedData = new CustomerSummarizedModel();
+            SupplyerDetailedData.FromDate = requestData.FromDate;
+            SupplyerDetailedData.ToDate = requestData.ToDate;
+            SupplyerDetailedData.PartyDetailedReports = result.PartyDetailed;
+            var CustomerDetailedReportModal = new CustomerReportDataModel()
+            {
+                Cmopany = _adminSvcs.GetCompany().Result.GetCompany,
+                Customers = SupplyerDetailedData
+            };
+            return View(CustomerDetailedReportModal);
+
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> SupplyerDetailedReportShortPrint([FromQuery] PartyReportDataRequest requestData)
         {
             var result = requestData.Type == null
             ? await _reportSvcs.GetDetailedSupplyerReport(requestData)

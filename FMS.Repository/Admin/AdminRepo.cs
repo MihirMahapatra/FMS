@@ -1676,7 +1676,7 @@ namespace FMS.Repository.Admin
             {
                 _Result.IsSuccess = false;
                 Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
-                var Query = await _appDbContext.LabourRates.Where(s => s.Fk_FinancialYearId == FinancialYear && s.Fk_ProductTypeId == ProductTypeId)
+                var Query = await _appDbContext.LabourRates.Where(s => s.Fk_ProductTypeId == ProductTypeId)
                                    .Select(lr => new LabourRateModel
                                    {
                                        LabourRateId = lr.LabourRateId,
@@ -1707,7 +1707,7 @@ namespace FMS.Repository.Admin
                 _Result.IsSuccess = false;
                 Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
                 Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
-                var Query = await _appDbContext.LabourRates.Where(s => s.Fk_FinancialYearId == FinancialYear && s.Fk_ProductTypeId == ProductTypeId && s.Fk_BranchId == BranchId)
+                var Query = await _appDbContext.LabourRates.Where(s => s.Fk_ProductTypeId == ProductTypeId && s.Fk_BranchId == BranchId)
                                    .Select(lr => new LabourRateModel
                                    {
                                        LabourRateId = lr.LabourRateId,

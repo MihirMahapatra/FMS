@@ -23,13 +23,6 @@
     const ddlZeroValuedDetailed = $('select[name="ddlDetailedZerovalued"]');
     var PrintData = {};
     //var PrintDataDetailed = {};
-    var table = $('#Summarizedtbl').DataTable({
-        "responsive": true,
-        "lengthChange": false,
-        "ordering": true,
-        "autoWidth": false,
-        "searching": true
-    });
     //-----------------------------------stock Report Summerized---------------------------------------//
     GetAllProductTypes();
     function GetAllProductTypes() {
@@ -132,7 +125,6 @@
                                 html += '<td>' + item.OutwardQty.toFixed(2) + '</td>';
                                 html += '<td>' + item.InwardQty.toFixed(2) + '</td>';
                                 var closing = item.OpeningQty + item.PurchaseQty + item.ProductionQty + item.SalesReturnQty + item.InwardQty - item.PurchaseReturnQty - item.SalesQty - item.DamageQty - item.OutwardQty - item.ProductionEntryQty;
-                                html += '<td>' + closing.toFixed(2) + ' ' + item.UnitName + '</td>';
                                 if (0 > closing) {
                                     html += '<td class="bg-danger text-white">' + closing.toFixed(2) + ' ' + item.UnitName + '</td>';
                                 }
@@ -141,14 +133,8 @@
                                 }
                                 html += '</tr >';
                             }
-
                         });
                         $('#BtnPrintSummarized').show();
-                        PrintData = {
-                            FromDate: fromDate.val(),
-                            ToDate: toDate.val(),
-                            StockReport: result.StockReports
-                        };
                     }
                     else {
                         html += '<tr>';
@@ -158,6 +144,12 @@
                     html += ' </tbody>';
                     html += '</table >';
                     $('.tblSummerizedStockList').html(html);
+                    if (!$.fn.DataTable.isDataTable('.SummerizedStockReportTable')) {
+                        var table = $('.SummerizedStockReportTable').DataTable({
+                            "responsive": true, "lengthChange": false, "autoWidth": false, "searching": true,
+                           
+                        });
+                    }
                 },
                 error: function (errormessage) {
                     $('#loader').hide();

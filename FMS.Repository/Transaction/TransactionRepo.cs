@@ -227,7 +227,7 @@ namespace FMS.Repository.Transaction
                         #region Ledger & Sub Ledger
                         var datass = FinancialYear;
                         // @ Purchase A/c --------------- Dr
-                        var updatePurchaseledgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.PurchaseAccount && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                        var updatePurchaseledgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.PurchaseAccount && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                         if (updatePurchaseledgerBalance != null)
                         {
                             updatePurchaseledgerBalance.RunningBalance += newPurchaseOrder.GrandTotal;
@@ -251,7 +251,7 @@ namespace FMS.Repository.Transaction
                         }
                         // @SundryCreditor A/c ------------ Cr
                         var LedgerBalanceId = Guid.Empty;
-                        var updateSundryCreditorLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.SundryCreditors && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                        var updateSundryCreditorLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.SundryCreditors && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                         if (updateSundryCreditorLedgerBalance != null)
                         {
                             updateSundryCreditorLedgerBalance.RunningBalance -= newPurchaseOrder.GrandTotal;
@@ -275,7 +275,7 @@ namespace FMS.Repository.Transaction
                             await _appDbContext.SaveChangesAsync();
                             LedgerBalanceId = newLedgerBalance.LedgerBalanceId;
                         }
-                        var updateSundryCreditorSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == newPurchaseOrder.Fk_SubLedgerId && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).SingleOrDefaultAsync();
+                        var updateSundryCreditorSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == newPurchaseOrder.Fk_SubLedgerId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                         if (updateSundryCreditorSubledgerBalance != null)
                         {
                             updateSundryCreditorSubledgerBalance.RunningBalance -= newPurchaseOrder.GrandTotal;
@@ -300,7 +300,7 @@ namespace FMS.Repository.Transaction
                             await _appDbContext.SaveChangesAsync();
                         }
                         //@TransportingChargePayment A/c--------Cr
-                        var updateTransportingChargePaymentBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.TransportingChargePayment && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                        var updateTransportingChargePaymentBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.TransportingChargePayment && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                         if (updateTransportingChargePaymentBalance != null)
                         {
                             updateTransportingChargePaymentBalance.RunningBalance -= newPurchaseOrder.TransportationCharges;
@@ -399,7 +399,7 @@ namespace FMS.Repository.Transaction
                             await _appDbContext.SaveChangesAsync();
                             #endregion
                             #region Update Stock
-                            var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == newPurchaseTransaction.Fk_ProductId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                            var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == newPurchaseTransaction.Fk_ProductId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                             if (UpdateStock != null)
                             {
                                 UpdateStock.AvilableStock += newPurchaseTransaction.UnitQuantity;
@@ -460,7 +460,7 @@ namespace FMS.Repository.Transaction
                                 {
                                     var difference = data.GrandTotal - UpdatePurchaseOrder.GrandTotal;
                                     // @ Purchase A/c --------------- Dr
-                                    var updatePurchaseledgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.PurchaseAccount && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                    var updatePurchaseledgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.PurchaseAccount && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                                     if (updatePurchaseledgerBalance != null)
                                     {
                                         updatePurchaseledgerBalance.RunningBalance += difference;
@@ -473,7 +473,7 @@ namespace FMS.Repository.Transaction
                                         return _Result;
                                     }
                                     // @SundryCreditor A/c ------------ Cr
-                                    var updateSundryCreditorSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == UpdatePurchaseOrder.Fk_SubLedgerId && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).SingleOrDefaultAsync();
+                                    var updateSundryCreditorSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == UpdatePurchaseOrder.Fk_SubLedgerId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                                     if (updateSundryCreditorSubledgerBalance != null)
                                     {
                                         updateSundryCreditorSubledgerBalance.RunningBalance -= difference;
@@ -500,7 +500,7 @@ namespace FMS.Repository.Transaction
                                     {
                                         var TransportChargedifference = data.TransportationCharges - UpdatePurchaseOrder.TransportationCharges;
                                         //@TransportingChargePayment A/c--------Cr
-                                        var updateTransportingChargePaymentBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.TransportingChargePayment && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                        var updateTransportingChargePaymentBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.TransportingChargePayment && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                                         if (updateTransportingChargePaymentBalance != null)
                                         {
                                             updateTransportingChargePaymentBalance.RunningBalance -= TransportChargedifference;
@@ -582,14 +582,14 @@ namespace FMS.Repository.Transaction
                                         await _appDbContext.SaveChangesAsync();
                                         #endregion
                                         #region Update Stock
-                                        var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == UpdatePurchaseTransaction.Fk_ProductId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                        var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == UpdatePurchaseTransaction.Fk_ProductId && s.Fk_BranchId == BranchId ).SingleOrDefaultAsync();
                                         if (UpdateStock != null)
                                         {
                                             if (UpdatePurchaseTransaction.Fk_ProductId != Guid.Parse(item[1]))
                                             {
                                                 UpdateStock.AvilableStock -= UpdatePurchaseTransaction.UnitQuantity;
                                                 await _appDbContext.SaveChangesAsync();
-                                                var UpdateNewStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == Guid.Parse(item[1]) && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                                var UpdateNewStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == Guid.Parse(item[1]) && s.Fk_BranchId == BranchId ).SingleOrDefaultAsync();
                                                 if (UpdateNewStock != null)
                                                 {
                                                     UpdateNewStock.AvilableStock += Convert.ToDecimal(item[4]);
@@ -662,7 +662,7 @@ namespace FMS.Repository.Transaction
                                         await _appDbContext.SaveChangesAsync();
                                         #endregion
                                         #region Update Stock
-                                        var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == newPurchaseTransaction.Fk_ProductId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                        var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == newPurchaseTransaction.Fk_ProductId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                                         if (UpdateStock != null)
                                         {
                                             UpdateStock.AvilableStock += newPurchaseTransaction.UnitQuantity;
@@ -689,7 +689,7 @@ namespace FMS.Repository.Transaction
                             }
                             else
                             {
-                                _Result.WarningMessage = "If Your Intension To Update Party Name Plz Delate This Record And Then Crate It";
+                                _Result.WarningMessage = "If Your Intension To Update Party Name Plz Delete This Record And Then Create It";
                                 return _Result;
                             }
                         }
@@ -732,7 +732,7 @@ namespace FMS.Repository.Transaction
                             foreach (var item in deletePurchaseTransaction)
                             {
                                 #region Stock
-                                var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == item.Fk_ProductId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == item.Fk_ProductId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                                 if (UpdateStock != null)
                                 {
                                     UpdateStock.AvilableStock -= item.UnitQuantity;
@@ -760,12 +760,12 @@ namespace FMS.Repository.Transaction
                             }
                             #endregion
                             #region Ledger & SubLedger
-                            var updateSundryCreditorSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == deletePurchaseOrders.Fk_SubLedgerId && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).SingleOrDefaultAsync();
+                            var updateSundryCreditorSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == deletePurchaseOrders.Fk_SubLedgerId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                             if (updateSundryCreditorSubledgerBalance != null)
                             {
                                 updateSundryCreditorSubledgerBalance.RunningBalance += deletePurchaseOrders.GrandTotal;
                                 await _appDbContext.SaveChangesAsync();
-                                var updateSundryCreditorLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.SundryCreditors && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                var updateSundryCreditorLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.SundryCreditors && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                                 if (updateSundryCreditorLedgerBalance != null)
                                 {
                                     updateSundryCreditorLedgerBalance.RunningBalance += deletePurchaseOrders.GrandTotal;
@@ -783,7 +783,7 @@ namespace FMS.Repository.Transaction
                                 _Result.WarningMessage = "SubLedger Balance Not Exist";
                                 return _Result;
                             }
-                            var updatePurchasedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.PurchaseAccount && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                            var updatePurchasedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.PurchaseAccount && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                             if (updatePurchasedgerBalance != null)
                             {
                                 updatePurchasedgerBalance.RunningBalance -= deletePurchaseOrders.GrandTotal;
@@ -982,7 +982,7 @@ namespace FMS.Repository.Transaction
                         #endregion
                         #region Ledger & Sub Ledger
                         // @ PurchaseReturn A/c --------- Cr
-                        var updatePurchaseReturnledgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.PurchaseReturnAccount && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                        var updatePurchaseReturnledgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.PurchaseReturnAccount && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                         if (updatePurchaseReturnledgerBalance != null)
                         {
                             updatePurchaseReturnledgerBalance.RunningBalance -= newPurchaseReturnOrder.GrandTotal;
@@ -1029,7 +1029,7 @@ namespace FMS.Repository.Transaction
                         }*/
                         // @SundryCreditor A/c ------------ Dr
                         var LedgerBalanceId = Guid.Empty;
-                        var updateSundryCreditorLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.SundryCreditors && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                        var updateSundryCreditorLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.SundryCreditors && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                         if (updateSundryCreditorLedgerBalance != null)
                         {
                             updateSundryCreditorLedgerBalance.RunningBalance += newPurchaseReturnOrder.GrandTotal;
@@ -1053,7 +1053,7 @@ namespace FMS.Repository.Transaction
                             await _appDbContext.SaveChangesAsync();
                             LedgerBalanceId = newLedgerBalance.LedgerBalanceId;
                         }
-                        var updateSundryCreditorSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == newPurchaseReturnOrder.Fk_SubLedgerId && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).SingleOrDefaultAsync();
+                        var updateSundryCreditorSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == newPurchaseReturnOrder.Fk_SubLedgerId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                         if (updateSundryCreditorSubledgerBalance != null)
                         {
                             updateSundryCreditorSubledgerBalance.RunningBalance += newPurchaseReturnOrder.GrandTotal;
@@ -1154,7 +1154,7 @@ namespace FMS.Repository.Transaction
                             await _appDbContext.SaveChangesAsync();
                             #endregion
                             #region Stock
-                            var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == newPurchaseReturnTransaction.Fk_ProductId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                            var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == newPurchaseReturnTransaction.Fk_ProductId && s.Fk_BranchId == BranchId ).SingleOrDefaultAsync();
                             if (UpdateStock != null)
                             {
                                 UpdateStock.AvilableStock -= newPurchaseReturnTransaction.UnitQuantity;
@@ -1216,7 +1216,7 @@ namespace FMS.Repository.Transaction
                                     var difference = data.GrandTotal - UpdatePurchaseReturnOrder.GrandTotal;
                                     #region Ledger & Sub Ledger
                                     // @ PurchaseReturn A/c --------- Cr
-                                    var updatePurchaseReturnledgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.PurchaseReturnAccount && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                    var updatePurchaseReturnledgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.PurchaseReturnAccount && s.Fk_BranchId == BranchId ).SingleOrDefaultAsync();
                                     if (updatePurchaseReturnledgerBalance != null)
                                     {
                                         updatePurchaseReturnledgerBalance.RunningBalance -= difference;
@@ -1229,12 +1229,12 @@ namespace FMS.Repository.Transaction
                                         return _Result;
                                     }
                                     // @SundryCreditor A/c ------------ Dr
-                                    var updateSundryCreditorSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == UpdatePurchaseReturnOrder.Fk_SubLedgerId && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).SingleOrDefaultAsync();
+                                    var updateSundryCreditorSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == UpdatePurchaseReturnOrder.Fk_SubLedgerId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                                     if (updateSundryCreditorSubledgerBalance != null)
                                     {
                                         updateSundryCreditorSubledgerBalance.RunningBalance += difference;
                                         updateSundryCreditorSubledgerBalance.RunningBalanceType = (updateSundryCreditorSubledgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
-                                        var updateSundryCreditorLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.LedgerBalanceId == updateSundryCreditorSubledgerBalance.Fk_LedgerBalanceId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                        var updateSundryCreditorLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.LedgerBalanceId == updateSundryCreditorSubledgerBalance.Fk_LedgerBalanceId && s.Fk_BranchId == BranchId ).SingleOrDefaultAsync();
                                         if (updateSundryCreditorLedgerBalance != null)
                                         {
                                             updateSundryCreditorLedgerBalance.RunningBalance += difference;
@@ -1287,14 +1287,14 @@ namespace FMS.Repository.Transaction
                                     {
                                         var UpdatePurchaseReturnTransaction = await _appDbContext.PurchaseReturnTransactions.Where(s => s.PurchaseReturnId == PurchaseReturnId && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).SingleOrDefaultAsync();
                                         #region Stock
-                                        var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == UpdatePurchaseReturnTransaction.Fk_ProductId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                        var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == UpdatePurchaseReturnTransaction.Fk_ProductId && s.Fk_BranchId == BranchId ).SingleOrDefaultAsync();
                                         if (UpdateStock != null)
                                         {
                                             if (UpdatePurchaseReturnTransaction.Fk_ProductId != Guid.Parse(item[1]))
                                             {
                                                 UpdateStock.AvilableStock -= UpdatePurchaseReturnTransaction.UnitQuantity;
                                                 await _appDbContext.SaveChangesAsync();
-                                                var UpdateNewStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == Guid.Parse(item[1]) && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                                var UpdateNewStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == Guid.Parse(item[1]) && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                                                 if (UpdateNewStock != null)
                                                 {
                                                     UpdateNewStock.AvilableStock -= Convert.ToDecimal(item[4]);
@@ -1388,7 +1388,7 @@ namespace FMS.Repository.Transaction
                                         await _appDbContext.SaveChangesAsync();
                                         #endregion
                                         #region Stock
-                                        var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == newPurchaseReturnTransaction.Fk_ProductId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                        var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == newPurchaseReturnTransaction.Fk_ProductId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                                         if (UpdateStock != null)
                                         {
                                             UpdateStock.AvilableStock -= newPurchaseReturnTransaction.UnitQuantity;
@@ -1458,7 +1458,7 @@ namespace FMS.Repository.Transaction
                             foreach (var item in deletePurchaseReturnTransaction)
                             {
                                 #region Stock
-                                var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == item.Fk_ProductId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == item.Fk_ProductId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                                 if (UpdateStock != null)
                                 {
                                     UpdateStock.AvilableStock += item.UnitQuantity;
@@ -1479,12 +1479,12 @@ namespace FMS.Repository.Transaction
                             await _appDbContext.SaveChangesAsync();
                             #endregion
                             #region LedgerBalance & Subledger
-                            var updateSundryCreditorSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == deletePurchaseReturnsOrders.Fk_SubLedgerId && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).SingleOrDefaultAsync();
+                            var updateSundryCreditorSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == deletePurchaseReturnsOrders.Fk_SubLedgerId && s.Fk_BranchId == BranchId ).SingleOrDefaultAsync();
                             if (updateSundryCreditorSubledgerBalance != null)
                             {
                                 updateSundryCreditorSubledgerBalance.RunningBalance -= deletePurchaseReturnsOrders.GrandTotal;
                                 updateSundryCreditorSubledgerBalance.RunningBalanceType = updateSundryCreditorSubledgerBalance.RunningBalance > 0 ? "Dr" : "Cr";
-                                var updateSundryCreditorLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.LedgerBalanceId == updateSundryCreditorSubledgerBalance.Fk_LedgerBalanceId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                var updateSundryCreditorLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.LedgerBalanceId == updateSundryCreditorSubledgerBalance.Fk_LedgerBalanceId && s.Fk_BranchId == BranchId ).SingleOrDefaultAsync();
                                 if (updateSundryCreditorLedgerBalance != null)
                                 {
                                     updateSundryCreditorLedgerBalance.RunningBalance -= deletePurchaseReturnsOrders.GrandTotal;
@@ -1492,7 +1492,7 @@ namespace FMS.Repository.Transaction
                                 }
                                 await _appDbContext.SaveChangesAsync();
                             }
-                            var updatePurchaseReturnldgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.PurchaseReturnAccount && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                            var updatePurchaseReturnldgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.PurchaseReturnAccount && s.Fk_BranchId == BranchId ).SingleOrDefaultAsync();
                             if (updatePurchaseReturnldgerBalance != null)
                             {
                                 updatePurchaseReturnldgerBalance.RunningBalance += deletePurchaseReturnsOrders.GrandTotal;
@@ -1662,7 +1662,7 @@ namespace FMS.Repository.Transaction
                             #endregion
                             #region Stock
                             //Update Finishedgood stock
-                            var UpdateFinishedGoodStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == newProductionEntry.Fk_ProductId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                            var UpdateFinishedGoodStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == newProductionEntry.Fk_ProductId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                             if (UpdateFinishedGoodStock != null)
                             {
                                 UpdateFinishedGoodStock.AvilableStock += newProductionEntry.Quantity;
@@ -1686,7 +1686,7 @@ namespace FMS.Repository.Transaction
                             {
                                 foreach (var item1 in getFinishedGoodRawmaterial)
                                 {
-                                    var UpdateRawMaterialStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == item1.Fk_RawMaterialId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                    var UpdateRawMaterialStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == item1.Fk_RawMaterialId && s.Fk_BranchId == BranchId ).SingleOrDefaultAsync();
                                     if (UpdateRawMaterialStock != null)
                                     {
                                         UpdateRawMaterialStock.AvilableStock -= (newProductionEntry.Quantity * item1.Quantity);
@@ -1732,7 +1732,7 @@ namespace FMS.Repository.Transaction
                             var getLabourSubLedger = await _appDbContext.Labours.Where(s => s.LabourId == newProductionEntry.Fk_LabourId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                             if (getLabourSubLedger != null)
                             {
-                                var updateLaourLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.LabourAccount && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                var updateLaourLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.LabourAccount && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                                 if (updateLaourLedgerBalance != null)
                                 {
                                     updateLaourLedgerBalance.RunningBalance -= newProductionEntry.Amount;
@@ -1756,7 +1756,7 @@ namespace FMS.Repository.Transaction
                                     await _appDbContext.SaveChangesAsync();
                                     LedgerBalanceId = newLedgerBalance.LedgerBalanceId;
                                 }
-                                var updateLaourSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == getLabourSubLedger.Fk_SubLedgerId && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).SingleOrDefaultAsync();
+                                var updateLaourSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == getLabourSubLedger.Fk_SubLedgerId && s.Fk_BranchId == BranchId ).SingleOrDefaultAsync();
                                 if (updateLaourSubledgerBalance != null)
                                 {
                                     updateLaourSubledgerBalance.RunningBalance -= newProductionEntry.Amount;
@@ -1787,7 +1787,7 @@ namespace FMS.Repository.Transaction
                                 return _Result;
                             }
                             // @labourCharges A/c--------Dr
-                            var updatelabourChargesLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.LabourCharges && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                            var updatelabourChargesLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.LabourCharges && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                             if (updatelabourChargesLedgerBalance != null)
                             {
                                 updatelabourChargesLedgerBalance.RunningBalance += newProductionEntry.Amount;
@@ -1848,7 +1848,7 @@ namespace FMS.Repository.Transaction
                             var getFinishedGoodRawmaterial = await _appDbContext.Productions.Where(s => s.Fk_FinishedGoodId == data.Fk_ProductId).ToListAsync();
                             if (getFinishedGoodRawmaterial.Count > 0)
                             {
-                                var UpdateFinishedGoodStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == data.Fk_ProductId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                var UpdateFinishedGoodStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == data.Fk_ProductId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                                 if (data.Fk_ProductId == UpdateProductionEntry.Fk_ProductId)
                                 {
                                     #region Update Stock
@@ -1874,7 +1874,7 @@ namespace FMS.Repository.Transaction
                                     //Update RawMaterial Stock
                                     foreach (var item in getFinishedGoodRawmaterial)
                                     {
-                                        var UpdateRawMaterialStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == item.Fk_RawMaterialId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                        var UpdateRawMaterialStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == item.Fk_RawMaterialId && s.Fk_BranchId == BranchId ).SingleOrDefaultAsync();
                                         if (UpdateRawMaterialStock != null)
                                         {
                                             var quantityDifference = ((UpdateProductionEntry.Quantity - data.Quantity) * item.Quantity);
@@ -1902,7 +1902,7 @@ namespace FMS.Repository.Transaction
                                     {
                                         foreach (var item in getOldProductFinishedGoodRawmaterial)
                                         {
-                                            var UpdateRawMaterialStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == item.Fk_RawMaterialId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                            var UpdateRawMaterialStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == item.Fk_RawMaterialId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                                             if (UpdateRawMaterialStock != null)
                                             {
                                                 UpdateRawMaterialStock.AvilableStock += (item.Quantity * UpdateProductionEntry.Quantity);
@@ -1910,7 +1910,7 @@ namespace FMS.Repository.Transaction
                                             }
                                         }
                                         //Revert FinishedGood Stock
-                                        var UpdateOldFinishedGoodStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == UpdateProductionEntry.Fk_ProductId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                        var UpdateOldFinishedGoodStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == UpdateProductionEntry.Fk_ProductId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                                         if (UpdateOldFinishedGoodStock != null)
                                         {
                                             UpdateOldFinishedGoodStock.AvilableStock -= UpdateProductionEntry.Quantity;
@@ -1932,7 +1932,7 @@ namespace FMS.Repository.Transaction
                                     //Update RawMaterial Stock
                                     foreach (var item in getFinishedGoodRawmaterial)
                                     {
-                                        var UpdateRawMaterialStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == item.Fk_RawMaterialId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                        var UpdateRawMaterialStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == item.Fk_RawMaterialId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                                         if (UpdateRawMaterialStock != null)
                                         {
                                             UpdateRawMaterialStock.AvilableStock -= (data.Quantity * item.Quantity);
@@ -1986,12 +1986,12 @@ namespace FMS.Repository.Transaction
                             var getLabourSubLedger = await _appDbContext.Labours.Where(s => s.LabourId == UpdateProductionEntry.Fk_LabourId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                             if (getLabourSubLedger != null)
                             {
-                                var updateSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == getLabourSubLedger.Fk_SubLedgerId && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).SingleOrDefaultAsync();
+                                var updateSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == getLabourSubLedger.Fk_SubLedgerId && s.Fk_BranchId == BranchId ).SingleOrDefaultAsync();
                                 if (updateSubledgerBalance != null)
                                 {
                                     updateSubledgerBalance.RunningBalance -= difference;
                                     updateSubledgerBalance.RunningBalanceType = (updateSubledgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
-                                    var updateLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.LabourAccount && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                    var updateLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.LabourAccount && s.Fk_BranchId == BranchId ).SingleOrDefaultAsync();
                                     if (updateLedgerBalance != null)
                                     {
                                         updateLedgerBalance.RunningBalance -= difference;
@@ -2016,7 +2016,7 @@ namespace FMS.Repository.Transaction
                                 return _Result;
                             }
                             // @labourCharges A/c--------Dr
-                            var updatelabourChargesLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.LabourCharges && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                            var updatelabourChargesLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.LabourCharges && s.Fk_BranchId == BranchId ).SingleOrDefaultAsync();
                             if (updatelabourChargesLedgerBalance != null)
                             {
                                 updatelabourChargesLedgerBalance.RunningBalance += difference;
@@ -2098,7 +2098,7 @@ namespace FMS.Repository.Transaction
                             #endregion
                             #region Stock
                             //Update FinidhedGoog Stocks (-)
-                            var UpdateFinishedGoodStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == DeleteProductionEntry.Fk_ProductId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                            var UpdateFinishedGoodStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == DeleteProductionEntry.Fk_ProductId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                             if (UpdateFinishedGoodStock != null)
                             {
                                 UpdateFinishedGoodStock.AvilableStock -= DeleteProductionEntry.Quantity;
@@ -2110,14 +2110,14 @@ namespace FMS.Repository.Transaction
                             var getLabourSubLedger = await _appDbContext.Labours.Where(s => s.LabourId == DeleteProductionEntry.Fk_LabourId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                             if (getLabourSubLedger != null)
                             {
-                                var updateLabourSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == getLabourSubLedger.Fk_SubLedgerId && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).SingleOrDefaultAsync();
+                                var updateLabourSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == getLabourSubLedger.Fk_SubLedgerId && s.Fk_BranchId == BranchId ).SingleOrDefaultAsync();
                                 if (updateLabourSubledgerBalance != null)
                                 {
                                     if (DeleteProductionEntry.Fk_LabourId == getLabourSubLedger.LabourId)
                                     {
                                         updateLabourSubledgerBalance.RunningBalance += DeleteProductionEntry.Amount;
                                         updateLabourSubledgerBalance.RunningBalanceType = (updateLabourSubledgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
-                                        var updateLabourLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.LedgerBalanceId == updateLabourSubledgerBalance.Fk_LedgerBalanceId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                        var updateLabourLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.LedgerBalanceId == updateLabourSubledgerBalance.Fk_LedgerBalanceId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                                         if (updateLabourLedgerBalance != null)
                                         {
                                             updateLabourLedgerBalance.RunningBalance += DeleteProductionEntry.Amount;
@@ -2128,7 +2128,7 @@ namespace FMS.Repository.Transaction
                                 }
                             }
                             // @labourCharges A/c--------Dr
-                            var updatelabourChargesLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.LabourCharges && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                            var updatelabourChargesLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.LabourCharges && s.Fk_BranchId == BranchId ).SingleOrDefaultAsync();
                             if (updatelabourChargesLedgerBalance != null)
                             {
                                 updatelabourChargesLedgerBalance.RunningBalance -= DeleteProductionEntry.Amount;
@@ -2269,7 +2269,7 @@ namespace FMS.Repository.Transaction
                             var getLabourSubLedger = await _appDbContext.Labours.Where(s => s.LabourId == newProductionEntry.Fk_LabourId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                             if (getLabourSubLedger != null)
                             {
-                                var updateLaourLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.LabourAccount && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                var updateLaourLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.LabourAccount && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                                 if (updateLaourLedgerBalance != null)
                                 {
                                     updateLaourLedgerBalance.RunningBalance -= newProductionEntry.Amount;
@@ -2293,7 +2293,7 @@ namespace FMS.Repository.Transaction
                                     await _appDbContext.SaveChangesAsync();
                                     LedgerBalanceId = newLedgerBalance.LedgerBalanceId;
                                 }
-                                var updateLaourSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == getLabourSubLedger.Fk_SubLedgerId && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).SingleOrDefaultAsync();
+                                var updateLaourSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == getLabourSubLedger.Fk_SubLedgerId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                                 if (updateLaourSubledgerBalance != null)
                                 {
                                     updateLaourSubledgerBalance.RunningBalance -= newProductionEntry.Amount;
@@ -2324,7 +2324,7 @@ namespace FMS.Repository.Transaction
                                 return _Result;
                             }
                             // @labourCharges A/c--------Dr
-                            var updatelabourChargesLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.LabourCharges && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                            var updatelabourChargesLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.LabourCharges && s.Fk_BranchId == BranchId ).SingleOrDefaultAsync();
                             if (updatelabourChargesLedgerBalance != null)
                             {
                                 updatelabourChargesLedgerBalance.RunningBalance += newProductionEntry.Amount;
@@ -2388,12 +2388,12 @@ namespace FMS.Repository.Transaction
                             var getLabourSubLedger = await _appDbContext.Labours.Where(s => s.LabourId == UpdateProductionEntry.Fk_LabourId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                             if (getLabourSubLedger != null)
                             {
-                                var updateSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == getLabourSubLedger.Fk_SubLedgerId && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).SingleOrDefaultAsync();
+                                var updateSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == getLabourSubLedger.Fk_SubLedgerId && s.Fk_BranchId == BranchId ).SingleOrDefaultAsync();
                                 if (updateSubledgerBalance != null)
                                 {
                                     updateSubledgerBalance.RunningBalance -= difference;
                                     updateSubledgerBalance.RunningBalanceType = (updateSubledgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
-                                    var updateLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.LabourAccount && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                    var updateLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.LabourAccount && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                                     if (updateLedgerBalance != null)
                                     {
                                         updateLedgerBalance.RunningBalance -= difference;
@@ -2419,7 +2419,7 @@ namespace FMS.Repository.Transaction
                                 return _Result;
                             }
                             // @labourCharges A/c--------Dr
-                            var updatelabourChargesLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.LabourCharges && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                            var updatelabourChargesLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.LabourCharges && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                             if (updatelabourChargesLedgerBalance != null)
                             {
                                 updatelabourChargesLedgerBalance.RunningBalance += difference;
@@ -2492,14 +2492,14 @@ namespace FMS.Repository.Transaction
                             var getLabourSubLedger = await _appDbContext.Labours.Where(s => s.LabourId == DeleteProductionEntry.Fk_LabourId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                             if (getLabourSubLedger != null)
                             {
-                                var updateLabourSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == getLabourSubLedger.Fk_SubLedgerId && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).SingleOrDefaultAsync();
+                                var updateLabourSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == getLabourSubLedger.Fk_SubLedgerId && s.Fk_BranchId == BranchId ).SingleOrDefaultAsync();
                                 if (updateLabourSubledgerBalance != null)
                                 {
                                     if (DeleteProductionEntry.Fk_LabourId == getLabourSubLedger.LabourId)
                                     {
                                         updateLabourSubledgerBalance.RunningBalance += DeleteProductionEntry.Amount;
                                         updateLabourSubledgerBalance.RunningBalanceType = (updateLabourSubledgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
-                                        var updateLabourLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.LedgerBalanceId == updateLabourSubledgerBalance.Fk_LedgerBalanceId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                        var updateLabourLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.LedgerBalanceId == updateLabourSubledgerBalance.Fk_LedgerBalanceId && s.Fk_BranchId == BranchId ).SingleOrDefaultAsync();
                                         if (updateLabourLedgerBalance != null)
                                         {
                                             updateLabourLedgerBalance.RunningBalance += DeleteProductionEntry.Amount;
@@ -2510,7 +2510,7 @@ namespace FMS.Repository.Transaction
                                 }
                             }
                             // @labourCharges A/c--------Dr
-                            var updatelabourChargesLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.LabourCharges && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                            var updatelabourChargesLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.LabourCharges && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                             if (updatelabourChargesLedgerBalance != null)
                             {
                                 updatelabourChargesLedgerBalance.RunningBalance -= DeleteProductionEntry.Amount;
@@ -2841,7 +2841,7 @@ namespace FMS.Repository.Transaction
                             /*********************************Update Ledger & SubLedger Balance********************************/
                             // @SundryDebitors A/c -----Dr
                             var LedgerBalanceId = Guid.Empty;
-                            var updateSundryDebitorsLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.SundryDebtors && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                            var updateSundryDebitorsLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.SundryDebtors && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                             if (updateSundryDebitorsLedgerBalance != null)
                             {
                                 updateSundryDebitorsLedgerBalance.RunningBalance += newSalesOrder.GrandTotal;
@@ -2865,7 +2865,7 @@ namespace FMS.Repository.Transaction
                                 await _appDbContext.SaveChangesAsync();
                                 LedgerBalanceId = newLedgerBalance.LedgerBalanceId;
                             }
-                            var updateSundryDebitorsSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == newSalesOrder.Fk_SubLedgerId && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).SingleOrDefaultAsync();
+                            var updateSundryDebitorsSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == newSalesOrder.Fk_SubLedgerId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                             if (updateSundryDebitorsSubledgerBalance != null)
                             {
                                 updateSundryDebitorsSubledgerBalance.RunningBalance += newSalesOrder.GrandTotal;
@@ -2889,7 +2889,7 @@ namespace FMS.Repository.Transaction
                                 await _appDbContext.SaveChangesAsync();
                             }
                             // @Sales A/c ------Cr
-                            var updateSalesLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.SalesAccount && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                            var updateSalesLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.SalesAccount && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                             if (updateSalesLedgerBalance != null)
                             {
                                 updateSalesLedgerBalance.RunningBalance -= newSalesOrder.GrandTotal;
@@ -2912,7 +2912,7 @@ namespace FMS.Repository.Transaction
                                 await _appDbContext.SaveChangesAsync();
                             }
                             //@TransportingChargeRecive A/c--------Dr
-                            var updateTransportingChargeReciveBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.TransportingChargeRecive && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                            var updateTransportingChargeReciveBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.TransportingChargeRecive && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                             if (updateTransportingChargeReciveBalance != null)
                             {
                                 updateTransportingChargeReciveBalance.RunningBalance += newSalesOrder.TransportationCharges;
@@ -2973,7 +2973,7 @@ namespace FMS.Repository.Transaction
                             #region Ledger & SubLedger
                             /***************************************Update Ledger Balance************************************/
                             // @cash A/c -----Dr
-                            var updateCashLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.CashAccount && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                            var updateCashLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.CashAccount && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                             if (updateCashLedgerBalance != null)
                             {
                                 updateCashLedgerBalance.RunningBalance += newSalesOrder.GrandTotal;
@@ -2996,7 +2996,7 @@ namespace FMS.Repository.Transaction
                                 await _appDbContext.SaveChangesAsync();
                             }
                             //@sales A/c -----Cr
-                            var updateSalesLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.SalesAccount && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                            var updateSalesLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.SalesAccount && s.Fk_BranchId == BranchId ).SingleOrDefaultAsync();
                             if (updateSalesLedgerBalance != null)
                             {
                                 updateSalesLedgerBalance.RunningBalance -= newSalesOrder.GrandTotal;
@@ -3019,7 +3019,7 @@ namespace FMS.Repository.Transaction
                                 await _appDbContext.SaveChangesAsync();
                             }
                             //@TransportingChargeRecive A/c--------Dr
-                            var updateTransportingChargeReciveBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.TransportingChargeRecive && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                            var updateTransportingChargeReciveBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.TransportingChargeRecive && s.Fk_BranchId == BranchId ).SingleOrDefaultAsync();
                             if (updateTransportingChargeReciveBalance != null)
                             {
                                 updateTransportingChargeReciveBalance.RunningBalance += newSalesOrder.TransportationCharges;
@@ -3141,7 +3141,7 @@ namespace FMS.Repository.Transaction
                                 {
                                     foreach (var item2 in getFinishedGoodSalesConfig2)
                                     {
-                                        var UpdateFhinishedGoodStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == item2.Fk_SubFinishedGoodId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                        var UpdateFhinishedGoodStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == item2.Fk_SubFinishedGoodId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                                         if (UpdateFhinishedGoodStock != null)
                                         {
                                             var Unit = _appDbContext.AlternateUnits.Where(s => s.FK_ProductId == item2.Fk_SubFinishedGoodId).FirstOrDefault();
@@ -3181,7 +3181,7 @@ namespace FMS.Repository.Transaction
                                 }
                                 else
                                 {
-                                    var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == Guid.Parse(item[1]) && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                    var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == Guid.Parse(item[1]) && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
 
                                     if (UpdateStock != null)
                                     {
@@ -3266,7 +3266,7 @@ namespace FMS.Repository.Transaction
                                 {
                                     foreach (var item1 in getFinishedGoodSalesConfig)
                                     {
-                                        var UpdateFhinishedGoodStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == item1.Fk_SubFinishedGoodId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                        var UpdateFhinishedGoodStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == item1.Fk_SubFinishedGoodId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                                         if (UpdateFhinishedGoodStock != null)
                                         {
                                             var Unit = _appDbContext.AlternateUnits.Where(s => s.FK_ProductId == item1.Fk_SubFinishedGoodId).FirstOrDefault();
@@ -3306,7 +3306,7 @@ namespace FMS.Repository.Transaction
                                 }
                                 else
                                 {
-                                    var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == Guid.Parse(item[1]) && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                    var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == Guid.Parse(item[1]) && s.Fk_BranchId == BranchId ).SingleOrDefaultAsync();
 
                                     if (UpdateStock != null)
                                     {
@@ -3376,12 +3376,12 @@ namespace FMS.Repository.Transaction
                                     if (UpdateSalesOrder.GrandTotal != data.GrandTotal)
                                     {
                                         // @SundryDebitors A/c ----- Dr
-                                        var updateSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == UpdateSalesOrder.Fk_SubLedgerId && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).SingleOrDefaultAsync();
+                                        var updateSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == UpdateSalesOrder.Fk_SubLedgerId && s.Fk_BranchId == BranchId ).SingleOrDefaultAsync();
                                         if (updateSubledgerBalance != null)
                                         {
                                             updateSubledgerBalance.RunningBalance += difference;
                                             updateSubledgerBalance.RunningBalanceType = (updateSubledgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
-                                            var updateLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.SundryDebtors && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                            var updateLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.SundryDebtors && s.Fk_BranchId == BranchId ).SingleOrDefaultAsync();
                                             if (updateLedgerBalance != null)
                                             {
                                                 updateLedgerBalance.RunningBalance += difference;
@@ -3400,7 +3400,7 @@ namespace FMS.Repository.Transaction
                                             return _Result;
                                         }
                                         // @Sales A/c -------- Cr
-                                        var updateSalesLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.SalesAccount && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                        var updateSalesLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.SalesAccount && s.Fk_BranchId == BranchId ).SingleOrDefaultAsync();
                                         if (updateSalesLedgerBalance != null)
                                         {
                                             updateSalesLedgerBalance.RunningBalance -= difference;
@@ -3416,7 +3416,7 @@ namespace FMS.Repository.Transaction
                                         {
                                             var TransportChargedifference = data.TransportationCharges - UpdateSalesOrder.TransportationCharges;
                                             //@TransportingChargeRecive A/c--------Cr
-                                            var updateTransportingChargeReciveBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.TransportingChargeRecive && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                            var updateTransportingChargeReciveBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.TransportingChargeRecive && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                                             if (updateTransportingChargeReciveBalance != null)
                                             {
                                                 updateTransportingChargeReciveBalance.RunningBalance += TransportChargedifference;
@@ -3447,7 +3447,7 @@ namespace FMS.Repository.Transaction
                                     if (UpdateSalesOrder.GrandTotal != data.GrandTotal)
                                     {
                                         // @cash A/c -----Dr
-                                        var updateCashLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.CashAccount && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                        var updateCashLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.CashAccount && s.Fk_BranchId == BranchId ).SingleOrDefaultAsync();
                                         if (updateCashLedgerBalance != null)
                                         {
                                             updateCashLedgerBalance.RunningBalance += difference;
@@ -3460,7 +3460,7 @@ namespace FMS.Repository.Transaction
                                             return _Result;
                                         }
                                         //@sales A/c -----Cr
-                                        var updateSalesLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.SalesAccount && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                        var updateSalesLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.SalesAccount && s.Fk_BranchId == BranchId ).SingleOrDefaultAsync();
                                         if (updateSalesLedgerBalance != null)
                                         {
                                             updateSalesLedgerBalance.RunningBalance -= difference;
@@ -3476,7 +3476,7 @@ namespace FMS.Repository.Transaction
                                         {
                                             var TransportChargedifference = data.TransportationCharges - UpdateSalesOrder.TransportationCharges;
                                             //@TransportingChargeRecive A/c--------Cr
-                                            var updateTransportingChargeReciveBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.TransportingChargeRecive && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                            var updateTransportingChargeReciveBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.TransportingChargeRecive && s.Fk_BranchId == BranchId ).SingleOrDefaultAsync();
                                             if (updateTransportingChargeReciveBalance != null)
                                             {
                                                 updateTransportingChargeReciveBalance.RunningBalance += TransportChargedifference;
@@ -3517,12 +3517,12 @@ namespace FMS.Repository.Transaction
                                     #endregion
                                     #region Revert LedgerBalance & Subledger Balance
                                     // @SundryDebitors A/c ----- Dr
-                                    var RevertSundryDebitorsSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == UpdateSalesOrder.Fk_SubLedgerId && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).SingleOrDefaultAsync();
+                                    var RevertSundryDebitorsSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == UpdateSalesOrder.Fk_SubLedgerId && s.Fk_BranchId == BranchId ).SingleOrDefaultAsync();
                                     if (RevertSundryDebitorsSubledgerBalance != null)
                                     {
                                         RevertSundryDebitorsSubledgerBalance.RunningBalance -= UpdateSalesOrder.GrandTotal;
                                         RevertSundryDebitorsSubledgerBalance.RunningBalanceType = (RevertSundryDebitorsSubledgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
-                                        var RevertSundryDebitorsLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.SundryDebtors && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                        var RevertSundryDebitorsLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.SundryDebtors && s.Fk_BranchId == BranchId ).SingleOrDefaultAsync();
                                         if (RevertSundryDebitorsLedgerBalance != null)
                                         {
                                             RevertSundryDebitorsLedgerBalance.RunningBalance -= UpdateSalesOrder.GrandTotal;
@@ -3541,7 +3541,7 @@ namespace FMS.Repository.Transaction
                                         return _Result;
                                     }
                                     // @Sales A/c -------- Cr
-                                    var RevertSalesLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.SalesAccount && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                    var RevertSalesLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.SalesAccount && s.Fk_BranchId == BranchId ).SingleOrDefaultAsync();
                                     if (RevertSalesLedgerBalance != null)
                                     {
                                         RevertSalesLedgerBalance.RunningBalance += UpdateSalesOrder.GrandTotal;
@@ -3556,7 +3556,7 @@ namespace FMS.Repository.Transaction
                                     #endregion
                                     #region Update LedgerBalance & Subledger Balance
                                     // @cash A/c -----Dr
-                                    var updateCashLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.CashAccount && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                    var updateCashLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.CashAccount && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                                     if (updateCashLedgerBalance != null)
                                     {
                                         updateCashLedgerBalance.RunningBalance += data.GrandTotal;
@@ -3569,7 +3569,7 @@ namespace FMS.Repository.Transaction
                                         return _Result;
                                     }
                                     //@sales A/c -----Cr
-                                    var updateSalesLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.SalesAccount && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                    var updateSalesLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.SalesAccount && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                                     if (updateSalesLedgerBalance != null)
                                     {
                                         updateSalesLedgerBalance.RunningBalance -= data.GrandTotal;
@@ -3626,7 +3626,7 @@ namespace FMS.Repository.Transaction
                                     #endregion
                                     #region  Revert LedgerBalance & Subledger Balance
                                     // @cash A/c -----Dr
-                                    var RevertCashLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.CashAccount && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                    var RevertCashLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.CashAccount && s.Fk_BranchId == BranchId ).SingleOrDefaultAsync();
                                     if (RevertCashLedgerBalance != null)
                                     {
                                         RevertCashLedgerBalance.RunningBalance -= UpdateSalesOrder.GrandTotal;
@@ -3639,7 +3639,7 @@ namespace FMS.Repository.Transaction
                                         return _Result;
                                     }
                                     //@sales A/c -----Cr
-                                    var RevertSalesLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.SalesAccount && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                    var RevertSalesLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.SalesAccount && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                                     if (RevertSalesLedgerBalance != null)
                                     {
                                         RevertSalesLedgerBalance.RunningBalance += UpdateSalesOrder.GrandTotal;
@@ -3654,7 +3654,7 @@ namespace FMS.Repository.Transaction
                                     #endregion
                                     #region Update Ledger & SubLedger Balance
                                     // @SundryDebitors A/c ----- Dr
-                                    var updateSundryDebitorsSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == data.Fk_SubLedgerId && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).SingleOrDefaultAsync();
+                                    var updateSundryDebitorsSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == data.Fk_SubLedgerId && s.Fk_BranchId == BranchId ).SingleOrDefaultAsync();
                                     if (updateSundryDebitorsSubledgerBalance != null)
                                     {
                                         updateSundryDebitorsSubledgerBalance.RunningBalance += data.GrandTotal;
@@ -3678,7 +3678,7 @@ namespace FMS.Repository.Transaction
                                         return _Result;
                                     }
                                     // @Sales A/c -------- Cr
-                                    var updateSalesLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.SalesAccount && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                    var updateSalesLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.SalesAccount && s.Fk_BranchId == BranchId ).SingleOrDefaultAsync();
                                     if (updateSalesLedgerBalance != null)
                                     {
                                         updateSalesLedgerBalance.RunningBalance -= data.GrandTotal;
@@ -3767,7 +3767,7 @@ namespace FMS.Repository.Transaction
                                     {
                                         foreach (var item1 in getFinishedGoodSalesConfig)
                                         {
-                                            var UpdateFhinishedGoodStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == item1.Fk_SubFinishedGoodId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                            var UpdateFhinishedGoodStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == item1.Fk_SubFinishedGoodId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                                             if (UpdateFhinishedGoodStock != null)
                                             {
                                                 var Unit = _appDbContext.AlternateUnits.Where(s => s.FK_ProductId == item1.Fk_SubFinishedGoodId).FirstOrDefault();
@@ -3809,12 +3809,12 @@ namespace FMS.Repository.Transaction
                                     }
                                     else
                                     {
-                                        var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == UpdateSalesTransaction.Fk_ProductId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                        var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == UpdateSalesTransaction.Fk_ProductId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                                         if (UpdateSalesTransaction.Fk_ProductId != Guid.Parse(item[1]))
                                         {
                                             UpdateStock.AvilableStock += UpdateSalesTransaction.UnitQuantity;
                                             await _appDbContext.SaveChangesAsync();
-                                            var UpdateNewStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == Guid.Parse(item[1]) && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                            var UpdateNewStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == Guid.Parse(item[1]) && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                                             if (UpdateNewStock != null)
                                             {
                                                 UpdateNewStock.AvilableStock -= Convert.ToDecimal(item[4]);
@@ -4250,7 +4250,7 @@ namespace FMS.Repository.Transaction
                                 {
                                     foreach (var item1 in getFinishedGoodSalesConfig)
                                     {
-                                        var UpdateFhinishedGoodStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == item1.Fk_SubFinishedGoodId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                        var UpdateFhinishedGoodStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == item1.Fk_SubFinishedGoodId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                                         if (UpdateFhinishedGoodStock != null)
                                         {
                                             var Unit = _appDbContext.AlternateUnits.Where(s => s.FK_ProductId == item1.Fk_SubFinishedGoodId).FirstOrDefault();
@@ -4261,7 +4261,7 @@ namespace FMS.Repository.Transaction
                                 }
                                 else
                                 {
-                                    var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == item.Fk_ProductId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                    var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == item.Fk_ProductId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                                     if (UpdateStock != null)
                                     {
                                         UpdateStock.AvilableStock += item.UnitQuantity;
@@ -4291,13 +4291,13 @@ namespace FMS.Repository.Transaction
                                 #endregion
                                 #region Update LedgerBalance & Subledger Balance
                                 //@SundryDebtors A/c -----Dr
-                                var updateSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == deleteSalesOrders.Fk_SubLedgerId && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).SingleOrDefaultAsync();
+                                var updateSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == deleteSalesOrders.Fk_SubLedgerId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                                 if (updateSubledgerBalance != null)
                                 {
                                     updateSubledgerBalance.RunningBalance -= deleteSalesOrders.GrandTotal;
                                     updateSubledgerBalance.RunningBalanceType = (updateSubledgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
                                     await _appDbContext.SaveChangesAsync();
-                                    var updateLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.LedgerBalanceId == updateSubledgerBalance.Fk_LedgerBalanceId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                    var updateLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.LedgerBalanceId == updateSubledgerBalance.Fk_LedgerBalanceId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                                     if (updateLedgerBalance != null)
                                     {
                                         updateLedgerBalance.RunningBalance -= deleteSalesOrders.GrandTotal;
@@ -4307,7 +4307,7 @@ namespace FMS.Repository.Transaction
                                 }
 
                                 // @Sales A/c ------Cr
-                                var updateSalesLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.SalesAccount && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                var updateSalesLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.SalesAccount && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                                 if (updateSalesLedgerBalance != null)
                                 {
                                     updateSalesLedgerBalance.RunningBalance += deleteSalesOrders.GrandTotal;
@@ -4329,7 +4329,7 @@ namespace FMS.Repository.Transaction
                                 #endregion
                                 #region Update LedgerBalance & Subledger Balance
                                 // @cash A/c -----Dr
-                                var updateCashLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.CashAccount && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                var updateCashLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.CashAccount && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                                 if (updateCashLedgerBalance != null)
                                 {
                                     updateCashLedgerBalance.RunningBalance -= deleteSalesOrders.GrandTotal;
@@ -4342,7 +4342,7 @@ namespace FMS.Repository.Transaction
                                     return _Result;
                                 }
                                 //@sales A/c -----Cr
-                                var updateSalesLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.SalesAccount && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                var updateSalesLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.SalesAccount && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                                 if (updateSalesLedgerBalance != null)
                                 {
                                     updateSalesLedgerBalance.RunningBalance += deleteSalesOrders.GrandTotal;
@@ -4567,7 +4567,7 @@ namespace FMS.Repository.Transaction
                         {
                             #region Ledger & Subledger
                             // @SalesReturn A/c ------Dr
-                            var updateSalesReturnLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.SalesReturnAccount && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                            var updateSalesReturnLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.SalesReturnAccount && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                             if (updateSalesReturnLedgerBalance != null)
                             {
                                 updateSalesReturnLedgerBalance.RunningBalance += newSalesReturnOrder.GrandTotal;
@@ -4591,7 +4591,7 @@ namespace FMS.Repository.Transaction
                             }
                             // @SundryDebitors A/c ---- Cr
                             var LedgerBalanceId = Guid.Empty;
-                            var updateSundryDebitorsLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.SundryDebtors && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                            var updateSundryDebitorsLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.SundryDebtors && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                             if (updateSundryDebitorsLedgerBalance != null)
                             {
                                 updateSundryDebitorsLedgerBalance.RunningBalance -= newSalesReturnOrder.GrandTotal;
@@ -4615,7 +4615,7 @@ namespace FMS.Repository.Transaction
                                 await _appDbContext.SaveChangesAsync();
                                 LedgerBalanceId = newLedgerBalance.LedgerBalanceId;
                             }
-                            var updateSundryDebitorsSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == newSalesReturnOrder.Fk_SubLedgerId && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).SingleOrDefaultAsync();
+                            var updateSundryDebitorsSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == newSalesReturnOrder.Fk_SubLedgerId && s.Fk_BranchId == BranchId ).SingleOrDefaultAsync();
                             if (updateSundryDebitorsSubledgerBalance != null)
                             {
                                 updateSundryDebitorsSubledgerBalance.RunningBalance -= newSalesReturnOrder.GrandTotal;
@@ -4639,7 +4639,7 @@ namespace FMS.Repository.Transaction
                                 await _appDbContext.SaveChangesAsync();
                             }
                             //@TransportingChargeRecive A/c--------Dr
-                            var updateTransportingChargeReciveBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.TransportingChargeRecive && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                            var updateTransportingChargeReciveBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.TransportingChargeRecive && s.Fk_BranchId == BranchId ).SingleOrDefaultAsync();
                             if (updateTransportingChargeReciveBalance != null)
                             {
                                 updateTransportingChargeReciveBalance.RunningBalance += newSalesReturnOrder.TransportationCharges;
@@ -4699,7 +4699,7 @@ namespace FMS.Repository.Transaction
                         {
                             #region Ledger & SubLedger
                             //@salesReturn A/c -----Dr
-                            var updateSalesReturnLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.SalesReturnAccount && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                            var updateSalesReturnLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.SalesReturnAccount && s.Fk_BranchId == BranchId ).SingleOrDefaultAsync();
                             if (updateSalesReturnLedgerBalance != null)
                             {
                                 updateSalesReturnLedgerBalance.RunningBalance += newSalesReturnOrder.GrandTotal;
@@ -4722,7 +4722,7 @@ namespace FMS.Repository.Transaction
                                 await _appDbContext.SaveChangesAsync();
                             }
                             // @cash A/c -----Cr
-                            var updateCashLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.CashAccount && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                            var updateCashLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.CashAccount && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                             if (updateCashLedgerBalance != null)
                             {
                                 updateCashLedgerBalance.RunningBalance -= newSalesReturnOrder.GrandTotal;
@@ -4745,7 +4745,7 @@ namespace FMS.Repository.Transaction
                                 await _appDbContext.SaveChangesAsync();
                             }
                             //@TransportingChargeRecive A/c--------Dr
-                            var updateTransportingChargeReciveBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.TransportingChargeRecive && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                            var updateTransportingChargeReciveBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.TransportingChargeRecive && s.Fk_BranchId == BranchId ).SingleOrDefaultAsync();
                             if (updateTransportingChargeReciveBalance != null)
                             {
                                 updateTransportingChargeReciveBalance.RunningBalance += newSalesReturnOrder.TransportationCharges;
@@ -4993,7 +4993,7 @@ namespace FMS.Repository.Transaction
                                 {
                                     foreach (var item1 in getFinishedGoodSalesConfig)
                                     {
-                                        var UpdateFhinishedGoodStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == item1.Fk_SubFinishedGoodId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                        var UpdateFhinishedGoodStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == item1.Fk_SubFinishedGoodId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                                         if (UpdateFhinishedGoodStock != null)
                                         {
                                             var Unit = _appDbContext.AlternateUnits.Where(s => s.FK_ProductId == item1.Fk_SubFinishedGoodId).FirstOrDefault();
@@ -5033,7 +5033,7 @@ namespace FMS.Repository.Transaction
                                 }
                                 else
                                 {
-                                    var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == newSalesReturnTransaction.Fk_ProductId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                    var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == newSalesReturnTransaction.Fk_ProductId && s.Fk_BranchId == BranchId ).SingleOrDefaultAsync();
                                     if (UpdateStock != null)
                                     {
                                         UpdateStock.AvilableStock += newSalesReturnTransaction.UnitQuantity;
@@ -5101,7 +5101,7 @@ namespace FMS.Repository.Transaction
                                     if (UpdateSalesReturnOrder.GrandTotal != data.GrandTotal)
                                     {
                                         // @ Sales Return A/c --------------- Dr
-                                        var updateSalesReturnledgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.SalesReturnAccount && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                        var updateSalesReturnledgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.SalesReturnAccount && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                                         if (updateSalesReturnledgerBalance != null)
                                         {
                                             updateSalesReturnledgerBalance.RunningBalance += difference;
@@ -5114,7 +5114,7 @@ namespace FMS.Repository.Transaction
                                             return _Result;
                                         }
                                         // @SundryDreditor A/c ------------ Cr
-                                        var updateSundryDebtorsSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == UpdateSalesReturnOrder.Fk_SubLedgerId && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).SingleOrDefaultAsync();
+                                        var updateSundryDebtorsSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == UpdateSalesReturnOrder.Fk_SubLedgerId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                                         if (updateSundryDebtorsSubledgerBalance != null)
                                         {
                                             updateSundryDebtorsSubledgerBalance.RunningBalance -= difference;
@@ -5141,7 +5141,7 @@ namespace FMS.Repository.Transaction
                                         {
                                             var TransportChargedifference = data.TransportationCharges - UpdateSalesReturnOrder.TransportationCharges;
                                             //@TransportingChargeRecive A/c--------Cr
-                                            var updateTransportingChargeReciveBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.TransportingChargeRecive && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                            var updateTransportingChargeReciveBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.TransportingChargeRecive && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                                             if (updateTransportingChargeReciveBalance != null)
                                             {
                                                 updateTransportingChargeReciveBalance.RunningBalance += TransportChargedifference;
@@ -5206,7 +5206,7 @@ namespace FMS.Repository.Transaction
                                         {
                                             var TransportChargedifference = data.TransportationCharges - UpdateSalesReturnOrder.TransportationCharges;
                                             //@TransportingChargeRecive A/c--------Cr
-                                            var updateTransportingChargeReciveBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.TransportingChargeRecive && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                            var updateTransportingChargeReciveBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.TransportingChargeRecive && s.Fk_BranchId == BranchId ).SingleOrDefaultAsync();
                                             if (updateTransportingChargeReciveBalance != null)
                                             {
                                                 updateTransportingChargeReciveBalance.RunningBalance += TransportChargedifference;
@@ -5246,7 +5246,7 @@ namespace FMS.Repository.Transaction
                                     #endregion
                                     #region Revert LedgerBalance & Subledger Balance
                                     // @ Sales Return A/c --------------- Dr
-                                    var updateSalesReturnledgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.SalesReturnAccount && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                    var updateSalesReturnledgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.SalesReturnAccount && s.Fk_BranchId == BranchId ).SingleOrDefaultAsync();
                                     if (updateSalesReturnledgerBalance != null)
                                     {
                                         updateSalesReturnledgerBalance.RunningBalance += UpdateSalesReturnOrder.GrandTotal;
@@ -5259,7 +5259,7 @@ namespace FMS.Repository.Transaction
                                         return _Result;
                                     }
                                     // @SundryDreditor A/c ------------ Cr
-                                    var updateSundryDebtorsSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == UpdateSalesReturnOrder.Fk_SubLedgerId && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).SingleOrDefaultAsync();
+                                    var updateSundryDebtorsSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == UpdateSalesReturnOrder.Fk_SubLedgerId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                                     if (updateSundryDebtorsSubledgerBalance != null)
                                     {
                                         updateSundryDebtorsSubledgerBalance.RunningBalance -= UpdateSalesReturnOrder.GrandTotal;
@@ -5382,7 +5382,7 @@ namespace FMS.Repository.Transaction
                                     #endregion
                                     #region Update Ledger & SubLedger Balance
                                     // @ Sales Return A/c --------------- Dr
-                                    var updateSalesReturnledgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.SalesReturnAccount && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                    var updateSalesReturnledgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.SalesReturnAccount && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                                     if (updateSalesReturnledgerBalance != null)
                                     {
                                         updateSalesReturnledgerBalance.RunningBalance += data.GrandTotal;
@@ -5395,7 +5395,7 @@ namespace FMS.Repository.Transaction
                                         return _Result;
                                     }
                                     // @SundryDreditor A/c ------------ Cr
-                                    var updateSundryDebtorsSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == UpdateSalesReturnOrder.Fk_SubLedgerId && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).SingleOrDefaultAsync();
+                                    var updateSundryDebtorsSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == UpdateSalesReturnOrder.Fk_SubLedgerId && s.Fk_BranchId == BranchId ).SingleOrDefaultAsync();
                                     if (updateSundryDebtorsSubledgerBalance != null)
                                     {
                                         updateSundryDebtorsSubledgerBalance.RunningBalance -= data.GrandTotal;
@@ -5552,7 +5552,7 @@ namespace FMS.Repository.Transaction
                                     {
                                         foreach (var item1 in getFinishedGoodSalesConfig)
                                         {
-                                            var UpdateFhinishedGoodStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == item1.Fk_SubFinishedGoodId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                            var UpdateFhinishedGoodStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == item1.Fk_SubFinishedGoodId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                                             if (UpdateFhinishedGoodStock != null)
                                             {
                                                 var Unit = _appDbContext.AlternateUnits.Where(s => s.FK_ProductId == item1.Fk_SubFinishedGoodId).FirstOrDefault();
@@ -5593,12 +5593,12 @@ namespace FMS.Repository.Transaction
                                     }
                                     else
                                     {
-                                        var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == UpdateSalesReturnTransaction.Fk_ProductId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                        var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == UpdateSalesReturnTransaction.Fk_ProductId && s.Fk_BranchId == BranchId ).SingleOrDefaultAsync();
                                         if (UpdateSalesReturnTransaction.Fk_ProductId != Guid.Parse(item[1]))
                                         {
                                             UpdateStock.AvilableStock += UpdateSalesReturnTransaction.UnitQuantity;
                                             await _appDbContext.SaveChangesAsync();
-                                            var UpdateNewStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == Guid.Parse(item[1]) && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                            var UpdateNewStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == Guid.Parse(item[1]) && s.Fk_BranchId == BranchId ).SingleOrDefaultAsync();
                                             if (UpdateNewStock != null)
                                             {
                                                 UpdateNewStock.AvilableStock -= Convert.ToDecimal(item[4]);
@@ -5697,7 +5697,7 @@ namespace FMS.Repository.Transaction
                                         {
                                             foreach (var item1 in getFinishedGoodSalesConfig)
                                             {
-                                                var UpdateFhinishedGoodStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == item1.Fk_SubFinishedGoodId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                                var UpdateFhinishedGoodStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == item1.Fk_SubFinishedGoodId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                                                 if (UpdateFhinishedGoodStock != null)
                                                 {
                                                     var Unit = _appDbContext.AlternateUnits.Where(s => s.FK_ProductId == item1.Fk_SubFinishedGoodId).FirstOrDefault();
@@ -5729,7 +5729,7 @@ namespace FMS.Repository.Transaction
                                         }
                                         else
                                         {
-                                            var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == newSalesReturnTransaction.Fk_ProductId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                            var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == newSalesReturnTransaction.Fk_ProductId && s.Fk_BranchId == BranchId ).SingleOrDefaultAsync();
                                             if (UpdateStock != null)
                                             {
                                                 UpdateStock.AvilableStock += newSalesReturnTransaction.UnitQuantity;
@@ -5821,7 +5821,7 @@ namespace FMS.Repository.Transaction
                                         {
                                             foreach (var item1 in getFinishedGoodSalesConfig)
                                             {
-                                                var UpdateFhinishedGoodStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == item1.Fk_SubFinishedGoodId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                                var UpdateFhinishedGoodStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == item1.Fk_SubFinishedGoodId && s.Fk_BranchId == BranchId ).SingleOrDefaultAsync();
                                                 if (UpdateFhinishedGoodStock != null)
                                                 {
                                                     var Unit = _appDbContext.AlternateUnits.Where(s => s.FK_ProductId == item1.Fk_SubFinishedGoodId).FirstOrDefault();
@@ -5853,7 +5853,7 @@ namespace FMS.Repository.Transaction
                                         }
                                         else
                                         {
-                                            var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == newSalesReturnTransaction.Fk_ProductId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                            var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == newSalesReturnTransaction.Fk_ProductId && s.Fk_BranchId == BranchId ).SingleOrDefaultAsync();
                                             if (UpdateStock != null)
                                             {
                                                 UpdateStock.AvilableStock += newSalesReturnTransaction.UnitQuantity;
@@ -5960,7 +5960,7 @@ namespace FMS.Repository.Transaction
                                 {
                                     foreach (var item1 in getFinishedGoodSalesConfig)
                                     {
-                                        var UpdateFhinishedGoodStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == item1.Fk_SubFinishedGoodId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                        var UpdateFhinishedGoodStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == item1.Fk_SubFinishedGoodId && s.Fk_BranchId == BranchId ).SingleOrDefaultAsync();
                                         if (UpdateFhinishedGoodStock != null)
                                         {
                                             var Unit = _appDbContext.AlternateUnits.Where(s => s.FK_ProductId == item1.Fk_SubFinishedGoodId).FirstOrDefault();
@@ -5971,7 +5971,7 @@ namespace FMS.Repository.Transaction
                                 }
                                 else
                                 {
-                                    var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == item.Fk_ProductId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                    var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == item.Fk_ProductId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                                     if (UpdateStock != null)
                                     {
                                         UpdateStock.AvilableStock -= item.UnitQuantity;
@@ -6213,7 +6213,7 @@ namespace FMS.Repository.Transaction
                         {
                             // @Labour A/c ------------ Dr
                             var LedgerBalanceId = Guid.Empty;
-                            var updateLabourLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.LabourAccount && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                            var updateLabourLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.LabourAccount && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                             if (updateLabourLedgerBalance != null)
                             {
                                 updateLabourLedgerBalance.RunningBalance += data.TotalAmount;
@@ -6238,7 +6238,7 @@ namespace FMS.Repository.Transaction
                                 LedgerBalanceId = newLedgerBalance.LedgerBalanceId;
                             }
                             var SubledgerId = await _appDbContext.Labours.Where(s => s.LabourId == data.Fk_LabourId && s.Fk_BranchId == BranchId).Select(s => s.Fk_SubLedgerId).SingleOrDefaultAsync();
-                            var updateLabourSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == SubledgerId && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).SingleOrDefaultAsync();
+                            var updateLabourSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == SubledgerId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                             if (updateLabourSubledgerBalance != null)
                             {
                                 updateLabourSubledgerBalance.RunningBalance += data.TotalAmount;
@@ -6262,7 +6262,7 @@ namespace FMS.Repository.Transaction
                                 await _appDbContext.SaveChangesAsync();
                             }
                             // @ LabourCharges A/c --------- Cr
-                            var updateLabourChargesledgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.LabourCharges && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                            var updateLabourChargesledgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.LabourCharges && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                             if (updateLabourChargesledgerBalance != null)
                             {
                                 updateLabourChargesledgerBalance.RunningBalance -= data.TotalAmount;
@@ -6305,7 +6305,7 @@ namespace FMS.Repository.Transaction
                             await _appDbContext.SaveChangesAsync();
                             #endregion
                             #region update Stock
-                            var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == newDamageTransaction.Fk_ProductId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                            var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == newDamageTransaction.Fk_ProductId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                             if (UpdateStock != null)
                             {
                                 UpdateStock.AvilableStock -= newDamageTransaction.Quantity;
@@ -6377,12 +6377,12 @@ namespace FMS.Repository.Transaction
                                     // @Labour A/c ------------ Dr
 
                                     var SubledgerId = await _appDbContext.Labours.Where(s => s.LabourId == data.Fk_LabourId && s.Fk_BranchId == BranchId).Select(s => s.Fk_SubLedgerId).SingleOrDefaultAsync();
-                                    var updateLabourSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == SubledgerId && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear).SingleOrDefaultAsync();
+                                    var updateLabourSubledgerBalance = await _appDbContext.SubLedgerBalances.Where(s => s.Fk_SubLedgerId == SubledgerId && s.Fk_BranchId == BranchId ).SingleOrDefaultAsync();
                                     if (updateLabourSubledgerBalance != null)
                                     {
                                         updateLabourSubledgerBalance.RunningBalance += difference;
                                         updateLabourSubledgerBalance.RunningBalanceType = (updateLabourSubledgerBalance.RunningBalance >= 0) ? "Dr" : "Cr";
-                                        var updateLabourLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.LabourAccount && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                        var updateLabourLedgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.LabourAccount && s.Fk_BranchId == BranchId ).SingleOrDefaultAsync();
                                         if (updateLabourLedgerBalance != null)
                                         {
                                             updateLabourLedgerBalance.RunningBalance += difference;
@@ -6401,7 +6401,7 @@ namespace FMS.Repository.Transaction
                                         return _Result;
                                     }
                                     // @ LabourCharges A/c --------- Cr
-                                    var updateLabourChargesledgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.LabourCharges && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                    var updateLabourChargesledgerBalance = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.LabourCharges && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                                     if (updateLabourChargesledgerBalance != null)
                                     {
                                         updateLabourChargesledgerBalance.RunningBalance -= difference;
@@ -6434,14 +6434,14 @@ namespace FMS.Repository.Transaction
                                 if (UpdateDamageTransaction != null)
                                 {
                                     #region Update Stock
-                                    var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == UpdateDamageTransaction.Fk_ProductId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                    var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == UpdateDamageTransaction.Fk_ProductId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                                     if (UpdateStock != null)
                                     {
                                         if (UpdateDamageTransaction.Fk_ProductId != Guid.Parse(item[1]))
                                         {
                                             UpdateStock.AvilableStock += UpdateDamageTransaction.Quantity;
                                             await _appDbContext.SaveChangesAsync();
-                                            var UpdateNewStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == Guid.Parse(item[1]) && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                            var UpdateNewStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == Guid.Parse(item[1]) && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                                             if (UpdateNewStock != null)
                                             {
                                                 UpdateNewStock.AvilableStock -= UpdateDamageTransaction.Quantity;
@@ -6488,7 +6488,7 @@ namespace FMS.Repository.Transaction
                                     await _appDbContext.SaveChangesAsync();
                                     #endregion
                                     #region Update Stock
-                                    var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == newDamageTransaction.Fk_ProductId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                    var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == newDamageTransaction.Fk_ProductId && s.Fk_BranchId == BranchId ).SingleOrDefaultAsync();
                                     if (UpdateStock != null)
                                     {
                                         UpdateStock.AvilableStock -= newDamageTransaction.Quantity;
@@ -6544,7 +6544,7 @@ namespace FMS.Repository.Transaction
                         {
                             foreach (var item in deleteDamageTransaction)
                             {
-                                var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == item.Fk_ProductId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == item.Fk_ProductId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                                 if (UpdateStock != null)
                                 {
                                     UpdateStock.AvilableStock += item.Quantity;
@@ -6738,7 +6738,7 @@ namespace FMS.Repository.Transaction
                             await _appDbContext.SaveChangesAsync();
 
                             //update Stock
-                            var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == newInwardSupplyTransaction.Fk_ProductId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                            var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == newInwardSupplyTransaction.Fk_ProductId && s.Fk_BranchId == BranchId ).SingleOrDefaultAsync();
                             if (UpdateStock != null)
                             {
                                 UpdateStock.AvilableStock += newInwardSupplyTransaction.Quantity;
@@ -6807,14 +6807,14 @@ namespace FMS.Repository.Transaction
                                 if (UpdateInwardSupplyTransaction != null)
                                 {
                                     //Update Stock
-                                    var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == UpdateInwardSupplyTransaction.Fk_ProductId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                    var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == UpdateInwardSupplyTransaction.Fk_ProductId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                                     if (UpdateStock != null)
                                     {
                                         if (UpdateInwardSupplyTransaction.Fk_ProductId != Guid.Parse(item[1]))
                                         {
                                             UpdateStock.AvilableStock -= UpdateInwardSupplyTransaction.Quantity;
                                             await _appDbContext.SaveChangesAsync();
-                                            var UpdateNewStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == Guid.Parse(item[1]) && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                            var UpdateNewStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == Guid.Parse(item[1]) && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                                             if (UpdateNewStock != null)
                                             {
                                                 UpdateNewStock.AvilableStock += UpdateInwardSupplyTransaction.Quantity;
@@ -6863,7 +6863,7 @@ namespace FMS.Repository.Transaction
                                     await _appDbContext.SaveChangesAsync();
 
                                     //Update Stock
-                                    var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == newInwardSupplyTransaction.Fk_ProductId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                    var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == newInwardSupplyTransaction.Fk_ProductId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                                     if (UpdateStock != null)
                                     {
                                         UpdateStock.AvilableStock += newInwardSupplyTransaction.Quantity;
@@ -6925,7 +6925,7 @@ namespace FMS.Repository.Transaction
                             foreach (var item in deleteInwardSupplyTransaction)
                             {
                                 //Update Stock
-                                var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == item.Fk_ProductId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == item.Fk_ProductId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                                 if (UpdateStock != null)
                                 {
                                     UpdateStock.AvilableStock -= item.Quantity;
@@ -7121,7 +7121,7 @@ namespace FMS.Repository.Transaction
                             await _appDbContext.SaveChangesAsync();
 
                             //update Stock
-                            var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == newOutwardSupplyTransactionn.Fk_ProductId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                            var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == newOutwardSupplyTransactionn.Fk_ProductId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                             if (UpdateStock != null)
                             {
                                 UpdateStock.AvilableStock -= newOutwardSupplyTransactionn.Quantity;
@@ -7183,14 +7183,14 @@ namespace FMS.Repository.Transaction
                                 if (UpdateOutwardSupplyTransaction != null)
                                 {
                                     //Update Stock
-                                    var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == UpdateOutwardSupplyTransaction.Fk_ProductId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                    var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == UpdateOutwardSupplyTransaction.Fk_ProductId && s.Fk_BranchId == BranchId ).SingleOrDefaultAsync();
                                     if (UpdateStock != null)
                                     {
                                         if (UpdateOutwardSupplyTransaction.Fk_ProductId != Guid.Parse(item[1]))
                                         {
                                             UpdateStock.AvilableStock += UpdateOutwardSupplyTransaction.Quantity;
                                             await _appDbContext.SaveChangesAsync();
-                                            var UpdateNewStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == Guid.Parse(item[1]) && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                            var UpdateNewStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == Guid.Parse(item[1]) && s.Fk_BranchId == BranchId ).SingleOrDefaultAsync();
                                             if (UpdateNewStock != null)
                                             {
                                                 UpdateNewStock.AvilableStock -= UpdateOutwardSupplyTransaction.Quantity;
@@ -7233,7 +7233,7 @@ namespace FMS.Repository.Transaction
                                     await _appDbContext.SaveChangesAsync();
 
                                     //Update Stock
-                                    var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == newOutwardSupplyTransaction.Fk_ProductId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                    var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == newOutwardSupplyTransaction.Fk_ProductId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                                     if (UpdateStock != null)
                                     {
                                         UpdateStock.AvilableStock -= newOutwardSupplyTransaction.Quantity;
@@ -7289,7 +7289,7 @@ namespace FMS.Repository.Transaction
                             foreach (var item in deleteOutwardSupplyTransaction)
                             {
                                 //Update Stock
-                                var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == item.Fk_ProductId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                                var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == item.Fk_ProductId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                                 if (UpdateStock != null)
                                 {
                                     UpdateStock.AvilableStock += item.Quantity;

@@ -677,7 +677,7 @@ namespace FMS.Repository.Master
                 Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
                 _Result.IsSuccess = false;
                 var Query = await (from s in _appDbContext.Stocks
-                                   where s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear /*&& s.Product.ProductType.ProductTypeId==*/
+                                   where s.Fk_BranchId == BranchId /*&& s.Product.ProductType.ProductTypeId==*/
                                    select new StockModel
                                    {
                                        StockId = s.StockId,
@@ -714,7 +714,7 @@ namespace FMS.Repository.Master
                 Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
                 _Result.IsSuccess = false;
                 var Query = await (from s in _appDbContext.Stocks
-                                   where s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear && s.Product.ProductType.ProductTypeId == ProductTypeId
+                                   where s.Fk_BranchId == BranchId && s.Product.ProductType.ProductTypeId == ProductTypeId
                                    select new StockModel
                                    {
                                        StockId = s.StockId,
@@ -755,7 +755,7 @@ namespace FMS.Repository.Master
                                    join s in _appDbContext.Stocks
                                    on p.ProductId equals s.Fk_ProductId
                                    into stockGroup
-                                   where !stockGroup.Any(s => s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear) && p.Fk_ProductGroupId == GroupId && p.Fk_ProductSubGroupId == (SubGroupId == Guid.Empty ? null : SubGroupId)
+                                   where !stockGroup.Any(s => s.Fk_BranchId == BranchId) && p.Fk_ProductGroupId == GroupId && p.Fk_ProductSubGroupId == (SubGroupId == Guid.Empty ? null : SubGroupId)
                                    select new ProductModel()
                                    {
                                        ProductId = p.ProductId,
@@ -788,7 +788,7 @@ namespace FMS.Repository.Master
                 using var transaction = _appDbContext.Database.BeginTransaction();
                 try
                 {
-                    var Query = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == data.Fk_ProductId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).SingleOrDefaultAsync();
+                    var Query = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == data.Fk_ProductId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
                     if (Query == null)
                     {
                         var newStock = new Stock
@@ -835,7 +835,7 @@ namespace FMS.Repository.Master
                 using var transaction = _appDbContext.Database.BeginTransaction();
                 try
                 {
-                    var stock = await _appDbContext.Stocks.Where(s => s.StockId == data.StockId && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).FirstOrDefaultAsync();
+                    var stock = await _appDbContext.Stocks.Where(s => s.StockId == data.StockId && s.Fk_BranchId == BranchId).FirstOrDefaultAsync();
                     if (stock != null)
                     {
 
@@ -982,7 +982,7 @@ namespace FMS.Repository.Master
                         await _appDbContext.SaveChangesAsync();
                         #endregion
                         #region Check LedgerBalance Exist 
-                        var isledgerBalanceExist = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == data.Fk_PartyType && s.Fk_FinancialYear == FinancialYear && s.Fk_BranchId == BranchId).FirstOrDefaultAsync();
+                        var isledgerBalanceExist = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == data.Fk_PartyType && s.Fk_BranchId == BranchId).FirstOrDefaultAsync();
                         Guid LedgerBalanceId = Guid.Empty;
                         if (isledgerBalanceExist == null)
                         {
@@ -1675,7 +1675,7 @@ namespace FMS.Repository.Master
                         await _appDbContext.SaveChangesAsync();
                         #endregion
                         #region Ledger Balance 
-                        var isLedgerbalanceExist = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.LabourAccount && s.Fk_BranchId == BranchId && s.Fk_FinancialYear == FinancialYear).FirstOrDefaultAsync();
+                        var isLedgerbalanceExist = await _appDbContext.LedgerBalances.Where(s => s.Fk_LedgerId == MappingLedgers.LabourAccount && s.Fk_BranchId == BranchId).FirstOrDefaultAsync();
                         Guid LedgerBalanceId = Guid.Empty;
                         if (isLedgerbalanceExist == null)
                         {

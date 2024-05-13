@@ -81,7 +81,6 @@
         });
     })
     var data = {}
-    var PrintDataDetailed = {};
     $('#btnViewCustomerDetailed').on('click', function () {
         $('#loader').show();
         $('.DetailedReportTable').empty();
@@ -123,7 +122,7 @@
                         if (result.PartyDetailed !== null) {
                             var balance =
                                 html += '<tr>';
-                            html += '<td colspan="8">Opening Bal.</td>';
+                            html += '<td colspan="9">Opening Bal.</td>';
                             html += '<td >' + result.PartyDetailed.OpeningBal + ' ' + result.PartyDetailed.OpeningBalType + '</td>';
                             html += '</tr >';
                             var balance = result.PartyDetailed.OpeningBal;
@@ -133,7 +132,7 @@
                                 html += '<td >Challan No</td>';
                                 html += '<td >Site Adress</td>';
                                 html += '<td >Branch</td>';
-                                html += '<td colspan="5">Details</td>';
+                                html += '<td colspan="6">Details</td>';
                                 html += '<td></td>';
                                 html += '</tr >';
                                 $.each(result.PartyDetailed.Orders, function (key, item) {
@@ -153,7 +152,7 @@
                                     html += '<td>' + item.ChallanNo + '</td>';
                                     html += '<td>' + item.SiteAdress + '</td>';
                                     html += '<td>' + item.BranchName + '</td>';
-                                    html += '<td colspan="4">' + "----" + '</td>';
+                                    html += '<td colspan="5">' + "----" + '</td>';
                                     html += '<td>-</td>';
                                     html += '</tr >';
                                     if (item.Transactions.length > 0) {
@@ -168,7 +167,6 @@
                                         html += '<td >Unit</td>';
                                         html += '<td >Rate</td>';
                                         html += '<td >Amount</td>';
-                                        html += '<td >-</td>';
                                         html += '</tr >';
                                         $.each(item.Transactions, function (key, Transaction) {
                                             html += '<tr>';
@@ -209,6 +207,7 @@
                             }
                         }
                         $('#BtnPrintDetailed').show();
+                        $('#BtnshortDetails').show();
                     }
                     else {
                         html += '<tr>';
@@ -230,6 +229,11 @@
             });
         }
     })
+    $('#BtnshortDetails').on('click', function () {
+        var queryString = $.param(data); // Serialize object to query string
+        var url = '/Print/CustomerDetailedReportShortPrintAll?' + queryString; // Append query string to URL
+        window.open(url, '_blank');
+    });
     $('#BtnPrintDetailed').on('click', function () {
         var queryString = $.param(data); // Serialize object to query string
         var url = '/Print/CustomerDetailedReportPrint?' + queryString; // Append query string to URL
@@ -382,6 +386,7 @@
                             }
                         }
                         $('#BtnPrintDetailedSupplyer').show();
+                        $('#BtnshortDetailedSupplyer').show();
                     }
                     else {
                         html += '<tr>';
@@ -408,6 +413,11 @@
     $('#BtnPrintDetailedSupplyer').on('click', function () {
         var queryString = $.param(Data); // Serialize object to query string
         var url = '/Print/SupplyerDetailedReportPrint?' + queryString; // Append query string to URL
+        window.open(url, '_blank');
+    });
+    $('#BtnshortDetailedSupplyer').on('click', function () {
+        var queryString = $.param(Data); // Serialize object to query string
+        var url = '/Print/SupplyerDetailedReportShortPrint?' + queryString; // Append query string to URL
         window.open(url, '_blank');
     });
 
