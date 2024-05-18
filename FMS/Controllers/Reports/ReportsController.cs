@@ -390,7 +390,6 @@ namespace FMS.Controllers.Reports
         }
         #endregion
         #region Branch Wise Customer/Suplyer Reports
-       
         [HttpGet]
         public IActionResult AllBranchCustomerReport()
         {

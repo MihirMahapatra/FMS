@@ -151,6 +151,7 @@ $(function () {
     });
     //----------------------------------------Sale Return---------------------------------------------- //
     const Sr_ddlPayment = $('select[name="Sr_ddlPayment"]');
+    const Sr_ddlcustomergroup = $('select[name="Sr_ddlPartyGroupId"]');
     const Sr_ddlRate = $('select[name="Sr_ddlRate"]');
     const Sr_ddlPaymentMode = $('select[name="PaymentMode"]');
     const Sr_CustomerName = $('input[name="Sr_CustomerName"]');
@@ -1316,6 +1317,56 @@ $(function () {
             }
         });
     }
+    function Sr_LoadPartyGroups() {
+        $.ajax({
+            url: "/Master/GetPartyGruops",
+            type: "GET",
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            success: function (result) {
+                Sr_ddlcustomergroup.empty();
+                var defaultOption = $('<option></option>').val('').text('--Select Option--');
+                Sr_ddlcustomergroup.append(defaultOption);
+                $.each(result.PartyGruops, function (key, item) {
+                    var option = $('<option></option>').val(item.PartyGroupId).text(item.PartyGruopName);
+                    Sr_ddlcustomergroup.append(option);
+                });
+            },
+            error: function (errormessage) {
+                console.log(errormessage)
+            }
+        });
+    }
+    Sr_ddlcustomergroup.on('change', function () {
+        var Sr_fkpartygroupId = $(this).val();
+        $.ajax({
+            url: "/Transaction/GetSundryDebtors",
+            type: "GET",
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            success: function (result) {
+                if (result.ResponseCode == 302) {
+                    Sr_ddlCustomer.empty();
+                    var defaultOption = $('<option></option>').val('').text('--Select Option--');
+                    Sr_ddlCustomer.append(defaultOption);
+                    $.each(result.SubLedgers, function (key, item) {
+                        if (item.PartyGroupId == Sr_fkpartygroupId) {
+                            var option = $('<option></option>').val(item.SubLedgerId).text(item.SubLedgerName);
+                            Sr_ddlCustomer.append(option);
+                        }
+                    });
+                }
+                else {
+                    Sr_ddlCustomer.empty();
+                    var defaultOption = $('<option></option>').val('').text('--Select Option--');
+                    Sr_ddlCustomer.append(defaultOption);
+                }
+            },
+            error: function (errormessage) {
+                console.log(errormessage)
+            }
+        });
+    });
     GetLastSalesReturnTransaction();
     function GetLastSalesReturnTransaction() {
         $.ajax({
@@ -1350,6 +1401,15 @@ $(function () {
             }
         });
     }
+    $(document).on('change', 'select[name="Sr_ddlPayment"]', function () {
+        selectedOption = Sr_ddlPayment.val();
+        if (selectedOption === 'credit') {
+            $('.Sr_hdnpartygroup').show();
+            Sr_GetSundryDebtors();
+            Sr_LoadPartyGroups();
+        } else {
+        }
+    });
     GetSalesReturnRateType()
     function GetSalesReturnRateType() {
         $.ajax({

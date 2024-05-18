@@ -147,28 +147,28 @@ $(function () {
                     if (result.ResponseCode == 302) {
                         html += '<div class="form-group row">';
                         html += '<label name="SubLadgerCurBal" for="SubLadgerCurBal_' + uniqueId + '" class="col-sm-2 col-form-label">Cur Bal: </label>';
-                        if (selectedName == "Sundry Debtors") {
-                            html += '<div class="col-sm-3" >';
-                            html += '<select class= "select2bs4 groupfilter"  style = "width: 100%;" name="groupId">';
-                            html += '<option>--Select Option--</option>';
-                            $.ajax({
-                                url: "/Master/GetPartyGruops",
-                                type: "GET",
-                                contentType: "application/json;charset=utf-8",
-                                dataType: "json",
-                                success: function (results) {
-                                    $.each(results.PartyGruops, function (key, item1) {
-                                        html += '<option value=' + item1.PartyGroupId + '>' + item1.PartyGruopName + ' </option>';
-                                    });
-                                    html += '</select>';
-                                    html += '</div>';
-                                },
-                                error: function (errormessage) {
-                                    console.log(errormessage)
-                                }
-                            });
+                        //if (selectedName == "Sundry Debtors") {
+                        //    html += '<div class="col-sm-3" >';
+                        //    html += '<select class= "select2bs4 groupfilter"  style = "width: 100%;" name="groupId">';
+                        //    html += '<option>--Select Option--</option>';
+                        //    $.ajax({
+                        //        url: "/Master/GetPartyGruops",
+                        //        type: "GET",
+                        //        contentType: "application/json;charset=utf-8",
+                        //        dataType: "json",
+                        //        success: function (results) {
+                        //            $.each(results.PartyGruops, function (key, item1) {
+                        //                html += '<option value=' + item1.PartyGroupId + '>' + item1.PartyGruopName + ' </option>';
+                        //            });
+                        //            html += '</select>';
+                        //            html += '</div>';
+                        //        },
+                        //        error: function (errormessage) {
+                        //            console.log(errormessage)
+                        //        }
+                        //    });
                            
-                        }
+                        //}
                         
                         html += '<div class="col-sm-5" >';
                         html += '<select class= "select2bs4 SubledgerType"  style = "width: 100%;" name="ddlSubledgerId">';

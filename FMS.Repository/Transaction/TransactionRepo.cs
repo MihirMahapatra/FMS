@@ -7087,7 +7087,59 @@ namespace FMS.Repository.Transaction
                 {
                     if (DateTime.TryParseExact(data.TransactionDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedTrnsactionDate))
                     {
-                        //************************************************************InwardSupply Order*****************************************//
+                        //**********************************************************Inwardsupply Order ******************************************//
+                        var newInwardSupplyOdr = new InwardSupplyOrder
+                        {
+                            FromBranch = BranchId,
+                            Fk_ProductTypeId = data.Fk_ProductTypeId,
+                            Fk_BranchId = data.Branch,
+                            Fk_FinancialYearId = FinancialYear,
+                            ChallanNo = data.ChallanNo,
+                            VehicleNo = data.VehicleNo,
+                            TransactionDate = convertedTrnsactionDate,
+                            TransactionNo = data.TransactionNo,
+                            TotalAmount = data.TotalAmount
+                        };
+                        await _appDbContext.InwardSupplyOrders.AddAsync(newInwardSupplyOdr);
+                        await _appDbContext.SaveChangesAsync();
+                        //*********************************InwardSupply Transaction**********************************************//
+                        foreach (var item in data.RowData)
+                        {
+                            var newInwardSupplyTransaction = new InwardSupplyTransaction
+                            {
+                                Fk_InwardSupplyOrderId = newInwardSupplyOdr.InwardSupplyOrderId,
+                                TransactionDate = convertedTrnsactionDate,
+                                TransactionNo = data.TransactionNo,
+                                Fk_ProductId = Guid.Parse(item[1]),
+                                Fk_BranchId = data.Branch,
+                                Fk_FinancialYearId = FinancialYear,
+                                Quantity = Convert.ToDecimal(item[2]),
+                                Rate = Convert.ToDecimal(item[4]),
+                                Amount = Convert.ToDecimal(item[5])
+                            };
+                            await _appDbContext.InwardSupplyTransactions.AddAsync(newInwardSupplyTransaction);
+                            await _appDbContext.SaveChangesAsync();
+
+                            //update Stock
+                            var UpdateStock = await _appDbContext.Stocks.Where(s => s.Fk_ProductId == newInwardSupplyTransaction.Fk_ProductId && s.Fk_BranchId == BranchId).SingleOrDefaultAsync();
+                            if (UpdateStock != null)
+                            {
+                                UpdateStock.AvilableStock += newInwardSupplyTransaction.Quantity;
+                            }
+                            else
+                            {
+                                var AddNewStock = new Stock
+                                {
+                                    Fk_BranchId = data.Branch,
+                                    Fk_ProductId = newInwardSupplyTransaction.Fk_ProductId,
+                                    Fk_FinancialYear = FinancialYear,
+                                    AvilableStock = newInwardSupplyTransaction.Quantity
+                                };
+                                await _appDbContext.Stocks.AddAsync(AddNewStock);
+                            }
+                            await _appDbContext.SaveChangesAsync();
+                        }
+                        //************************************************************OutwardSupply Order*****************************************//
                         var newOutwardSupplyOrder = new OutwardSupplyOrder
                         {
                             ToBranch = data.Branch,
@@ -7102,7 +7154,7 @@ namespace FMS.Repository.Transaction
                         };
                         await _appDbContext.OutwardSupplyOrders.AddAsync(newOutwardSupplyOrder);
                         await _appDbContext.SaveChangesAsync();
-                        //*********************************InwardSupply Transaction**********************************************//
+                        //*********************************OutwardSupply Transaction**********************************************//
                         foreach (var item in data.RowData)
                         {
                             var newOutwardSupplyTransactionn = new OutwardSupplyTransaction
