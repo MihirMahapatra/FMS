@@ -193,6 +193,23 @@ namespace FMS.Controllers.Reports
             return BadRequest(ModelState);
         }
         #endregion
+        #region InwardOutward Report
+        [HttpGet]
+        public IActionResult InwardOutwardReport()
+        {
+            return PartialView();
+        }
+        [HttpPost]
+        public async Task<IActionResult> GetInwardOutwardReport([FromBody] BankBookDataRequest requestData)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _reportSvcs.GetInwardOutwardReport(requestData);
+                return new JsonResult(result);
+            }
+            return BadRequest(ModelState);
+        }
+        #endregion
         #region DaySheet
         [HttpGet]
         public IActionResult DaySheet()

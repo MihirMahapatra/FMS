@@ -1873,6 +1873,86 @@ namespace FMS.Repository.Reports
             return _Result;
         }
         #endregion
+        #region InwardOutward Report
+        public async Task<Result<InwardOutWardReportModel>>GetInwardOutwardReport(BankBookDataRequest requestData)
+        {
+            Result<InwardOutWardReportModel> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                InwardOutWardReportModel SupllyerInfos = new InwardOutWardReportModel();
+                if (DateTime.TryParseExact(requestData.FromDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedFromDate) && DateTime.TryParseExact(requestData.ToDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime convertedToDate))
+                {
+                    Guid FinancialYearId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
+                    if (_HttpContextAccessor.HttpContext.Session.GetString("BranchId") != "All")
+                    {
+                        Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
+                        SupllyerInfos.Orders.AddRange(_appDbContext.InwardSupplyTransactions.Where(r => r.Fk_BranchId == BranchId && r.TransactionDate >= convertedFromDate && r.TransactionDate <= convertedToDate)
+                               .OrderBy(t => t.TransactionDate)
+                               .Select(t => new InwardOutWardTransationModel
+                               {
+                                   TransactionDate = t.TransactionDate,
+                                   TransactionNo = t.TransactionNo,
+                                   Product = t.Product.ProductName,
+                                   Quantity = t.Quantity,
+                                   BranchName = t.Branch.BranchName,
+                                   VoucherType = "InwardSupply"
+                               }).ToList());
+                        SupllyerInfos.Orders.AddRange(_appDbContext.OutwardSupplyTransactions.Where(r => r.Fk_BranchId == BranchId && r.TransactionDate >= convertedFromDate && r.TransactionDate <= convertedToDate)
+                               .OrderBy(t => t.TransactionDate)
+                               .Select(t => new InwardOutWardTransationModel
+                               {
+                                   TransactionDate = t.TransactionDate,
+                                   TransactionNo = t.TransactionNo,
+                                   Product = t.Product.ProductName,
+                                   Quantity = t.Quantity,
+                                   BranchName = t.Branch.BranchName,
+                                   VoucherType = "OutWardTransation"
+                               }).ToList());
+                        SupllyerInfos.Orders = SupllyerInfos.Orders.OrderBy(t => t.TransactionDate).ToList();
+                    }
+                    else
+                    {
+                        SupllyerInfos.Orders.AddRange(_appDbContext.InwardSupplyTransactions.Where(r => r.TransactionDate >= convertedFromDate && r.TransactionDate <= convertedToDate)
+                                .OrderBy(t => t.TransactionDate)
+                                .Select(t => new InwardOutWardTransationModel
+                                {
+                                    TransactionDate = t.TransactionDate,
+                                    TransactionNo = t.TransactionNo,
+                                    Product = t.Product.ProductName,
+                                    Quantity = t.Quantity,
+                                    BranchName = t.Branch.BranchName,
+                                    VoucherType = "InwardSupply"
+                                }).ToList());
+                        SupllyerInfos.Orders.AddRange(_appDbContext.OutwardSupplyTransactions.Where(r =>  r.TransactionDate >= convertedFromDate && r.TransactionDate <= convertedToDate)
+                              .OrderBy(t => t.TransactionDate)
+                              .Select(t => new InwardOutWardTransationModel
+                              {
+                                  TransactionDate = t.TransactionDate,
+                                  TransactionNo = t.TransactionNo,
+                                  Product = t.Product.ProductName,
+                                  Quantity = t.Quantity,
+                                  BranchName = t.Branch.BranchName,
+                                  VoucherType = "OutWardTransation"
+                              }).ToList());
+                        SupllyerInfos.Orders = SupllyerInfos.Orders.OrderBy(t => t.TransactionDate).ToList();
+                    }
+                    if (SupllyerInfos != null)
+                    {
+                        _Result.SingleObjData = SupllyerInfos;
+                        _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
+                    }
+                    _Result.IsSuccess = true;
+                }
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("horizonexception@gmail.com", "FMS Excepion", $"ReportRepo/GetDetailedSupplyerReport : {_Exception.Message}");
+            }
+            return _Result;
+        }
+        #endregion
         #region DaySheet
         public async Task<Result<DaySheetModel>> GetDaySheet(string Date)
         {
@@ -3214,5 +3294,6 @@ namespace FMS.Repository.Reports
             return _Result;
         }
         #endregion
+
     }
 }

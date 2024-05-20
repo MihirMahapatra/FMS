@@ -504,6 +504,45 @@ namespace FMS.Service.Reports
             return Obj;
         }
         #endregion
+        #region InwardOutward Report
+        public async Task<InwardOutWardReportViewModel> GetInwardOutwardReport(BankBookDataRequest requestData)
+        {
+            InwardOutWardReportViewModel Obj;
+            var Result = await _reportRepo.GetInwardOutwardReport(requestData);
+            if (Result.IsSuccess)
+            {
+                if (Result.Response == "success")
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.Found),
+                        InwardOutwardTransation = Result.SingleObjData,
+                    };
+                }
+                else
+                {
+                    Obj = new()
+                    {
+                        ResponseStatus = Result.Response,
+                        ResponseCode = Convert.ToInt32(ResponseCode.Status.NotFound),
+                        Message = "No Record Found"
+                    };
+                }
+            }
+            else
+            {
+                Obj = new()
+                {
+                    ResponseStatus = Result.Response,
+                    ResponseCode = Convert.ToInt32(ResponseCode.Status.BadRequest),
+                    Exception = Result.Exception,
+                    Message = "Some Eroor Occoured"
+                };
+            }
+            return Obj;
+        }
+        #endregion
         #region DaySheet
         public async Task<DaySheetViewModel> GetDaySheet(string Date)
         {

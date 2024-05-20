@@ -31,6 +31,9 @@ namespace FMS.Repository.Reports
         Task<Result<PartyReportInfoModel>> GetBranchWiseSupllayerInfo(PartyReportDataRequest requestData);
         Task<Result<PartyReportModel2>> GetDetailedSupplyerReport(PartyReportDataRequest requestData);
         #endregion
+        #region InwardOutward Report
+        Task<Result<InwardOutWardReportModel>> GetInwardOutwardReport(BankBookDataRequest requestData);
+        #endregion
         #region DaySheet
         public Task<Result<DaySheetModel>> GetDaySheet(string Date);
 
