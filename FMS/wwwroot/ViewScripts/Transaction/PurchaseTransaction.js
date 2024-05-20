@@ -515,7 +515,6 @@ $(function () {
         row.find('input:eq(8)').val(AcctualAmount.toFixed(2));
         row.find('input:eq(7)').val(GstAmounts.toFixed(2));
         row.find('input:eq(5)').val(discountAmount.toFixed(2));
-
         var totalAmount = 0;
         var toalSubTotalAmount = 0;
         var totalGstAmount = 0;

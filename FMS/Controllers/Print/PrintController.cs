@@ -439,5 +439,22 @@ namespace FMS.Controllers.Print
             return View(ClientRefarancePrintModel);
         }
         #endregion
+        #region InwordOutword Report
+        [HttpGet]
+        public async Task<IActionResult> InwardOutwardPrintData([FromQuery] BankBookDataRequest requestData)
+        {
+            var result = await _reportSvcs.GetInwardOutwardReport(requestData);
+            var InwardOutwardReportData = new CustomerSummarizedModel();
+            InwardOutwardReportData.FromDate = requestData.FromDate;
+            InwardOutwardReportData.ToDate = requestData.ToDate;
+            InwardOutwardReportData.InwardOutWardTransations = result.InwardOutwardTransation;
+            var InwardOutwardReportModal = new CustomerReportDataModel()
+            {
+                Cmopany = _adminSvcs.GetCompany().Result.GetCompany,
+                Customers = InwardOutwardReportData
+            };
+            return View(InwardOutwardReportModal);
+        }
+        #endregion
     }
 }

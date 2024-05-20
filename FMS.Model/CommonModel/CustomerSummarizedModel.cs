@@ -14,5 +14,7 @@ namespace FMS.Model.CommonModel
         public PartyReportModel2 PartyDetailedReports { get; set; }
         public List<PartyReportModel> PartyReports { get; set; }
         public List<PartyModel> Party { get; set; }
+        public InwardOutWardReportModel InwardOutWardTransations { get; set; }
+
     }
 }

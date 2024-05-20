@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     Layout = null;
 }
 
@@ -34,7 +33,7 @@
         }
     </style>
     <meta name="viewport" content="width=device-width" />
-    <title>Client Refarance Print</title>
+    <title>InwardOutWard Print</title>
     <link rel="stylesheet" href="~/invoice/assets/css/app.min.css">
     <link rel="stylesheet" href="~/invoice/assets/css/style.css">
 </head>
@@ -56,7 +55,7 @@
                                     </div>
                                 </div>
                                 <div class="col-auto">
-                                    <h6 style="padding-top:20px;padding-right:20px; text-decoration:underline;font-family: cursive;padding-right:20px">Client Refarance Report</h6>
+                                    <h6 style="padding-top:20px;padding-right:20px; text-decoration:underline;font-family: cursive;padding-right:20px">Inward Out Ward Report</h6>
                                 </div>
                             </div>
                         </header>
@@ -68,7 +67,6 @@
                                         @Model.Cmopany.Adress<br>@Model.Cmopany.Email,<br>
                                         @Model.Cmopany.Phone,<br>Odisha
                                     </address>
-                                    <b>Refarance Name : @Model.Customers.PartyReports[0].RefarenceName </b>
                                 </div>
                             </div>
                             <div class="col-auto" style="padding-right:30px">
@@ -80,21 +78,38 @@
                         <table class="invoice-table">
                             <thead>
                                 <tr class="small-row">
-                                    <th style=" text-align:left;">Client Name</th>
-                                    <th style=" text-align:right">Bal</th>
-                                    <th style=" text-align:center">Type</th>
+                                    <th >Date</th>
+                                    <th>Branch</th>
+                                    <th >Transaction No</th>
+                                    <th >VoucherType</th>
+                                    <th >Item</th>
+                                    <th >Issue</th>
+                                    <th >Recived</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @if (Model.Customers != null)
                                 {
-                                    @foreach (var item in Model.Customers.PartyReports)
+                                    @foreach (var item in Model.Customers.InwardOutWardTransations.Orders)
                                     {
-                                        var balance = item.Balance + item.OpeningBal;
+                                       
                                         <tr class="small-row">
-                                            <td style="text-align:left;">@item.PartyName</td>
-                                            <td style=" text-align:right">@Math.Abs(@balance)</td>
-                                            <td style=" text-align:center">@item.BalanceType</td>
+                                            <td >@item.TransactionDate.ToString("dd-MM-yyyy")</td>
+                                            <td >@item.BranchName</td>
+                                            <td >@item.TransactionNo</td>
+                                            <td >@item.VoucherType</td>
+                                            <td >@item.Product</td>
+                                            @if (@item.VoucherType == "OutWardTransation")
+                                            {
+                                                <td>@item.Quantity</td>
+                                                <td>-</td>
+                                            }
+                                            else
+                                            {
+                                                <td>-</td>
+                                                <td>@item.Quantity</td>
+                                            }
+                                            
                                         </tr>
                                     }
                                 }
@@ -147,3 +162,5 @@
     <script src="~/invoice/assets/js/main.js"></script>
 </body>
 </html>
+
+

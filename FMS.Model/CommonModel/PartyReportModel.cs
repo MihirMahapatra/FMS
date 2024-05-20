@@ -59,7 +59,6 @@ namespace FMS.Model.CommonModel
         public string PartyName { get; set; }
         public string Adress { get; set; }
         public List<PartyReportOrderModel> Orders { get; set; } = new List<PartyReportOrderModel>();
-
     }
     public class PartyReportViewModel : Base
     {

@@ -13,12 +13,9 @@
     fromDate.val(todayDate);
     const toDate = $('input[name="ToDateSummerized"]');
     toDate.val(todayDate);
-    //const ddlLabour = $('select[name="ddlLabour"]');
-    //const ddlSummerizedLabourTypes = $('select[name="ddlSummerizedLabourTypes"]');
-    //const ddlDetailedLabourTypes = $('select[name="ddlDetailedLabourTypes"]');
-    //var PrintDataSummarized = {};
-    //var PrintData = {};
+   
     //-----------------------------------------------------InwardOutward Report Screen --------------------------------------------------//
+    var data = {};
     $('#btnViewSummerized').on('click', function () {
         $('#loader').show();
         $('.SummerizedLabourReportTable').empty();
@@ -31,6 +28,10 @@
         }
         else {
             var requestData = {
+                FromDate: fromDate.val(),
+                ToDate: toDate.val()
+            };
+            data = {
                 FromDate: fromDate.val(),
                 ToDate: toDate.val()
             };
@@ -103,17 +104,8 @@
         }
     })
     $('#BtnPrintSummarized').on('click', function () {
-        console.log(PrintDataSummarized);
-        $.ajax({
-            type: "POST",
-            url: '/Print/LabourSummarizedPrintData',
-            dataType: 'json',
-            data: JSON.stringify(PrintDataSummarized),
-            contentType: "application/json;charset=utf-8",
-            success: function (Response) {
-                window.open(Response.redirectTo, '_blank');
-
-            },
-        });
+        var queryString = $.param(data); // Serialize object to query string
+        var url = '/Print/InwardOutwardPrintData?' + queryString; // Append query string to URL
+        window.open(url, '_blank');
     });
 });
