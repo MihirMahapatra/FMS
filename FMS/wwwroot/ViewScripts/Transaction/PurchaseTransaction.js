@@ -41,7 +41,7 @@ $(function () {
     transactionDate.val(todayDate);
     invoiceDate.val(todayDate);
     //-----------------------------------Contorl Foucous Of Element Purchase----------------------------//
-    ddlSupplyer.focus();
+    transactionDate.focus();
     invoiceNo.on('focus', function () {
         $(this).css('border-color', 'red');
     });

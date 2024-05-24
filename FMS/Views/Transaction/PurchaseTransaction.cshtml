@@ -33,8 +33,6 @@
     <link rel="stylesheet" href="~/plugins/toastr/toastr.min.css">
     <link href="~/viewstyles/loader.css" rel="stylesheet" />
 }
-
-
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <section class="content-header">
@@ -50,7 +48,6 @@
             </div>
         </div><!-- /.container-fluid -->
     </section>
-
     <!-- Main content -->
     <section class="content">
         <div class="container-fluid">
@@ -80,7 +77,7 @@
                                             <div class="form-group">
                                                 <label class="pt-2">Transaction Date</label>
                                                 <div class="input-group  date" id="reservationdate3" data-target-input="nearest">
-                                                    <input type="text" class="form-control datetimepicker-input" data-target="#reservationdate3" name="TransactionDate" />
+                                                    <input type="text" class="form-control datetimepicker-input" data-target="#reservationdate3" name="TransactionDate" tabindex="1" />
                                                     <div class="input-group-append" data-target="#reservationdate3" data-toggle="datetimepicker">
                                                         <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                                     </div>
@@ -90,7 +87,7 @@
                                         <div class="col-md-3">
                                             <div class="form-group">
                                                 <label class="pt-2">Product  Type</label>
-                                                <select class="form-control select2bs4" style="width: 100%" name="ddlProductType" tabindex="1">
+                                                <select class="form-control select2bs4" style="width: 100%" name="ddlProductType" tabindex="2">
                                                 </select>
                                             </div>
                                         </div>
@@ -114,21 +111,21 @@
                                                 <div class="col-md-4">
                                                     <div class="form-group">
                                                         <label>Supplier Name</label>
-                                                        <select class="form-control select2bs4" style="width: 100%" name="ddlSupplyerId" tabindex="1">
+                                                        <select class="form-control select2bs4" style="width: 100%" name="ddlSupplyerId" tabindex="3">
                                                         </select>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-2">
                                                     <div class="form-group">
                                                         <label>Mat. Recive No</label>
-                                                        <input type="text" class="form-control" id="" name="InvoiceNo" tabindex="2">
+                                                        <input type="text" class="form-control" id="" name="InvoiceNo" tabindex="4">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-2">
                                                     <div class="form-group">
                                                         <label for="">Mat. Recive date</label>
                                                         <div class="input-group  date" id="reservationdate1" data-target-input="nearest">
-                                                            <input type="text" class="form-control  datetimepicker-input" data-target="#reservationdate1" name="InvoiceDate" tabindex="3" />
+                                                            <input type="text" class="form-control  datetimepicker-input" data-target="#reservationdate1" name="InvoiceDate" tabindex="5" />
                                                             <div class="input-group-append" data-target="#reservationdate1" data-toggle="datetimepicker">
                                                                 <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                                             </div>

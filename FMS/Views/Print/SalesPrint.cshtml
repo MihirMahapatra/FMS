@@ -177,8 +177,12 @@
                                     return tens[num / 10] + ((num % 10 != 0) ? " " + units[num % 10] : "");
                                 if (num < 1000)
                                     return units[num / 100] + " Hundred" + ((num % 100 != 0) ? " " + ConvertToWords(num % 100) : "");
-                                if (num < 1000000)
+                                if (num < 100000)
                                     return ConvertToWords(num / 1000) + " Thousand" + ((num % 1000 != 0) ? " " + ConvertToWords(num % 1000) : "");
+                                if (num < 10000000)
+                                    return ConvertToWords(num / 100000) + " Lakh" + ((num % 100000 != 0) ? " " + ConvertToWords(num % 100000) : "");
+                                if (num < 1000000000)
+                                    return ConvertToWords(num / 10000000) + " Crore" + ((num % 10000000 != 0) ? " " + ConvertToWords(num % 10000000) : "");
                                 if (num < 1000000000)
                                     return ConvertToWords(num / 1000000) + " Million" + ((num % 1000000 != 0) ? " " + ConvertToWords(num % 1000000) : "");
                                 return ConvertToWords(num / 1000000000) + " Billion" + ((num % 1000000000 != 0) ? " " + ConvertToWords(num % 1000000000) : "");

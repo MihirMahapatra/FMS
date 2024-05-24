@@ -433,7 +433,6 @@ $(function () {
     }
     $(document).on('click', '#btnRefresh', LoadStocks);
     //-------Update Records---------//
-
     $(document).on('click', '.btn-stock-edit', (event) => {
         const value = $(event.currentTarget).data('id');
         EditStock(value);

@@ -225,12 +225,14 @@
     });
     function EditLabourRate(id) {
         var $tr = $('#btnLabourRateEdit_' + id + '').closest('tr');
-        var date = moment($tr.find('td:eq(1)').text().trim(), 'DD MMM YYYY').format('DD/MM/YYYY');
+        //var date = moment($tr.find('td:eq(1)').text().trim(), 'DD MMM YYYY').format('DD/MM/YYYY');
+        var dateText = $tr.find('td:eq(1)').text().trim();
+        var date = moment(dateText, 'DD/MM/YYYY').format('DD/MM/YYYY');
         var ProductType = $tr.find('td:eq(2)').text().trim();
         var ProductName = $tr.find('td:eq(3)').text().trim();
         var rate = $tr.find('td:eq(4)').text().trim();
         //****************Date  Input***********************/
-        var dateInputHtml = `
+        var dateInputHtml = 1   `
         <div class="input-group date" id="datepicker_${id}" data-target-input="nearest">
             <input type="text" class="form-control datetimepicker-input" data-target="#datepicker_${id}" name="date" value="${date}" />
             <div class="input-group-append" data-target="#datepicker_${id}" data-toggle="datetimepicker">

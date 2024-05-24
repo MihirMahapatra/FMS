@@ -32,7 +32,6 @@
             padding: 0.1em !important; /* Adjust the row height */
             font-size: 0.9em !important;
         }
-
         body {
             color: black !important;
             font-size: 0.8em !important;
@@ -43,7 +42,7 @@
     <title>Customers Detailed Sort Print</title>
     <link rel="stylesheet" href="~/invoice/assets/css/app.min.css">
     <link rel="stylesheet" href="~/invoice/assets/css/style.css">
-    <link href="~/viewstyles/printtext.css" rel="stylesheet" />
+    <link href="~/viewstyles/printtext.css" rel="stylesheet"/>
 </head>
 <body class="hospital-template" style="font-family: Times,  Times New Roman, Georgia, serif;">
     <div class="invoice-container-wrap">
@@ -87,7 +86,6 @@
                         </div>
                         <table class="invoice-table">
                             <thead>
-                               
                                 <tr class="small-row">
                                     <th style="width:10%!important;">Date</th>
                                     <th style="width:10%!important;">VhrType</th>
@@ -118,7 +116,6 @@
                               
                                 @foreach (var item in Model.Customers.PartyDetailedReports.Orders)
                                 {
-
                                     @if (item.Transactions.Any())
                                     {
                                         
@@ -214,6 +211,15 @@
                                     }
                                     
                                 }
+                                @* <tr class="small-rows">
+                                    <td class="cust-text" colspan="9">Opening Bal.</td>
+                                    <td style="text-align:center;" colspan="2">@Model.Customers.PartyDetailedReports.OpeningBal  @Model.Customers.PartyDetailedReports.OpeningBalType</td>
+                                </tr> *@
+                                <tr class="small-row">
+                                    <td colspan="7" style="background-color:lightblue">-</td>
+                                    <td colspan="2" style="background-color:lightblue">Opening Bal</td>
+                                    <td colspan="2" style="background-color:lightblue; text-align:center;"> @Model.Customers.PartyDetailedReports.OpeningBal  @Model.Customers.PartyDetailedReports.OpeningBalType </td>
+                                </tr>
                                 <tr class="small-row">
                                     <td>-</td>
                                     <td>-</td>
@@ -222,8 +228,8 @@
                                     <td>-</td>
                                     <td>-</td>
                                     <td>-</td>
-                                    <td>-</td>
-                                    <td>-</td>
+                                    <td colspan="2">Totals</td>
+                                    
                                     <td>@TotalAmount.ToString("N2")</td>
                                     <td>@TotalReceptAmount.ToString("N2")</td>
                                 </tr>
@@ -243,7 +249,8 @@
                                         var closing = GrandTotalAmount + Openingbal - @TotalReceptAmount;
                                         var drcr = closing > 0 ? "Dr" : "Cr";
                                     }
-                                    <td colspan="9" style="background-color:lightblue">Closing Balance</td>
+                                    <td colspan="7" style="background-color:lightblue">-</td>
+                                    <td colspan="2" style="background-color:lightblue">Closing Balance</td>
                                     <td colspan="2" style="background-color:lightblue; text-align:center;"> @closing.ToString("N2")  @drcr </td>
                                 </tr>
                             </tbody>
@@ -264,7 +271,6 @@
                         </div>
                         <p class="invoice-note mt-3">
                             <b>Report End </b>
-
                         </p>
                     </div>
                     <div class="invoice-buttons">

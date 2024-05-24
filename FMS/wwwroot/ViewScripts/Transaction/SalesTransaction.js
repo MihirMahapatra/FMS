@@ -185,7 +185,9 @@ $(function () {
         pageLength: 10,// Set the default page length to 5
     });
     //-------------------------------Contorl Foucous Of Element Sale Return--------------------------------//
-    Sr_ddlPayment.focus();
+    //Sr_ddlPayment.focus();
+    transactionDate.focus();
+    Sr_transactionDate.focus();
     Sr_CustomerName.on('focus', function () {
         $(this).css('border-color', 'red');
     });
@@ -455,7 +457,7 @@ $(function () {
             $('.rate').prop('disabled', false);
         }
     });
-    $('#addSalesRowBtn').click(function () {
+    function addSalesRow() {
         var uniqueId = 'ddlitem' + new Date().getTime();
         var html = '<tr>';
         html += '<td hidden><input type="hidden" class="form-control" value="0"></td>';
@@ -482,12 +484,15 @@ $(function () {
         else {
             html += '<td><div class="form-group"><input type="text" class="form-control rate" value="0"></div></td>';
         }
+        html += '<td><div class="form-group"><input type="text" class="form-control" value="0" disabled></div></td>';
+        html += '<td><div class="form-group"><input type="text" class="form-control" value="0" disabled></div></td>';
         html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
         html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
         html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
-        html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
-        html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
-        html += '<td><button class="btn btn-primary btn-link deleteBtn" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button></td>';
+        html += '<td style="background-color:#ffe6e6; text-align:center">';
+        html += '<button class="btn btn-primary btn-link addBtn" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-plus"></i></button>';
+        html += '<button class="btn btn-primary btn-link deleteBtn" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button>';
+        html += '</td>';
         html += '</tr>';
         SalesTable.row.add($(html)).draw(false).node();
         $.ajax({
@@ -505,6 +510,7 @@ $(function () {
                         var option = $('<option></option>').val(item.ProductId).text(item.ProductName);
                         selectElement.append(option);
                     });
+                    selectElement.focus();
                 }
             },
             error: function (errormessage) {
@@ -514,6 +520,13 @@ $(function () {
         $('#tblSales tbody').find('.select2bs4').select2({
             theme: 'bootstrap4'
         });
+    }
+    $('#addSalesRowBtn').click(function () {
+        addSalesRow();
+    });
+
+    $('#tblSales').on('click', '.addBtn', function () {
+        addSalesRow();
     });
     $(document).on('click', '.deleteBtn', function () {
         var row = SalesTable.row($(this).closest('tr'));
@@ -644,9 +657,10 @@ $(function () {
             }
         });
         $('input[name="SubTotal"]').val(toalSubTotalAmount.toFixed(2));
-        $('input[name="TotalDiscountAmount"]').val(totalDiscountAmount.toFixed(2));
+        //$('input[name="TotalDiscountAmount"]').val(totalDiscountAmount.toFixed(2));
         $('input[name="GstAmount"]').val(totalGstAmount.toFixed(2));
-        $('input[name="GrandTotal"]').val(totalAmount.toFixed(2));
+        var discountAmountss = discount.val();
+        $('input[name="GrandTotal"]').val((totalAmount - discountAmountss).toFixed(2));
         const gstDifferences = {};
         $('#tblSales tbody tr').each(function () {
             const gstRate = parseFloat($(this).find('input:eq(6)').val());
@@ -682,6 +696,15 @@ $(function () {
         discountAmount = discount.val();
         gstAmount = gst.val();
         updateGrandTotal = parseFloat(handlingChgAmount) + parseFloat(tranportChgAmount) + parseFloat(subTotalAmount) + parseFloat(gstAmount) - parseFloat(discountAmount);
+        grandTotal.val(updateGrandTotal.toFixed(2));
+    });
+    discount.on('change', function () {
+        var discount = $(this).val();
+        tranportChgAmount = transportationCharges.val();
+        subTotalAmount = subTotal.val();
+        gstAmount = gst.val();
+        handlingChgAmount = handlingCharges.val();
+        updateGrandTotal = parseFloat(handlingChgAmount) + parseFloat(tranportChgAmount) + parseFloat(subTotalAmount) + parseFloat(gstAmount) - parseFloat(discount);
         grandTotal.val(updateGrandTotal.toFixed(2));
     });
     $('#btnSave').on('click', CreateSale);
@@ -1058,7 +1081,10 @@ $(function () {
                     html += '<td><div class="form-group"><input type="text" class="form-control" id=""  value=' + item.Gst + '></div></td>';
                     html += '<td><div class="form-group"><input type="text" class="form-control" id=""  value=' + item.GstAmount + '></div></td>';
                     html += '<td><div class="form-group"><input type="text" class="form-control" id=""  value=' + item.Amount + '></div></td>';
-                    html += '<td><button class="btn btn-primary btn-link deleteBtn" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button></td>';
+                    html += '<td style="background-color:#ffe6e6; text-align:center">';
+                    html += '<button class="btn btn-primary btn-link addBtn" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-plus"></i></button>';
+                    html += '<button class="btn btn-primary btn-link deleteBtn" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button>';
+                    html += '</td>';
                     html += '</tr>';
                     var newRow = SalesTable.row.add($(html)).draw(false).node();
                     var selectElement = $('#ddn_' + item.SalesId);
@@ -1456,8 +1482,8 @@ $(function () {
         else {
             html += '<td><div class="form-group"><input type="text" class="form-control sr_rate" value="0"></div></td>';
         }
-        html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
-        html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
+        html += '<td><div class="form-group"><input type="text" class="form-control" value="0" disabled></div></td>';
+        html += '<td><div class="form-group"><input type="text" class="form-control" value="0" disabled></div></td>';
         html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
         html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
         html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
@@ -1598,7 +1624,6 @@ $(function () {
             $('.Sr_hdntxt').show();
         }
     });
-  
     $('#tblSalesReturn tbody').on('change', 'input[type="text"]', function () {
         var row = $(this).closest('tr');
         var quantity = parseFloat(row.find('input:eq(1)').val());
@@ -1643,7 +1668,7 @@ $(function () {
         $('input[name="Sr_SubTotal"]').val(toalSubTotalAmount.toFixed(2));
         $('input[name="Sr_GrandTotal"]').val(totalAmount.toFixed(2));
         $('input[name="Sr_GstAmount"]').val(totalGstAmount.toFixed(2));
-        $('input[name="Sr_DiscountAmount"]').val(totalDiscountAmount.toFixed(2));
+       // $('input[name="Sr_DiscountAmount"]').val(totalDiscountAmount.toFixed(2));
         const gstDifferences = {};
         $('#tblSalesReturn tbody tr').each(function () {
             const gstRate = parseFloat($(this).find('input:eq(6)').val()); // Assuming GST rate is in the 6th input field (0-based index).
@@ -1671,6 +1696,14 @@ $(function () {
         discountAmount = Sr_discount.val();
         gstAmount = Sr_gst.val();
         updateGrandTotal = parseFloat(tranportChgAmount) + parseFloat(subTotalAmount) + parseFloat(gstAmount) - parseFloat(discountAmount);
+        Sr_grandTotal.val(updateGrandTotal.toFixed(2));
+    });
+    Sr_discount.on('change', function () {
+        var Sr_discount = $(this).val();
+        Sr_tranportChgAmount = Sr_transportationCharges.val();
+        Sr_subTotalAmount = Sr_subTotal.val();
+        Sr_gstAmount = Sr_gst.val();
+        updateGrandTotal =  parseFloat(Sr_tranportChgAmount) + parseFloat(Sr_subTotalAmount) + parseFloat(Sr_gstAmount) - parseFloat(Sr_discount);
         Sr_grandTotal.val(updateGrandTotal.toFixed(2));
     });
     $('#Sr_btnSave').on('click', CreateSalesReturn);

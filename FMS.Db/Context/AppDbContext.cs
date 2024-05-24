@@ -14,7 +14,7 @@ public partial class AppDbContext : IdentityDbContext<AppUser>, IDataProtectionK
     }
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
-
+        this.Database.SetCommandTimeout(300);
     }
     #region Entity
     public DbSet<DataProtectionKey> DataProtectionKeys { get; set; } = null!;

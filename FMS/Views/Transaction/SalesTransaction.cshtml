@@ -32,7 +32,6 @@
     <!-- Toastr -->
     <link rel="stylesheet" href="~/plugins/toastr/toastr.min.css">
 }
-
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <section class="content-header">
@@ -77,7 +76,7 @@
                                             <div class="form-group">
                                                 <label class="pt-2">Transaction Date</label>
                                                 <div class="input-group  date" id="reservationdate3" data-target-input="nearest">
-                                                    <input type="text" class="form-control datetimepicker-input" data-target="#reservationdate3" name="TransactionDate" />
+                                                    <input type="text" class="form-control datetimepicker-input" data-target="#reservationdate3" tabindex="1" name="TransactionDate" />
                                                     <div class="input-group-append" data-target="#reservationdate3" data-toggle="datetimepicker">
                                                         <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                                     </div>
@@ -87,21 +86,21 @@
                                         <div class="col-md-2">
                                             <div class="form-group">
                                                 <label class="pt-2">Transaction Type</label>
-                                                <select class="form-control select2bs4 PaymentOptions" style="width: 100%" name="ddlPayment" tabindex="1">
+                                                <select class="form-control select2bs4 PaymentOptions" style="width: 100%" name="ddlPayment" tabindex="2">
                                                 </select>
                                             </div>
                                         </div>
                                         <div class="col-md-2 hdnpartygroup" style="display:none">
                                             <div class="form-group">
                                                 <label class="pt-2">ChooseGroup</label>
-                                                <select class="form-control select2bs4" style="width: 100%" id="PartyGroupId" tabindex="2" name="ddlPartyGroupId">
+                                                <select class="form-control select2bs4" style="width: 100%" id="PartyGroupId" tabindex="3" name="ddlPartyGroupId">
                                                 </select>
                                             </div>
                                         </div>
                                         <div class="col-md-2">
                                             <div class="form-group">
                                                 <label class="pt-2">Rate Type</label>
-                                                <select class="form-control select2bs4 RateOptions" style="width: 100%" name="ddlRate" tabindex="3">
+                                                <select class="form-control select2bs4 RateOptions" style="width: 100%" name="ddlRate" tabindex="4">
                                                 </select>
                                             </div>
                                         </div>
@@ -124,25 +123,25 @@
                                                 <div class="col-md-3 ">
                                                     <div class="form-group hdnddn" style=" display:none">
                                                         <label>Customer Name</label>
-                                                        <select class="form-control select2bs4 " style="width: 100%" name="ddlCustomerId" tabindex="3">    </select>
+                                                        <select class="form-control select2bs4 " style="width: 100%" name="ddlCustomerId" tabindex="4">    </select>
 
                                                     </div>
                                                     <div class="form-group hdntxt">
                                                         <label>Customer Name</label>
-                                                        <input type="text" class="form-control" id="" name="CustomerName" tabindex="3">
+                                                        <input type="text" class="form-control" id="" name="CustomerName" tabindex="4">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <label>Challan No</label>
-                                                        <input type="text" class="form-control" id="" name="OrderNo" tabindex="4">
+                                                        <input type="text" class="form-control" id="" name="OrderNo" tabindex="5">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <label for="">Challan Date</label>
                                                         <div class="input-group  date" id="reservationdate2" data-target-input="nearest">
-                                                            <input type="text" class="form-control datetimepicker-input" data-target="#reservationdate2" name="OrderDate" tabindex="5" />
+                                                            <input type="text" class="form-control datetimepicker-input" data-target="#reservationdate2" name="OrderDate" tabindex="6" />
                                                             <div class="input-group-append" data-target="#reservationdate2" data-toggle="datetimepicker">
                                                                 <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                                             </div>
@@ -152,7 +151,7 @@
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <label>Vehicle No</label>
-                                                        <input type="text" class="form-control" id="" name="VehicleNo" tabindex="6">
+                                                        <input type="text" class="form-control" id="" name="VehicleNo" tabindex="7">
                                                     </div>
                                                 </div>
 
@@ -161,13 +160,13 @@
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <label>Transpoter Name</label>
-                                                        <input type="text" class="form-control" id="" name="TranspoterName" tabindex="7">
+                                                        <input type="text" class="form-control" id="" name="TranspoterName" tabindex="8">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <label>Site Adress</label>
-                                                        <input type="text" class="form-control" id="" name="SiteAdress" tabindex="8">
+                                                        <input type="text" class="form-control" id="" name="SiteAdress" tabindex="9">
                                                     </div>
                                                 </div>
                                             </div>
@@ -177,7 +176,7 @@
                                     <div class="card card-primary">
                                         <div class="card-header">
                                             <h3 class="card-title"><b>Sales</b></h3>
-                                            <button class="btn btn-primary btn-link" id="addSalesRowBtn" tabindex="9" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px; float:right"> <i class="fa-solid fa-plus"></i></button>
+                                            <button class="btn btn-primary btn-link" id="addSalesRowBtn" tabindex="10" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px; float:right"> <i class="fa-solid fa-plus"></i></button>
                                         </div>
                                         <div class="card-body">
                                             <div class="row">
@@ -190,13 +189,13 @@
                                                                 <th style="width:15%">Product Name</th>
                                                                 <th style="width:15%" colspan=2>Qty</th>
                                                                 <th style="width:10%">Qty Unit</th>
-                                                                <th style="width:10%">Rate</th>
-                                                                <th style="width:10%">Disc %</th>
+                                                                <th style="width:5%">Rate</th>
+                                                                <th style="width:5%">Disc%</th>
                                                                 <th style="width:10%">Disc Amt</th>
                                                                 <th style="width:5%">GST</th>
                                                                 <th style="width:10%">GST Amt</th>
                                                                 <th style="width:10%">Amount</th>
-                                                                <th style="width:5%">Action</th>
+                                                                <th style="width:15%">Action</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
@@ -219,7 +218,7 @@
                                                         <div class="col-md-12 mt-3">
                                                             <div class="form-group">
                                                                 <label>Narration:</label>
-                                                                <textarea class="form-control" rows="2" placeholder="Enter ..." name="NarrationSales" tabindex="11"></textarea>
+                                                                <textarea class="form-control" rows="2" placeholder="Enter ..." name="NarrationSales"></textarea>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -227,10 +226,7 @@
                                                 <div class="col-md-2"></div>
                                                 <div class="col-md-4 table-responsive pt-1">
                                                     <table class="table">
-                                                        <tr>
-                                                            <th>Discount</th>
-                                                            <td><input type="text" class="form-control form-control-sm" id="" value="0" name="TotalDiscountAmount" disabled></td>
-                                                        </tr>
+                                                        
                                                         <tr>
                                                             <th style="width:40%">Sub total</th>
                                                             <td><input type="text" class="form-control form-control-sm" id="" name="SubTotal" value="0" disabled></td>
@@ -241,11 +237,15 @@
                                                         </tr>
                                                         <tr>
                                                             <th>Transport Crgs.(+)</th>
-                                                            <td><input type="text" class="form-control form-control-sm" id="" value="0" name="TransportationCharges" tabindex="12"></td>
+                                                            <td><input type="text" class="form-control form-control-sm" id="" value="0" name="TransportationCharges" ></td>
                                                         </tr>
                                                         <tr>
                                                             <th>Handling Crgs.(+)</th>
-                                                            <td><input type="text" class="form-control form-control-sm" id="" value="0" name="HandlingCharges" tabindex="13"></td>
+                                                            <td><input type="text" class="form-control form-control-sm" id="" value="0" name="HandlingCharges" ></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Discount Amount</th>
+                                                            <td><input type="text" class="form-control form-control-sm" id="" value="0" name="TotalDiscountAmount"></td>
                                                         </tr>
                                                         <tr>
                                                             <th>Grand Amt:</th>
@@ -256,8 +256,8 @@
                                             </div>
                                         </div>
                                         <div class="card-footer">
-                                            <button type="button" id="btnSave" tabindex="14" class="btn btn-primary" style="float:right">Submit</button>
-                                            <button type="button" id="btnUpdate" tabindex="15" class="btn btn-primary" style="float:right; display:none">Update</button>
+                                            <button type="button" id="btnSave"  class="btn btn-primary" style="float:right">Submit</button>
+                                            <button type="button" id="btnUpdate"  class="btn btn-primary" style="float:right; display:none">Update</button>
                                         </div>
                                     </div>
                                 </div>
@@ -452,10 +452,6 @@
                                                 <div class="col-md-4 table-responsive pt-1">
                                                     <table class="table">
                                                         <tr>
-                                                            <th>Discount</th>
-                                                            <td><input type="text" class="form-control form-control-sm" id="" value="0" name="Sr_DiscountAmount" disabled></td>
-                                                        </tr>
-                                                        <tr>
                                                             <th style="width:40%">Sub total</th>
                                                             <td><input type="text" class="form-control form-control-sm" id="" name="Sr_SubTotal" value="0" disabled></td>
                                                         </tr>
@@ -466,6 +462,10 @@
                                                         <tr>
                                                             <th>Transport Crgs.(+)</th>
                                                             <td><input type="text" class="form-control form-control-sm" id="" value="0" name="Sr_TransportationCharges"></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Discount Amount</th>
+                                                            <td><input type="text" class="form-control form-control-sm" id="" value="0" name="Sr_DiscountAmount"></td>
                                                         </tr>
                                                         <tr>
                                                             <th>Grand Amt:</th>

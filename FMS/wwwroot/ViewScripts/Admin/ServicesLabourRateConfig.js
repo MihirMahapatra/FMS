@@ -225,7 +225,9 @@
     });
     function EditLabourRate(id) {
         var $tr = $('#btnLabourRateEdit_' + id + '').closest('tr');
-        var date = moment($tr.find('td:eq(1)').text().trim(), 'DD MMM YYYY').format('DD/MM/YYYY');
+        //var date = moment($tr.find('td:eq(1)').text().trim(), 'DD MMM YYYY').format('DD/MM/YYYY');
+        var dateText = $tr.find('td:eq(1)').text().trim();
+        var date = moment(dateText, 'DD/MM/YYYY').format('DD/MM/YYYY');
         var rate = $tr.find('td:eq(4)').text().trim();
         //****************Date  Input***********************/
         var dateInputHtml = `

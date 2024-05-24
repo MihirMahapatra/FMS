@@ -98,7 +98,7 @@
                                 @if (Model.LabourDetails != null)
 
                                 {
-                                    <tr class="small-row">
+                                   @*  <tr class="small-row">
                                         <td>-</td>
                                         <td>Opening Bal</td>
                                         <td>-</td>
@@ -110,18 +110,18 @@
                                         <td>-</td>
                                         <td>-</td>
                                         <td style="text-align:center;">@Model.LabourDetails.LaborReportDetailed[0].OpeningBalance</td>
-                                    </tr>
+                                    </tr> *@
                                     decimal TotalPaymentAmt = 0;
                                     decimal TotalBillingAmt =0 ;
-                                    @foreach (var report in Model.LabourDetails.LaborReportDetailed)
+                                    decimal Balance = 0;
+                                    @foreach(var report in Model.LabourDetails.LaborReportDetailed)
                                     {
-                                        decimal Balance = @Model.LabourDetails.LaborReportDetailed[0].OpeningBalance;
+                                        Balance = @Model.LabourDetails.LaborReportDetailed[0].OpeningBalance;
                                         if(report.Orders != null)
                                         {
                                             foreach (var item in report.Orders)
                                             {
                                               
-                                                Balance += @item.Amount;
                                                 <tr class="small-row">
                                                     <td>@item.TransactionDate.ToString("dd/MM/yyyy")</td>
                                                     @if (item.Particular == "LabourOrders")
@@ -152,7 +152,6 @@
                                                         Balance += @item.Amount;
                                                        
                                                     }
-
                                                     else if (item.Particular == "DamageOrders")
                                                     {
                                                         <td>0.00</td>
@@ -160,7 +159,7 @@
                                                         <td>0.00</td>
                                                         Balance -= @item.Amount;
                                                     }
-                                                    else
+                                                    else 
                                                     {
                                                         <td>0.00</td>
                                                         <td>0.00</td>
@@ -176,19 +175,22 @@
                                         
                                     }
                                     <tr class="small-row">
-                                        <td>-</td>
-                                        <td>-</td>
-                                        <td>-</td>
-                                        <td>-</td>
-                                        <td>-</td>
-                                        <td>-</td>
-                                        <td>-</td>
-                                        <td style="background-color:lightcoral">@TotalBillingAmt.ToString("N2")</td>
-                                        <td>-</td>
-                                        <td style="background-color:lightcoral">@TotalPaymentAmt.ToString("N2")</td>
-                                        <td style="text-align:center;">-</td>
+                                        <td colspan="7">-</td>
+                                        <td colspan="2">Opening Bal</td>
+                                        <td colspan="2" style="text-align:center">@Model.LabourDetails.LaborReportDetailed[0].OpeningBalance</td>
+                                        
                                     </tr>
-
+                                    <tr class="small-row">
+                                        <td colspan="7">-</td>
+                                        <td colspan="2">Total</td>
+                                        <td  style="background-color:lightcoral">@TotalBillingAmt.ToString("N2")</td>
+                                        <td style="background-color:lightcoral">@TotalPaymentAmt.ToString("N2")</td>
+                                    </tr>
+                                    <tr class="small-row">
+                                        <td colspan="7">-</td>
+                                        <td colspan="2">Balance</td>
+                                        <td colspan="2" style="text-align:center">@Balance</td>
+                                    </tr>
                                 }
                                 else
                                 {

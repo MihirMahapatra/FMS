@@ -530,7 +530,7 @@ namespace FMS.Repository.Reports
                         Result.OpeningQty = await _appDbContext.Products
                             .Where(p => p.Fk_ProductTypeId == requestData.ProductTypeId && p.ProductId == requestData.ProductId)
                              .Select(s =>
-                                 s.Stocks.Where(x => x.Fk_ProductId == s.ProductId && x.Fk_BranchId == BranchId && x.Fk_FinancialYear == FinancialYear).Sum(i => i.OpeningStock)
+                                 s.Stocks.Where(x => x.Fk_ProductId == s.ProductId && x.Fk_BranchId == BranchId).Sum(i => i.OpeningStock)
                                  + s.PurchaseTransactions.Where(d => d.Fk_FinancialYearId == FinancialYear && d.Fk_BranchId == BranchId && d.TransactionDate < convertedFromDate).Sum(p => p.AlternateQuantity * p.AlternateUnit.UnitQuantity)
                                  + s.LabourOrders.Where(d => d.Fk_FinancialYearId == FinancialYear && d.FK_BranchId == BranchId && d.TransactionDate < convertedFromDate).Sum(pe => pe.Quantity)
                                  + s.SalesReturnTransactions.Where(d => d.Fk_FinancialYearId == FinancialYear && d.Fk_BranchId == BranchId && d.TransactionDate < convertedFromDate).Sum(i => i.UnitQuantity)
