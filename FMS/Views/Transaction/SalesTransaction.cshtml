@@ -1,4 +1,5 @@
-﻿﻿@{
+﻿
+﻿@{
     Layout = "_Layout";
     ViewData["Title"] = "Sales";
 }
@@ -287,7 +288,7 @@
                                             <div class="form-group">
                                                 <label class="pt-2">Transaction Date</label>
                                                 <div class="input-group  date" id="reservationdate4" data-target-input="nearest">
-                                                    <input type="text" class="form-control datetimepicker-input" data-target="#reservationdate4" name="Sr_TransactionDate" />
+                                                    <input type="text" class="form-control datetimepicker-input" data-target="#reservationdate4" tabindex="1" name="Sr_TransactionDate" />
                                                     <div class="input-group-append" data-target="#reservationdate4" data-toggle="datetimepicker">
                                                         <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                                     </div>
@@ -297,21 +298,21 @@
                                         <div class="col-md-2">
                                             <div class="form-group">
                                                 <label class="pt-2">Payment Method</label>
-                                                <select class="form-control select2bs4" style="width: 100%" name="Sr_ddlPayment" tabindex="1">
+                                                <select class="form-control select2bs4" style="width: 100%" name="Sr_ddlPayment" tabindex="2">
                                                 </select>
                                             </div>
                                         </div>
                                         <div class="col-md-2 Sr_hdnpartygroup" style="display:none">
                                             <div class="form-group">
                                                 <label class="pt-2">ChooseGroup</label>
-                                                <select class="form-control select2bs4" style="width: 100%" id="Sr_PartyGroupId" tabindex="2" name="Sr_ddlPartyGroupId">
+                                                <select class="form-control select2bs4" style="width: 100%" id="Sr_PartyGroupId" tabindex="3" name="Sr_ddlPartyGroupId">
                                                 </select>
                                             </div>
                                         </div>
                                         <div class="col-md-2">
                                             <div class="form-group">
                                                 <label class="pt-2">Payment Mode</label>
-                                                <select class="form-control select2bs4" style="width: 100%" name="PaymentMode">
+                                                <select class="form-control select2bs4" style="width: 100%" tabindex="4" name="PaymentMode">
                                                     <option value="Cash" selected>Cash</option>
                                                     <option value="Bank">Bank</option>
                                                 </select>
@@ -320,7 +321,7 @@
                                         <div class="col-md-2">
                                             <div class="form-group">
                                                 <label class="pt-2">Rate Type</label>
-                                                <select class="form-control select2bs4 RateOptions" style="width: 100%" name="Sr_ddlRate" tabindex="2">
+                                                <select class="form-control select2bs4 RateOptions" style="width: 100%" name="Sr_ddlRate" tabindex="5">
                                                 </select>
                                             </div>
                                         </div>
@@ -343,26 +344,26 @@
                                                 <div class="col-md-3 ">
                                                     <div class="form-group Sr_hdnddn" style=" display:none">
                                                         <label>Customer Name</label>
-                                                        <select class="form-control select2bs4 " style="width: 100%" name="Sr_ddlCustomerId">    </select>
+                                                        <select class="form-control select2bs4 " style="width: 100%" tabindex="6" name="Sr_ddlCustomerId">    </select>
 
                                                     </div>
                                                     <div class="form-group Sr_hdntxt">
                                                         <label>Customer Name</label>
-                                                        <input type="text" class="form-control" id="" name="Sr_CustomerName" tabindex="2">
+                                                        <input type="text" class="form-control" id="" name="Sr_CustomerName" tabindex="6">
                                                     </div>
                                                 </div>
 
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <label>Mat Receipt No</label>
-                                                        <input type="text" class="form-control" id="" name="Sr_OrderNo" tabindex="3">
+                                                        <input type="text" class="form-control" id="" name="Sr_OrderNo" tabindex="7">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <label for="">Mat Receipt date</label>
                                                         <div class="input-group  date" id="reservationdate6" data-target-input="nearest">
-                                                            <input type="text" class="form-control datetimepicker-input" data-target="#reservationdate6" name="Sr_OrderDate" tabindex="4" />
+                                                            <input type="text" class="form-control datetimepicker-input" data-target="#reservationdate6" name="Sr_OrderDate" tabindex="8" />
                                                             <div class="input-group-append" data-target="#reservationdate6" data-toggle="datetimepicker">
                                                                 <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                                             </div>
@@ -372,36 +373,35 @@
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <label>Vehicle No</label>
-                                                        <input type="text" class="form-control" id="" name="Sr_VehicleNo" tabindex="5">
+                                                        <input type="text" class="form-control" id="" name="Sr_VehicleNo" tabindex="9">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <label>Transpoter Name</label>
-                                                        <input type="text" class="form-control" id="" name="Sr_TranspoterName" tabindex="6">
+                                                        <input type="text" class="form-control" id="" name="Sr_TranspoterName" tabindex="10">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <label>Receiving Person</label>
-                                                        <input type="text" class="form-control" id="" name="Sr_ReceivingPerson" tabindex="7">
+                                                        <input type="text" class="form-control" id="" name="Sr_ReceivingPerson" tabindex="11">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <label>Site Adress</label>
-                                                        <input type="text" class="form-control" id="" name="Sr_SiteAdress" tabindex="7">
+                                                        <input type="text" class="form-control" id="" name="Sr_SiteAdress" tabindex="12">
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-
                                     <!-------------Sales Return------------------>
                                     <div class="card card-primary">
                                         <div class="card-header">
                                             <h3 class="card-title"><b>Sales</b></h3>
-                                            <button class="btn btn-primary btn-link" id="addSalesReturnRowBtn" tabindex="8" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px; float:right"> <i class="fa-solid fa-plus"></i></button>
+                                            <button class="btn btn-primary btn-link" id="addSalesReturnRowBtn" tabindex="13" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px; float:right"> <i class="fa-solid fa-plus"></i></button>
                                         </div>
                                         <div class="card-body">
                                             <div class="row">
@@ -414,13 +414,13 @@
                                                                 <th style="width:15%">Product Name</th>
                                                                 <th style="width:15%" colspan=2>Qty</th>
                                                                 <th style="width:10%">Qty Unit</th>
-                                                                <th style="width:10%">Rate</th>
-                                                                <th style="width:10%">Disc %</th>
+                                                                <th style="width:5%">Rate</th>
+                                                                <th style="width:5%">Disc%</th>
                                                                 <th style="width:10%">Disc Amt</th>
                                                                 <th style="width:5%">GST</th>
                                                                 <th style="width:10%">GST Amt</th>
                                                                 <th style="width:10%">Amount</th>
-                                                                <th style="width:5%">Action</th>
+                                                                <th style="width:15%">Action</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
@@ -477,8 +477,8 @@
                                             </div>
                                         </div>
                                         <div class="card-footer">
-                                            <button type="button" id="Sr_btnSave" tabindex="9" class="btn btn-primary" style="float:right">Submit</button>
-                                            <button type="button" id="Sr_btnUpdate" tabindex="10" class="btn btn-primary" style="float:right; display:none">Update</button>
+                                            <button type="button" id="Sr_btnSave"  class="btn btn-primary" style="float:right">Submit</button>
+                                            <button type="button" id="Sr_btnUpdate"  class="btn btn-primary" style="float:right; display:none">Update</button>
                                         </div>
                                     </div>
                                 </div>

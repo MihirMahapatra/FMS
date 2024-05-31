@@ -232,7 +232,7 @@
         var ProductName = $tr.find('td:eq(3)').text().trim();
         var rate = $tr.find('td:eq(4)').text().trim();
         //****************Date  Input***********************/
-        var dateInputHtml = 1   `
+        var dateInputHtml = `
         <div class="input-group date" id="datepicker_${id}" data-target-input="nearest">
             <input type="text" class="form-control datetimepicker-input" data-target="#datepicker_${id}" name="date" value="${date}" />
             <div class="input-group-append" data-target="#datepicker_${id}" data-toggle="datetimepicker">

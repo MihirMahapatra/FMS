@@ -223,11 +223,11 @@ $(function () {
     $('#addPurchaseReturnRowBtn').on('blur', function () {
         $(this).css('background-color', '');
     });
-    $('#Pr_btnSave').on('keydown', function (e) {
-        if (e.key === 'Enter' || e.keyCode === 13) {
-            $('#btnSave').click();
-        }
-    });
+    //$('#Pr_btnSave').on('keydown', function (e) {
+    //    if (e.key === 'Enter' || e.keyCode === 13) {
+    //        $('#Pr_btnSave').click();
+    //    }
+    //});
     $('#Pr_btnSave').on('focus', function () {
         $(this).css('background-color', 'black');
     });
@@ -351,7 +351,7 @@ $(function () {
             }
         });
     }
-    $(document).on('click', '#addPurchaseRowBtn', function () {
+    function addPurchaseRow() {
         if (!ddlProductType.val() || ddlProductType.val() === '--Select Option--') {
             toastr.error('Plz Select Product Type First');
             ddlProductType.focus();
@@ -388,7 +388,10 @@ $(function () {
             html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
             html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
             html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
-            html += '<td><button class="btn btn-primary btn-link deleteBtn" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button></td>';
+            html += '<td style="background-color:#ffe6e6; text-align:center">';
+            html += '<button class="btn btn-primary btn-link addBtn" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-plus"></i></button>';
+            html += '<button class="btn btn-primary btn-link deleteBtn" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button>';
+            html += '</td>';
             html += '</tr>';
             var newRow = PurchaseTable.row.add($(html)).draw();
             $.ajax({
@@ -417,6 +420,12 @@ $(function () {
                 theme: 'bootstrap4'
             });
         }
+    }
+    $('#addPurchaseRowBtn').click(function () {
+        addPurchaseRow();
+    });
+    $('#tblPurchase').on('click', '.addBtn', function () {
+        addPurchaseRow();
     });
     $(document).on('change', '.Rawmaterial', function () {
         var selectElement = $(this);
@@ -918,7 +927,10 @@ $(function () {
                     html += '<td><div class="form-group"><input type="text" class="form-control" id=""  value=' + item.Gst + '></div></td>';
                     html += '<td><div class="form-group"><input type="text" class="form-control" id=""  value=' + item.GstAmount + '></div></td>';
                     html += '<td><div class="form-group"><input type="text" class="form-control" id=""  value=' + item.Amount + '></div></td>';
-                    html += '<td><button class="btn btn-primary btn-link deleteBtn" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button></td>';
+                    html += '<td style="background-color:#ffe6e6; text-align:center">';
+                    html += '<button class="btn btn-primary btn-link addBtn" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-plus"></i></button>';
+                    html += '<button class="btn btn-primary btn-link deleteBtn" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button>';
+                    html += '</td>';
                     html += '</tr>';
                     PurchaseTable.row.add($(html)).draw(false).node();
                     var selectProductElement = $('#ddnProduct_' + item.PurchaseId);
@@ -1153,6 +1165,7 @@ $(function () {
         GetSundryCreditorsForPurchaseReturn();
         GetLastPurchaseReturnTransaction();
         GetProductTypeForPurchaseReturn();
+        Pr_transactionDate.focus();
     });
     function GetProductTypeForPurchaseReturn() {
         $.ajax({
@@ -1222,7 +1235,6 @@ $(function () {
             }
         });
     }
-    $('#addPurchaseReturnRowBtn').on('click', PurchaseReturnRowBtn);
     function PurchaseReturnRowBtn() {
         if (!Pr_ddlProductType.val() || Pr_ddlProductType.val() === '--Select Option--') {
             toastr.error('Plz Select Product Type First');
@@ -1256,7 +1268,10 @@ $(function () {
             html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
             html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
             html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
-            html += '<td><button class="btn btn-primary btn-link deleteBtnReturn" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button></td>';
+            html += '<td style="background-color:#ffe6e6; text-align:center">';
+            html += '<button class="btn btn-primary btn-link addBtnReturn" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-plus"></i></button>';
+            html += '<button class="btn btn-primary btn-link deleteBtnReturn" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button>';
+            html += '</td>';
             html += '</tr>';
             var newRow = PurchaseReturnTable.row.add($(html)).draw(false).node();
             $.ajax({
@@ -1285,6 +1300,12 @@ $(function () {
             });
         }
     }
+    $('#addPurchaseReturnRowBtn').click(function () {
+        PurchaseReturnRowBtn();
+    });
+    $('#tblPurchaseReturn').on('click', '.addBtnReturn', function () {
+        PurchaseReturnRowBtn();
+    });
     $(document).on('change', '#Qtyrt', function () {
         var row = $(this).closest('tr');
         var alternateQty = $(this).val();
@@ -1741,7 +1762,10 @@ $(function () {
                     html += '<td><div class="form-group"><input type="text" class="form-control" id=""  value=' + item.Gst + '></div></td>';
                     html += '<td><div class="form-group"><input type="text" class="form-control" id=""  value=' + item.GstAmount + '></div></td>';
                     html += '<td><div class="form-group"><input type="text" class="form-control" id=""  value=' + item.Amount + '></div></td>';
-                    html += '<td><button class="btn btn-primary btn-link deleteBtn" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button></td>';
+                    html += '<td style="background-color:#ffe6e6; text-align:center">';
+                    html += '<button class="btn btn-primary btn-link addBtnReturn" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-plus"></i></button>';
+                    html += '<button class="btn btn-primary btn-link deleteBtnReturn" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button>';
+                    html += '</td>';
                     html += '</tr>';
                     PurchaseReturnTable.row.add($(html)).draw(false).node();
                     var selectProductElement = $('#ddn_' + item.PurchaseReturnId);

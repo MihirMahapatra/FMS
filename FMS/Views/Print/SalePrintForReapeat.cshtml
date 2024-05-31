@@ -1,9 +1,5 @@
-﻿@using FMS.Model.ViewModel
-@using System
-@model SalesPrintModel
-@{
-    Layout = null;
-}
+﻿@using FMS.Model.CommonModel
+@model StockSumrizedReportModal
 <!DOCTYPE html>
 <html>
 <head>
@@ -33,7 +29,7 @@
         }
     </style>
     <meta name="viewport" content="width=device-width" />
-    <title>SalesPrint</title>
+    <title>Stock Summarized Print</title>
     <link rel="stylesheet" href="~/invoice/assets/css/app.min.css">
     <link rel="stylesheet" href="~/invoice/assets/css/style.css">
 </head>
@@ -50,11 +46,11 @@
                                         <a href="index.html">
                                             <img src="~/landingpage/assets/images/logo/logo.png" alt="logo" style="width:30%; margin-left:25px;" />
                                         </a>
-                                        <p style=" color:black; font-family: Times,  Times New Roman, Georgia, serif; margin-left:30px;"> @Model.Cmopany.Name</p>
+                                        <p style="font-family: Times,  Times New Roman, Georgia, serif; color:black; margin-left:30px;"> @Model.Cmopany.Name</p>
                                     </div>
                                 </div>
                                 <div class="col-auto">
-                                    <h6 style="padding-top:20px; text-decoration:underline;font-family: cursive;padding-right:40px">Tax Invoice</h6>
+                                    <h6 style="padding-top:20px;text-decoration:underline;font-family: cursive;padding-right:20px">Tax Invoice</h6>
                                 </div>
                             </div>
                         </header>
@@ -66,14 +62,15 @@
                                         @Model.Cmopany.Adress<br>@Model.Cmopany.Email,<br>
                                         @Model.Cmopany.Phone,<br>Odisha
                                     </address>
-                                    <br /> <b>Customer Name : @Model.SalesData.CustomerName</b>
+                                    <br /> <b>Customer Name : @Model.StockReports.salesOrderModel.CustomerName</b>
                                 </div>
                             </div>
                             <div class="col-auto" style="padding-right:20px">
-                                Print Date :  @DateTime.Now.ToString("dd/MM/yyyy") <br />
+                                Date :  @DateTime.Now.ToString("dd/MM/yyyy") <br />
+                                Trn Date :  @Model.StockReports.salesOrderModel.TransactionDate.ToString("dd/MM/yyyy") <br />
                             </div>
                         </div>
-                        <table class="invoice-table table-stripe-column">
+                        <table class="invoice-table">
                             <thead>
                                 <tr class="small-row">
                                     <th style="width:30%">Product</th>
@@ -88,26 +85,34 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var Item in Model.SalesData.PrintData)
+                                @if (Model.StockReports != null)
+                                {
+                                    @if(Model.StockReports.salesOrderModel != null)
+                                    {
+                                        var Item = Model.StockReports.salesOrderModel;
+                                        foreach (var Transation in Item.SalesTransactions)
+                                        {
+                                            <tr class="small-row">
+                                                <td>@Transation.Product.ProductName</td>
+                                                <td>@Transation.AlternateQuantity.ToString("N2")</td>
+                                                <td>@Transation.Product.Unit.UnitName</td>
+                                                <td>@Transation.Rate</td>
+                                                <td>@Transation.Discount</td>
+                                                <td>@Transation.DiscountAmount</td>
+                                                <td>@Transation.Gst</td>
+                                                <td>@Transation.GstAmount</td>
+                                                <td>@Transation.Amount</td>
+                                            </tr>
+                                        }
+                                        
+                                    }
+                                    
+                                    
+                                }
+                                else
                                 {
                                     <tr class="small-row">
-                                        <td>@Item[1]</td>
-                                        <td>@Item[2]</td>
-                                        @if (@Item[3] == "--Select Option--")
-                                        {
-                                            <td>@Item[12]</td>
-                                        }
-
-                                        else{
-                                            <td>@Item[3]</td>
-                                        }
-                                        <td>@Item[5]</td>
-                                        <td>@Item[6]</td>
-                                        <td>@Item[7]</td>
-                                        <td>@Item[8]</td>
-                                        <td>@Item[9]</td>
-                                        <td>@Item[10]</td>
-                                        
+                                        <td colspan="6">No SaleTransation available</td>
                                     </tr>
                                 }
                             </tbody>
@@ -118,16 +123,16 @@
                                 </div>
                             </div>
                             <div class="col-auto">
-                                
+
                                 @{
-                                    var Subtotal = @Model.SalesData.SubTotal;
-                                    var Discount = @Model.SalesData.Discount;
+                                    var Subtotal = @Model.StockReports.salesOrderModel.SubTotal;
+                                    var Discount = @Model.StockReports.salesOrderModel.Discount;
                                     var Total = Subtotal - Discount;
                                 }
                                 <table class="total-table3">
                                     <tr>
                                         <th>SubTotal:</th>
-                                        <td>@Model.SalesData.SubTotal</td>
+                                        <td>@Model.StockReports.salesOrderModel.SubTotal</td>
                                     </tr>
                                     <tr>
                                         <th colspan="2">
@@ -140,15 +145,15 @@
                                     </tr>
                                     <tr>
                                         <th>Gst Amount:</th>
-                                        <td>@Model.SalesData.Gst</td>
+                                        <td>@Model.StockReports.salesOrderModel.Gst</td>
                                     </tr>
                                     <tr>
                                         <th>Transportation Charges:</th>
-                                        <td>@Model.SalesData.TransportationCharges</td>
+                                        <td>@Model.StockReports.salesOrderModel.TransportationCharges</td>
                                     </tr>
                                     <tr>
                                         <th>Handling Charges:</th>
-                                        <td>@Model.SalesData.HandlingCharges</td>
+                                        <td>@Model.StockReports.salesOrderModel.HandlingCharges</td>
                                     </tr>
                                     <tr>
                                         <th colspan="2">
@@ -157,9 +162,9 @@
                                     </tr>
                                     <tr>
                                         <th>Grant Amount:</th>
-                                        <td>@Model.SalesData.GrandTotal</td>
+                                        <td>@Model.StockReports.salesOrderModel.GrandTotal</td>
                                     </tr>
-                                   
+
                                 </table>
                             </div>
                         </div>
@@ -186,9 +191,9 @@
                                 return ConvertToWords(num / 1000000000) + " Billion" + ((num % 1000000000 != 0) ? " " + ConvertToWords(num % 1000000000) : "");
                             }
                         }
-                        <b>Total In Words:</b>@ConvertToWords((long)Model.SalesData.GrandTotal)  Rupees Only
+                        <b>Total In Words:</b>@ConvertToWords((long)Model.StockReports.salesOrderModel.GrandTotal)  Rupees Only
                         <p class="invoice-note mt-3">
-                            <b> The END Report </b>
+                            <b> --End Report--</b>
                         </p>
                     </div>
                     <div class="invoice-buttons">

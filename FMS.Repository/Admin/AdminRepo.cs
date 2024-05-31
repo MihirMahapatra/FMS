@@ -1545,8 +1545,7 @@ namespace FMS.Repository.Admin
             {
                 _Result.IsSuccess = false;
                 var Query = _appDbContext.SalesConfigs.Where(s => s.Fk_FinishedGoodId == Guid.Parse(data.FinishedGoodId)).FirstOrDefaultAsync();
-                if (Query.Result == null)
-                {
+                
                     List<SalesConfig> salesConfigs = new();
 
                     foreach (var item in data.RowData)
@@ -1560,7 +1559,7 @@ namespace FMS.Repository.Admin
 
                         });
 
-                    }
+                    
                     await _appDbContext.SalesConfigs.AddRangeAsync(salesConfigs);
                     int count = await _appDbContext.SaveChangesAsync();
                     _Result.Response = (count > 0) ? ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Created) : ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Error);

@@ -3,6 +3,7 @@ using FMS.Model.CommonModel;
 using FMS.Model.ViewModel;
 using FMS.Service.Admin;
 using FMS.Service.Reports;
+using FMS.Service.Transaction;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -14,13 +15,33 @@ namespace FMS.Controllers.Print
         private readonly AppDbContext _appDbContext;
         private readonly IAdminSvcs _adminSvcs;
         private readonly IReportSvcs _reportSvcs;
-        public PrintController(IAdminSvcs adminSvcs, IReportSvcs reportSvcs, AppDbContext appDbContext)
+        private readonly ITransactionSvcs _transactionSvcs;
+        public PrintController(IAdminSvcs adminSvcs, IReportSvcs reportSvcs, ITransactionSvcs transactionSvcs, AppDbContext appDbContext)
         {
             _adminSvcs = adminSvcs;
             _reportSvcs = reportSvcs;
             _appDbContext = appDbContext;
+            _transactionSvcs = transactionSvcs;
         }
         #region Sales Print
+        [HttpGet]
+        public async Task<IActionResult> SalePrintForReapeat([FromQuery]  Guid Id)
+        {
+            var result = await _transactionSvcs.GetSalesById(Id);
+            var StockReportData = new StockReportDataModel();
+            StockReportData.salesOrderModel = result.salesOrder;
+            if (StockReportData.salesOrderModel.CustomerName == "")
+            {
+                var subId = StockReportData.salesOrderModel.Fk_SubLedgerId;
+                StockReportData.salesOrderModel.CustomerName = _appDbContext.SubLedgers.Where(s=> s.SubLedgerId == subId).Select( s => s.SubLedgerName).FirstOrDefault();
+            }
+            var StockSumrizedReportModal = new StockSumrizedReportModal()
+            {
+                Cmopany = _adminSvcs.GetCompany().Result.GetCompany,
+                StockReports = StockReportData
+            };
+            return View(StockSumrizedReportModal);
+        }
         [HttpPost]
         public IActionResult SalesPrintData([FromBody] SalesDataRequest requestData)
         {
@@ -456,5 +477,6 @@ namespace FMS.Controllers.Print
             return View(InwardOutwardReportModal);
         }
         #endregion
+
     }
 }

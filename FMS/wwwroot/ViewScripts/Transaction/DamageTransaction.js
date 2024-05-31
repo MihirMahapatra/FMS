@@ -176,7 +176,10 @@ $(function () {
             html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
             html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
             html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
-            html += '<td><button class="btn btn-primary btn-link deleteBtn" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button></td>';
+            html += '<td style="background-color:#ffe6e6; text-align:center">';
+            html += '<button class="btn btn-primary btn-link addBtn" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-plus"></i></button>';
+            html += '<button class="btn btn-primary btn-link deleteBtn" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button>';
+            html += '</td>';
             html += '</tr>';
             var newRow = DamageTable.row.add($(html)).draw(false).node();
             $.ajax({
@@ -206,6 +209,9 @@ $(function () {
             theme: 'bootstrap4'
         });
     }
+    $('#tblDamage').on('click', '.addBtn', function () {
+        addDamageRowBtn();
+    });
     $(document).on('change', '.SelectedProduct', function () {
         var selectElement = $(this);
         var selectedProductId = selectElement.val();
@@ -218,7 +224,7 @@ $(function () {
                 success: function (result) {
                     if (result.ResponseCode == 302) {
                         var Textbox = selectElement.closest('tr').find('input[type="text"]');
-                        Textbox.eq(1).val(result.product.Price);
+                        Textbox.eq(1).val(result.Product.Price);
                     }
                 },
                 error: function (errormessage) {
@@ -500,7 +506,10 @@ $(function () {
                     html += '<td><div class="form-group"><input type="text" class="form-control" id="" value=' + item.Quantity + '></div></td>';
                     html += '<td><div class="form-group"><input type="text" class="form-control" id=""  value=' + item.Rate + '></div></td>';
                     html += '<td><div class="form-group"><input type="text" class="form-control" id=""  value=' + item.Amount + '></div></td>';
-                    html += '<td><button class="btn btn-primary btn-link deleteBtn" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button></td>';
+                    html += '<td style="background-color:#ffe6e6; text-align:center">';
+                    html += '<button class="btn btn-primary btn-link addBtn" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-plus"></i></button>';
+                    html += '<button class="btn btn-primary btn-link deleteBtn" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button>';
+                    html += '</td>';
                     html += '</tr>';
                     var newRow = DamageTable.row.add($(html)).draw(false).node();
                     var selectElement = $('#ddn_' + item.DamageTransactionId);

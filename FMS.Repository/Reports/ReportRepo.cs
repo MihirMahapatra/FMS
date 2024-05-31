@@ -531,20 +531,20 @@ namespace FMS.Repository.Reports
                             .Where(p => p.Fk_ProductTypeId == requestData.ProductTypeId && p.ProductId == requestData.ProductId)
                              .Select(s =>
                                  s.Stocks.Where(x => x.Fk_ProductId == s.ProductId && x.Fk_BranchId == BranchId).Sum(i => i.OpeningStock)
-                                 + s.PurchaseTransactions.Where(d => d.Fk_FinancialYearId == FinancialYear && d.Fk_BranchId == BranchId && d.TransactionDate < convertedFromDate).Sum(p => p.AlternateQuantity * p.AlternateUnit.UnitQuantity)
-                                 + s.LabourOrders.Where(d => d.Fk_FinancialYearId == FinancialYear && d.FK_BranchId == BranchId && d.TransactionDate < convertedFromDate).Sum(pe => pe.Quantity)
-                                 + s.SalesReturnTransactions.Where(d => d.Fk_FinancialYearId == FinancialYear && d.Fk_BranchId == BranchId && d.TransactionDate < convertedFromDate).Sum(i => i.UnitQuantity)
-                                 + s.InwardSupplyTransactions.Where(d => d.Fk_FinancialYearId == FinancialYear && d.Fk_BranchId == BranchId && d.TransactionDate < convertedFromDate).Sum(i => i.Quantity)
-                                 - s.PurchaseReturnTransactions.Where(d => d.Fk_FinancialYearId == FinancialYear && d.Fk_BranchId == BranchId && d.TransactionDate < convertedFromDate).Sum(i => i.AlternateQuantity * i.AlternateUnit.UnitQuantity)
-                                 - s.SalesTransactions.Where(d => d.Fk_FinancialYearId == FinancialYear && d.Fk_BranchId == BranchId && d.TransactionDate < convertedFromDate).Sum(i => i.UnitQuantity)
-                                 - s.DamageTransactions.Where(d => d.Fk_FinancialYearId == FinancialYear && d.Fk_BranchId == BranchId && d.TransactionDate < convertedFromDate).Sum(i => i.Quantity)
-                                 - s.OutwardSupplyTransactions.Where(d => d.Fk_FinancialYearId == FinancialYear && d.Fk_BranchId == BranchId && d.TransactionDate < convertedFromDate).Sum(i => i.Quantity)
-                                 - s.LabourTransactions.Where(d => d.Fk_FinancialYearId == FinancialYear && d.Fk_BranchId == BranchId && d.TransactionDate < convertedFromDate).Sum(i => i.Quantity)
+                                 + s.PurchaseTransactions.Where(d =>  d.Fk_BranchId == BranchId && d.TransactionDate < convertedFromDate).Sum(p => p.AlternateQuantity * p.AlternateUnit.UnitQuantity)
+                                 + s.LabourOrders.Where(d =>  d.FK_BranchId == BranchId && d.TransactionDate < convertedFromDate).Sum(pe => pe.Quantity)
+                                 + s.SalesReturnTransactions.Where(d =>  d.Fk_BranchId == BranchId && d.TransactionDate < convertedFromDate).Sum(i => i.UnitQuantity)
+                                 + s.InwardSupplyTransactions.Where(d =>  d.Fk_BranchId == BranchId && d.TransactionDate < convertedFromDate).Sum(i => i.Quantity)
+                                 - s.PurchaseReturnTransactions.Where(d =>  d.Fk_BranchId == BranchId && d.TransactionDate < convertedFromDate).Sum(i => i.AlternateQuantity * i.AlternateUnit.UnitQuantity)
+                                 - s.SalesTransactions.Where(d =>  d.Fk_BranchId == BranchId && d.TransactionDate < convertedFromDate).Sum(i => i.UnitQuantity)
+                                 - s.DamageTransactions.Where(d =>  d.Fk_BranchId == BranchId && d.TransactionDate < convertedFromDate).Sum(i => i.Quantity)
+                                 - s.OutwardSupplyTransactions.Where(d =>  d.Fk_BranchId == BranchId && d.TransactionDate < convertedFromDate).Sum(i => i.Quantity)
+                                 - s.LabourTransactions.Where(d =>  d.Fk_BranchId == BranchId && d.TransactionDate < convertedFromDate).Sum(i => i.Quantity)
                              ).SingleOrDefaultAsync();
                         #endregion
                         #region Damage Transaction
                         Result.Stocks.AddRange(await _appDbContext.DamageTransactions
-                            .Where(d => d.Fk_ProductId == requestData.ProductId && d.Fk_FinancialYearId == FinancialYear && d.Fk_BranchId == BranchId && d.TransactionDate >= convertedFromDate && d.TransactionDate <= convertedToDate)
+                            .Where(d => d.Fk_ProductId == requestData.ProductId && d.Fk_BranchId == BranchId && d.TransactionDate >= convertedFromDate && d.TransactionDate <= convertedToDate)
                             .Select(d => new StockReportDetailedModel
                             {
                                 TransactionDate = d.TransactionDate,
@@ -558,7 +558,7 @@ namespace FMS.Repository.Reports
                         #endregion
                         #region OutwardSupplyTransactions
                         Result.Stocks.AddRange(await _appDbContext.OutwardSupplyTransactions
-                            .Where(d => d.Fk_ProductId == requestData.ProductId && d.Fk_FinancialYearId == FinancialYear && d.Fk_BranchId == BranchId && d.TransactionDate >= convertedFromDate && d.TransactionDate <= convertedToDate)
+                            .Where(d => d.Fk_ProductId == requestData.ProductId  && d.Fk_BranchId == BranchId && d.TransactionDate >= convertedFromDate && d.TransactionDate <= convertedToDate)
                             .Select(o => new StockReportDetailedModel
                             {
                                 TransactionDate = o.TransactionDate,
@@ -571,7 +571,7 @@ namespace FMS.Repository.Reports
                         #endregion
                         #region InwardSupplyTransactions
                         Result.Stocks.AddRange(await _appDbContext.InwardSupplyTransactions
-                            .Where(d => d.Fk_ProductId == requestData.ProductId && d.Fk_FinancialYearId == FinancialYear && d.Fk_BranchId == BranchId && d.TransactionDate >= convertedFromDate && d.TransactionDate <= convertedToDate)
+                            .Where(d => d.Fk_ProductId == requestData.ProductId  && d.Fk_BranchId == BranchId && d.TransactionDate >= convertedFromDate && d.TransactionDate <= convertedToDate)
                             .Select(i => new StockReportDetailedModel
                             {
                                 TransactionDate = i.TransactionDate,
@@ -584,7 +584,7 @@ namespace FMS.Repository.Reports
                         #endregion
                         #region SalesTransactions
                         Result.Stocks.AddRange(await _appDbContext.SalesTransaction
-                            .Where(d => d.Fk_ProductId == requestData.ProductId && d.Fk_FinancialYearId == FinancialYear && d.Fk_BranchId == BranchId && d.TransactionDate >= convertedFromDate && d.TransactionDate <= convertedToDate)
+                            .Where(d => d.Fk_ProductId == requestData.ProductId  && d.Fk_BranchId == BranchId && d.TransactionDate >= convertedFromDate && d.TransactionDate <= convertedToDate)
                             .Select(s => new StockReportDetailedModel
                             {
                                 TransactionDate = s.TransactionDate,
@@ -597,7 +597,7 @@ namespace FMS.Repository.Reports
                         #endregion
                         #region SalesReturnTransactions
                         Result.Stocks.AddRange(await _appDbContext.SalesReturnTransactions
-                            .Where(d => d.Fk_ProductId == requestData.ProductId && d.Fk_FinancialYearId == FinancialYear && d.Fk_BranchId == BranchId && d.TransactionDate >= convertedFromDate && d.TransactionDate <= convertedToDate)
+                            .Where(d => d.Fk_ProductId == requestData.ProductId &&  d.Fk_BranchId == BranchId && d.TransactionDate >= convertedFromDate && d.TransactionDate <= convertedToDate)
                             .Select(sr => new StockReportDetailedModel
                             {
                                 TransactionDate = sr.TransactionDate,
@@ -610,7 +610,7 @@ namespace FMS.Repository.Reports
                         #endregion
                         #region PurchaseTransactions
                         Result.Stocks.AddRange(await _appDbContext.PurchaseTransactions
-                            .Where(d => d.Fk_ProductId == requestData.ProductId && d.Fk_FinancialYearId == FinancialYear && d.Fk_BranchId == BranchId && d.TransactionDate >= convertedFromDate && d.TransactionDate <= convertedToDate)
+                            .Where(d => d.Fk_ProductId == requestData.ProductId  && d.Fk_BranchId == BranchId && d.TransactionDate >= convertedFromDate && d.TransactionDate <= convertedToDate)
                             .Select(p => new StockReportDetailedModel
                             {
                                 TransactionDate = p.TransactionDate,
@@ -623,7 +623,7 @@ namespace FMS.Repository.Reports
                         #endregion
                         #region PurchaseReturnTransactions
                         Result.Stocks.AddRange(await _appDbContext.PurchaseReturnTransactions
-                            .Where(d => d.Fk_ProductId == requestData.ProductId && d.Fk_FinancialYearId == FinancialYear && d.Fk_BranchId == BranchId && d.TransactionDate >= convertedFromDate && d.TransactionDate <= convertedToDate)
+                            .Where(d => d.Fk_ProductId == requestData.ProductId  && d.Fk_BranchId == BranchId && d.TransactionDate >= convertedFromDate && d.TransactionDate <= convertedToDate)
                             .Select(pr => new StockReportDetailedModel
                             {
                                 TransactionDate = pr.TransactionDate,
@@ -636,7 +636,7 @@ namespace FMS.Repository.Reports
                         #endregion
                         #region LabourTransactions
                         Result.Stocks.AddRange(await _appDbContext.LabourTransactions
-                            .Where(d => d.Fk_ProductId == requestData.ProductId && d.Fk_FinancialYearId == FinancialYear && d.Fk_BranchId == BranchId && d.TransactionDate >= convertedFromDate && d.TransactionDate <= convertedToDate)
+                            .Where(d => d.Fk_ProductId == requestData.ProductId && d.Fk_BranchId == BranchId && d.TransactionDate >= convertedFromDate && d.TransactionDate <= convertedToDate)
                             .Select(pet => new StockReportDetailedModel
                             {
                                 TransactionDate = pet.TransactionDate,
@@ -649,7 +649,7 @@ namespace FMS.Repository.Reports
                         #endregion
                         #region LabourOrders
                         Result.Stocks.AddRange(await _appDbContext.LabourOrders
-                            .Where(d => d.Fk_ProductId == requestData.ProductId && d.Fk_FinancialYearId == FinancialYear && d.FK_BranchId == BranchId && d.TransactionDate >= convertedFromDate && d.TransactionDate <= convertedToDate)
+                            .Where(d => d.Fk_ProductId == requestData.ProductId  && d.FK_BranchId == BranchId && d.TransactionDate >= convertedFromDate && d.TransactionDate <= convertedToDate)
                             .Select(pe => new StockReportDetailedModel
                             {
                                 TransactionDate = pe.TransactionDate,

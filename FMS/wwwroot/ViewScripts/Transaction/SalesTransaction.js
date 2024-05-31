@@ -94,11 +94,11 @@ $(function () {
     $('#addSalesRowBtn').on('blur', function () {
         $(this).css('background-color', '');
     });
-    $('#btnSave').on('keydown', function (e) {
-        if (e.key === 'Enter' || e.keyCode === 13) {
-            $('#btnSave').click();
-        }
-    });
+    //$('#btnSave').on('keydown', function (e) {
+    //    if (e.key === 'Enter' || e.keyCode === 13) {
+    //        $('#btnSave').click();
+    //    }
+    //});
     $('#btnSave').on('focus', function () {
         $(this).css('background-color', 'black');
     });
@@ -241,11 +241,11 @@ $(function () {
     $('#addSalesReturnRowBtn').on('blur', function () {
         $(this).css('background-color', '');
     });
-    $('#Sr_btnSave').on('keydown', function (e) {
-        if (e.key === 'Enter' || e.keyCode === 13) {
-            $('#Sr_btnSave').click();
-        }
-    });
+    //$('#Sr_btnSave').on('keydown', function (e) {
+    //    if (e.key === 'Enter' || e.keyCode === 13) {
+    //        $('#Sr_btnSave').click();
+    //    }
+    //});
     $('#Sr_btnSave').on('focus', function () {
         $(this).css('background-color', 'black');
     });
@@ -433,7 +433,7 @@ $(function () {
                     ddlCustomer.append(defaultOption);
                     $.each(result.SubLedgers, function (key, item) {
                         if (item.PartyGroupId == fkpartygroupId) {
-                            var option = $('<option></option>').val(item.SubLedgerId).text(item.SubLedgerName);
+                            var option = $('<option></option>').val(item.SubLedgerId).text(item.SubLedgerName + " (" + item.Adress + ")");
                             ddlCustomer.append(option);
                         }
                     });
@@ -524,7 +524,6 @@ $(function () {
     $('#addSalesRowBtn').click(function () {
         addSalesRow();
     });
-
     $('#tblSales').on('click', '.addBtn', function () {
         addSalesRow();
     });
@@ -773,7 +772,6 @@ $(function () {
                 PrintData.push(PrintCelles);
                 PrintCelles.push(unitText);
             });  
-
             var requestData = {
                 TransactionType: ddlPayment.val(),
                 RateType: ddlRate.val(),
@@ -902,6 +900,7 @@ $(function () {
                         html += '<td style="background-color:#ffe6e6;">';
                         html += '<button class="btn btn-primary btn-link btn-sm btn-sales-edit"   id="btnsalesEdit_' + item.SalesOrderId + '"     data-id="' + item.SalesOrderId + '" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-edit"></i></button>';
                         html += ' <button class="btn btn-primary btn-link btn-sm btn-sales-delete" id="btnsalesDelete_' + item.SalesOrderId + '"   data-id="' + item.SalesOrderId + '" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button>';
+                        html += ' <button class="btn btn-primary btn-link btn-sm btn-sales-Print" id="btnsalesPrint_' + item.SalesOrderId + '"   data-id="' + item.SalesOrderId + '" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-print"></i></button>';
                         html += '</td>';
                         html += '</tr >';
                     });
@@ -1314,6 +1313,12 @@ $(function () {
             }
         });
     }
+
+    $(document).on('click', '.btn-sales-Print', (event) => {
+        const value = $(event.currentTarget).data('id');
+        var url = '/Print/SalePrintForReapeat?Id=' + value;  // Append query string to URL
+        window.open(url, '_blank');
+    });
     //-------------------------------------------------------------Sales Return Screen --------------------------------------------------------//
     Sr_GetSundryDebtors();
     function Sr_GetSundryDebtors() {
@@ -1377,7 +1382,7 @@ $(function () {
                     Sr_ddlCustomer.append(defaultOption);
                     $.each(result.SubLedgers, function (key, item) {
                         if (item.PartyGroupId == Sr_fkpartygroupId) {
-                            var option = $('<option></option>').val(item.SubLedgerId).text(item.SubLedgerName);
+                            var option = $('<option></option>').val(item.SubLedgerId).text(item.SubLedgerName + " (" + item.Adress + ")");
                             Sr_ddlCustomer.append(option);
                         }
                     });
@@ -1454,7 +1459,6 @@ $(function () {
             }
         });
     }
-    $('#addSalesReturnRowBtn').on('click', SalesReturnRowBtn);
     function SalesReturnRowBtn() {
         var uniqueId = 'ddlitem' + new Date().getTime();
         var html = '<tr>';
@@ -1487,7 +1491,10 @@ $(function () {
         html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
         html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
         html += '<td><div class="form-group"><input type="text" class="form-control" value="0"></div></td>';
-        html += '<td><button class="btn btn-primary btn-link deleteBtnReturn" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button></td>';
+        html += '<td style="background-color:#ffe6e6; text-align:center">';
+        html += '<button class="btn btn-primary btn-link addBtnReturn" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-plus"></i></button>';
+        html += '<button class="btn btn-primary btn-link deleteBtnReturn" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button>';
+        html += '</td>';
         html += '</tr>';
         var newRow = SalesReturnTable.row.add($(html)).draw(false).node();
         $.ajax({
@@ -1505,6 +1512,7 @@ $(function () {
                         var option = $('<option></option>').val(item.ProductId).text(item.ProductName);
                         selectElement.append(option);
                     });
+                    selectElement.focus();
                 }
             },
             error: function (errormessage) {
@@ -1515,6 +1523,12 @@ $(function () {
             theme: 'bootstrap4'
         });
     }
+    $('#addSalesReturnRowBtn').click(function () {
+        SalesReturnRowBtn();
+    });
+    $('#tblSalesReturn').on('click', '.addBtnReturn', function () {
+        SalesReturnRowBtn();
+    });
     $(document).on('change', 'select[name = "Sr_ddlRate"]', function () {
         selectedOption = Sr_ddlRate.val();
         if (selectedOption === 'wholesalerate') {
@@ -1924,7 +1938,6 @@ $(function () {
             contentType: "application/json;charset=utf-8",
             dataType: "json",
             success: function (result) {
-                console.log(result);
                 Sr_OrderId.val(result.SalesReturnOrder.SalesReturnOrderId)
                 const ModifytransactionDates = result.SalesReturnOrder.TransactionDate;
                 if (ModifytransactionDates) {
@@ -2068,7 +2081,10 @@ $(function () {
                     html += '<td><div class="form-group"><input type="text" class="form-control" id=""  value=' + item.Gst + '></div></td>';
                     html += '<td><div class="form-group"><input type="text" class="form-control" id=""  value=' + item.GstAmount + '></div></td>';
                     html += '<td><div class="form-group"><input type="text" class="form-control" id=""  value=' + item.Amount + '></div></td>';
-                    html += '<td><button class="btn btn-primary btn-link deleteBtnrt" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button></td>';
+                    html += '<td style="background-color:#ffe6e6; text-align:center">';
+                    html += '<button class="btn btn-primary btn-link addBtnReturn" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-plus"></i></button>';
+                    html += '<button class="btn btn-primary btn-link deleteBtnReturn" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button>';
+                    html += '</td>';
                     html += '</tr>';
                     var newRow = SalesReturnTable.row.add($(html)).draw(false).node();
                     var selectElement = $('#ddn_' + item.SalesReturnId);
