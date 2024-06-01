@@ -139,31 +139,70 @@
                                                     }else
                                                     {
                                                         <td>@item.Narration</td>
+                                                    }                                                 
+                                                    @if(item.Quantity==0 )
+                                                    {
+                                                        <td>-</td>
+                                                    }else
+                                                    {
+                                                        <td>@item.Quantity.ToString("N2")</td>
+                                                    }                                                 
+                                                    @if(item.Rate==0)
+                                                    {
+                                                        <td>-</td>
+                                                    }else
+                                                    {
+                                                        <td>@item.Rate.ToString("N2")</td>
+                                                    }                                                 
+                                                    @if(item.OTAmount==0){
+                                                        <td>-</td>
                                                     }
-                                                    <td>@item.Quantity.ToString("N2")</td>
-                                                    <td>@item.Rate.ToString("N2")</td>
-                                                    <td>@item.OTAmount.ToString("N2")</td>
+                                                    else
+                                                    {
+                                                        <td>@item.OTAmount.ToString("N2")</td>
+                                                    }
                                                     @if (item.Particular == "LabourOrders")
                                                     {
                                                         TotalBillingAmt += @item.Amount;
-                                                        <td>@item.Amount.ToString("N2")</td>
-                                                        <td>0.00</td>
-                                                        <td>0.00</td>
+                                                        if(item.Amount == 0)
+                                                        {
+                                                            <td>-</td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>@item.Amount.ToString("N2")</td>
+                                                        }
+                                                        
+                                                        <td>-</td>
+                                                        <td>-</td>
                                                         Balance += @item.Amount;
-                                                       
                                                     }
                                                     else if (item.Particular == "DamageOrders")
                                                     {
-                                                        <td>0.00</td>
-                                                        <td>@item.Amount.ToString("N2")</td>
-                                                        <td>0.00</td>
+                                                        <td>-</td>
+                                                        if (item.Amount == 0)
+                                                        {
+                                                            <td>-</td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>@item.Amount.ToString("N2")</td>
+                                                        }
+                                                        <td>-</td>
                                                         Balance -= @item.Amount;
                                                     }
                                                     else 
                                                     {
-                                                        <td>0.00</td>
-                                                        <td>0.00</td>
-                                                        <td>@item.Amount</td>
+                                                        <td>-</td>
+                                                        <td>-</td>
+                                                        if (item.Amount == 0)
+                                                        {
+                                                            <td>-</td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>@item.Amount.ToString("N2")</td>
+                                                        }
                                                         Balance -= @item.Amount;
                                                         TotalPaymentAmt += item.Amount;
                                                     }
