@@ -29,7 +29,7 @@
         }
     </style>
     <meta name="viewport" content="width=device-width" />
-    <title>Sales Print</title>
+    <title>SalesReturn Print</title>
     <link rel="stylesheet" href="~/invoice/assets/css/app.min.css">
     <link rel="stylesheet" href="~/invoice/assets/css/style.css">
 </head>
@@ -50,7 +50,7 @@
                                     </div>
                                 </div>
                                 <div class="col-auto">
-                                    <h6 style="padding-top:20px;text-decoration:underline;font-family: cursive;padding-right:20px">Tax Invoice</h6>
+                                    <h6 style="padding-top:20px;text-decoration:underline;font-family: cursive;padding-right:20px">Credit Note</h6>
                                 </div>
                             </div>
                         </header>
@@ -62,12 +62,12 @@
                                         @Model.Cmopany.Adress<br>@Model.Cmopany.Email,<br>
                                         @Model.Cmopany.Phone,<br>Odisha
                                     </address>
-                                    <br /> <b>Customer Name : @Model.StockReports.salesOrderModel.CustomerName</b>
+                                    <br /> <b>Customer Name : @Model.StockReports.SalesReturnOrderModel.CustomerName</b>
                                 </div>
                             </div>
                             <div class="col-auto" style="padding-right:20px">
                                 Date :  @DateTime.Now.ToString("dd/MM/yyyy") <br />
-                                Trn Date :  @Model.StockReports.salesOrderModel.TransactionDate.ToString("dd/MM/yyyy") <br />
+                                Trn Date :  @Model.StockReports.SalesReturnOrderModel.TransactionDate.ToString("dd/MM/yyyy") <br />
                             </div>
                         </div>
                         <table class="invoice-table">
@@ -87,10 +87,10 @@
                             <tbody>
                                 @if (Model.StockReports != null)
                                 {
-                                    @if(Model.StockReports.salesOrderModel != null)
+                                    @if (Model.StockReports.SalesReturnOrderModel != null)
                                     {
-                                        var Item = Model.StockReports.salesOrderModel;
-                                        foreach (var Transation in Item.SalesTransactions)
+                                        var Item = Model.StockReports.SalesReturnOrderModel;
+                                        foreach (var Transation in Item.SalesReturnTransactions)
                                         {
                                             <tr class="small-row">
                                                 <td>@Transation.Product.ProductName</td>
@@ -104,15 +104,12 @@
                                                 <td>@Transation.Amount</td>
                                             </tr>
                                         }
-                                        
                                     }
-                                    
-                                    
                                 }
                                 else
                                 {
                                     <tr class="small-row">
-                                        <td colspan="6">No SaleTransation available</td>
+                                        <td colspan="6">No SaleReturnTransation available</td>
                                     </tr>
                                 }
                             </tbody>
@@ -125,14 +122,14 @@
                             <div class="col-auto">
 
                                 @{
-                                    var Subtotal = @Model.StockReports.salesOrderModel.SubTotal;
-                                    var Discount = @Model.StockReports.salesOrderModel.Discount;
+                                    var Subtotal = @Model.StockReports.SalesReturnOrderModel.SubTotal;
+                                    var Discount = @Model.StockReports.SalesReturnOrderModel.Discount;
                                     var Total = Subtotal - Discount;
                                 }
                                 <table class="total-table3">
                                     <tr>
                                         <th>SubTotal:</th>
-                                        <td>@Model.StockReports.salesOrderModel.SubTotal</td>
+                                        <td>@Model.StockReports.SalesReturnOrderModel.SubTotal</td>
                                     </tr>
                                     <tr>
                                         <th colspan="2">
@@ -145,15 +142,11 @@
                                     </tr>
                                     <tr>
                                         <th>Gst Amount:</th>
-                                        <td>@Model.StockReports.salesOrderModel.Gst</td>
+                                        <td>@Model.StockReports.SalesReturnOrderModel.Gst</td>
                                     </tr>
                                     <tr>
                                         <th>Transportation Charges:</th>
-                                        <td>@Model.StockReports.salesOrderModel.TransportationCharges</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Handling Charges:</th>
-                                        <td>@Model.StockReports.salesOrderModel.HandlingCharges</td>
+                                        <td>@Model.StockReports.SalesReturnOrderModel.TransportationCharges</td>
                                     </tr>
                                     <tr>
                                         <th colspan="2">
@@ -162,7 +155,7 @@
                                     </tr>
                                     <tr>
                                         <th>Grant Amount:</th>
-                                        <td>@Model.StockReports.salesOrderModel.GrandTotal</td>
+                                        <td>@Model.StockReports.SalesReturnOrderModel.GrandTotal</td>
                                     </tr>
 
                                 </table>
@@ -191,7 +184,7 @@
                                 return ConvertToWords(num / 1000000000) + " Billion" + ((num % 1000000000 != 0) ? " " + ConvertToWords(num % 1000000000) : "");
                             }
                         }
-                        <b>Total In Words:</b>@ConvertToWords((long)Model.StockReports.salesOrderModel.GrandTotal)  Rupees Only
+                        <b>Total In Words:</b>@ConvertToWords((long)Model.StockReports.SalesReturnOrderModel.GrandTotal)  Rupees Only
                         <p class="invoice-note mt-3">
                             <b> --End Report--</b>
                         </p>
@@ -220,3 +213,5 @@
     <script src="~/invoice/assets/js/main.js"></script>
 </body>
 </html>
+
+

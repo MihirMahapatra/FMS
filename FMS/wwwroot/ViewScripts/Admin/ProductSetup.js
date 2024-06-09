@@ -614,7 +614,9 @@
                         else {
                             html += '<td> - </td>';
                         }
-                        html += '<td>' + item.Price + '</td>';
+                        //html += '<td>' + item.Price + '</td>';
+                        html += '<td class="price">' + item.Price + '  <button class="btn btn-link btn-sm btn-productrate-edit" id="btnProductRateEdit_' + item.ProductId + '"     data-id="' + item.ProductId + '" style="border: none; color: #337AB7;"><i class="fa-solid fa-edit"></i></button></td>';
+                        //html += '<td class="price" style="display:none;">' + item.Price + '  <button class="btn btn-link btn-sm"  style="border: none; color: #337AB7;"><i class="fa-solid fa-floppy-disk"></i></button></td>';
                         html += '<td>' + item.WholeSalePrice + '</td>';
                         html += '<td>' + item.GST + '</td>';
                         html += '<td style="background-color:#ffe6e6;">';
@@ -634,7 +636,7 @@
                 $('.tbProduct').html(html);
                 if (!$.fn.DataTable.isDataTable('.ProductTable')) {
                     $('.ProductTable').DataTable({
-                        "paging": true,
+                        "paging": false,
                         "lengthChange": false,
                         "searching": true,
                         "ordering": true,
@@ -725,6 +727,73 @@
             });
         }
     }
+    //----------------Product Rate change----------------------------------//
+    $(document).on('click', '.btn-productrate-edit', (event) => {
+        const value = $(event.currentTarget).data('id');
+        EditProductRate(value);
+    });
+    function EditProductRate(id) {
+        var $tr = $('#btnProductRateEdit_' + id + '').closest('tr');
+        var rate = $tr.find('td:eq(6)').text().trim();
+        //****************Date  Input***********************/
+        $tr.find('td:eq(6)').html('<div class="form-group"><input type="text" class="form-control rate-input" value="' + rate + '"></div>');
+        $tr.find('td:eq(6) .rate-input').focus().select();
+        $tr.find('td:eq(6) .rate-input').on('keypress', function (event) {
+            if (event.which === 13) { // Enter key
+                var $nextTr = $tr.next('tr');
+                if ($nextTr.length > 0) {
+                    var nextId = $nextTr.find('.btn-productrate-edit').data('id');
+                    EditProductRate(nextId);
+                    
+                }
+            }
+        });
+    }
+    $('.btn-product-Ratechange').on('click', function () {
+        var rowData = [];
+        $('.ProductTable tbody tr').each(function () {
+            var row = $(this);
+            var input = row.find('td:eq(6) input, td:eq(6) select');
+            if (input.length > 0) { // Check if input field exists in column 6
+                var cellData = [];
+                row.find('td').each(function () {
+                    var cell = $(this);
+                    var value = cell.text().trim(); // Default to cell text
+                    var input = cell.find('input, select');
+                    if (input.length > 0) {
+                        value = input.val(); // If input field exists, get its value
+                    }
+                    cellData.push(value);
+                });
+                rowData.push(cellData); // Store row data
+            }
+        });
+        var data = {
+            RowData: rowData
+        }
+        $.ajax({
+            type: "POST",
+            url: '/Admin/UpdateProductRate',
+            dataType: 'json',
+            data: JSON.stringify(data),
+            contentType: "application/json;charset=utf-8",
+            success: function (Response) {
+                $('#modal-edit-Product').modal('hide');
+                if (Response.ResponseCode = 200) {
+                    toastr.success(Response.SuccessMsg);
+                }
+                else {
+                    toastr.error(Response.ErrorMsg);
+                }
+                LoadProducts();
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+        console.log(rowData);
+    });
+    //-----End-----------------//
     $(document).on('click', '.btn-product-edit', (event) => {
         const value = $(event.currentTarget).data('id');
         EditProduct(value);

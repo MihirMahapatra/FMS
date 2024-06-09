@@ -25,6 +25,24 @@ namespace FMS.Controllers.Print
         }
         #region Sales Print
         [HttpGet]
+        public async Task<IActionResult> SaleReturnPrintRepeat([FromQuery] Guid Id)
+        {
+            var result = await _transactionSvcs.GetSalesReturnById(Id);
+            var StockReportData = new StockReportDataModel();
+            StockReportData.SalesReturnOrderModel = result.SalesReturnOrder;
+            if (StockReportData.SalesReturnOrderModel.CustomerName == "")
+            {
+                var subId = StockReportData.SalesReturnOrderModel.Fk_SubLedgerId;
+                StockReportData.SalesReturnOrderModel.CustomerName = _appDbContext.SubLedgers.Where(s => s.SubLedgerId == subId).Select(s => s.SubLedgerName).FirstOrDefault();
+            }
+            var StockSumrizedReportModal = new StockSumrizedReportModal()
+            {
+                Cmopany = _adminSvcs.GetCompany().Result.GetCompany,
+                StockReports = StockReportData
+            };
+            return View(StockSumrizedReportModal);
+        }
+        [HttpGet]
         public async Task<IActionResult> SalePrintForReapeat([FromQuery]  Guid Id)
         {
             var result = await _transactionSvcs.GetSalesById(Id);

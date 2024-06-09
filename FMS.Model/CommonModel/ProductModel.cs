@@ -33,5 +33,6 @@
         public List<ProductionModel> RawMaterialProductions { get; set; }
         public List<SalesConfigModel> SalesConfigs { get; set; }
         public decimal OpeningQty { get; set; }
+        public List<List<string>> RowData { get; set; }
     }
 }

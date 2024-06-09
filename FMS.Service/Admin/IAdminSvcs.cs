@@ -61,6 +61,7 @@ namespace FMS.Service.Admin
         Task<Base> CreateProduct(ProductModel data);
         Task<Base> UpdateProduct(ProductModel data);
         Task<Base> DeleteProduct(Guid Id);
+        Task<Base> UpdateProductRate(ProductModel data);
         #endregion
         #endregion
         #region Alternate Unit

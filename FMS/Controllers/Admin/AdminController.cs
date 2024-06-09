@@ -469,6 +469,20 @@ namespace FMS.Controllers.Admin
             var result = await _adminSvcs.DeleteProduct(GroupId);
             return new JsonResult(result);
         }
+        [HttpPost, Authorize(Policy = "Edit")]
+        public async Task<IActionResult> UpdateProductRate([FromBody] ProductModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _adminSvcs.UpdateProductRate(model);
+                return new JsonResult(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
+
+        }
         #endregion
         #endregion
         #region Alternate Unit

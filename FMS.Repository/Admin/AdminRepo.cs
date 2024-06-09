@@ -1150,6 +1150,35 @@ namespace FMS.Repository.Admin
 
             return _Result;
         }
+        public async Task<Result<bool>> UpdateProductRate(ProductModel data)
+        {
+            Result<bool> _Result = new();
+            try
+            {
+                _Result.IsSuccess = false;
+                
+                if (data.RowData != null)
+                {
+                    foreach (var item in data.RowData)
+                    {
+                        var product = await _appDbContext.Products.Where(x => x.ProductId == Guid.Parse(item[0])).SingleOrDefaultAsync();
+                        if (product != null)
+                        {
+                            product.Price = Convert.ToDecimal(item[6]);
+                        }
+                    }
+                    int count = await _appDbContext.SaveChangesAsync();
+                    _Result.Response = (count > 0) ? ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Modified) : ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Error);
+                }
+                _Result.IsSuccess = true;
+            }
+            catch (Exception _Exception)
+            {
+                _Result.Exception = _Exception;
+                await _emailService.SendExceptionEmail("horizonexception@gmail.com", "FMS Excepion", $"MasterRepo/UpdateProduct : {_Exception.Message}");
+            }
+            return _Result;
+        }
         #endregion
         #endregion
         #region Alternate Unit

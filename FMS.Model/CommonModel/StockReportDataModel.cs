@@ -15,5 +15,7 @@ namespace FMS.Model.CommonModel
         public List<StockReportSummerizedModel> StockReport { get; set; }
         public ProductModel Product { get; set; }
         public SalesOrderModel salesOrderModel { get; set; }
+        public SalesReturnOrderModel SalesReturnOrderModel { get; set; }
+        
     }
 }

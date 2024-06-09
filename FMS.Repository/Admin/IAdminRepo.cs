@@ -63,6 +63,7 @@ namespace FMS.Repository.Admin
         Task<Result<bool>> CreateProduct(ProductModel data);
         Task<Result<bool>> UpdateProduct(ProductModel data);
         Task<Result<bool>> DeleteProduct(Guid Id, IDbContextTransaction transaction, bool IsCallBack);
+        Task<Result<bool>> UpdateProductRate(ProductModel data);
         #endregion
         #endregion
         #region Alternate Units

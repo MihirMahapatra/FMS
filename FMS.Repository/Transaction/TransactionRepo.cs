@@ -2901,7 +2901,6 @@ namespace FMS.Repository.Transaction
             }
             return _Result;
         }
-
         public async Task<Result<bool>> CreateSales(SalesDataRequest data)
         {
             Result<bool> _Result = new();
@@ -4561,44 +4560,41 @@ namespace FMS.Repository.Transaction
                 _Result.IsSuccess = false;
                 Guid BranchId = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("BranchId"));
                 Guid FinancialYear = Guid.Parse(_HttpContextAccessor.HttpContext.Session.GetString("FinancialYearId"));
-                var Query = await _appDbContext.SalesReturnOrders.Where(s => s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear && s.SalesReturnOrderId == Id).Select(s => new SalesReturnOrderModel
+
+                var salesReturnOrder = await _appDbContext.SalesReturnOrders
+                    .Where(s => s.Fk_BranchId == BranchId  && s.SalesReturnOrderId == Id)
+                    .FirstOrDefaultAsync();
+                if (salesReturnOrder != null)
                 {
-                    SalesReturnOrderId = s.SalesReturnOrderId,
-                    Fk_SubLedgerId = s.Fk_SubLedgerId,
-                    CustomerName = s.CustomerName,
-                    TransactionNo = s.TransactionNo,
-                    TransactionType = s.TransactionType,
-                    TransportationCharges = s.TransportationCharges,
-                    TransactionDate = s.TransactionDate,
-                    OrderNo = s.OrderNo,
-                    OrderDate = s.OrderDate,
-                    SiteAdress = s.SiteAdress,
-                    Discount = s.Discount,
-                    PaymentMode = s.PaymentMode,
-                    Gst = s.Gst,
-                    SubTotal = s.SubTotal,
-                    GrandTotal = s.GrandTotal,
-                    TranspoterName = s.TranspoterName,
-                    VehicleNo = s.VehicleNo,
-                    ReceivingPerson = s.ReceivingPerson,
-                    Naration = s.Narration,
-                    SalesReturnTransactions = _appDbContext.SalesReturnTransactions
-                    //.Where(x => x.Fk_SalesReturnOrderId == s.SalesReturnOrderId)
-                     .Where(x => x.Fk_SalesReturnOrderId == s.SalesReturnOrderId && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear && (x.Fk_SubProductId == null || x.SalesReturnId == _appDbContext.SalesReturnTransactions.Where(y => y.Fk_SubProductId == x.Fk_SubProductId).Min(y => y.SalesReturnId)))
-                    .Select(x => new SalesReturnTransactionModel
+                    var salesReturnTransactions = await _appDbContext.SalesReturnTransactions
+                        .Where(x => x.Fk_SalesReturnOrderId == salesReturnOrder.SalesReturnOrderId)
+                        .ToListAsync();
+
+                    var filteredTransactions = salesReturnTransactions
+                        .Where(x => x.Fk_SubProductId == null ||
+                                    x.SalesReturnId == salesReturnTransactions
+                                        .Where(y => y.Fk_SubProductId == x.Fk_SubProductId)
+                                        .Min(y => y.SalesReturnId))
+                        .ToList();
+
+                    var salesReturnTransactionModels = filteredTransactions.Select(x => new SalesReturnTransactionModel
                     {
                         SalesReturnId = x.SalesReturnId,
                         AlternateQuantity = x.AlternateQuantity,
                         UnitQuantity = x.UnitQuantity,
-                        UnitName = x.Fk_SubProductId == null ? _appDbContext.Products
-                                      .Where(p => p.ProductId == x.Fk_ProductId)
-                                      .Select(p => p.Unit.UnitName)
-                                      .FirstOrDefault() : _appDbContext.Products
-                                      .Where(p => p.ProductId == x.Fk_SubProductId)
-                                     .Select(p => p.Unit.UnitName)
-                                     .FirstOrDefault(),
+                        UnitName = x.Fk_SubProductId == null
+                            ? _appDbContext.Products
+                                .Where(p => p.ProductId == x.Fk_ProductId)
+                                .Select(p => p.Unit.UnitName)
+                                .FirstOrDefault()
+                            : _appDbContext.Products
+                                .Where(p => p.ProductId == x.Fk_SubProductId)
+                                .Select(p => p.Unit.UnitName)
+                                .FirstOrDefault(),
                         Fk_AlternateUnitId = x.Fk_AlternateUnitId,
-                        AlternateUnit = x.AlternateUnit != null ? new AlternateUnitModel { AlternateUnitName = x.AlternateUnit.AlternateUnitName } : null,
+                        AlternateUnit = x.AlternateUnit != null
+                            ? new AlternateUnitModel { AlternateUnitName = x.AlternateUnit.AlternateUnitName }
+                            : null,
                         Rate = x.Rate,
                         Discount = x.Discount,
                         DiscountAmount = x.DiscountAmount,
@@ -4606,27 +4602,50 @@ namespace FMS.Repository.Transaction
                         GstAmount = x.GstAmount,
                         Amount = x.Amount,
                         Fk_ProductId = x.Fk_SubProductId ?? x.Fk_ProductId,
-                        Product = x.Fk_SubProductId == null ? _appDbContext.Products
-                                 .Where(p => p.ProductId == x.Fk_ProductId)
-                                   .Select(p => new ProductModel { ProductName = p.ProductName, Unit = new UnitModel { UnitName = p.Unit.UnitName } })
-                                   .FirstOrDefault() : _appDbContext.Products
-                                    .Where(p => p.ProductId == x.Fk_SubProductId)
-                                    .Select(p => new ProductModel { ProductName = p.ProductName, Unit = new UnitModel { UnitName = p.Unit.UnitName } })
-                                    .FirstOrDefault()
-                    }).ToList(),
-                }).FirstOrDefaultAsync();
-                if (Query != null)
-                {
-                    var Order = Query;
-                    _Result.SingleObjData = Order;
+                        Product = x.Fk_SubProductId == null
+                            ? _appDbContext.Products
+                                .Where(p => p.ProductId == x.Fk_ProductId)
+                                .Select(p => new ProductModel { ProductName = p.ProductName, Unit = new UnitModel { UnitName = p.Unit.UnitName } })
+                                .FirstOrDefault()
+                            : _appDbContext.Products
+                                .Where(p => p.ProductId == x.Fk_SubProductId)
+                                .Select(p => new ProductModel { ProductName = p.ProductName, Unit = new UnitModel { UnitName = p.Unit.UnitName } })
+                                .FirstOrDefault()
+                    }).ToList();
+
+                    var salesReturnOrderModel = new SalesReturnOrderModel
+                    {
+                        SalesReturnOrderId = salesReturnOrder.SalesReturnOrderId,
+                        Fk_SubLedgerId = salesReturnOrder.Fk_SubLedgerId,
+                        CustomerName = salesReturnOrder.CustomerName,
+                        TransactionNo = salesReturnOrder.TransactionNo,
+                        TransactionType = salesReturnOrder.TransactionType,
+                        TransportationCharges = salesReturnOrder.TransportationCharges,
+                        TransactionDate = salesReturnOrder.TransactionDate,
+                        OrderNo = salesReturnOrder.OrderNo,
+                        OrderDate = salesReturnOrder.OrderDate,
+                        SiteAdress = salesReturnOrder.SiteAdress,
+                        Discount = salesReturnOrder.Discount,
+                        PaymentMode = salesReturnOrder.PaymentMode,
+                        Gst = salesReturnOrder.Gst,
+                        SubTotal = salesReturnOrder.SubTotal,
+                        GrandTotal = salesReturnOrder.GrandTotal,
+                        TranspoterName = salesReturnOrder.TranspoterName,
+                        VehicleNo = salesReturnOrder.VehicleNo,
+                        ReceivingPerson = salesReturnOrder.ReceivingPerson,
+                        Naration = salesReturnOrder.Narration,
+                        SalesReturnTransactions = salesReturnTransactionModels
+                    };
+
+                    _Result.SingleObjData = salesReturnOrderModel;
                     _Result.Response = ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Success);
+                    _Result.IsSuccess = true;
                 }
-                _Result.IsSuccess = true;
             }
             catch (Exception _Exception)
             {
                 _Result.Exception = _Exception;
-                await _emailService.SendExceptionEmail("horizonexception@gmail.com", "FMS Excepion", $"TransactionRepo/GetSalesReturnById : {_Exception.Message}");
+                await _emailService.SendExceptionEmail("horizonexception@gmail.com", "FMS Exception", $"TransactionRepo/GetSalesReturnById : {_Exception.Message}");
             }
             return _Result;
         }
@@ -5605,7 +5624,7 @@ namespace FMS.Repository.Transaction
                                         foreach (var item1 in getFinishedGoodSalesConfig1)
                                         {
                                             var newUpdateSalesReturnTransaction = await _appDbContext.SalesReturnTransactions
-                                               .Where(s => s.Fk_ProductId == item1.Fk_SubFinishedGoodId)
+                                               .Where(s => s.Fk_SubProductId == Guid.Parse(item[1]) && s.Fk_ProductId == item1.Fk_SubFinishedGoodId && s.SalesReturnId == SalesReturnId && s.Fk_BranchId == BranchId && s.Fk_FinancialYearId == FinancialYear)
                                                .SingleOrDefaultAsync();
                                             if (newUpdateSalesReturnTransaction != null)
                                             {
@@ -5762,7 +5781,6 @@ namespace FMS.Repository.Transaction
                                 }
                                 else
                                 {
-
                                     var getFinishedGoodSalesConfig1 = await _appDbContext.SalesConfigs.Where(s => s.Fk_FinishedGoodId == Guid.Parse(item[1])).ToListAsync();
                                     if (getFinishedGoodSalesConfig1.Count > 0)
                                     {

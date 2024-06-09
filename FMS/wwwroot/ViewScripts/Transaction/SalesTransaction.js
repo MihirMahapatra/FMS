@@ -1889,6 +1889,7 @@ $(function () {
                         html += '<td style="background-color:#ffe6e6;">';
                         html += '<button class="btn btn-primary btn-link btn-sm btn-salesReturn-edit"   id="btnsalesReturnEdit_' + item.SalesReturnOrderId + '"     data-id="' + item.SalesReturnOrderId + '" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-edit"></i></button>';
                         html += ' <button class="btn btn-primary btn-link btn-sm btn-salesReturn-delete" id="btnsalesReturnDelete_' + item.SalesReturnOrderId + '"   data-id="' + item.SalesReturnOrderId + '" style="border: 0px;color: #fff; background-color:#FF0000; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-trash-can"></i></button>';
+                        html += ' <button class="btn btn-primary btn-link btn-sm btn-salesReturn-Print" id="btnsalesReturnPrint_' + item.SalesReturnOrderId + '"   data-id="' + item.SalesReturnOrderId + '" style="border: 0px;color: #fff; background-color:#337AB7; border-color: #3C8DBC; border-radius: 4px;"> <i class="fa-solid fa-print"></i></button>';
                         html += '</td>';
                         html += '</tr >';
                     });
@@ -1924,6 +1925,11 @@ $(function () {
             }
         });
     }
+    $(document).on('click', '.btn-salesReturn-Print', (event) => {
+        const value = $(event.currentTarget).data('id');
+        var url = '/Print/SaleReturnPrintRepeat?Id=' + value;  // Append query string to URL
+        window.open(url, '_blank');
+    });
     $(document).on('click', '.btn-salesReturn-edit', (event) => {
         const value = $(event.currentTarget).data('id');
         GetSalesReturnById(value);
