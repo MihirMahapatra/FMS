@@ -90,22 +90,14 @@ $(function () {
     $('#addPurchaseRowBtn').on('blur', function () {
         $(this).css('background-color', '');
     });
-    $('#btnSave').on('keydown', function (e) {
-        if (e.key === 'Enter' || e.keyCode === 13) {
-            $('#btnSave').click();
-        }
-    });
+   
     $('#btnSave').on('focus', function () {
         $(this).css('background-color', 'black');
     });
     $('#btnSave').on('blur', function () {
         $(this).css('background-color', '');
     });
-    $('#btnUpdate').on('keydown', function (e) {
-        if (e.key === 'Enter' || e.keyCode === 13) {
-            $('#btnUpdate').click();
-        }
-    });
+   
     $('#btnUpdate').on('focus', function () {
         $(this).css('background-color', 'black');
     });
@@ -1901,7 +1893,7 @@ $(function () {
                 InvoiceDate: Pr_invoiceDate.val(),
                 TranspoterName: Pr_transpoterName.val(),
                 VehicleNo: Pr_vehicleNo.val(),
-                ReceivingPerson: Pr_receivingPerson.val(),
+                //ReceivingPerson: Pr_receivingPerson.val(),
                 SubTotal: Pr_subTotal.val(),
                 DiscountAmount: Pr_discount.val(),
                 TransportationCharges: Pr_transportationCharges.val(),

@@ -252,11 +252,7 @@ $(function () {
     $('#Sr_btnSave').on('blur', function () {
         $(this).css('background-color', '');
     });
-    $('#Sr_btnUpdate').on('keydown', function (e) {
-        if (e.key === 'Enter' || e.keyCode === 13) {
-            $('#Sr_btnUpdate').click();
-        }
-    });
+   
     $('#Sr_btnUpdate').on('focus', function () {
         $(this).css('background-color', 'black');
     });
