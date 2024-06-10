@@ -1585,14 +1585,13 @@ namespace FMS.Repository.Admin
                             Fk_SubFinishedGoodId = Guid.Parse(item[0]),
                             Quantity = Convert.ToDecimal(item[1]),
                             Unit = item[2].ToString()
-
                         });
 
                     
-                    await _appDbContext.SalesConfigs.AddRangeAsync(salesConfigs);
-                    int count = await _appDbContext.SaveChangesAsync();
-                    _Result.Response = (count > 0) ? ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Created) : ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Error);
-                }
+                     }
+                await _appDbContext.SalesConfigs.AddRangeAsync(salesConfigs);
+                int count = await _appDbContext.SaveChangesAsync();
+                _Result.Response = (count > 0) ? ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Created) : ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Error);
                 _Result.IsSuccess = true;
             }
             catch (Exception _Exception)

@@ -904,7 +904,7 @@ namespace FMS.Repository.Transaction
                     TransportationCharges = s.TransportationCharges,
                     VehicleNo = s.VehicleNo,
                     TranspoterName = s.TranspoterName,
-                    ReceivingPerson = s.ReceivingPerson,
+                    //ReceivingPerson = s.ReceivingPerson,
                     Naration = s.Narration,
                     Discount = s.Discount,
                     Gst = s.Gst,
@@ -969,7 +969,7 @@ namespace FMS.Repository.Transaction
                             InvoiceDate = convertedInvoiceDate,
                             TransportationCharges = data.TransportationCharges,
                             TranspoterName = data.TranspoterName,
-                            ReceivingPerson = data.ReceivingPerson,
+                            //ReceivingPerson = data.ReceivingPerson,
                             Narration = data.Naration,
                             VehicleNo = data.VehicleNo,
                             SubTotal = data.SubTotal,
@@ -1271,7 +1271,7 @@ namespace FMS.Repository.Transaction
                                 UpdatePurchaseReturnOrder.TransportationCharges = data.TransportationCharges;
                                 UpdatePurchaseReturnOrder.VehicleNo = data.VehicleNo;
                                 UpdatePurchaseReturnOrder.TranspoterName = data.TranspoterName;
-                                UpdatePurchaseReturnOrder.ReceivingPerson = data.ReceivingPerson;
+                               // UpdatePurchaseReturnOrder.ReceivingPerson = data.ReceivingPerson;
                                 UpdatePurchaseReturnOrder.Narration = data.Naration;
                                 UpdatePurchaseReturnOrder.SubTotal = Convert.ToDecimal(data.SubTotal);
                                 UpdatePurchaseReturnOrder.Discount = Convert.ToDecimal(data.DiscountAmount);

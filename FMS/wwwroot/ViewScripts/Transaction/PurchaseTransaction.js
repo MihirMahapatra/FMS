@@ -159,7 +159,7 @@ $(function () {
     const Pr_grandTotal = $('input[name="Pr_GrandTotal"]');
     const Pr_vehicleNo = $('input[name="Pr_VehicleNo"]');
     const Pr_transpoterName = $('input[name="Pr_TranspoterName"]');
-    const Pr_receivingPerson = $('input[name="Pr_ReceivingPerson"]');
+    //const Pr_receivingPerson = $('input[name="Pr_ReceivingPerson"]');
     const Pr_gst = $('input[name="Pr_GstAmount"]');
     const Pr_Narration = $('textarea[name="NarrationPurchaseReturn"]');
     var PurchaseReturnTable = $('#tblPurchaseReturn').DataTable({
@@ -200,12 +200,12 @@ $(function () {
     Pr_transpoterName.on('blur', function () {
         $(this).css('border-color', ''); // Reset background color on blur
     });
-    Pr_receivingPerson.on('focus', function () {
-        $(this).css('border-color', 'red');
-    });
-    Pr_receivingPerson.on('blur', function () {
-        $(this).css('border-color', ''); // Reset background color on blur
-    });
+    //Pr_receivingPerson.on('focus', function () {
+    //    $(this).css('border-color', 'red');
+    //});
+    //Pr_receivingPerson.on('blur', function () {
+    //    $(this).css('border-color', ''); // Reset background color on blur
+    //});
     $('a[href="#CreatePurchaseReturn"]').on('click', function () {
         chkPage = true;
     });
@@ -267,17 +267,17 @@ $(function () {
             $(this).val(inputValue);
         }
     });
-    Pr_receivingPerson.on('keydown', function (event) {
-        const keyCode = event.keyCode || event.which;
-        if (keyCode >= 48 && keyCode <= 57 || (keyCode >= 96 && keyCode <= 111)) {
-            event.preventDefault();
-        }
-        else {
-            let inputValue = $(this).val();
-            inputValue = inputValue.toUpperCase();
-            $(this).val(inputValue);
-        }
-    });
+  //Pr_receivingPerson.on('keydown', function (event) {
+  //      const keyCode = event.keyCode || event.which;
+  //      if (keyCode >= 48 && keyCode <= 57 || (keyCode >= 96 && keyCode <= 111)) {
+  //          event.preventDefault();
+  //      }
+  //      else {
+  //          let inputValue = $(this).val();
+  //          inputValue = inputValue.toUpperCase();
+  //          $(this).val(inputValue);
+  //      }
+  //  });
     /*-------------------------------------------------------------Purchase Screen --------------------------------------------------------*/
     //Insert Operation  
     GetProductTypes();
@@ -1450,10 +1450,6 @@ $(function () {
             toastr.error('TranspoterName Is Required.');
             Pr_transpoterName.focus();
             return;
-        } else if (!Pr_receivingPerson.val()) {
-            toastr.error('ReceivingPerson Is Required.');
-            Pr_receivingPerson.focus();
-            return;
         } else {
             $('#loader').show();
             var rowData = [];
@@ -1483,7 +1479,7 @@ $(function () {
                     TransportationCharges: Pr_transportationCharges.val(),
                     TranspoterName: Pr_transpoterName.val(),
                     VehicleNo: Pr_vehicleNo.val(),
-                    ReceivingPerson: Pr_receivingPerson.val(),
+                    //ReceivingPerson: Pr_receivingPerson.val(),
                     Naration: Pr_Narration.val(),
                     rowData: rowData
                 };
@@ -1716,7 +1712,7 @@ $(function () {
                     }
                 }
                 Pr_vehicleNo.val(result.purchaseReturnOrder.VehicleNo);
-                Pr_receivingPerson.val(result.purchaseReturnOrder.ReceivingPerson);
+               // Pr_receivingPerson.val(result.purchaseReturnOrder.ReceivingPerson);
                 Pr_transpoterName.val(result.purchaseReturnOrder.TranspoterName);
                 Pr_Narration.val(result.purchaseReturnOrder.Naration);
                 ModifyorderDate = result.purchaseReturnOrder.OrderDate;
@@ -1880,11 +1876,8 @@ $(function () {
             toastr.error('TranspoterName Is Required.');
             Pr_transpoterName.focus();
             return;
-        } else if (!Pr_receivingPerson.val()) {
-            toastr.error('ReceivingPerson Is Required.');
-            Pr_receivingPerson.focus();
-            return;
-        } else {
+        }
+         else {
             $('#loader').show();
             var rowData = [];
             $('#tblPurchaseReturn tbody tr').each(function () {
@@ -1935,7 +1928,7 @@ $(function () {
                         Pr_invoiceDate.val('');
                         Pr_transpoterName.val('');
                         Pr_vehicleNo.val('');
-                        Pr_receivingPerson.val('');
+                       // Pr_receivingPerson.val('');
                         Pr_subTotal.val('0');
                         Pr_discount.val('0');
                         Pr_gst.val('0');
