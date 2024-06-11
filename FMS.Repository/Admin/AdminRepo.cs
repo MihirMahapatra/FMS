@@ -1567,28 +1567,59 @@ namespace FMS.Repository.Admin
             return _Result;
         }
 
+        //public async Task<Result<bool>> CreateSalesConfig(ProductConfigDataRequest data)
+        //{
+        //    Result<bool> _Result = new();
+        //    try
+        //    {
+        //        _Result.IsSuccess = false;
+        //        //var Query = _appDbContext.SalesConfigs.Where(s => s.Fk_FinishedGoodId == Guid.Parse(data.FinishedGoodId)).FirstOrDefaultAsync();
+
+        //            List<SalesConfig> salesConfigs = new();
+
+        //            foreach (var item in data.RowData)
+        //            {
+        //                salesConfigs.Add(new SalesConfig
+        //                {
+        //                    Fk_FinishedGoodId = Guid.Parse(data.FinishedGoodId),
+        //                    Fk_SubFinishedGoodId = Guid.Parse(item[0]),
+        //                    Quantity = Convert.ToDecimal(item[1]),
+        //                    Unit = item[2].ToString()
+        //                });
+
+
+        //             }
+        //        await _appDbContext.SalesConfigs.AddRangeAsync(salesConfigs);
+        //        int count = await _appDbContext.SaveChangesAsync();
+        //        _Result.Response = (count > 0) ? ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Created) : ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Error);
+        //        _Result.IsSuccess = true;
+        //    }
+        //    catch (Exception _Exception)
+        //    {
+        //        _Result.Exception = _Exception;
+        //    }
+        //    return _Result;
+        //}
         public async Task<Result<bool>> CreateSalesConfig(ProductConfigDataRequest data)
         {
-            Result<bool> _Result = new();
+            Result<bool> _Result = new Result<bool>();
             try
             {
                 _Result.IsSuccess = false;
-                var Query = _appDbContext.SalesConfigs.Where(s => s.Fk_FinishedGoodId == Guid.Parse(data.FinishedGoodId)).FirstOrDefaultAsync();
-                
-                    List<SalesConfig> salesConfigs = new();
 
-                    foreach (var item in data.RowData)
+                List<SalesConfig> salesConfigs = new List<SalesConfig>();
+
+                foreach (var item in data.RowData)
+                {
+                    salesConfigs.Add(new SalesConfig
                     {
-                        salesConfigs.Add(new SalesConfig
-                        {
-                            Fk_FinishedGoodId = Guid.Parse(data.FinishedGoodId),
-                            Fk_SubFinishedGoodId = Guid.Parse(item[0]),
-                            Quantity = Convert.ToDecimal(item[1]),
-                            Unit = item[2].ToString()
-                        });
+                        Fk_FinishedGoodId = Guid.Parse(data.FinishedGoodId),
+                        Fk_SubFinishedGoodId = Guid.Parse(item[0]),
+                        Quantity = Convert.ToDecimal(item[1]),
+                        Unit = item[2].ToString()
+                    });
+                }
 
-                    
-                     }
                 await _appDbContext.SalesConfigs.AddRangeAsync(salesConfigs);
                 int count = await _appDbContext.SaveChangesAsync();
                 _Result.Response = (count > 0) ? ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Created) : ResponseStatusExtensions.ToStatusString(ResponseStatus.Status.Error);
@@ -1600,6 +1631,7 @@ namespace FMS.Repository.Admin
             }
             return _Result;
         }
+
 
         public async Task<Result<bool>> UpdateSalesConfig(SalesConfigModel data)
         {
